@@ -1,0 +1,107 @@
+DiamondTouch drivers and libraries.
+
+The linux driver and documentation are available in
+
+  /home/mirrors/misc/diamondtouch/dtlinux
+
+The windows driver, SDK libraries, and documentation are available in
+
+  /home/mirrors/misc/diamondtouch/DiamondTouch
+
+The table has 128 wires (antennas) in the x direction and 96 in the y direction.
+The table usb device returns two arrays of signal strength for each user.
+The x signals are right to left and the y signals are top to bottom.
+The SDK (dtusbio.c) reverses both arrays; ie, the data in a dt_frame is left
+to right and bottom to top.
+Signal strength is one byte (0 - 255).
+The table returns data for four users.
+
+A read from the linux driver returns data for all for users
+
+  u32 frame_number
+  u8 user0[224]
+  u8 user1[224]
+  u8 user2[224]
+  u8 user3[224]
+
+A read from the windows driver returns data for one user
+
+  u8 user_id
+  u8 unknown
+  u8 data[244]
+
+The usb device returns 64 byte subframes, because that seems to be the
+maximum size of a usb packet, and the driver assembles them into frames.
+The subframes consist of
+
+  u8 frame_number
+  u8 subframe_number (1)
+  u8 unknown[4]
+  u8 data[58]
+
+  u8 frame_number
+  u8 subframe_number (2,3)
+  u8 data[62]
+
+  u8 frame_number
+  u8 subframe_number (4)
+  u8 data[42]
+
+The user is identified by the endpoint in the usb packet header.
+Think of the endpoint as a source port in a network header.
+
+The linux driver didn't include any libraries to interpret the signal strengths.
+The windows driver included libraries to convert the signal strengths into
+position, bounding box, and mouse actions.
+
+The position is interpolated and output as an integer (0-2032, 0-1520).
+The bounding box is output as integers in raw units (0-127, 0-95).
+That is, the position is multiplied by 16.
+
+I modified the windows libraries to accept the linux driver output.
+In particular, I modified dt_read_device to take an array of dt_frame,
+rather than just one, because the linux driver returns data for all
+four users.
+
+If all you want are the signal strengths, then you can just open the device
+
+  /dev/DiamondTouch
+
+and start reading 900 bytes at a time.
+(4 frame number + 4 users * 224 signal strengths)
+
+If you want the position and bounding box, then open with dt_open_device,
+read with dt_device_read, and interpret with dt_fi_interpret_frame.
+The position and bounding box are in the dt_event structure, passed by reference.
+
+If you want mouse action interpretation, then interpret the dt_event with
+dt_me_update.  The mouse actions are returned in a dt_mouse_action_list,
+passed by reference.
+
+arf.c, mzdt.c, and xtest.c are sample linux programs I wrote.
+arf.c - commandline to display frame information.
+mzdt.c - mzscheme extension, each read returns a frame.
+xtest.c - daemon that turns mouse actions into X events.
+
+dtlibst.c is a sample windows program included with the windows driver.
+
+Here is an outline of a program.
+
+#include <libdt.h>
+#include <dtmouse.h>
+
+dt_table *tp = dt_get_table(user_id);  -- get the device name, /dev/DiamondTouch
+dt_device dtdev = dt_device_open(tp, &(tp->devname[0][0]));  -- open the device
+dt_frame *fp = dt_frame_new(tp);       -- alloc space for a frame (data for one user)
+dt_fi_user_initialize((dt_user_id)i);
+dt_me_initialize((dt_user_id)i);
+dt_event *ep = (dt_event *)calloc(sizeof(dt_event), 1);
+dt_mouse_action_list *malp = (dt_mouse_action_list *)calloc(sizeof(dt_mouse_action_list), 1);
+
+dt_device_read(dtdev, tp, fp, &ioerr); -- fp is a dt_frame containing signal strengths
+dt_fi_interpret_frame(ep, fp[i]);      -- ep is a dt_event containing position and bounding box
+dt_me_update(malp, ep);                -- malp is a dt_mouse_action_list
+
+dt_frame_free(fp[i]);
+dt_fi_user_uninitialize((dt_user_id)i);
+dt_device_close(tp, dtdev);

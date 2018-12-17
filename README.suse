@@ -1,0 +1,19 @@
+For SUSE install the following packages:
+
+  emacs
+  cvs
+  gcc
+  gcc-c++
+  xorg-x11-devel
+  ImageMagick-devel
+  db-devel
+  xpdf
+  make
+  libpng-devel
+
+DrScheme requires the following:
+  xorg-x11-Mesa-devel
+  openssl-devel
+  readline-devel
+  ncurses-devel
+  termcap  (and ln -s libtermcap.so.2 libtermcap.so)

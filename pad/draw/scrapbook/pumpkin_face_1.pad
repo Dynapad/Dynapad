@@ -1,0 +1,36 @@
+# 0.2.7devo
+global Pad_ObjectList PADLOAD
+set Pad_ObjectList ""
+
+global _hyper
+    catch {unset _tmp}
+    set _tmp(ids) {}
+
+$PADLOAD config -background #8ea8ab
+set Pad_ID [$PADLOAD create polygon 310.311 238.866 315.969 246.844 323.513 249.503 330.114 249.503 327.285 267.232 319.741 276.983 310.311 283.188 301.824 274.324 297.109 258.368 298.995 244.185  -anchor center -maxsize 9390 -minsize 0 -place "-105.303 81.5318 1" -tags item -visible 1 -fill #ffff29 -joinstyle miter -pen #000000 -penwidth 2.83108]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 348.031 249.503 355.575 245.071 362.176 236.207 368.777 241.525 372.549 261.914 367.834 280.529 356.518 284.961 346.145 274.324 342.373 254.822  -anchor center -maxsize 9390 -minsize 0 -place "-62.5444 81.0885 1" -tags item -visible 1 -fill #ffff29 -joinstyle miter -pen #000000 -penwidth 2.83108]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 339.544 244.185 332 241.525 332 235.32 336.715 228.229 344.259 229.115 346.145 236.207  -anchor center -maxsize 9390 -minsize 0 -place "-80.9327 56.7113 1" -tags item -visible 1 -fill #ffff29 -joinstyle miter -pen #000000 -penwidth 2.83108]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 304.653 222.023 310.311 214.932 319.741 207.84 330.114 204.294 323.513 195.43 305.596 195.43 298.052 212.273 298.995 223.796  -anchor center -maxsize 9390 -minsize 0 -place "-104.721 30.1179 1" -tags item -visible 1 -fill #ffff29 -joinstyle miter -pen #000000 -penwidth 2.83108]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 295.223 278.756 309.368 292.939 310.311 303.577  -anchor center -maxsize 9390 -minsize 0 -place "-117.238 111.671 1" -tags item -visible 1 -fill #ffff29 -joinstyle miter -pen #000000 -penwidth 2.83108]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 353.689 296.485 370.663 283.188 353.689 308.009  -anchor center -maxsize 9390 -minsize 0 -place "-53.1924 111.466 1" -tags item -visible 1 -fill #ffff29 -joinstyle miter -pen #000000 -penwidth 2.83108]
+lappend Pad_ObjectList $Pad_ID
+
+
+
+$PADLOAD itemconfigure 1 -visiblelayers "all -filter"
+
+
+
+	foreach id $_tmp(ids) {
+	    set src $_tmp(src$id)
+	    set dst $_tmp(dst$id)
+	    set _hyper($src.obj) $dst
+	    lappend _hyper($dst.dst) $src
+	}
+    
+

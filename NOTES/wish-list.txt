@@ -1,0 +1,100 @@
+======== EVENTS
+
+In general-- try to eliminate modes.
+
+Low-level X-events should be parsable into a hierarchy of high-level events.
+
+Rationale:
+Competition between select-box and pan for left-button-drag.  Several solutions, but
+all require parsing of slow events: gesture, pause, etc.
+Solutions include:
+Give simple click+drag to select box, enter pan mode by:
+-- click, hold, wait
+-- click, drag gesture
+-- click multiple buttn, drag (maybe maps nicely onto multi-finger drag on table?)
+
+Alternatives which circumvent competition:
+-- Auto-unselect when operation (e.g. drag) is finished, but
+have single click on pad toggle between empty selection and last non-empty selection
+-- Keep track of state: before vs. after drag.  After drag, shift-select starts over;
+before drag, shift-select is incremental
+
+
+======== CONTEXTS/ GENERALIZED MODES
+
+Modes should be generalized to a hierarchy of "contexts" (spatial, temporal, etc).
+Application physics determined by mapping of events onto contexts.
+
+
+======== GENERALIZED REGIONS
+
+In general, a region is just a spatialized application:
+all bindings, physics, etc. should be sensitive to a hierarchy of
+spatial containers.
+
+
+======== BEHAVIOR/CALLBACK SUBSCRIPTIONS
+
+Geometry Management:
+
+Object satellites (annotation elements, halos, etc) do not
+communicate directly via callbacks to their master objects.
+Instead they subscribe to layout services which receive callbacks
+from master and (if needed) coordinate updates to entire set
+of subscribers.
+
+======== OBJECT-SENSITIVE HALOS/MENUS
+
+Halo/menu options change depending on type of object (& context?)
+
+======== ANNOTATION
+
+
+======== SAVE HISTORY/VERSION CONTROL
+
+Summary:
+Dynapad workspaces/collections can be saved at any time as a full snapshot
+and
+system records/infers incremental changes between states (via undo?),
+transformations which the user can (sometimes) apply to other saved snapshots
+
+Workspace load should display version history visually as tree/graph
+
+
+======== CONNECT DYNAPAD OBJECTS TO REAL-WORLD OBJECTS (IMAGES, FILES, WEBPAGES)
+
+see the file "remote-objects.txt" in this directory
+
+
+======== CHUNK SELECTION by GESTURE
+
+Summary:
+Replace selection rectangle by "smart selection" system
+which snaps to "chunks" within a collection.
+
+Suggest incremental "grow/shrink selection" operation
+
+Interaction proposals:
+
+1)  Repeated click grow selection to next bigger chunk
+    Pros: precendent in varied existing apps
+	  quick & easy
+	  mouse-compatible
+    Cons: pre-empts other multi-click operations
+          no easy undo (incremental shrink)
+	  needs fixed-length cycle (i.e. always N chunk levels)
+
+2)  "Smart lasso":
+    Circling gesture selects initial chunk (matches gesture size?);
+    repeated circles increment, reverse circles decrement
+    Pros: cognitively natural
+          easily reversible
+    Cons: difficult with mouse?
+
+
+======== IMMEDIATE APPLICATIONS (feb 21, 2003)
+
+1) Image sorting (Dev)
+2) Dual-display presentation (Jim)
+3) Directory sorting (Jim)
+4) Document citation network (JR)

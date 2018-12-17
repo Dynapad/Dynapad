@@ -1,0 +1,91 @@
+This patch is modification of HelloX application from :
+http://www.paulgriffiths.net/program/c/hellox.html
+
+The goal is to add support for TrueType/AntiAliased font via XRender 
+extension in X 4.02 and later.
+
+The goal of this patch is to make the example as simple as possible. Thus
+all changes are localized to one place (what's not quite the best conding
+style).
+
+        Adam Sulmicki <adam@cfar.umd.edu>
+	Tue Apr 24 21:59:16 EST 2001
+	http://www.eax.com/patches/
+	http://www.eax.com/xft/
+
+-------------------------------------------------------------------------------
+
+diff -u HelloX-orig/HelloX.c HelloX/HelloX.c
+--- HelloX-orig/HelloX.c	Sun Dec 12 13:12:11 1999
++++ HelloX/HelloX.c	Tue Apr 24 21:35:23 2001
+@@ -19,6 +19,11 @@
+ #include <string.h>
+ #include <stdio.h>
+ 
++/*########################################################*/
++/*# BEGIN:  TT/AA message */
++#include <X11/Xft/Xft.h>
++/*# END : TT/AA message */
++/*########################################################*/
+ 
+ /*  Global variables  */
+ 
+@@ -182,6 +187,45 @@
+ 
+ 	    XDrawString(display, win, gc, msg_x, msg_y,
+ 			message, strlen(message));
++
++	    /*########################################################*/
++	    /*# BEGIN:  TT/AA message */
++	    {
++
++	      static char * msg = "Hello, X FreeType AA!";
++	      XftDraw *xftdraw;
++	      XftFont *xftfont;
++	      XftColor color_fg;
++	      XColor dummyc,fg;
++	      Status retval;
++
++	      xftdraw = XftDrawCreate(display, (Drawable) win, 
++				      DefaultVisual(display, screen_num), 
++				      DefaultColormap(display, screen_num));
++	      if (!xftdraw) {
++		perror("XftDrawCreate(): Failed"); exit(1);}
++
++	      xftfont = XftFontOpen(display, screen_num,XFT_FAMILY, XftTypeString,
++				    "lucidux",XFT_SIZE, XftTypeInteger, 25,0);
++	      if (!xftfont) {
++		perror("XftFontOpen(): Failed"); exit(1);}
++
++	      retval = XAllocNamedColor(display,DefaultColormap(display,screen_num), 
++					"green", &fg, &dummyc);
++	      if (!retval) {
++		perror("XAllocNamedColor(): Failed"); exit(1);}
++
++	      color_fg.color.red = dummyc.red;
++	      color_fg.color.green = dummyc.green;
++	      color_fg.color.blue = dummyc.blue;
++	      color_fg.color.alpha = 0x00ff00;
++	      color_fg.pixel = fg.pixel;
++	      
++	      XftDrawString8(xftdraw, &color_fg, xftfont, msg_x-30, msg_y+30,
++			     (unsigned char *) msg, strlen(msg));
++	    }
++	    /*# END : TT/AA message */
++	    /*########################################################*/
+ 
+ 	    break;
+ 
+diff -u HelloX-orig/Makefile HelloX/Makefile
+--- HelloX-orig/Makefile	Sat Dec 11 07:32:38 1999
++++ HelloX/Makefile	Tue Apr 24 13:13:13 2001
+@@ -1,5 +1,8 @@
+ HelloX: HelloX.o
+-	gcc -o HelloX HelloX.o -Wall -L/usr/X11R6/lib -lX11
++	gcc -o HelloX HelloX.o -Wall -L/usr/X11R6/lib -lX11 -lXft
+ 
+ HelloX.o: HelloX.c
+ 	gcc -o HelloX.o HelloX.c -c -ansi -pedantic -Wall
++
++clean:
++	rm -f HelloX.o HelloX *~

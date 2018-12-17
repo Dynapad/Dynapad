@@ -1,0 +1,21 @@
+#!/bin/csh
+#
+#  This is usually invoked from the Makefile, via "make depend"
+#
+onintr clean
+
+touch /tmp/deps$$
+if ("$CXX" == "CC") then
+  foreach f(*.cpp ../generic/*.cpp)
+    $CXX $CXXFLAGS -MM $f >> /tmp/deps$$
+  end
+  sed -e 's:^\(.*\)\.o:../$(ARCH)/\1.o:' < /tmp/deps$$ | awk -f dep.awk | sort
+else
+  foreach f(*.cpp ../generic/*.cpp)
+    $CXX $CXXFLAGS -MM $f >> /tmp/deps$$
+  end
+  sed -e 's:^\(.*\)\.o:../$(ARCH)/\1.o:' < /tmp/deps$$
+endif
+
+clean:
+rm -f /tmp/deps$$

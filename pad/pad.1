@@ -1,0 +1,160 @@
+'\"
+'\" Copyright (c) 1991 The Regents of the University of California.
+'\" All rights reserved.
+'\"
+'\" Permission is hereby granted, without written agreement and without
+'\" license or royalty fees, to use, copy, modify, and distribute this
+'\" documentation for any purpose, provided that the above copyright
+'\" notice and the following two paragraphs appear in all copies.
+'\"
+'\" IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY
+'\" FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+'\" ARISING OUT OF THE USE OF THIS DOCUMENTATION, EVEN IF THE UNIVERSITY OF
+'\" CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+'\"
+'\" THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES,
+'\" INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY
+'\" AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
+'\" ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATION TO
+'\" PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+'\" 
+'/" 
+.so man.macros
+.HS wish tkcmds 3.3
+.BS
+'\" Note:  do not modify the .SH NAME line immediately below!
+.SH NAME
+padwish \- Pad++ windowing shell
+.SH SYNOPSIS
+\fBpadwish\fR ?\fIoptions\fR? ?\fIarg arg ...\fR?
+.SH OPTIONS
+.IP "\fB\-display \fIdisplay\fR" 15
+Display (and screen) on which to display window.
+.IP "\fB\-geometry \fIgeometry\fR" 15
+Initial geometry to use for window.
+.IP "\fB\-name \fIname\fR" 15
+Use \fIname\fR as the title to be displayed in the window, and
+as the name of the interpreter for \fBsend\fR commands.
+.IP "\fB\-sync\fR" 15
+Execute all X server commands synchronously, so that errors
+are reported immediately.  This will result in much slower
+execution, but it is useful for debugging.
+.IP "\fB\-colormap \fIcolormap\fR" 15
+Specifies the colormap that padwish should use.  If 
+\fIcolormap\fR is "new", then a private colormap is
+allocated for padwish, so images will look nicer
+(although on some systems you get a distracting flash when you move the
+pointer in and out of a PadDraw window and the global colormap is updated).
+.IP "\fB\-visual \fIvisual\fR" 15
+Specifies the visual type that padwish should use.  The valid
+visuals depend on the X server you are running on.  Some common
+useful ones are "truecolor 24" and "truecolor 12", which specify
+24 bit and 12 bit mode, respectively.
+.IP "\fB\-language\fR" 15
+Specifies what scripting language the top-level interpreter 
+should use.  Pad++ always supports Tcl, but can be compiled 
+to use the Elk version of Scheme also.  In addition, Pad++
+provides a mechanism to support other interpreted scripting 
+languages as well.
+.IP "\fB\-sharedmemory\fR" 15
+Specifies if Pad++ should try and use X shared memory.
+Some machines (notably a particular Solaris 5.4 machine)
+crashes and the X server dies when Pad++ is used with shared
+memory, so it can be disabled if there is trouble.
+Defaults to 1 (true).
+.IP "\fB\-help\fR" 15
+Print a summary of the command-line options and exit.
+.IP "\fB\-\-\fR" 15
+Pass all remaining arguments through to the script's
+argv variable without interpreting them.  This provides
+a mechanism for passing arguments such as -name to a script
+instead of having padwish interpret them.
+.BE
+
+.SH DESCRIPTION
+.PP
+\fBPadwish\fR is an extension to wish, the simple windowing shell
+that comes with the standard distribution of Tcl/Tk.  The extension
+includes a new pad widget.  The pad widget is similar to the canvas,
+but supports many new features - primarily zooming.
+.PP
+\fBPadwish\fR creates a main window and then processes Tcl commands.
+If \fBpadwish\fR is invoked with no \fB\-f\fR option then it
+reads Tcl commands interactively from standard input.
+It will continue processing commands until all windows have been
+deleted or until end-of-file is reached on standard input.
+.VS
+If there exists a file \fB.padinit\fR in the home directory of
+the user, \fBpadwish\fR evaluates the file as a Tcl script
+just before reading the first command from standard input.
+.VE
+.PP
+If the \fB\-file\fR option is provided to Tk, then \fBpadwish\fR reads Tcl
+commands from the file named in the \fB\-file\fR option.  These
+commands will normally create an interactive interface consisting
+of one or more widgets.  When the end of the command file is
+reached, \fBpadwish\fR will continue to respond to X events until
+all windows have been deleted.
+.VS
+There is no automatic evaluation of \fB.padinit\fR in this
+case, but the script file can always \fBsource\fR it if desired.
+.VE
+
+.SH "VARIABLES"
+.PP
+\fBPadwish\fR sets the following Tcl variables:
+.TP 15
+\fBargc\fR
+Contains a count of the number of \fIarg\fR arguments (0 if none),
+not including the options described above.
+.TP 15
+\fBargv\fR
+Contains a Tcl list whose elements are the \fIarg\fR arguments (not
+including the options described above), in order, or an empty string
+if there are no \fIarg\fR arguments.
+.TP 15
+\fBargv0\fR
+.VS
+Contains \fIfileName\fR if it was specified.
+Otherwise, contains the name by which \fBpadwish\fR was invoked.
+.TP 15
+\fBtcl_interactive\fR
+Contains 1 if \fBpadwish\fR is reading commands interactively (no
+\fB\-file\fR option was specified and standard input is a terminal-like
+device), 0 otherwise.
+.VE
+
+.SH "SCRIPT FILES"
+.PP
+If you create a Tcl script in a file whose first line is
+.DS
+\fB#!/usr/local/bin/padwish -f
+.DE
+then you can invoke the script file directly from your shell if
+you mark it as executable.
+This assumes that \fBpadwish\fR has been installed in the default
+location in /usr/local/bin;  if it's installed somewhere else
+then you'll have to modify the above line to match.
+
+.SH PROMPTS
+.PP
+.VS
+When \fBpadwish\fR is invoked interactively it normally prompts for each
+command with ``\fB% \fR''.  You can change the prompt by setting the
+variables \fBtcl_prompt1\fR and \fBtcl_prompt2\fR.  If variable
+\fBtcl_prompt1\fR exists then it must consist of a Tcl script
+to output a prompt;  instead of outputting a prompt \fBpadwish\fR
+will evaluate the script in \fBtcl_prompt1\fR.
+The variable \fBtcl_prompt2\fR is used in a similar way when
+a newline is typed but the current command isn't yet complete;
+if \fBtcl_prompt2\fR isn't set then no prompt is output for
+incomplete commands.
+.VE
+
+.SH DOCUMENTATION
+.PP
+A programmer's guide is available with the distribution in doc/guide.ps,
+and a reference manual is available with the distribution in doc/reference.ps.
+
+.SH KEYWORDS
+Pad++, zooming, graphical user interfaces, shell, toolkit

@@ -1,0 +1,27 @@
+#
+# This file, 'padinit', contains Tcl code that 
+# gets executed with padwish starts on Windows.
+#
+# The default behavior for this file is to start PadDraw.
+
+#
+# By default, the Tcl console is hidden, and it can be 
+# re-created within PadDraw under the Tools menu.  Or, if 
+# you want to start with the console, then comment out
+# the following line ('console hide').
+#
+console hide
+
+#
+# By default on windows, Pad++ assumes you have a two button
+# mouse.  You can zoom in/out with the right button/shift right button.
+# If you have a three button mouse and want to zoom in with
+# the middle button, uncomment the following line:
+#
+# set _pad(MouseButtons) 3
+
+cd ..
+set env(PADHOME) [pwd]
+set env(HOME) [pwd]
+source $env(PADHOME)/draw/pad.tcl
+

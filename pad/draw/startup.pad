@@ -1,0 +1,85 @@
+# 0.2.5.devo
+global _hyper
+    catch {unset _tmp}
+    set _tmp(ids) {}
+
+global Pad_ObjectList PADLOAD env
+set Pad_ObjectList ""
+set origUnits [lindex [$PADLOAD config -units] 4]
+$PADLOAD config -units pixels
+
+set Pad_ID [$PADLOAD create text -text "Prof. Ben Bederson\nProf. Jim Hollan\nAllison Druin\nRon Hightower\nMohamad Ijadi\nDavid Proft\nDavid Rogers\nJason Stewart\nDavid Thompson\nDavid Vick\nYing Zhao" -pen #000000 -font Utopia-1 -anchor nw -place "-254.202042 113.119934 5.462943" -alwaysrender 0 -events 1 -faderange 0.300000 -minsize 0.000000 -maxsize 10000.000000 -sticky 0 -layer main -transparency 1.000000 -tags "text Hyper"]
+lappend Pad_ObjectList $Pad_ID
+set _hyper($Pad_ID) "-280.238800 -225.511795 313.783173 295.560120"
+set _tmp(dst16) $Pad_ID
+set _hyper($Pad_ID.animate) "1"
+set Pad_ID [$PADLOAD create text -text "Prof. Ken Perlin\nJon Meyer\nDuane Whitehurst\nDavid Fox\nDavid Bacon" -pen #000000 -font Utopia-1 -anchor nw -place "-248.091217 -51.737457 7.542792" -alwaysrender 0 -events 1 -faderange 0.300000 -minsize 0.000000 -maxsize 10000.000000 -sticky 0 -layer main -transparency 1.000000 -tags "text Hyper"]
+lappend Pad_ObjectList $Pad_ID
+set _hyper($Pad_ID) "-280.238953 -225.511917 313.783325 295.560242"
+set _tmp(dst17) $Pad_ID
+set _hyper($Pad_ID.animate) "1"
+set Pad_ID [$PADLOAD create text -text "(c) University of New Mexico 1994,1995" -pen #003455 -font System-1 -anchor nw -place "-265.744751 10.896999 3.913324" -alwaysrender 0 -events 1 -faderange 0.300000 -minsize 0.000000 -maxsize 10000.000000 -sticky 0 -layer main -transparency 1.000000 -tags "text"]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create text -text "Pad++" -pen #003455 -font Utopia-1 -anchor nw -place "-57.857601 316.641541 75.872818" -alwaysrender 0 -events 1 -faderange 0.300000 -minsize 0.000000 -maxsize 10000.000000 -sticky 0 -layer main -transparency 1.000000 -tags "text Hyper"]
+lappend Pad_ObjectList $Pad_ID
+
+lappend _tmp(ids) 8
+set _tmp(src8) $Pad_ID
+set _hyper($Pad_ID.animate) "1"
+set Pad_ID [$PADLOAD create text -text "Pad++" -pen #003455 -font Utopia-1 -anchor nw -place "104.388 240.585 3.19797" -alwaysrender 0 -events 1 -faderange 0.300000 -minsize 0.000000 -maxsize 10000.000000 -sticky 0 -layer main -transparency 1.000000 -tags "text Hyper"]
+lappend Pad_ObjectList $Pad_ID
+set _hyper($Pad_ID) "-280.238953 -225.511917 313.783325 295.560242"
+set _tmp(dst8) $Pad_ID
+set _hyper($Pad_ID.animate) "1"
+set Pad_ID [$PADLOAD create text -text "Pad++" -pen #003455 -font System-1 -anchor nw -place "26.201260 112.218330 0.015964" -alwaysrender 0 -events 1 -faderange 0.300000 -minsize 0.000000 -maxsize 10000.000000 -sticky 0 -layer main -transparency 1.000000 -tags "text"]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create text -text "ARPA HCI #N66001-94-C-6039" -pen #241c45 -font Utopia-1 -anchor nw -place "-45.685959 -167.859360 17.618574" -alwaysrender 0 -events 1 -faderange 0.300000 -minsize 0.000000 -maxsize 10000.000000 -sticky 0 -layer main -transparency 1.000000 -tags "text"]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create text -text "(c) New York Univ. 1994,1995" -pen #003455 -font System-1 -anchor nw -place "-260.205750 -179.174133 4.339335" -alwaysrender 0 -events 1 -faderange 0.300000 -minsize 0.000000 -maxsize 10000.000000 -sticky 0 -layer main -transparency 1.000000 -tags "text"]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create portal -9.910947 -187.181961 286.098877 10.914255 -view "75.366501 54.555599 0.380171" -fill #aeba61 -border #516555 -borderwidth 7.019555 -relief ridge  -font System-1 -visiblelayers "all" -anchor center -place "100.548904 2.182755 1.000000" -alwaysrender 0 -events 1 -faderange 0.300000 -minsize 0.000000 -maxsize 10000.000000 -sticky 0 -layer main -transparency 1.000000 ]
+set portalid $Pad_ID
+lappend Pad_ObjectList $Pad_ID
+set image [$PADLOAD allocimage "$env(PADHOME)/images/pad.gif" -norgb]
+set Pad_ID [$PADLOAD create image -image $image -anchor center -place "-187.250229 219.729797 0.486531" -alwaysrender 0 -events 1 -faderange 0.300000 -minsize 0.000000 -maxsize 162500.000000 -sticky 0 -layer main -transparency 1.000000 -tags "Hyper image_item"]
+lappend Pad_ObjectList $Pad_ID
+
+lappend _tmp(ids) 14
+set _tmp(src14) $Pad_ID
+set _tmp(dst14) $Pad_ID
+set _hyper($Pad_ID.animate) "1"
+set Pad_ID [$PADLOAD create portal 54.531170 -144.462387 84.522705 -41.325970 118.798752 -78.569679 153.594833 -50.733692 207.413528 -93.917717 268.408020 -21.944344 294.463470 -173.111389 47.390327 -174.543854 -view "16.772200 231.447998 0.309980" -fill #a2a2a2 -border #003845 -borderwidth 7.435118 -relief ridge  -font System-1 -visiblelayers "all -portalmodifier" -anchor center -place "176.658569 -32.255356 1.000000" -alwaysrender 0 -events 1 -faderange 0.300000 -minsize 0.000000 -maxsize 10000.000000 -sticky 0 -layer main -transparency 1.000000 -tags "item"]
+lappend Pad_ObjectList $Pad_ID
+set image [$PADLOAD allocimage "$env(PADHOME)/images/unm_logo.gif" -norgb]
+set Pad_ID [$PADLOAD create image -image $image -anchor center -place "-186.575089 68.155815 0.477135" -alwaysrender 0 -events 1 -faderange 0.300000 -minsize 0.000000 -maxsize 55% -sticky 0 -layer main -transparency 1.000000 -tags "Hyper image_item"]
+lappend Pad_ObjectList $Pad_ID
+
+lappend _tmp(ids) 16
+set _tmp(src16) $Pad_ID
+set _hyper($Pad_ID.animate) "1"
+set image [$PADLOAD allocimage "$env(PADHOME)/images/nyu_logo.gif" -norgb]
+set Pad_ID [$PADLOAD create image -image $image -anchor center -place "-184.320175 -106.485924 0.974127" -alwaysrender 0 -events 1 -faderange 0.300000 -minsize 0.000000 -maxsize 54% -sticky 0 -layer main -transparency 1.000000 -tags "Hyper image_item"]
+lappend Pad_ObjectList $Pad_ID
+
+lappend _tmp(ids) 17
+set _tmp(src17) $Pad_ID
+set _hyper($Pad_ID.animate) "1"
+set Pad_ID [$PADLOAD create line -73.8163 323.868 292.993 322.383 294.478 172.392 -72.3312 172.392 -72.3312 323.868 -72.3312 323.868  -events 1 -noisedata "202.223 0.3 0.09 10" -place "110.331 248.13 1" -tags item -timerrate 100 -timerscript ".pad ic 23 -roughness 0.09" -arrow none -arrowshape "127.435997 148.505997 47.788399" -capstyle round -joinstyle round -pen #003455 -penwidth 7.42528 -roughness 0.09 -undulate 1]
+lappend Pad_ObjectList $Pad_ID
+
+
+
+$PADLOAD moveto 16.772186 35.024162 0.673375
+$PADLOAD itemconfigure 1 -visiblelayers "all"
+
+$PADLOAD config -units $origUnits
+
+
+	foreach id $_tmp(ids) {
+	    set src $_tmp(src$id)
+	    set dst $_tmp(dst$id)
+	    set _hyper($src.obj) $dst
+	    lappend _hyper($dst.dst) $src
+	}
+    
+

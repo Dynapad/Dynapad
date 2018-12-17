@@ -1,0 +1,31 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(dt.c)
+AM_INIT_AUTOMAKE(libdt,0.1)
+
+dnl Checks for programs.
+AC_PROG_CC
+AC_PROG_RANLIB
+
+dnl Checks for libraries.
+dnl Replace `main' with a function in -lX11:
+dnl AC_CHECK_LIB(X11, main)
+dnl Replace `main' with a function in -lXmu:
+dnl AC_CHECK_LIB(Xmu, main)
+dnl Replace `main' with a function in -lXt:
+dnl AC_CHECK_LIB(Xt, main)
+dnl Replace `main' with a function in -lXtst:
+dnl AC_CHECK_LIB(Xtst, main)
+dnl Replace `main' with a function in -lm:
+dnl AC_CHECK_LIB(m, main)
+
+dnl Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS(fcntl.h limits.h)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_HEADER_TIME
+
+dnl Checks for library functions.
+AC_CHECK_FUNCS(gettimeofday)
+
+AC_OUTPUT(Makefile)

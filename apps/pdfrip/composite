@@ -1,0 +1,113 @@
+#!/usr/bin/perl -w
+
+use strict;
+use File::Copy;
+
+
+$0 =~ s#.*/##;
+
+if (!defined($ENV{"DYNAHOME"})) {
+  print "DYNAHOME not set\n";
+  exit 1;
+}
+
+sub tile2x2() {
+  my(@images) = <image-*.jpg>;
+  if (@images > 0) {
+    my($slice) = $#images > 3 ? 3 : $#images;
+    @images = @images[0 .. $slice];
+  }
+  if (@images > 0) {
+    system "montage -geometry 600x800 -tile 2x2 @images tile.jpg";
+  }
+  if (-f "firstpage.jpg" && -f "tile.jpg") {
+    system "montage -geometry 600x800 firstpage.jpg tile.jpg composite.jpg";
+  } elsif (-f "firstpage.jpg") {
+    system "montage -geometry 600x800 firstpage.jpg composite.jpg";
+  } elsif (-f "tile.jpg") {
+    copy("tile.jpg", "composite.jpg");
+  }
+  unlink "tile.jpg";
+}
+
+sub largest_rightside() {
+  if (-f "firstpage.jpg" && -f "largest.jpg") {
+    system "montage -geometry 600x800 firstpage.jpg largest.jpg composite.jpg";
+  } elsif (-f "firstpage.jpg") {
+    copy("firstpage.jpg", "composite.jpg");
+  } elsif (-f "largest.jpg") {
+    copy("largest.jpg", "composite.jpg");
+  }
+}
+
+sub largest_bottomhalf() {
+  if (-f "firstpage.jpg" && -f "largest.jpg") {
+    system "composite -geometry 300x400+100+400 largest.jpg firstpage.jpg composite.jpg"
+  } elsif (-f "firstpage.jpg") {
+    copy("firstpage.jpg", "composite.jpg");
+  } elsif (-f "largest.jpg") {
+    copy("largest.jpg", "composite.jpg");
+  }
+}
+
+my(@composites) = (\&tile2x2, \&largest_rightside, \&largest_bottomhalf);
+
+sub mkcomposites() {
+  unlink("composite.jpg");
+  my($composite, $comp, $thumb, $i);
+  $i = 0;
+  foreach $composite (@composites) {
+    my($comp) = sprintf("composite-%03d.jpg", $i);
+    my($thumb) = sprintf("thumbs/125/composite-%03d-125.jpg", $i);
+    &$composite;
+    rename("composite.jpg", $comp);
+    system "convert -geometry 125x125 -filter Lanczos $comp $thumb";
+    $i++;
+  }
+  $comp = "composite.jpg";
+  $thumb = "thumbs/125/composite-125.jpg";
+  symlink("composite-000.jpg", $comp);
+  system "convert -geometry 125x125 -filter Lanczos $comp $thumb";
+}
+
+sub rip($) {
+  my ($pdf)=@_;
+  
+  if (! -f $pdf) {
+    print "$0: $pdf not a file\n";
+    return;
+  }
+  
+  (my $suf = $pdf) =~ s/.*(...)$/$1/;
+  if (lc($suf) ne "pdf") {
+    print "$0: $pdf no pdf suffix\n";
+    return;
+  }
+  
+  if (`file -L $pdf` !~ /: PDF/) {
+    print "$0: $pdf not a pdf\n";
+    return;
+  }
+  
+  chomp(my($dir) = `dirname $pdf`);
+  chomp($pdf = `basename $pdf`);
+  $dir = "$dir/.$pdf";
+  
+  if (! -d $dir) {
+    print "$0: $dir missing\n";
+    return;
+  }
+  
+  chdir $dir;
+  $pdf = "../$pdf";
+  
+  mkcomposites;
+}
+
+chomp(my $pwd=`pwd`);
+my $pdf;
+foreach $pdf (@ARGV) {
+  chdir $pwd;
+  print "$pdf\n" ;
+  rip $pdf;
+}

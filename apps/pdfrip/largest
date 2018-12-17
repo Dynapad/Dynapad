@@ -1,0 +1,66 @@
+#!/bin/sh
+
+if [ "${DYNAHOME}" = "" ]; then
+  echo "DYNAHOME not set"
+  exit 1
+fi
+
+rip() {
+  pdf=$1
+  
+  if [ ! -f $pdf ]; then
+    echo "$0: $pdf not a file"
+    return
+  fi
+  
+  suf=`expr $pdf : '.*\(...\)' | tr [:upper:] [:lower:]`
+  if [ "$suf" != "pdf" ]; then
+    echo "$0: $pdf no pdf suffix"
+    return
+  fi
+  
+  if ! file -L $pdf | grep PDF >/dev/null ; then
+    echo "$0: $pdf not a pdf"
+    return
+  fi
+  
+  dir=`dirname $pdf`
+  pdf=`basename $pdf`
+  dir=$dir/.$pdf
+  
+  if [ ! -d $dir ]; then
+    echo "$0: $dir missing"
+    return
+  fi
+  
+  cd $dir
+  pdf=../$pdf
+  
+  images=`ls -1 image-*.jpg 2>/dev/null`
+  size=0
+  largest=""
+  for image in $images; do
+    size2=`stat -t $image | cut -d ' ' -f 2`
+    if [ -z "$largest" ]; then
+      largest=$image
+      size=$size2
+      continue
+    fi
+    if [ $size2 -gt $size ]; then
+      largest=$image
+      size=$size2
+    fi
+  done
+  if [ -n "$largest" ]; then
+    echo $largest
+    ln -s $largest largest.jpg
+    convert -geometry 125x125 -filter Lanczos largest.jpg thumbs/125/largest-125.jpg
+  fi
+}
+
+pwd=`pwd`
+for pdf in $*; do
+  cd $pwd
+  echo $pdf
+  rip $pdf
+done

@@ -1,0 +1,47 @@
+To compile your own driver you will need the source 
+code for XFree86, the driver source file (xf86GtcoCC.c) 
+and the compile scripts (build-v3 or build-v4). Your 
+system must also have gcc v2.96 or later, and ld v2.10.90
+or later.
+
+THIS DRIVER HAS BEEN TESTED WITH v4.0.1 SOURCE
+The compile scripts have been tested against v4.1 
+but ONLY the scripts not the driver itself.
+
+Before you compile you must know which version of the 
+XF86Config file your system uses. If you system uses 
+version 3.x then you compile with the build-v3.sh script, 
+if your system uses v4.x you compile with build-v4.sh.
+
+To compile this driver you will need to edit the compile script.
+You will need to tell the script where to find the source 
+tree, this is set in the variable DIR. Simply change 
+that to the absolute path to your source tree 
+(see example).
+
+example - change
+DIR="./incl_dir"
+ to
+DIR="/usr/src/redhat/SOURCES"
+
+If you are using a later version of gcc (>= ~2.96) you need to add
+the "-fno-merge-constants" flag to the compile line by hand. Open the
+build-v*.sh script and add this option to the parameters given to gcc.
+
+The driver will still build if you need this option and you don't use
+it, but X will crash when it tries to load the driver. You will see a 
+bunch of errors that look something liked this:
+
+  (II) Loading /usr/X11R6/lib/modules/input/gtcc_drv.o
+  Not loading .rodata.str1.1
+  Not loading .rodata.str1.32
+  Not loading .rodata.cst8
+  (II) Symbol .LC12 from module /usr/X11R6/lib/modules/input/gtcc_drv.o is unresolved!
+  Symbol .LC12 from module /usr/X11R6/lib/modules/input/gtcc_drv.o is unresolved!
+  Symbol .LC12 from module /usr/X11R6/lib/modules/input/gtcc_drv.o is unresolved!
+  Symbol .LC19 from module /usr/X11R6/lib/modules/input/gtcc_drv.o is unresolved!
+  Symbol .LC18 from module /usr/X11R6/lib/modules/input/gtcc_drv.o is unresolved!
+
+If you see errors like that, use the "-fno-merge-constants" flag.
+
+See the file SETUP to complete installation.

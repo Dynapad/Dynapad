@@ -1,0 +1,132 @@
+/************************************************************
+*  choice_set_vars -> Top -> Len
+*
+*  Sets the following variables based on global Tcl Choice array.
+*  This variables should all be declared locally before calling
+*  this procedure, or they will become global variables.
+*
+*    Border_width   - Thickness of border
+*    Value          - Current value
+*    X Y            - Coordinates of trough
+*    Width Height   - Dimensions of trough
+*************************************************************/
+
+{ -> Choice
+    Choice 'x tclget2 => X
+    Choice 'y tclget2 => Y
+    Choice 'width tclget2 => Width
+    Choice 'height tclget2 => Height
+    Choice 'fill_border tclget2 => Inactive_border
+    Choice 'activefill_border tclget2 => Active_border
+    Choice 'borderwidth tclget2 => Border_width
+    Choice 'value tclget2 => Value
+    Choice 'pick_value tclget2 => Pick
+    Choice 'pen tclget2 => Pen
+    Choice 'font tclget2 => Font
+} => choice_set_vars
+
+/*************************************************************
+*   Choice X Y choice_pick => Result
+*
+*    Result is 0 for false
+*    Result is +---+---+
+*              | 1 | 2 |
+*              +---+---+
+*              | 3 | 4 |
+*              +---+---+
+*************************************************************/
+
+{ -> Mouse_y -> Mouse_x -> Choice
+    0 -> Active_border 0 -> Inactive_border 0 -> Border_width 0 -> Value
+    0 -> X 0 -> Y 0 -> Width 0 -> Height 0 -> Pick 0 -> Pen 0 -> Font
+    Choice choice_set_vars
+
+
+    0 -> Result
+    Mouse_x X >
+    Mouse_x X Width + < and
+    Mouse_y Y > and
+    Mouse_y Y Height + < and (
+                             /* Mouse within choice */
+        Width 2 / -> Hw
+	Height 2 / -> Hh
+	Mouse_y Y Hh + < (
+                             /* Mouse in bottom half of choice */
+	   3 -> Result
+	|
+	   1 -> Result
+	)
+	Mouse_x X Hw + > (
+                             /* Mouse in right half of choice */
+	   Result 1 + -> Result
+	)
+    )
+    Result
+} => choice_pick
+
+/*************************************************************
+*   Choice choice_render
+*
+*     Renders specified choice
+*************************************************************/
+
+{ -> Choice
+    0 -> Active_border 0 -> Inactive_border 0 -> Border_width 0 -> Value
+    0 -> X 0 -> Y 0 -> Width 0 -> Height 0 -> Pick 0 -> Pen 0 -> Font
+    Choice choice_set_vars
+
+   { -> Border -> Type -> Height -> Width -> Y -> X
+      X Y join X Width + Y Height + join Border_width Border Type drawborder
+   } -> draw_choice_border
+
+   { -> _N -> body 
+      0 -> _I
+      [ 
+         _I _N < ? 
+         _I body
+         _I 1 + => _I
+      ]
+   } -> dotimes
+
+	       	                               /* Render options */
+   {
+     Text_size 2 / setfontheight
+     Offset 2 / -> Item_offset
+     { -> I
+      { -> J
+         X Hw I * + -> X1
+         Y Hh 1 J - * + -> Y1
+         J 2 * I + 1 + -> Item
+         Item Pick == ( Active_border | Inactive_border ) -> Border
+         Item Pick == ( SUNKEN | RAISED ) -> Type
+         X1 Y1 Hw Hh Type Border draw_choice_border
+	 Choice Item tclget2 -> Item_label
+         Item_label X1 Item_offset + Y1 Item_offset + join drawtext
+      } 2 dotimes
+     } 2 dotimes
+   } -> draw_options
+
+   {
+      X Y Width Height RAISED Inactive_border draw_choice_border
+      Width X + 20 - Y 13 + 15 7 SUNKEN Inactive_border draw_choice_border
+      Text_size setfontheight
+      Value Offset Offset join drawtext
+   } -> draw_body
+
+   Width 2 / -> Hw
+   Height 2 / -> Hh
+   getsize -> Size
+   Pen setcolor
+   Font setfont
+   20 -> Text_size
+   5 -> Offset
+
+   Size Width > (
+                      /* Render options */
+       draw_options
+   | 
+       draw_body
+                      /* Render overview */
+   )
+
+} => choice_render

@@ -1,0 +1,36 @@
+MAKE_MAP www.cnet.com
+dimension_type: fixed
+filter: gaussian
+layout: spiral
+thumb: http://www.cnet.com/Images/Fdoor/cnetlogo60.gif http://x/
+thumb: http://www.cnet.com/Images/Fdoor/fdtitle.gif http://x/
+thumb: http://www.cnet.com/Images/Fd/Pg/pg.1028shootout.gif http://x/
+thumb: http://www.cnet.com/Images/Fd/Pg/pg.1105wireless.gif http://x/
+thumb: http://www.cnet.com/Images/Fdoor/666666.gif http://x/
+thumb: http://ad.preferences.com/image http://x/
+thumb: http://www.cnet.com/Ads/Media/Images/1x1.gif http://x/
+thumb: http://www.cnet.com/Ads/Media/Images/dotd.fdbutton.dotd.gif http://x/
+thumb: http://www.cnet.com/Images/topicfinderL.gif http://x/
+thumb: http://www.cnet.com/Images/cnet.says.sm.gif http://x/
+ 
+
+MAKE_MAP www.cnet.com
+return: url
+replace: overwrite
+dimensions: 256 256
+dimension_type: fixed
+thumb_min_width: 10
+thumb_min_height: 10
+filter: gaussian
+layout: tile
+thumb: http://www.cnet.com/Images/Fdoor/cnetlogo60.gif http://x/
+thumb: http://www.cnet.com/Images/Fdoor/fdtitle.gif http://x/
+thumb: http://www.cnet.com/Images/Fd/Pg/pg.1028shootout.gif http://x/
+thumb: http://www.cnet.com/Images/Fd/Pg/pg.1105wireless.gif http://x/
+thumb: http://www.cnet.com/Images/Fdoor/666666.gif http://x/
+thumb: http://www.cnet.com/Ads/Media/Images/lending.portal.portal.gif?u_vid_1_0 http://x/
+thumb: http://www.cnet.com/Ads/Media/Images/dotd.fdbutton.dotd.gif http://x/
+thumb: http://www.cnet.com/Images/topicfinderL.gif http://x/
+thumb: http://www.cnet.com/Images/cnet.says.sm.gif http://x/
+thumb: http://www.cnet.com/Images/bump.gif http://x/
+

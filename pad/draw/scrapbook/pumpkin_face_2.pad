@@ -1,0 +1,32 @@
+# 0.2.7devo
+global Pad_ObjectList PADLOAD
+set Pad_ObjectList ""
+
+global _hyper
+    catch {unset _tmp}
+    set _tmp(ids) {}
+
+$PADLOAD config -background #8ea8ab
+set Pad_ID [$PADLOAD create polygon 303.71 -158.262 311.254 -150.284 317.855 -148.511 329.171 -148.511 335.772 -151.171 328.228 -139.647 315.969 -140.533 305.596 -147.625  -anchor center -maxsize 9390 -minsize 0 -place "-133.227 96.8684 1" -tags item -visible 1 -fill #ffff29 -joinstyle miter -pen #000000 -penwidth 2.83108]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 347.088 -152.057 355.575 -151.171 366.891 -159.149 370.663 -168.013 371.606 -150.284 360.29 -139.647 348.031 -145.852  -anchor center -maxsize 9390 -minsize 0 -place "-93.3213 88.8579 1" -tags item -visible 1 -fill #ffff29 -joinstyle miter -pen #000000 -penwidth 2.83108]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 334.829 -170.672 340.487 -161.808 349.917 -170.672 348.974 -179.537  -anchor center -maxsize 9390 -minsize 0 -place "-112.959 76.2594 1" -tags item -visible 1 -fill #ffff29 -joinstyle miter -pen #000000 -penwidth 2.83108]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 286.737 -188.401 294.281 -197.266 306.539 -190.174 309.368 -199.039 316.912 -197.266 318.798 -183.969 335.772 -182.196 351.803 -188.401 356.518 -207.017 365.948 -207.017 368.777 -200.811 378.207 -216.768 388.58 -208.79 381.979 -230.951 365.948 -237.156 364.062 -223.859 353.689 -223.859 348.031 -233.61 344.259 -218.54 334.829 -214.995 328.228 -223.859 312.197 -226.518 312.197 -213.222 302.767 -211.449 297.109 -219.427 288.623 -204.357  -anchor center -maxsize 9390 -minsize 0 -place "-115.374 35.0088 1" -tags item -visible 1 -fill #ffff29 -joinstyle miter -pen #000000 -penwidth 2.83108]
+lappend Pad_ObjectList $Pad_ID
+
+
+
+$PADLOAD itemconfigure 1 -visiblelayers "all -filter"
+
+
+
+	foreach id $_tmp(ids) {
+	    set src $_tmp(src$id)
+	    set dst $_tmp(dst$id)
+	    set _hyper($src.obj) $dst
+	    lappend _hyper($dst.dst) $src
+	}
+    
+

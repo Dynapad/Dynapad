@@ -1,0 +1,12 @@
+Pad++ Version 0.9 for Windows
+
+Extract into \
+This will create a directory for Pad++ called 'pad-09'.
+To run Pad++, run '\pad-09\win\padwish'.
+(Pad++ works best in 8 bit mode.)
+
+(c) 1993-1997 Pad++ Consortium
+    - University of New Mexico
+    - New York University
+
+http://www.cs.unm.edu/pad++

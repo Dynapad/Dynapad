@@ -1,0 +1,72 @@
+Thanks to Etienne for figuring out how to install dynapad
+on Mac OS X, in particular for finding XDarwin and fink.
+
+Now some names (which I might have wrong).
+Jaguar - Mac OS X version 10.2
+Darwin - the unix underneath Mac OS X
+Quartz - the OS X window system
+
+Install in the following order.
+
+XDarwin
+This is XFree86 ported to Darwin.  Available from
+  sourceforge.net/projects/xonx
+  www.xdarwin.org/downloads
+
+OS X Developer's Tools
+These are included with OS X 10.2 and the installer is in
+  Applications/Installers/Developer's Tools.
+Run Developer.mpkg.
+
+fink
+This is a port of GNU tools to OS X.  Available from
+  fink.sourceforge.net
+fink itself is a command for downloading ported tools.
+I found it helpful to add the following to /etc/csh.login
+  source /sw/bin/init.csh
+Then fink and any commands added by fink are automatically
+available.  Close and open terminal for the change to take
+effect.
+
+GNU readline
+fink install readline
+
+DrScheme
+Available from
+  www.plt-scheme.org/anoncvs
+Follow the instructions for checking out a copy using CVS.
+Before compiling
+  setenv CFLAGS -fno-rtti
+./configure --enable-xonx
+Then make and install.
+I found it helpful to add the following to /etc/csh.login
+  setenv PATH "${PATH}:/Users/admin/plt/bin"
+Replace the last part with the path to your DrScheme, then
+drscheme is in your path.  Close and open terminal for the
+change to take effect.
+
+Tcl/Tk
+fink install tcltk
+
+JPEG library
+fink install libjpeg
+
+PPM library
+fink install netpbm
+
+DB3
+fink install db3 db3-bin db3-shlibs
+cd /sw/include
+sudo ln -s db3/db.h
+
+dynapad
+cvs checkout dynapad
+./configure --with-plt=<location of drscheme>
+make all
+
+Now, start XDarwin.  It runs in two modes, fullscreen and rootless.
+(I prefer rootless.)  Then run drscheme in one of the XDarwin
+terminal windows.  Load and execute dynapad (probably workspace.ss).
+
+Ron Stanonik
+Tue Sep 24 13:36:39 PDT 2002

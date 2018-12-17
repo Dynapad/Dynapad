@@ -1,0 +1,16 @@
+#!/bin/tcsh
+
+set dfile="thumbs/dates.txt"
+
+rm -f $dfile
+
+foreach i ( *{JPG,jpg,JPEG,jpeg,Jpg} )
+  set d=`jhead "$i" | grep Date | sed -e "s,Date.Time.* : ,,"`
+  if ( "$d" == "" ) then
+    set d="          no data -"
+    echo "$d $i"
+  else
+    echo "$d $i"
+    echo "$d $i" >> $dfile
+  endif
+end

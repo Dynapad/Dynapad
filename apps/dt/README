@@ -1,0 +1,36 @@
+From dana@cs.ucsd.edu Tue Sep 21 13:15:11 2004
+Date: Tue, 6 Apr 2004 15:14:41 -0700
+From: Dana Dahlstrom <dana@cs.ucsd.edu>
+To: dynapad@hci.ucsd.edu
+Subject: DiamondTouch and uberapp
+
+I decided to create a clean user account on hoopla, get Dynapad and
+uberapp running with the DiamondTouch table, and trace my steps.
+
+build:
+  check out Dynapad module from CVS and change to module directory
+  build dynapad
+    ./configure && make all
+  build dt library and tools
+    cd apps/dt && ./configure && make
+
+run:
+  start X with appropriate layout, on display :1 because :0 is in use
+    startx -- :1 -layout dtclone
+  start touchd
+    ./apps/dt/touchd/touchd &
+  start mred
+    mred -z
+  load dynapad
+    (load "dynapad.ss")
+  load uberapp
+    (appload "uberapp")
+  load the dt interface to uberapp
+    (appload "dt-dynapad" "dt-buttons.ss")
+
+I know many of these are standard steps, but I decided to err on the
+side of completeness and specificity. I also spent some time simplifying
+the process described above; a few steps previously required now aren't.
+
+
+Dana

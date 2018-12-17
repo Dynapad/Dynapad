@@ -1,0 +1,32 @@
+0:25	0:36	T1				{al:l kin' of (0.5) in three-dimensional space they're like this (3.0) an' that's the ^active site mkay (2)^ and so (0.3) our new theory is (1) that}
+0:36	0:40	T1sq				{(1.5) thrombomodulin does something like this (1)}
+0:40	0:48	T1tw				{or like this (2) okay (4). [G:So it's guiding] It's cha::ngi:ng::: the loops: around the active site (0.5)}
+0:48	0:53	T1	AS			{so that (0.3) now Protein C comes in (1) instead of (0.3) fibrinogen (1.6) okay:}
+1:06	1:08	T1			B:	{(0.9) but he studies} Protein C Inhibitor
+1:14	1:18	T1	AS			{and it basically doesn't (1) come anywhere near thrombin (0.8) very fast (0.3)}
+1:18	1:20	T1				{in the ^absence of thrombomodulin^ (0.7)}
+1:20	1:22	T1	B			{but when you {bind thrombomohh:dulin} to the back side of thrombin}
+1:22	1:24	T1	AS			{suddenly that protein C inhibitor is in there (0.5) a: THOUSAND} FOLD FASTER (0.5)
+1:24	1:26	T1				than it was when you don't} have thrombomodulin bound there, right. (0.5)
+1:28	1:30	T1			B:	{So there's a lo:tta evidence suggesting} 
+1:30	1:32	T1tw				{that so:mething like this is going on.}
+1:32	1:35	T1sq				{(2.0)}
+1:35	1:36	T1tw				{Bu:t (0.4)}
+1:36	1:37	T1sq				{we don't- I don't really know (1.2)}
+1:57	1:59	T1	B		B:	{{you've put thrombomodulin back here, and now you have a
+1:59	2:04	T1	B	SC		{sca:ffold, and Protein C binds there and it just happens to get in the active site of thrombin. (0.2)}}}
+2:04	2:06	T1				{^The other camp says,^ ^no no no^
+2:06	2:08	T1	NB			{there's no Protein C binding to thrombomodulin} at all,}
+2:08	2:11	T1sq				{it's a:ll this (0.2) right and it's}
+2:13	2:15	T1			B:	{But (0.5)} ^the crystallographers^ 
+2:15	2:20	T1sq				{deny that this is happening at all because they can't capture it in their crystal structure.}
+2:30	2:40	T1sq			C:	I mean so: so {there's two things going on (0.1). There's some sorta dynamics (0.3) or conformational change right in the loops}
+2:39	2:43	T1	AS		B:	{And they had (0.2) a P-PACK in the active site see and once you put a P-PACK in the active site,}
+2:43	2:46	T1cl	AS			{then you do this (0.4) and then you're not gonna see:}
+2:46	2:50	T1tw				{whatever th-he it's doing. (2)}
+2:52	2:53	T1			C:	{So there's two neat things about the story,}
+2:53	2:57	T1tw				{You're seeing rearrangement or dynamics changes in th- the loops surrounding the active site,}
+3:55	4:00	T1	AS		B:	I mean it's no:t: {{the big protein (0.3) and all the effects that are happening with the macromolecule,}
+4:00	4:03	T1	Aspep			{instead of the three amino acid (0.6) substrate}}
+5:26	5:28	T1tw			S:	{Are these effects, you know this: thing yer doing (0.3)}
+5:28	5:31	T1				{You think it's all those steric effects} 

@@ -1,0 +1,22 @@
+With a three button mouse, you zoom in with Button 2, and out with Button 3. 
+With a two button mouse, you zoom in with Button 2 and out with Shift-Button 2.
+On Windows, you can control this with the padinit file.
+
+The "hand" mode in the drawing tools is for navigating. 
+With the left button, you can pan and follow links.
+We call this the "Run" mode.
+
+When in "Run" mode (with the hand cursor), the arrow keys
+will pan, and the page up/page down keys will zoom.
+
+Clicking on the color swatch in the drawing tools will bring 
+up the color tools.
+
+Holding down the Control key in any mode will let you pan 
+with the left button.
+
+Holding down the Alt key in any mode will let you zoom.  
+Zooming works like it does with the magnifier tool.  
+Click zooms in.  Click-drag sweeps out a region to zoom into.  
+Shift-click zooms out.  Shift-click-drag sweeps out a region 
+to zoom out from.

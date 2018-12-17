@@ -1,0 +1,62 @@
+                        PadDraw Help
+                Benjamin B. Bederson
+
+
+       Welcome to PadDraw.
+
+
+PadDraw is a sample application
+written on top of Pad++.  It is
+meant to fulfill three goals:
+  * Demonstrate Pad++ functionality
+  * Provide sample code for others
+    learning to use Pad++.
+  * Be a testbed for Pad++
+
+PadDraw is written entirely in Tcl.
+
+(Click on the button marked 
+'next' to advance to the next 
+page in the tour).
+<page>
+PadDraw is a basic drawing
+program and comes with several
+demonstrations of small
+applications written in Pad++.
+
+The demonstrations can all be
+accessed via the "Demo" menu.
+<page>
+Navigating within PadDraw
+-------------------------
+
+Moving around is accomplished
+with the mouse buttons.
+
+Left:   Mode dependent
+        (See Drawing Tools)
+Middle: Zoom In
+Right:  Zoom Out
+
+The hand in the Drawing
+Tool allows Panning 
+(Moving left/right/up/down).
+
+However, holding the *control*
+key allows panning no matter
+what mode is active.
+<page>
+Drawing Tools
+-------------
+
+Sorry, this is a work in progress.
+<page>
+Creating Portals
+----------------
+
+Sorry, this is a work in progress.
+<page>
+Creating Hyperlinks
+-------------------
+
+Sorry, this is a work in progress.

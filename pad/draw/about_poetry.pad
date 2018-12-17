@@ -1,0 +1,48 @@
+# 0.3devo
+global Pad_ObjectList PADLOAD
+set Pad_ObjectList ""
+
+
+$PADLOAD config -background #8ea8ab
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "-806.073 -309.633 16.7041" -tags "item text" -font Helvetica-bold-1 -pen #000000 -text "You need merely to click on an active \npart of the "]
+set Pad_NewID(3) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(3)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "-809.6 -78.1216 46.0067" -tags "item text" -font Utopia-bolditalic-1 -pen #000000 -text "Poetry Demos"]
+set Pad_NewID(4) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(4)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "-754.52 -85.667 17.755" -tags "item text" -font Utopia-bolditalic-1 -pen #ffffff -text "About the"]
+set Pad_NewID(5) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(5)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "-753.028 -84.7682 17.755" -tags "item text" -font Utopia-bolditalic-1 -pen #a92413 -text "About the"]
+set Pad_NewID(6) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(6)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "-809.169 -159.314 18.4258" -tags "item text link4 linkdest current" -font Helvetica-1 -pen #000000 -text "The poetry contained in this demo\nmenu uses text as an interactive image.\nThrough the use of position, color, \nmovement, and zooming, an attempt is\nmade to bring life to the poetry."]
+set Pad_NewID(7) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(7)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "-674.553 -337.852 16.1757" -tags "item text link linkto1" -linkto link1 -font Helvetica-bold-1 -pen #a92413 -text TEXT]
+set Pad_NewID(8) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(8)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "-571.804 -333.621 16.1757" -tags "item text link linkto2" -linkto link2 -font Helvetica-bold-1 -pen #a92413 -text text]
+set Pad_NewID(9) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(9)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "-488.396 -345.105 16.1757" -tags "item text link linkto3" -linkto link3 -font Helvetica-bold-1 -pen #a92413 -text Text]
+set Pad_NewID(10) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(10)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "-1093.89 -390.856 43.4167" -tags "item text link1 linkdest link2 link3" -font Times-italic-1 -pen #000000 -text "And the poetry will take you to the next part \nof the text.  The original authors of these \npoems are noted at the start of each poem.\nThe interactive text was designed by Allison\nDruin.   "]
+set Pad_NewID(11) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(11)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "-1093.89 -741.536 43.4167" -tags "item text" -font Times-italic-1 -pen #000000 -text "The inspiration for this connective text comes\nfrom Charles Paine, Catherine Taylor, and \nBen Bederson. "]
+set Pad_NewID(12) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(12)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "-309.423 -949.48 33.4232" -tags "item text link linkto4" -linkto link4 -font Times-bolditalic-1 -pen #a92413 -text "return to beginning"]
+set Pad_NewID(13) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(13)
+
+$PADLOAD itemconfigure 1 -visiblelayers "all"
+
+set view [$PADLOAD getview]
+$PADLOAD moveto -597.28 -229.665 1.40622
+if [info exists Pad_NewID(2)] {$PADLOAD ic $Pad_NewID(2) -sticky 1}
+eval $PADLOAD moveto $view
+set _pad(StartView) "-820.931091 -396.424652 -372.208923 -62.905323"
+

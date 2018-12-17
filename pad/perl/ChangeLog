@@ -1,0 +1,47 @@
+Mon May 26 12:09:21 1997  jason stewart  <jasons@sandy-home.cs.unm.edu>
+
+	* ChangeLog: Added initial version to repository
+
+	* Text.pm: Added initial version to repository
+
+	* Rectangle.pm: Added initial version to repository
+
+	* Polygon.pm: Added initial version to repository
+
+	* Line.pm: Added initial version to repository
+
+	* Surface.pm: Added initial version to repository
+
+	* Object.pm: Added initial version to repository
+
+	* Colors.pm: Added initial version to repository
+
+	* tkMain.c: Added initial version to repository
+
+	* test.pl: Added initial version to repository
+
+	* tclAppinit.c: Added initial version to repository
+
+	* pad_test.pl: renamed old tst.pl
+
+	* pad-perl.h: Added initial version to repository
+
+	* pad-perl.c: Added initial version to repository
+
+	* boot.h: Added initial version to repository
+
+	* Pad.xs: Added initial version to repository
+
+	* Pad.pm: Added new split version to repository
+
+	* Makefile.PL: Added initial version to repository
+
+	* MANIFEST: Added initial version to repository
+
+	* Boot.c: Added initial version to repository
+
+Revision history for Perl extension Pad.
+
+0.01  Sun May 25 13:38:33 1997
+	- original version; created by h2xs 1.18
+

@@ -1,0 +1,158 @@
+#!/bin/sh
+
+if [ "${DYNAHOME}" = "" ]; then
+  echo "DYNAHOME not set"
+  exit 1
+fi
+
+minsize=1024c
+maxsize=100k
+
+rip() {
+  local pdf dir base image ps jpg thumb size largest temp
+  pdf=$1
+  
+  if [ ! -f $pdf ]; then
+    echo "$0: $pdf not a file"
+    return
+  fi
+  
+  suf=`expr $pdf : '.*\(...\)' | tr [:upper:] [:lower:]`
+  if [ "$suf" != "pdf" ]; then
+    echo "$0: $pdf no pdf suffix"
+    return
+  fi
+  
+  if ! file -L $pdf | grep PDF >/dev/null ; then
+    echo "$0: $pdf not a pdf"
+    return
+  fi
+  
+  dir=`dirname $pdf`
+  pdf=`basename $pdf`
+  dir=$dir/.$pdf
+  
+  if [ -d $dir ]; then
+    echo "skipping $pdf, already ripped"
+    return
+  fi
+
+  mkdir $dir
+  if [ $? -ne 0 ]; then
+    echo "$0: mkdir $dir failed"
+    return
+  fi
+  
+  cd $dir
+  pdf=../$pdf
+  
+  mkdir -p thumbs/125
+  
+  pdfimages $pdf image
+  find . -maxdepth 1 -name 'image-*.p?m' -size -${minsize} -print | xargs rm -f
+  find . -maxdepth 1 -name 'image-*.pbm' -size +${maxsize} -print | xargs rm -f
+  size=0
+  largest=""
+  shopt -s nullglob
+  for image in image-*.p*m; do
+    base=`expr $image : '\(.*\)....'`
+    jpg=$base.jpg
+    convert $image $jpg
+    thumb=thumbs/125/$base-125.jpg
+    convert -geometry 125x125 -filter Lanczos $image $thumb
+    temp=`stat -t $jpg | cut -d ' ' -f 2`
+    if [ -z "$largest" ]; then
+      largest=$jpg
+      size=$temp
+    elif [ $temp -gt $size ]; then
+      largest=$jpg
+      size=$temp
+    fi
+    rm $image
+  done
+  shopt -u nullglob
+  if [ -n "$largest" ]; then
+    ln -s $largest largest.jpg
+    convert -geometry 125x125 -filter Lanczos largest.jpg thumbs/125/largest-125.jpg
+  fi
+  
+  ps=firstpage.ps
+  jpg=firstpage.jpg
+  pdftops -f 1 -l 1 $pdf $ps
+  convert $ps $jpg
+  thumb=thumbs/125/firstpage-125.jpg
+  convert -geometry 125x125 -filter Lanczos $ps $thumb
+  rm $ps
+  
+  pdfinfo $pdf > info.txt
+  
+  pdftotext $pdf text
+
+  sed -n '1{
+    s/^ *//
+    s/ *$//
+    p
+  }' text > title
+
+  sed -n '3{
+    s/^ *//
+    s/ *$//
+    p
+  }' text > author
+}
+
+ripokay() {
+  path=$1
+  dir=`dirname $pdf`
+  pdf=`basename $path`
+  ripdir=$dir/.$pdf
+  if [ -s $ripdir/firstpage.jpg -a -s $ripdir/largest.jpg ]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+stash() {
+  path=$1
+  dir=`dirname $pdf`
+  pdf=`basename $path`
+  ripdir=$dir/.$pdf
+  bad=$dir/bad
+  if [ ! -d $bad ]; then
+    mkdir $bad
+  fi
+  mv $path $bad
+  mv $ripdir $bad
+}
+
+args=""
+for pdf in "$@"; do
+  new=`echo "$pdf" | sed 's/ /_/g'`
+  if [ "$pdf" != "$new" ]; then
+    echo "$pdf -> $new"
+    mv "$pdf" "$new"
+  fi
+  args="$args $new"
+done
+set $args
+
+args=""
+pwd=`pwd`
+for pdf in $*; do
+  cd $pwd
+  echo $pdf
+  rip $pdf
+  cd $pwd
+  if ripokay $pdf; then
+    args="$args $pdf"
+  else
+    echo "rip failed"
+    stash $pdf
+  fi
+done
+cd $pwd
+set $args
+
+echo "building composites"
+${DYNAHOME}/apps/pdfrip/composite $*

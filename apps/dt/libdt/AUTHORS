@@ -1,0 +1,26 @@
+Sam Shipman (of Mitsubishi Electric Research Labs) wrote:
+
+  dt.c
+  dtframe.c
+  dtframe.h
+  dt.h
+  dtmouse.c
+  dtmouse.h
+  dtstats.c
+  dtstats.h
+  dtusbio.c
+  globals.h
+  libdt.h
+
+Ron Stanonik (of the UCSD DCOG-HCI lab) wrote:
+
+  README
+
+Dana Dahlstrom (of the UCSD DCOG-HCI lab) wrote:
+
+  libdt.h
+  configure.in
+  doc/modes.txt
+  dtucsd.c
+  dtucsd.h
+  Makefile.am

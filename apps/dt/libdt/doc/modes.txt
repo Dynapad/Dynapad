@@ -1,0 +1,14 @@
+0 DEFAULT
+  cursor follows finger, then clicks at end of motion
+1 MELS_CAFE
+  cursor leaps to finger-down position and clicks; no continuous motion
+2 PAINT
+  button down when finger is (but for noise); cursor follows (click & drag)
+3 WEB_DEMO
+  same as DEFAULT
+4 MOVE_ONLY
+  self explanatory; no button activity
+5 MAP_DEMO
+  same as PAINT, but without the noisy up/down during motion
+6 ANTI_NOISE
+  same as MAP_DEMO, but two fingers make a right-button drag

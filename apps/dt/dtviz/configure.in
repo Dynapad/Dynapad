@@ -1,0 +1,37 @@
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(dtviz.c)
+
+dnl Force with-libdt and with-xss arguments.
+AC_ARG_WITH([xss],
+            [  --with-xss=dir          XScreenSaver source directory],
+            [xssdir=$withval; AC_SUBST(xssdir)],
+            [AC_MSG_ERROR([You must specify a directory containing XScreenSaver source (using --with-xss=dir).])])
+
+if ! test -f $xssdir/config.h; then
+  echo "No $xssdir/config.h; configuring XScreenSaver."
+  (cd $xssdir && ./configure)
+fi
+
+AM_INIT_AUTOMAKE(dtviz,0.1)
+
+dnl Checks for programs.
+AC_PROG_CC
+AC_PROG_INSTALL
+
+dnl Checks for libraries.
+AC_CHECK_LIB(Xmu, XmuPrintDefaultErrorMessage)
+AC_CHECK_LIB(m, pow)
+
+dnl Checks for header files.
+AC_PATH_XTRA
+  AC_SUBST(X_CFLAGS)
+  AC_SUBST(X_LIBS)
+  AC_SUBST(X_EXTRA_LIBS)
+  AC_SUBST(X_PRE_LIBS)
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+
+dnl Checks for library functions.
+AC_HEADER_STDC
+
+AC_OUTPUT(Makefile)

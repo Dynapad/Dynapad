@@ -1,0 +1,94 @@
+Dynapad runs on Windows by using Cygwin XFree86.
+
+The Windows version of DrScheme loads the Dynapad mzscheme extension,
+which displays in the Cygwin XFree86 window.
+
+
+Installation
+
+Install Cygwin (www.cygwin.com), including:
+  database
+    db4.1
+    libdb4.1-devel
+  devel
+    cvs
+    gcc
+    gcc-g++
+    gdb
+    ImageMagick-devel
+    make
+    rcs
+  doc
+    man
+  editors
+    vim
+  graphics
+    ImageMagick
+    jpeg
+    tiff
+  net
+    openssh
+    rsync
+  text
+    less
+    more
+  utils
+    file
+  XFree86
+    base
+    headers
+    man
+    scalable fonts
+
+Add C:\cygwin\bin;C:\cygwin\usr\X11R6/bin to your Windows path,
+so that DrScheme can find the cygwin and X11 dlls.  To do that
+click right on My Computer, then click left on Properties, Advanced,
+Environment Variables, Path (in System variables), Edit, and current
+Path value.  Use the right arrow to move to the end of the current
+Path value.  Type
+
+  ;C:\cygwin\bin;C:\cygwin\usr\X11R6\bin
+
+Click OK enough times to get out.
+
+
+Install the Windows version of DrScheme (www.plt-scheme.org).
+  The self-installing version of 205 doesn't work with dynapad.
+  Instead install the nightly, full binary.
+  Download plt-i386-win32-full.tgz.
+  From the cygwin shell
+    cd /home
+    tar xzf plt-i386-win32-full.tgz
+    cd plt
+    ./install.bat
+
+
+Start Cygwin
+  In your home directory create .bashrc and insert the following
+    export CVSROOT=:ext:user@hci.ucsd.edu:/home/cvs
+    export CVS_RSH=ssh
+  Replace user with your hci login.
+
+  If your home directory has a space in the name, make yourself
+  another directory in /home without a space in the name, and use
+  that directory for installing dynapad.
+
+In Cygwin
+  Get a copy of Dynapad; eg, cvs checkout dynapad
+  cd dynapad
+  Edit makefile.in and change libmzsch205_007.lib to whatever version
+  is in /home/plt/lib/gcc.
+  ./configure --with-plt=/home/plt
+  make all
+
+
+Operation
+
+In Cygwin
+  Start X by running 
+    dynapad/mystartxwin.sh
+  In the xterm window start DrScheme
+    /home/plt/DrScheme.exe
+  Load dynapad/workspace.ss.
+  The corner cursor will appear in the Cygwin XFree86 window,
+  position it and click to create the Dynapad window.

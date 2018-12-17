@@ -1,0 +1,123 @@
+ACCEPTANCE
+
+Please read this license agreement before using Pad++. Do not use,
+copy, or distribute this software until you have read and agreed to
+the Terms and Conditions of this license agreement. This is a contract
+with important legal consequences. You and your organization, as the
+Licensee, agree to the Terms and Conditions of this agreement by
+using, copying, or distributing this software.
+
+REGISTRATION
+
+You must register your license with the Pad++ Consortium. Register by
+filling out the registration form in the file "Register" and send it
+to the Pad++ Consortium by any of the methods listed on the form.
+
+DEFINITIONS
+
+"Pad++ Consortium" is the group of developers of the Pad++ System. The
+Pad++ Consortium currently includes the University of New Mexico (UNM)
+and New York University (NYU).
+
+"Pad++ System" is defined to include C or C++ source code, object
+code, executables, libraries, user interface specifications, and
+documentation of Pad++, all of which are owned by the Pad++
+Consortium. Pad++ also includes components that are not owned by the
+Pad++ Consortium; these components are clearly marked and contain the
+owner's notices.
+
+"Loaded" is defined to mean combining object code to form an executable. 
+
+RIGHT TO USE
+
+As a Free Access Licensee, you have the right to use the Pad++ System
+as long as it is not combined with any product or service in any
+way. Use of the Pad++ System with commercially acquired software that
+depends on the Pad++ System in any way requires the commercial
+software supplier to have negotiated a Distribution License with the
+Pad++ Consortium.
+
+RIGHT TO REDISTRIBUTE
+
+Permission to distribute the Pad++ System using electronic media and
+at no cost is granted, provided that the software contains no
+modifications, you do not assign any price or value to the
+distribution, you do not combine the distribution of the Pad++
+System with any other product or service in any way, and you
+distribute the same version of the Pad++ System that is currently
+being distributed via the Internet by the Pad++ Consortium.
+
+DERIVATIVE WORKS
+
+You may modify the existing Pad++ System, but only for internal
+use. These derivative works or modifications may not be distributed
+outside your organization. If you develop an independent application
+involving extensions to the Pad++ System, you may use it
+internally. If you want to distribute it, you must negotiate a
+Distribution License with the Pad++ Consortium. Any software that is
+loaded with the Pad++ System is bound by this license agreement.
+
+LICENSEE AGREES
+
+By distributing the Pad++ Software, the Licensee agrees to abide by
+the copyright law and all other applicable laws of the U.S. and
+foreign countries, including, but not limited to, export control laws,
+and the terms of this license.
+
+TERMINATION
+
+The Pad++ Consortium shall have the right to terminate this license
+immediately by written notice upon Licensee's breach of, or
+non-compliance with, any of the terms of this license. Licensee may be
+held legally responsible for any copyright infringement that is caused
+or encouraged by Licensee's failure to abide by the terms of this
+license.
+
+GOVERNMENT USE RIGHTS
+
+Use, duplication, or disclosure by the U.S. Government is subject to
+restrictions set forth in subparagraphs (a) through (d) of the
+Commercial Computer Restricted Rights clause of FAR 52.227-19 when
+applicable, or in subparagraph (c)(1)(ii) of the Rights in Technical
+Data and Computer Software clause at DFARS 252.227-7013, and in
+similar clauses in the NASA FAR Supplement. Any provision of Pad++
+Software to the U.S. Government is with Limited Rights or as specified
+in any contracts covering the development of this software.
+
+ADDITIONAL RIGHTS AND CONSORTIUM MEMBERSHIP
+
+No additional rights or Pad++ Consortium membership are granted.
+
+ENTIRE AGREEMENT
+
+This License Agreement constitutes the entire agreement between the
+Pad++ Consortium and Licensee and may be amended or changed only by
+written agreement signed by both parties. This License Agreement is
+governed by the laws of the State of New Mexico.
+
+IN NO EVENT SHALL THE AUTHORS OR DISTRIBUTORS BE LIABLE TO ANY PARTY
+FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES
+ARISING OUT OF THE USE OF THIS SOFTWARE, ITS DOCUMENTATION, OR ANY
+DERIVATIVES THEREOF, EVEN IF THE AUTHORS HAVE BEEN ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+
+THE AUTHORS AND DISTRIBUTORS SPECIFICALLY DISCLAIM ANY WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND
+NON-INFRINGEMENT. THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, AND
+THE AUTHORS AND DISTRIBUTORS HAVE NO OBLIGATION TO PROVIDE
+MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+
+QUESTIONS AND INFORMATION
+
+If you have any questions concerning this license agreement, the
+copyright, or trademarks, please contact the Pad++ Consortium via
+electronic mail at pad-info@cs.unm.edu or via postal mail at The Pad++
+Consortium, Computer Science Department, University of New Mexico,
+Albuquerque, NM 87131.
+
+COPYRIGHT NOTICE
+
+"(c) Copyright 1993-1996 Pad++ Consortium {University of New Mexico (UNM)
+and New York University (NYU)}, All Rights Reserved." Licensee can not 
+remove or obscure any of the copyright or trademark notices in this software.

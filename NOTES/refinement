@@ -1,0 +1,315 @@
+Need to understand
+  Pad::level
+  Pad_XRenderer::_Dissolve_buffers(int speed)
+  Refinement
+  Restorers
+
+
+renderer.cpp
+
+EventChecker(Display *, XEvent *event, char *)
+  ButtonPress, KeyPress, Expose, or XMotionNotify & Button1Mask|Button2Mask|Button3Mask
+  Pad_eventCheckerResult = TRUE;
+  return(0);  -- so X event not removed from queue
+
+Pad_XRenderer::Is_interrupted(Pad_Win *win)
+  if (win->interruptible) {
+    Pad_eventCheckerResult = FALSE;
+    XCheckIfEvent(_display, &event, EventChecker, 0);
+    rc = Pad_eventCheckerResult;
+  } else
+    rc = FALSE;
+  return(rc);
+
+
+view.cpp
+
+Pad_View::Animate_to(float newXview, float newYview, float newZoom, int animationTime, Pad_Bool twostep)
+  if (animationTime > 0) {
+    do {
+      ... calculate new position
+      // Change view to new position
+      Set_view(x, y, z, TRUE);
+      ... calculate time elapsed
+      // Check for interruption
+      rc = Pad_renderer->Is_interrupted(win);
+    } while ((elapsedTime < animationTime) && !rc);
+    Set_view(newXview, newYview, newZoom, TRUE);
+  else
+    Set_view(newXview, newYview, newZoom, FALSE);
+
+// Return true to continue rendering other objects, or false if rendering
+// was interrupted.
+Pad_View::Render(Pad_Restorer *restorer)
+
+pad.cpp
+
+Pad::Scale(Pad_List &objs, float x, float y, float zmult, Pad_Bool transformp, int animationTime)
+  if (animationTime <= 0) {
+    obj->Scale(x, y, zmult, transformp);
+  else {
+    do {
+      ...
+      // Scale objects a little bit
+      ...
+      rc = Pad_renderer->Is_interrupted(view->win);
+    } while ((elapsedTime < animationTime) && !rc);
+  }
+  
+
+Pad::Slide(Pad_List &objs, Pad_PList &deltas, Pad_Bool transformp, int animationTime)
+  if (animationTime <= 0) {
+    obj->Slide(delta->x, delta->y, transformp);
+  else {
+    do {
+      ...
+      // Slide objects a little bit
+      ...
+      rc = Pad_renderer->Is_interrupted(view->win);
+    } while ((elapsedTime < animationTime) && !rc);
+  }
+
+Pad::Render_object(Pad_Object *obj, int renderSpeed)
+  // Call object render method if visible
+  // and no callbacks were fired.
+  if (visible && (callback == FALSE)) {
+    if (renderSpeed > 0) {
+      if (renderSpeed == 1) {
+        rc = obj->Render_medium();
+      else
+        rc = obj->Render_fast();
+    else
+      rc = obj->Render();
+
+
+text.cpp
+Pad_Text::Render(void)
+  switch (level) {
+    case 0:
+      // For render level 0, Don't check for interruption
+      for (i=startLine; i<=endLine; i++) 
+    case 1:
+      // For render level 1, Check for interruption every 10 lines
+      for (i=startLine; i<=endLine; i++) {
+        if (i%10 == 9) {
+	  if ((view->pad->level > 0) && Pad_renderer->Is_interrupted(Pad_prc->win)) {
+	  }
+    case 2:
+      // For render level 2, Check for interruption every 5 lines
+      for (i=startLine; i<=endLine; i++) {
+        if ((i%5 == 4) &&
+	  (pad->level > 0) && Pad_renderer->Is_interrupted(Pad_prc->win))
+  }
+
+// This gets called whenever the system is slow, and the object
+// should render itself faster - even if that makes it a bt ugly.
+Pad_Text::Render_medium(void)
+  // If the font is not too big, we'll
+  // lower it's rendering quality a level
+  ... change level
+  Render();
+
+// This gets called whenever the system is very slow, and the object
+// should render itself very fast - even if that makes it ugly.
+Pad_Text::Render_fast(void)
+  Pad_renderer->Draw_filled_box(bb[XMIN], bb[YMIN], bb[XMAX],bb[YMAX]);
+
+
+object.cpp
+
+// Return true if the object is visible within the main view OR
+// in any of the visiblePortals in the current view.
+// This can be true even when an object isn't getting rendered
+// because region management can cause just a portion of the screen
+// to be rendered leaving visible objects unrendered.
+Pad_Object::Is_visible(void)
+  Pad_Bool vis = Is_visible(pad->view->viewBBox.Get(), pad->view);
+
+// Return true if object is visible in a given view (and bbox).
+Pad_Object::Is_visible(float viewBB[4], Pad_View *view)
+  bbox_visible = Pad_Is_overlapping(bb, viewBB);
+
+
+win.h
+
+class Pad_RenderContext
+
+class Pad_Win
+    int           defaultRenderLevel;   // Render level when not refining
+    int           highestRenderLevel;   // Highest render level currently performed on screen
+    int           refinementDelay;      // Delay before refinement starts
+    Pad_Bool      doubleBuffer;         // Double buffering flag
+    int           fastPan;              // Panning uses copy areas with back buffer
+    int           interruptible;        // True for rendering to be interruptible by X events
+    Pad_List      restorers;            // List of currently working restorers.
+    Pad_Restorer *biddingRestorer;      // Objects register changes with this restorer.
+    Pad_Restorer *activeRestorer;       // Set during render to the restorer that is working.
+    Pad_Restorer *refiningRestorer;     // Set during render. Objects needing refinement
+                                        // add their bbox's to this
+
+                                        // A restorer containing rect (0, 0, win->width,
+                                        // win->height). Never scheduled for render.
+    Pad_Restorer *windowRestorer;
+    Pad_Bool      damageEnabled;        // Flag determining whether damage can occur
+
+
+pad.cpp
+
+Pad::Render_display_list(Pad_Object *obj)
+  while (obj) {
+    if (Pad_Is_overlapping(obj->Get_global_bbox()->Get(), Pad_prc->activeBBox.Get())) {
+      if (obj->Check_for_render()) {
+        if (!Pad_prc->slow && (level == 0) && (count++ % OBJECTS_PER_TIME_CHECK) == 0) {
+	  // System has gotten slow.  So, request objects to draw themselves
+	  // very simply, and schedule a refinement
+	  if (renderTime > desiredTime) {
+	     Pad_prc->slow = TRUE;
+	     Pad_prc->win->refiningRestorer->Make_full();
+	  }
+	}
+
+	renderSpeed = 0;
+	if (Pad_prc->slow) {
+	  if (!obj->Get_alwaysrender() && !obj->Is_sticky()) {
+	    renderSpeed = 1 2 or 3
+	    }
+	}
+
+	if (renderSpeed < 3) {
+	  if (!Render_object(obj, renderSpeed)) {
+	    if (level > 0) {
+	      interrupted = TRUE;
+	      level = 0;
+	      obj->Compute_dimensions(w, h);     // Re-compute dimensions as render level
+	      Render_object(obj, renderSpeed);   // Re-render this object
+	    }
+	  }
+	}
+
+	obj = obj->next;
+      }
+    }
+  }
+
+// Render the entire pad surface.
+// Return true to continue rendering other objects, or false if rendering
+// was interrupted.
+Pad::Render(void)
+  rc = Render_display_list(first);
+
+
+renderSpeed = 0;
+renderSpeed = 1;  // Render large objects a bit faster
+renderSpeed = 2;  // Render medium size objects ugly
+renderSpeed = 3;  // Don't render small objects
+
+Pad
+  level;                // Current refinement render level
+  // For render level 0, Don't check for interruption
+
+global.cpp:Pad_RenderContext *Pad_prc = NULL;
+
+Pad::Render_display_list()
+    if (Pad_prc->slow)
+      renderSpeed = 0;
+      if (obj->pixelDim < view->win->smallObjSize)
+        renderSpeed = 3;  // Don't render small objects
+      else if (obj->pixelDim < view->win->mediumObjSize)
+        renderSpeed = 2;   // Render medium size objects ugly
+      else
+        renderSpeed = 1;   // Render large objects a bit faster
+
+Pad::Render_object()
+        if (renderSpeed > 0) {
+            if (renderSpeed == 1) {
+                rc = obj->Render_medium();
+            } else {
+                rc = obj->Render_fast();
+            }
+        } else {
+            rc = obj->Render();
+        }
+
+// Change the view to the specified coordinates.
+// Compute the new view's bounding box.
+// Update each object's view list
+// If it's a pan, do a smart pan.
+//   (Shift over the image, render the missing strip,
+//    and trigger a repair.  The repair is needed because a shift
+//    of the image is not guaranteed to be identical to a re-render
+//    because of rounding).
+// Else, render the whole world
+// Don't allow zooming in or out too much.
+Pad_View::Set_view(float xv, float yv, float zm, Pad_Bool render_now)
+  if
+    // Force the restorer to run now
+    // and to update the whole window
+    XCopyArea(win->dpy->display, win->dbl, win->dbl, win->copyGC, ...)
+    restorer->flush_all = TRUE;   // makes sure whole window gets updated
+    restorer->Schedule(RESTORE_NOW, NULL);
+    // We now need to schedule a refinement on the area
+    // of the screen we copied. This is required because
+    // floating point rounding may be different at the
+    // new pan coordinate.
+
+    // Repair delay starts from now.
+    repairer->Schedule(RESTORE_REPAIR, NULL);
+  else
+    // Force main render immediately
+    r->Schedule(RESTORE_NOW, NULL);
+
+Pad_Object::Damage(void)
+  // For every place this object is visible,
+  // add that region to a restorer
+  // (creating and scheduling a restorer if necessary)
+  damage_view(this, obbox, pad->view, &views);
+    // Find places an object is visible on the primary surface, first-level portals,
+    // and other surfaces it might be visible on through portals.
+    add_damaged_view(obj, obbox, &portals, views)
+  r->Schedule(RESTORE_WHEN_IDLE, NULL);
+
+// Mark entire pad surface as changed, and register it
+// for re-rendering.
+Pad_View::Damage(void)
+  win->biddingRestorer->Schedule(RESTORE_WHEN_IDLE, NULL);
+
+Pad_Restorer::Schedule(Pad_Restore_Mode newMode, Pad_Restorer *current)
+  switch (mode) {
+  case RESTORE_NOW:
+    Do_restore();
+  case RESTORE_WHEN_IDLE
+    // Use timers instead of idle event
+    // so that they happen before refinements.
+    timer = Pad_CreateTimerHandler(IDLE_DELAY, restoreCB, (ClientData)this);
+  case RESTORE_REPAIR:
+    timer = Pad_CreateTimerHandler(delay, restoreCB, (ClientData)this);
+  case RESTORE_REFINE:
+    timer = Pad_CreateTimerHandler(delay, restoreCB, (ClientData)this);
+
+Pad::Scale(Pad_List &objs, float x, float y, float zmult, Pad_Bool transformp, int animationTime)
+Pad::Slide(Pad_List &objs, Pad_PList &deltas, Pad_Bool transformp, int animationTime)
+  view->Update_display();
+
+Pad_View::Update_display(void)
+  Update_display(0, FALSE);
+// Force all damaged areas to be re-rendered immediately.
+// The dissolve speed can be specified (0 is a swap buffer,
+// 3 is the slowest dissolve).
+// All refinements also are rendered now.
+Pad_View::Update_display(int dissolveSpeed, Pad_Bool withRefinements)
+  restorer->Do_restore();
+
+Pad_Restorer::Do_restore(void)
+  // Return true to continue rendering other objects, or false if rendering
+  // was interrupted.
+  Pad_View::Render(Pad_Restorer *restorer)
+    Pad::Render(void)
+      Render_display_list(first);
+        while (obj)
+          Pad_prc->win->refiningRestorer->Make_full();
+          Render_object(obj, renderSpeed);
+            obj->Render_medium();
+            obj->Render_fast();
+            obj->Render();
+	      if ((view->pad->level > 0) && Pad_renderer->Is_interrupted(Pad_prc->win))
+	        rc = FALSE;

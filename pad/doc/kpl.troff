@@ -1,0 +1,482 @@
+.co 
+.co	format this file by: troff -me
+.co 
+.ba .8in
+.in .8in
+.ll +.2in
+.sz +1
+.de BE
+\fH
+.in +1i
+.nf
+..
+.de EE
+\fR
+.in -1i
+.fi
+..
+
+.ce
+.b
+KPL USER'S MANUAL
+.r
+
+Kpl is a minimal stack based language.
+The only built in first class data types are floating
+point vectors, procedures, and symbols.
+It is designed to allow interpreted programs to
+be written simply and executed quickly.
+It is also designed to allow very, very easy extensibility.
+Programs written in kpl tend to be very compact.
+The ease of extensibility makes it easy to build
+a customized version of kpl that is optimized
+for a particular type of application.
+
+This manual is structured as follows.
+First we explain the few syntactical rules of kpl,
+along with examples.  Finally we describe the
+built in functions of kpl
+
+Notation is generally reverse polish - if you
+type the number \fH3\fR, then the value 3 gets
+pushed on the stack; if you type the expression
+\fH+\fR, then the top two items get popped from
+the stack and added, and the result is pushed
+back.  There is no real punctuation, but
+all tokens must be separated by spaces.
+
+Only assignment and flow of control are not in
+reverse polish notation.
+Procedures are denoted by matching \fH"{"\fR and \fH"}"\fR.
+Conditionals are denoted by matching \fH"("\fR and \fH")"\fR.
+Loops are denoted by matching \fH"["\fR and \fH"]"\fR.
+
+Here are the basic operations needed to get started.
+
+.b
+Assignment:
+.r
+
+The simplest form of assignment is:
+
+.BE
+=> varname
+.EE
+
+This pops the stack, and places the value into
+variable \fHvarname\fR.  For example, to multiply
+the item at the top of the stack by itself
+and then print the result, we could say:
+
+.BE
+=> x
+x x * print
+.EE
+
+.b
+Conditionals:
+.r
+
+When a \fH"("\fR symbol is encountered,
+the stack is popped.  If the result is non-zero,
+then everything between the \fH"("\fR and its matching \fH")"\fR
+is executed.  For example:
+
+.BE
+x x 0 < ( -1 * )
+.EE
+
+pushes the absolute value of x on the stack.
+
+.b
+Else conditions:
+.r
+
+If \fH"|"\fR appears between the \fH"("\fR and \fH")"\fR, then
+everything after the \fH"|"\fR is an else condition.
+For example:
+
+.BE
+a b < ( a | b )
+.EE
+
+pushes the minimum of \fHa\fR and \fHb\fR on the stack.
+
+.b
+Loops:
+.r
+
+Everything between matching \fH"["\fR and \fH"]"\fR gets
+repeated forever, unless a break condition
+occurs.  For example:
+
+.BE
+[
+	"this is an infinite loop" print
+]
+.EE
+
+prints the same message an infinite number
+of times (in theory, at least).
+
+.b
+Conditional breaks:
+.r
+
+When a \fH"?"\fR is encountered
+in the innermost loop or procedure,
+then the item on top of the stack is popped and examined.
+If the result is zero,
+then the loop or procedure is exited.
+For example:
+
+.BE
+0 => i
+[
+	i 10 < ?
+	i print
+	i 1 + => i
+]
+.EE
+
+prints the sequence f\H0 1 2 3 4 5 6 7 8 9\fR, and
+
+.BE
+{ -> i
+	i 1 > ?
+	"at least one" print
+	i 10 > ?
+	"at least ten" print
+} => foo
+
+5 foo
+.EE
+
+will print \fH"at least one"\fR but
+not \fH"at least ten"\fR.
+
+There can be any number of breaks inside a loop
+or procedure.
+
+.b
+Procedures:
+.r
+
+Anything between a matching \fH"{"\fR and \fH"}"\fR is
+a procedure.  When executed, this just pushes
+a quantity of type \fIprocedure\fR onto the stack.
+You can then assign this to a variable.  When
+the variable is subsequently invoked, then
+this procedure is run.  For example:
+
+.BE
+{ 1 + } => plus_one
+
+1.5 plus_one
+.EE
+
+results in the quantity 2.5 being pushed onto the stack.
+Note that the stack is available inside the procedure.
+
+.b
+Dynamic scoping
+.r
+
+Each variable can act like a stack.
+When you assign to a variable in a procedure,
+you can use the alternate form \fH"->"\fR.  This pushes
+the variable's stack before
+assigning the value to the variable.
+The scope of
+this assignment is the procedure and any
+procedures called by the procedure, recursively. Any
+\fH"=>"\fR's within the procedure will assign to this
+same level of that variable.  The variable is automatically
+popped when the procedure returns.  This is a
+form of dynamic scoping.  For example:
+
+.BE
+{ -> b -> a
+	a b > ( a | b )
+} => max
+
+10 20 max
+.EE
+
+results in the value 20 being pushed on the stack.
+Notice that we achieve the equivalent of passed
+arguments by popping stack values into
+variables in reverse order.
+
+.b
+Local variables
+.r
+
+If you need a variable whose value is not exported to
+more deeply nested procedures, preceed the variable
+name with a `#'.  For example:
+
+.BE
+{
+	2 => #a
+} => proc1
+
+{
+	1 => #a
+	proc1
+	#a
+} => proc2
+
+proc2
+
+.EE
+
+will print the number 1.
+The assignment in \fHproc1\fR is hidden from \fHproc2\fR,
+because the variable \fH#a\fR cannot be exported.
+
+You can also pass a procedure definition
+through the stack, and assign it to a local
+variable.  For example:
+
+.BE
+{ => #body => #incr => #test => #init
+	#init => #i
+	[ #i #test ?
+	  #i #body
+	  #i #incr => #i
+	]
+} => for
+.EE
+
+implements a standard \fHfor\fR loop.
+Given the following:
+
+.BE
+{ 1 } { 10 < } { 1 + } { 2 pow print } for
+{ 1 } { 1000 < } { 2 * } { print } for
+.EE
+
+kpl prints the sequence:
+
+.BE
+1 4 9 16 25 36 49 64 81
+.EE
+
+followed by the sequence:
+
+.BE
+1 2 4 8 16 32 64 128 256 512
+.EE
+
+.b
+A slightly longer example
+.r
+
+Here's a program that prints the first 100
+prime numbers, using only the tools that we have
+learned until now.
+
+.BE
+{ -> n
+	0 -> j
+	1 -> i
+	[
+		i n < ?
+		2 => j
+		[
+			j i < ?
+			i j mod ?
+			j 1 + => j
+		]
+		j i == ( i print )
+      i 1 + => i
+   ]
+} => primes
+
+100 primes
+.EE
+
+.b
+Vectors:
+.r
+
+Anywhere that you can have a number, you can also
+have a vector of up to 16 elements.  Vector
+elements are separated by the \fH":"\fR character.
+All arithmetic operators can deal with vectors.
+For example:
+
+.BE
+1:2 3:4 +
+.EE
+
+results in \fH4:6\fR being pushed on the stack.
+
+.BE
+1:2:3:4 5 +
+.EE
+
+results in \fH6:7:8:9\fR being pushed on the stack.
+
+.BE
+{ -> x
+	x x *
+} => squared
+
+\fH1:2:3:4\fR squared
+.EE
+
+results in \fH1:4:9:16\fR being pushed on the stack.
+
+.b
+Quoting and eval:
+.r
+
+There are two ways of quoting a symbol:
+
+.BE
+\'foo
+"foo"
+.EE
+
+The two forms are equivalent.  The first form
+is a little more compact, whereas the second
+form allows embedded spaces.
+
+There is an alternate postfix form of assignment
+that works with quoted variables:
+
+.BE
+10 'foo =
+.EE
+
+puts the value 10 into variable \fHfoo\fR.
+
+The \fIevalf\R operator \fH"`"\fR unquotes things.
+This is very useful when you want to pass a variable
+reference into a procedure.  For example:
+
+.BE
+{ -> var 
+	var ` 1 + var =
+} => increment
+
+ 10 => foo
+ 'foo increment
+.EE
+
+results in the value of variable foo being incremented
+to 11.  In the above example, \fHvar\fR evaluates to the symbol
+\fHfoo\fR, whereas \fHvar `\fR evaluates to the value of \fHfoo\fR.
+
+You can also use \fH`\fR to evaluate a procedure in-line.
+For example:
+
+.BE
+10 { 1 + 2 * } `
+.EE
+
+results in the value \fH22\fR being pushed on the stack.
+
+.b
+Built in functions:
+.r
+
+.b
+Binary operators:
+.r
+
+.BE
++ - * / == != <= >=
+.EE
+
+.b
+Assignment operators:
+.r
+
+.BE
+= => <- ->
+.EE
+
+Other built in operators:
+
+.BE
+exit
+index
+join
+level
+print
+system
+strcat
+.EE
+
+.b
+Built in debugging commands
+.r
+
+.BE
+printstack
+troff
+tron
+.EE
+
+.b
+Arrays
+.r
+
+Every variable is really an array of unbounded size.
+The dynamic scoping described earlier is actually implemented by
+incrementing the index into a variable's array when the
+\fH"->"\fR operation is encountered,
+and decrementing it again upon completion of the routine
+where the \fH"->"\fR assignment occurred.
+
+You can control a variable level yourself if you wish,
+by using the two built in functions \fHvset\fR and \fHvget\fR.
+
+You can set the current index \fHi\fR of variable \fHfoo\fR by:
+
+.BE
+ 'foo i vset
+.EE
+
+\fHvset\fR pops the \fHi\fR argument off the stack, but
+leaves the symbol \fH'foo\fR on the stack.
+
+You can determine the current index value of \fHfoo\fR by:
+
+.BE
+ 'foo vget
+.EE
+
+\fHvget\fR leaves the symbol \fH'foo\fR on the stack, and pushes
+the current index value on top of it.
+
+You can use this to implement a stack handler in kpl as follows:
+
+.BE
+{ getv 1 + setv } => pushv
+{ getv 1 - setv } => popv
+.EE
+
+You can implement infinite resolution arrays in kpl as follows:
+
+.BE
+{ setv ` } => gets
+{ setv = } => sets
+.EE
+
+For example, you could use these routines to assign and
+fetch values from the array \fHitems\fR as follows:
+
+.BE
+ value 'items i sets
+ 'items i gets => value
+.EE
+
+Notice that arrays are always global in scope -
+you can't use the same symbol name
+simultaneously as both a dynamically
+scoped variable and as an array.
+

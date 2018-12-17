@@ -1,0 +1,33 @@
+Simple mysql interface.  You can use this directly, but I recommend
+subclassing from mysql%.  See workspace.ss and worktest.ss for examples.
+
+mysql.c must first be compiled (use the makefile) and the resulting mysql.so
+must be in the mysql collects directory (presumably this directory!).
+
+Usage:
+
+  (require "mysql.ss")
+  (define c (make-object mysql%))
+  (send c connect "host" "user" "password")
+  (send c database "test")
+  (send c query "select * from table")
+  (send c store_result)
+
+If you get an error (return #f), you can obtain the error message with
+
+  (send c error)
+
+There are also slightly higher level methods:
+
+  (send c select "* from table")
+  (send c delete "from table where column = value")  returns affected_rows
+  (send c update "...")  returns affected_rows
+  (send c insert "into table values (value0, value1)  returns insert_id
+  (send c insert_id)
+  (send c affected_rows)
+
+You might need to use mysql_escape_string to ensure that strings are
+properly escaped for mysql.  See workspace.ss for an example.
+
+(and Ron (not DrRon))
+Mon Jun 28 12:41:33 PDT 2004

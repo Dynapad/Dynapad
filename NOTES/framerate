@@ -1,0 +1,43 @@
+If anything on the surface changes, then dynapad renders all of
+the objects in the view, even if they are unchanged and even if
+they are totally covered.
+
+The objects are all rendered to a buffer, which is then displayed
+(copied to the X display).
+
+If rendering takes too long (> 100ms) or if mouse/keyboard input
+becomes available, then the remaining objects are rendered quickly
+(images become gray boxes, text is "greeked"), and a restorer is
+scheduled to refine the view 1 second later.
+
+When a restorer runs, it renders all of the objects in the view,
+then the buffer is displayed using a dissolve (dithered blocks of
+pixels are copied to the X display).
+
+The only efficiency regarding changed regions is that only changed
+regions are copied to the X display.  That is, all objects in the view
+are rendered to the buffer, but only the changed regions of the buffer
+are copied to the X server.
+
+
+Approximate call chain:
+
+restoreCB()
+  Do_restore()
+    view->Render()
+      pad->Render()
+        pad->Render_display-list(first)
+  	  while (obj)
+	    if obj in view and renderTime > 1000/desiredFrameRate
+	      renderSpeed = fast rendering
+            pad->Render_object(obj, renderSpeed)
+	      switch renderSpeed
+	        object->Render()
+	        object->Render_medium()
+	        object->Render_fast()
+            if previous object was interrupted
+	      level = 0
+      Swap_buffers(speed)
+        switch speed
+	 XCopyArea()
+         _Dissolve_buffers(speed)

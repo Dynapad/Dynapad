@@ -1,0 +1,67 @@
+Zoomable directory browser
+
+Shows contents of given directory and recurses down to show contents
+of all subdirectories.  An optional depth parameter limits the number 
+of levels of recursion.
+
+Usage:
+
+   (load "directory-browser.ss")
+   (define db (make-object dir-browser% currentPAD [path] [depth]))
+
+Caution: Directories with a large number of contents such as /home/Share 
+or /usr/bin may take a while to load... and could possibly crash Dynapad
+if no depth level is specified.
+
+Example:
+
+   -- Draw subdirectories 2 levels deep	
+   (define db (make-object dir-browser% currentPAD "/home/Share/testdir" 2))
+	
+   -- Draw contents of only one directory
+   (define db (make-object dir-browser% currentPAD "/home/hci/dynapad" 0))
+
+   -- Draw ALL recursive subdirectories
+   (define db (make-object dir-browser% currentPAD "/home/Share/testdir"))
+
+Opening/Closing Windows:
+
+   A dir-window% is open when it displays its file icons and subdirectory 
+   windows.  It is closed when it displays only a white rectangle.  To
+   open a closed window, click inside it while pressing the Shift key.
+   Do likewise to close an opened window.
+   This is a useful feature for working with depth levels.
+
+Navigation:
+
+   Zoom into a directory window by clicking inside the window 
+   excluding icons and sub-windows.
+
+   Zoom back to a parent window by clicking outside the 
+   currently centered window.
+
+Selecting:
+
+   Select a directory window by clicking on the title.
+
+Applications:
+
+   Double click on a file icon to open its associated application.
+   - Text files  -> Emacs
+   - Image files -> ImageMagick
+   - PDF files   -> Acrobat Reader
+   - URL files   -> Konqueror
+
+Thermometer:
+   
+   Background colors symbolize icon's "temperature"
+   Arbitrary scheme:
+ 	- Red = modified within last day
+	- Yellow = modified within last week
+	- Green = modified within last month
+	- Blue = not modified for over 30 days 
+
+
+Shaun Haber
+srhaber@hci.ucsd.edu
+Mon Sep  8 2003

@@ -1,0 +1,74 @@
+This file describes the conventions the Pad++ C++ code should follow.
+Because this document was written long after much of the code was
+written, not all code follows these conventions, but all new code should,
+and old code will slowly be brought up to the standards.
+
+Naming Conventions
+------------------
+
+1. All global variables, procedures and class names meant for public use
+   should use a prefix of 'Pad_'.
+
+2. All global variables, procedures and class names meant for internal use
+   should use a prefix of '_Pad_'.
+
+3. All Static variables and procedures (i.e., variables that are local to a file) 
+   and slots and methods should not have any special prefix.
+
+4. All protected and private slots and methods should use a prefix of '_'.
+
+4. Class names should have every word start with a Capital, 
+   I.e., Pad_DoorItem
+
+5. Procedures and methods should have every word separated by underscores, and only the
+   first word capitalized.  I.e., Pad_Open_door or Open_door
+
+6. Variables and slots should have every word start with a Capital except for the first word.
+   I.e., Pad_doorType or doorType
+
+
+	//
+	// This is some example code that demonstrates several data types
+	// and their names.
+	//
+	int Pad_allDoors;		// Global list of all doors
+	int Pad_Close_doors(void);	// Global procedure to close all doors
+
+	int _Pad_doorCache;			// Private cache of doors
+	int _Pad_Close_door_helper(void);	// Helper routine for Pad_Close_doors()
+
+	class Pad_DoorItem
+	{
+	  public:
+	    int doorType;
+	    int doorName;
+	
+	    void Get_door_name(void);
+	    void Get_door_type(void);
+
+	  private:
+	    int _doorId;
+	};
+
+
+Commenting Conventions
+----------------------
+
+1. Every file should have a short description of what the file as a whole does.
+
+2. Every procedure should have a short description of what the procedure does,
+   and notes about any important but non-obvious characteristics of the procedure.
+
+3. There should be breaks with a few lines of '/'s between major functional areas
+   within a file.
+
+
+C++ Conventions
+---------------
+
+It is unsafe to have allocate dynamic memory with "new" in constructors
+of global class instances.  This is because C++ does not define the order
+that those constructors get executed in.  You can not even be sure that
+application constructors get called after system constructors.  On at
+least one system (Windows NT with Visual C++), this will generate bad
+memory errors.

@@ -1,0 +1,532 @@
+
+This document describes the Pad++ output files for Pad objects and scripts.  
+Pad objects can be written either as Tcl scripts, or directly with a binary
+represenation of their data and options.
+
+Every Pad object can be written as a Tcl script, which when interpreted,
+will create the object and configure its options.  The script is based 
+on the Tcl interface to Pad++ (See the Reference Guide).  Infact, if the
+application created the object with a Tcl script then the output script
+will be very similar to it.  The Tcl script output has been available since
+the earlier versions of Pad++.  See the Reference Guide for a full
+description of the Tcl syntax for creating and configuring objects.
+
+Currently, if the first three input characters are not "PAD"
+then it is assumed the file contains Tcl scripts.
+
+In either case, when reading a file the application can assume the Tcl table
+Pad_NewID has entries for relating new object ids (after reading) to their 
+ids at the time of writing.  This is primarily used for handling object
+aliases and links, but it can also be a useful hack for making application 
+scripts independent of hard-coded object ids (ofcourse, applications are 
+better off using object tags).
+
+For applications with large number of data intensive objects (such as
+lines, text) the text based Tcl script output may not be efficient
+and appropriate.  As an alternative, objects can be written directly
+in a compact and portable binary format.  The overhead of evaluating scripts 
+through Tcl interpreter is also avoided.  The binary file and its processing 
+are more efficient and faster than the Tcl script output.  In addition,
+it is designed to facilitate output compatibility between different versions 
+of the Pad++ substrate.  The format makes it easy for the reader to deal 
+with unknown object types and options.  Binary output files are written using
+XDR (External Data Represenation), a machine independent data representation
+virtually available on all machines.  This also makes the binary output 
+suitable for network transmissions.
+
+A general discussion of the binary format is followed by the detailed 
+definition of object types, their options and data fields.  It is assumed 
+the reader is familiar with the basic Pad_Object classes.  See the files 
+$PADHOME/generic/types.h, object.h and streamdata.h for the actual symbols 
+values refered to.
+
+For C++ applications: The Pad::Read() method can parse and read files
+in both Tcl script and binary format.  The Pad_StreamData class can used 
+for customized and lower-level operations.
+
+The general format of a Pad++ binary output file is like:
+
+PAD<version> <format> <sysname><newline>
+<zero or more objects and scripts>
+<tag indicating end of data, PAD_END_INPUT>
+
+NOTE: The first line is expected in ASCII.
+
+<version> is a string and indicates the version of Pad++ software that 
+wrote the file.  For example, "0.3devo" (see the global variable Pad_version).
+
+<format> is an integer indicating data representation used for writing
+the rest of the file. The value of 1 (PAD_XDR_FORMAT) indicates External 
+Data Representation (XDR) is used (currently this is the only publicized
+data rep. for Pad output files, but native and character based reps are 
+also available).
+
+<sysname> indicates the system that wrote the file and it's only present 
+if native binary format is used (e.g. Linux). See the uname() system call.
+
+All Pad objects and scripts are written in "data blocks".
+A data block is composed of zero or more data items.  Items have 
+information  about their length and actual data.  You can 
+think of a data block as a structure, and data items as its fields.
+Data blocks contain whole Pad objects, scripts or other application 
+defined data.
+
+The general format for a data block is:
+
+  int num_items;
+  int total_bytes;
+  <num_items data items>
+
+"num_items" is the total number of items contained in this block.
+
+"total_bytes" is the total number of bytes to follow in this block.
+
+num_items and total_bytes are written in the data representation
+indicated for the whole file. By knowing the total_bytes to follow
+in the block the reader can easily skip part or all of the block.
+
+The general format for an item in a data block is:
+
+  int      data_length;  // only present if item is a vector
+  unsigned char bytes;
+
+"data_length" is number of datums if item was a vector/array (it is not 
+present otherwise, a single datum is expected).
+
+"bytes" is the actual data buffer and its content and length depedends
+on the number of datums and the encoding that was used (e.g. xdr).  
+Note that data_length is the number of datums not the total number 
+of bytes in the data buffer (this means the reader has to know what
+type of data it is expecting to read).
+
+data_length and bytes are written in the data rep. used for the block.
+
+As mentioned before, data blocks and items are used to write whole Pad
+objects and scripts.  The first item in a block is expected to be 
+an integer item specifying its contents.  The remaining items describe 
+the actual object in the block.  The content tag specifies either 
+a Pad object type (e.g. PAD_LINE), a script (PAD_SCRIPT_OBJ) or the end of 
+data blocks (PAD_END_INPUT).  
+
+Data blocks for Pad objects contain data and options that are common to
+all object types (e.g. bbox and minsize), followed by type specific data 
+and options and application scripts for the object.
+
+PAD_KPL, PAD_TCL, PAD_USER_TYPE and PAD_MENU objects are treated as special
+cases and they are written as Tcl scripts.  Their data blocks contain 
+the following items:
+
+int    obj_type;       // with value of PAD_SCRIPT_OBJ
+string script;         // object script
+
+For these objects we write the Tcl script necessary to create
+them. The reader has to evaluate the script string (a call to Tcl_GlobalEval),
+which should result in creating the object and processing of its options.
+
+PAD_PAD and PAD_WRAPPER objects are not written in data streams.
+
+All other objects, some generic data is written first (data common to all 
+types), and it followed by type specific data.  This organization closely
+follows the class hiearchy of Pad object types.
+
+The following items are written for all Pad objects (see object.h for more
+information):
+
+  int          obj_type;    // indicating object type
+  unsigned int flags;       // bit field basic object attributes
+  unsigned int optionFlags; // bit field indicating generic options set
+
+  float[5]     transform_and_anchorPoint;  // [0] & [1] are x & y offsets,
+                                           // [2] is the scale
+                                           // [3] & [4] are anchor point x&y.
+
+  float[4]     bbox;  // [0] & [1] are Xmin & Ymin
+                      // [2] & [3] are Xmax & Ymax 
+
+  <zero or more items for options that are set, see discussion below>
+
+  int          end_options_tag;  // indicates end of generic options
+
+  int          id;               // the object id at the time of writing
+
+  <items specific to object type>
+
+  <string postWrite_script>      // application post-write script for object>
+
+"end_options_tag" has the unique value of PAD_ENDOBJ_OPTIONS and it
+indicates the end of options for the object.  Note that the above
+are data items (e.g. float[4] bbox; refers to a vectorized float data
+item.  See the discussion above about the format of data items).
+
+For each set option the following items are written:
+
+  int option_id;
+  int total_bytes;
+  <zero or more items for this option>
+
+"option_id" is the unique numeric id for the option (see object.h).
+
+"total_bytes" is the total number of bytes to follow for this option (this
+enables the reader to ignore unidentified options).
+
+The following lists the generic options for Pad objects and
+the data items written for them:
+
+PAD_ANCHOR:
+integer anchor;
+
+PAD_ANGLE:
+float angle;
+
+PAD_FADERANGE:
+float fadeRange;
+
+PAD_INFO:
+string info;
+
+PAD_LAYER:
+string layer;
+
+PAD_MINSIZE:
+float minSize;
+
+PAD_MAXSIZE:
+float maxSize;
+
+PAD_NOISEDATA:
+float[4] noise;  // for noise pos, freq, amp and steps
+
+PAD_RENDERSCRIPT:
+string language;
+string script;
+
+PAD_TAGS:
+int num_tags;
+<num_tags> strings;
+
+PAD_TIMERSCRIPT:
+string language;
+string script;
+
+PAD_TIMERRATE:
+int timerRate
+
+PAD_TRANSPARENCY:
+float transparency;
+
+PAD_VIEWSCRIPT:
+string language;
+string script;
+
+PAD_ZOOMACTION:
+int num_actions;
+for each [action]:
+  int    user_actionSize;
+  int    actionSize; 
+  string grow_script_language;
+  string grow_script;
+  string shrink_script_language;
+  string shrink_script;
+
+Note that all the scripts strings will have to be envaluated by the
+Tcl interpreter.
+
+User defined options (option_id of PAD_USER_OPTION) are treated
+specially and following items are written for them:
+
+  int    option_id;  // set to PAD_USER_OPTION
+  int    total_bytes;
+  string option_name;
+  string option_value;
+
+The following lists the various object types and the items written
+for them:
+
+For aliases:
+------------
+unsigned int aliasFlags;
+<alias options>
+int end_options_tag;
+
+Alias options (recall discussion about writing option ids, etc).
+
+PAD_REFERENCE:
+long hasReference;  // zero if alias does not have a ref object
+int  referenceId;   // present if hasReference is non-zero
+
+For Pad_Group:
+--------------
+unsigned int groupFlags;
+Pad_Bool     divisible;
+int          numMembers;
+
+This is followed by numMembers data streams for objects in the group.
+
+For Pad_Grid:
+-------------
+unsigned int groupFlags;
+Pad_Bool     divisible;
+int          numMembers;
+
+This is followed by numMembers data streams for objects in the
+grid.  Each stream is followed by a script stream that contains the
+Tcl script which configures the object in the grid.
+
+Pad_Image:
+----------
+unsigned int  imageFlags;
+int           writeFormat;  //indicates if image data is actually written.
+unsigned char dither;
+long          hasName;    // 0 if image has no name
+string        name;     // present if hasName
+long          hasImage;	 // 0 if no image item
+int           writtenFlag; // present if hasImage is non-zero and it
+	                   // indicates if the image data is written already.
+
+If writing the image item directly then:
+
+string        name;     // image item name
+long[4]       dimInfo; // array of 4 for width, height, length and rgb.
+unsigned long[width*height] rgbData;
+
+Otherwise (writing the filename):
+
+Pad_Bool rgb;
+string name;  // image filename
+
+For Pad_Line:
+-------------
+unsigned int       lineFlags;
+float[numPoints*2] points_coords;  // array of floats for x, y of each point
+<line options that are set>
+int end_options_tag;  // indicating end of line options
+
+Following line options are written if they are set:
+
+PAD_CAPSTYLE:
+unsigned char capStyle;
+
+PAD_JOINSTYLE:
+unsigned char jointStyle;
+
+PAD_PEN:
+string penName;
+
+PAD_PENWIDTH:
+float lineWidth;
+
+PAD_ARROW:
+int arrowStyle;
+
+PAD_ARROWSHAPE:
+float[3] arrowShape;  // array of 3 floats for arrowShapeA, arrowShapeB and
+		      // arrowShapeC parameters.
+
+Additionally for Pad_Polygon and its derived classes:
+
+PAD_FILL:
+string fillName;
+int    end_options_flag;
+
+For Pad_View:
+-------------
+unsigned int viewFlags;
+float[3] view; // array of three floats for x, y and z
+float[4] bbox; // array of 4 float for xmin, ymin, xmax, ymax
+<options that are set>
+int end_options_flag;
+
+For view options that are set:
+
+PAD_VISIBLELAYERS:
+string visibleLayers;
+
+Additionally for Pad_Portal:
+----------------------------
+unsigned int       portalFlags;
+int                numPoints;
+float[numPoints*2] pointsArray; // array of n*2 floats for portal points
+<options that are set>
+int                end_options_flag;
+
+Following portal options are written if they are set:
+
+PAD_BORDER:
+string borderName;
+
+PAD_BORDERWIDTH:
+float borderWidth;
+
+PAD_FILL:
+string fillName;
+
+PAD_PEN:
+string penName;
+
+PAD_RELIEF:
+int relief;
+
+PAD_TITLE:
+int      hasTitle;  // non-zero indicates title follows
+string   title;     // present if hasTitle
+float[3] view;      // array of three float for view x, y and z
+
+For Pad_Text:
+-------------
+unsigned int textFlags;
+int numTextLines;
+<string textLine>  // zero or more string for text lines
+string fontFamily;
+string fgColor;
+
+For Pad_TextFile:
+
+unsigned int textFlags;
+Pad_Bool fileLoaded;
+string fontFamily;
+int writeFormat;  // indicates textFile is written by reference
+		  // or actually written out.
+string fgColor;
+
+If referencing textFile then:
+
+string fileName;
+
+Otherwise:
+
+int numLines;
+<string lines> // zero or more strings for text lines
+
+For Pad_Component
+-----------------
+unsigned int _componentFlags;     // OR'd combination of flags
+_hiliteWidth;	                  // Width of hilite border in pixels
+string penColor;
+string fillColor;
+string font;
+float activeArea's x, y, width, height;  // Active area of component (not including hilite border)
+
+For Pad_Container
+-----------------
+Same as Pad_Group
+
+For Pad_Panel
+-------------
+Same as Pad_Container
+
+For Pad_Window
+--------------
+Pad_Container data followed by:
+unsigned int _windowFlags;
+
+For Pad_Frame
+-------------
+Pad_Window data followed by:
+int _cursorType;          // Base Cursor for this frame
+int _frameFlags;          // OR'd combination of flags
+string _border;           // 3D Bevel
+string _activeBorder;     // 3D Bevel when active
+string _title;	          // Title across top of frame
+long   hasmenuBar;        // non-zero if frame has a menubar
+int    menuBarID;         // menubar's old object id; Pad_NewID(this id)
+                          // is the new menubar object.
+For Pad_Label
+--------------
+Pad_Component data, followed by:
+
+unsigned int _labelFlags;
+int alignment;
+float labelOffsetX, labelOffsetY;
+float offset;
+string label;
+
+For Pad_Button:
+---------------
+Pad_Label data followed by:
+unsigned int _buttonFlags;
+int _relief;
+string _border;
+string _activeBorder;
+long hasCommand;
+string commandLanguage;
+string commandScript;
+
+For Pad_Checkbox
+----------------
+Pad_Button data followed by:
+Pad_Bool _inCheckboxGroup;
+
+For Pad_MenuBar
+---------------
+Same as Pad_Panel
+
+For Pad_Menu
+------------
+Written as Tcl script (see notes below).
+
+For Pad_MenuItem
+----------------
+If the menuitem is in a menu then it will be written as Tcl script.
+Stand alone menuitems have the same data written as button.
+
+
+PAD_MENU, PAD_KPL, PAD_TCL and PAD_USER_TYPE objects are written as scripts
+and their data streams contains:
+
+int    obj_type;       // with value of PAD_SCRIPT_OBJ
+string script;         // object write script
+
+Example:
+--------
+The following shows what was written for a PadDraw application that had 
+a rectangle object.  The char data-rep is used for readability (data blocks
+and items are appended with a newline).  Text in <<>> are additional
+comments.
+
+PAD0.9b2 3     << First line in ASCII.  It indicates the binary format
+                  is to follow, 0.9b2 as the Pad++ version, and
+                  the data rep used (3, text data rep) >>
+2 109          << Data block with two items and 109 bytes to follow>>
+3000           << Integer indicating content of this block, a script.>>
+               << This is a pre-write script written by the PadDraw app >>
+               << to initialize some tcl lists and tables it uses for >>
+               << for hyperlinks and list of objects read. >>
+99 # 0.9b2     << Script with 99 chars >>
+global Pad_ObjectList PADLOAD
+set Pad_ObjectList ""
+
+
+$PADLOAD config -background #8ea8ab
+ 
+11 95          << Data block with 11 items and 95 bytes to follow>>
+104            << Integer indicating content of this block, a rectangle>
+2181           << integer, generic object flags >>
+0              << integer, generic optionFlags >>
+5 0 0 1 50 50  << float[5] for transformation and anchor point >>
+4 -0.6 -0.6 100.6 100.6   << float[4] for bbox >>
+4000                      << integer, end of generic options >>
+5                         << integer, object id at the time of writing >>
+                         << integer, lineFlags >>
+8 0 0 100 0 100 100 0 100 << float[8] for the 4 corners of the rectangle >>
+4000                      << integer, end of line options >>
+4000                      << integer, end of rectangle options >>
+2 341                     << Data block with 2 items and 341 bytes >>
+3000                      << integer, indicating content is a script >>
+330 $PADLOAD itemconfigure 1 -visiblelayers "all"  << script with 330 chars >> 
+
+set view [$PADLOAD getview]
+$PADLOAD moveto 0 0 1
+if [info exists Pad_NewID(4)] {$PADLOAD ic $Pad_NewID(4) -sticky 1}
+if [info exists Pad_NewID(3)] {$PADLOAD ic $Pad_NewID(3) -sticky 1}
+if [info exists Pad_NewID(2)] {$PADLOAD ic $Pad_NewID(2) -sticky 1}
+eval $PADLOAD moveto $view
+
+ 
+1 6                       << Data block with 1 item and 6 bytes >> 
+3001                      << integer, indicating end of blocks >>
+
+
+See the Pad_Pad::Read() method in generic/pad.cpp for C++ code which
+reads infput files.
+
+

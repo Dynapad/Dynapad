@@ -1,0 +1,12 @@
+Sometimes images in PDFs are rotated (CTM) before display.
+For example, add an image to a word document, rotate it in
+the document, then create a PDF.  The image will display properly
+in xpdf, but not when extracted using pdfimages.  xpdf applies
+the included CTM, pdfimages doesn't.
+
+I modified ImageOutputDev.cc to rotate images (ppm) extracted with pdfimages.
+For reference I'm including a diff and copy of ImageOutputDev.cc.
+A binary pdfimages built using this ImageOutputDev.cc is in dynapad/bin.
+
+Ron Stanonik
+Tue Apr 27 14:27:53 PDT 2004

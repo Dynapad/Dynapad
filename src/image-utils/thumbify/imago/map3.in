@@ -1,0 +1,14 @@
+MAKE_MAP foo
+dimensions: 500 500
+return: url
+layout: grid
+rate: area-colors
+replace: overwrite
+filter: gaussian
+thumb_min_width: 10
+thumb_min_height: 11
+thumb_min_colors: 2
+thumb_max_size: 75
+thumb: http://www.keyboardmag.com/homegif/ko_logo_full2.gif http://www.keyboardmag.com/giveaway
+thumb: http://www.keyboardmag.com/homegif/thismonth.gif http://www.keyboardmag.com/giveaway
+thumb: http://www.nopres.co.uk/images/bands/boxes/nop.gif http://www.nopres.co.uk/

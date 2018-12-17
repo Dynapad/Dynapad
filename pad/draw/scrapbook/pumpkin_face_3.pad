@@ -1,0 +1,32 @@
+# 0.2.7devo
+global Pad_ObjectList PADLOAD
+set Pad_ObjectList ""
+
+global _hyper
+    catch {unset _tmp}
+    set _tmp(ids) {}
+
+$PADLOAD config -background #8ea8ab
+set Pad_ID [$PADLOAD create polygon 198.829 189.102 195.064 165.211 199.771 158.132 219.538 151.938 225.185 166.096 215.772 182.023  -anchor center -maxsize 9390 -minsize 0 -place "-58.5688 84.8588 1" -tags item -visible 1 -fill #ffff29 -joinstyle miter -pen #000000 -penwidth 2.83108]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 169.649 184.677 157.413 173.174 153.647 161.671 152.706 151.938 168.708 154.593 182.827 159.902 181.886 186.447  -anchor center -maxsize 9390 -minsize 0 -place "-116.662 87.0086 1" -tags item -visible 1 -fill #ffff29 -joinstyle miter -pen #000000 -penwidth 2.83108]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 139.528 137.781 148.941 129.817 152.706 118.314 160.236 115.659 161.178 127.162 176.238 124.508 179.062 112.12 189.416 112.12 192.24 125.393 200.712 126.277 205.418 113.89 216.714 120.084 216.714 133.356 231.774 137.781 237.422 151.938 239.305 124.508 228.951 107.696 223.303 116.544 212.949 109.465 209.183 99.7321 198.829 103.271 189.416 105.041 180.945 102.387 174.356 99.7321 163.06 99.7321 160.236 109.465 145.176 112.12 136.704 125.393  -anchor center -maxsize 9390 -minsize 0 -place "-86.1451 29.2021 1" -tags item -visible 1 -fill #ffff29 -joinstyle miter -pen #000000 -penwidth 2.83108]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 186.593 155.477 178.121 143.09 183.769 136.896 195.064 137.781 193.182 151.053  -anchor center -maxsize 9390 -minsize 0 -place "-91.5216 61.4143 1.3173" -tags item -visible 1 -fill #ffff29 -joinstyle miter -pen #000000 -penwidth 2.14916]
+lappend Pad_ObjectList $Pad_ID
+
+
+
+$PADLOAD itemconfigure 1 -visiblelayers "all -filter"
+
+
+
+	foreach id $_tmp(ids) {
+	    set src $_tmp(src$id)
+	    set dst $_tmp(dst$id)
+	    set _hyper($src.obj) $dst
+	    lappend _hyper($dst.dst) $src
+	}
+    
+

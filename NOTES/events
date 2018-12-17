@@ -1,0 +1,175 @@
+Pad Event Handling
+
+Pad_Bind_proc is registered as an event handler with the Tk dispatcher for X events.
+  Where are timer events registered?
+    Pad_CreateTimerHandler calls Tcl_CreateTimerHandler.
+  Who handles refinement?
+
+Pad_Bind_proc calls Pick_enter_leave and then Do.
+
+Pick_enter_leave finds the current item and generates pad item Enter/Leave events.
+  X EnterNotify/LeaveNotify events are about entering/leaving the pad window and
+  are handled by Pad_Bind_proc.
+
+Do calls Pad_BindEvent, passing it the event, item (current object), and a list
+consisting of (item, item tags, all) or (all, item tags, item) depending whether
+the event order (bindtags) is specific or general.
+  The list includes the item tags because pad can bind events to tags.
+  Do does not know what bindings exist.
+
+Pad_BindEvent searches the bindingTable for matching bindings (event + item/tag/all),
+builds a list of callbacks, and finally Evals them.
+
+
+static Pad_ObjHandle current;   // Current item under pointer - tag or object
+static XEvent pickEvent;        // The event upon which the current choice of 'current' is based.
+
+
+Pad_Event::Get_current(void)
+{
+  return(current._Get_object());
+}
+
+  Tk_CreateEventHandler(tkwindow,
+    KeyPressMask | KeyReleaseMask |
+    ButtonPressMask | ButtonReleaseMask | EnterWindowMask |
+    LeaveWindowMask | PointerMotionMask,
+    Pad_Bind_proc,
+    (ClientData)tkwin);
+
+// This procedure is invoked by the Tk dispatcher to handle
+// events associated with bindings on items.
+
+Pad_Bind_proc(ClientData clientData, XEvent *eventPtr)
+{
+  padEvent = new Pad_Event(win, eventPtr);
+  if (eventPtr->type == ButtonPress)
+    padEvent->Pick_enter_leave();
+    padEvent->Do();
+  } else if (eventPtr->type == ButtonRelease) {
+    padEvent->Do();
+    padEvent->Pick_enter_leave();
+  } else if (eventPtr->type == EnterNotify) {
+    padEvent->Pick_enter_leave();
+    win->view->pad->Set_active(TRUE);
+  } else if (eventPtr->type == LeaveNotify) {
+    win->view->pad->Set_active(FALSE);
+    padEvent->Pick_enter_leave();
+  } else if (eventPtr->type == MotionNotify) {
+    padEvent->Pick_enter_leave();
+    padEvent->Do();
+  } else
+    padEvent->Do();
+}
+
+
+// Find the topmost item in a pad that contains a given
+// location and mark the the current item.
+
+Pad_Event::Pick_enter_leave(void)
+{
+  Pad_ObjHandle closest;
+
+  closest.Attach(sourceWin->view->pad->Find_pick(this));
+
+  // Simulate a LeaveNotify event on the previous current item and
+  // an EnterNotify event on the new current item.
+  if ((closest != current) {
+    Pad_Object *itemPtr = Get_current();
+    event.type = LeaveNotify;
+    padEvent = new Pad_Event(win, &event);
+    itemPtr->Pointer_out(padEvent);
+    padEvent->Do();
+  }
+
+  if (closest == current)
+    return;
+
+  current.Attach(closest);
+  if (Get_current()) {
+    event.type = EnterNotify;
+    padEvent = new Pad_Event(win, &event);
+    closest._Get_object()->Pointer_in(padEvent);
+    padEvent->Do();
+  }
+}
+
+
+// Generate an event of type <type> on <tag>, and
+// return the string returned by the event in <result>,
+// and return the return code of the event.
+//
+Pad_GenerateEvent(Pad_Win *win, int type, char *tag, Pad_String &result)
+{
+  padEvent = new Pad_Event(win, &event);
+
+  saveCurrent = current;
+  current.Attach(NULL);
+  objectPtr[0] = Tk_GetUid(tag);
+
+  Pad_BindEvent(win->bindingTable, &event, padEvent, 1, objectPtr, NULL);
+
+  current = saveCurrent;
+}
+
+
+Pad_Event::Do(Pad_Object *obj)
+{
+  saveCurrent = current;
+  current.Attach(obj);
+
+  Do();
+
+  current = saveCurrent;
+}
+
+
+Pad_Event::Do(void)
+{
+  ClientData *objectPtr;
+  Pad_Object *itemPtr;
+
+  if ((eventPtr->type == KeyPress) || (eventPtr->type == KeyRelease)) {
+    itemPtr = Pad_focus;
+  else
+    itemPtr = Get_current();
+
+  if (itemPtr == NULL)
+    return;
+
+  // Set up an array with all the relevant objects for processing
+  // this event.  The relevant objects are (a) the event's item,
+  // (b) the tags associated with the event's item, and (c) the
+  // tag "all".  If there are a lot of tags then malloc an array
+  // to hold all of the objects.
+
+  objectPtr[0] =
+    ((itemPtr->flags & PAD_MASK_ID_EVENT_FIRST) ? (ClientData)itemPtr : (ClientData)Pad_allUid);
+
+  i = 1;
+  DOLISTI(oi, itemPtr->tags, Tk_Uid, tag) {
+    objectPtr[i] = tag;
+    i++;
+  }
+
+  objectPtr[numTags + 1] =
+    ((itemPtr->flags & PAD_MASK_ID_EVENT_FIRST) ? (ClientData)Pad_allUid : (ClientData)itemPtr);
+
+  Pad_BindEvent(itemPtr->pad->view->win->bindingTable, eventPtr, this, numObjects, objectPtr, itemPtr);
+}
+
+
+Pad_BindEvent(Tk_BindingTable bindingTable, XEvent *eventPtr, Pad_Event *padEvent,
+  int numObjects, ClientData *objectPtr, Pad_Object *itemPtr)
+{
+  Pad_List callbacks;
+
+  for ( ; numObjects > 0; numObjects--, objectPtr++) {
+    callback = matchPtr->command;
+    callbacks.Push_last(callback);
+  }
+
+  while (!callbacks.Is_empty()) {
+    code = callback->Eval(itemPtr, padEvent);
+  }
+}

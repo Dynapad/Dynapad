@@ -1,0 +1,24 @@
+kpl eval 'std.kpl source
+
+1 => RAISED
+2 => FLAT
+4 => SUNKEN
+8 => GROOVE
+16 => RIDGE
+
+/* ==== GRAPHICS UTILITIES ==== */
+
+{
+    TRUE -> First?
+    newpath
+    { First? ( moveto FALSE => First? | lineto ) } rmap
+    fill
+} => polygon
+
+{
+    TRUE -> First?
+    newpath
+    { First? ( moveto FALSE => First? | lineto ) } rmap
+    stroke
+} => line
+

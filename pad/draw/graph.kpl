@@ -1,0 +1,110 @@
+/************************************************************
+*   Graph widget support code
+*
+*     Available functions:
+*       Graph graph_render
+*
+*     Parameters:
+*       - Graph is the name of a global Tcl array controlling this graph.
+*       - X and Y specify a point in the graph's coordinate space in pixels
+************************************************************/
+
+/*************************************************************
+*   Graph graph_render
+*
+*     Renders specified graph
+*************************************************************/
+
+{ -> Graph
+    Graph 'x tclget2 => X
+    Graph 'y tclget2 => Y
+    Graph 'width tclget2 => Width
+    Graph 'height tclget2 => Height
+    Graph 'borderwidth tclget2 => Border_width
+    Graph 'fill_border tclget2 -> Border
+    Graph 'gpen tclget2 -> GPen
+    Graph 'lpen tclget2 -> LPen
+    Graph 'apen tclget2 -> APen
+    Graph 'pen tclget2 -> Pen
+    Graph 'font tclget2 -> Font
+    Graph 'labeldx tclget2 -> LabelDx
+    Graph 'labeldy tclget2 -> LabelDy
+    Graph 'xmax_size tclget2 -> XmaxSize
+    Graph 'ymax_size tclget2 -> YmaxSize
+    Graph 'xmin tclget2 -> Xmin
+    Graph 'xmax tclget2 -> Xmax
+    Graph 'ymin tclget2 -> Ymin
+    Graph 'ymax tclget2 -> Ymax
+    Graph 'nlines tclget2 -> Nlines
+    Graph 'npts tclget2 -> Npts
+
+		    /* Draw outer border */
+    X Y join X Width + Y Height + join Border_width Border RAISED drawborder
+
+		    /* Draw label text */
+    Font setfont
+    LPen setcolor
+
+    Xmax Xmin - 5 / -> Dx
+    Ymax Ymin - 10 / -> Dy
+
+    14 LabelDy - -> Y
+    Ymin -> YValue
+    " " YValue strcat 7 LabelDx - Y join drawtext 
+    7 YmaxSize LabelDx + 2 / - -> X
+    1 -> i
+    [ i 10 < ?
+      Y 10 + => Y
+      YValue Dy + => YValue
+      YValue YValue 1 mod - YValue == (
+         " " YValue strcat X Y join drawtext 
+      )
+      i 1 + => i
+    ]
+    Y 10 + => Y
+    " " Ymax strcat 7 YmaxSize - Y join drawtext 
+
+    Xmin -> XValue
+    " " XValue strcat 12.4 LabelDx - 4 join drawtext 
+    32.4 XmaxSize LabelDx + 2 / - -> X
+    1 -> i
+    [ i 5 < ?
+      XValue Dx + => XValue
+      " " XValue XValue 1 mod - strcat X 4 join drawtext
+      X 20 + => X
+      i 1 + => i
+    ]
+    " " Xmax strcat 112.4 XmaxSize - 4 join drawtext 
+
+		    /* Draw grid */
+    GPen setcolor
+    35 -> X
+    23 -> Y
+    0 -> i
+    [ i 5 < ?
+      X 13 join X join 113 join drawline 
+      X 20 + => X
+      15 Y join 115 join Y join drawline 
+      Y 10 + => Y
+      15 Y join 115 join Y join drawline 
+      Y 10 + => Y
+      i 1 + => i
+    ]
+    15 Y join 115 join Y join drawline 
+
+		    /* Draw axes */
+    APen setcolor
+    13:13:117:13 drawline
+    15:11:15:115 drawline
+
+		    /* Draw graph line */
+    Npts 2 >= (
+      Pen setcolor
+      0 -> i
+      [ i Nlines < ?
+        Graph 'data. i strcat tclget2 -> Data
+        Data drawline
+        i 1 + => i
+      ]
+    )
+} => graph_render

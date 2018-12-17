@@ -1,0 +1,44 @@
+# 0.2.7devo
+global Pad_ObjectList PADLOAD
+set Pad_ObjectList ""
+
+global _hyper
+    catch {unset _tmp}
+    set _tmp(ids) {}
+
+$PADLOAD config -background #8ea8ab
+set Pad_ID [$PADLOAD create rectangle -225.462 146.167 -207.969 116.02  -anchor center -maxsize 9390 -minsize 0 -place "-224.715 134.094 1" -tags item -visible 1 -fill #424542 -joinstyle miter -pen #000000 -penwidth 4.37639]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon -71.9825 103.23 -64.208 119.674 -32.138 120.588 -22 104  -anchor center -maxsize 9390 -minsize 0 -place "-224.991 114.909 1" -tags item -visible 1 -fill #424542 -joinstyle miter -pen #000000 -penwidth 4.86262]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create rectangle -236.152 196.412 -193.391 137.945  -anchor center -maxsize 9390 -minsize 0 -place "-222.771 170.179 1" -tags item -visible 1 -fill #424542 -joinstyle miter -pen #000000 -penwidth 4.86262]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create rectangle -229.349 188.19 -200.194 170.833  -anchor center -maxsize 9390 -minsize 0 -place "-222.772 182.512 1" -tags item -visible 1 -fill #f7f7f7 -joinstyle miter -pen #000000 -penwidth 2.91759]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create rectangle -286.686 126.983 -275.997 111.452  -anchor center -maxsize 9390 -minsize 0 -place "-273.567 111.909 1" -tags item -visible 1 -fill #f7f7f7 -joinstyle miter -pen #000000 -penwidth 4.37639]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create rectangle -297.376 106.885 -149.659 19.1845  -anchor center -maxsize 9390 -minsize 0 -place "-226.433 65.7751 1" -tags item -visible 1 -fill #a5a2a5 -joinstyle miter -pen #000000 -penwidth 4.86262]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create rectangle -291.545 99.5763 -274.052 31.0605  -anchor center -maxsize 9390 -minsize 0 -place "-282.799 65.3184 1" -tags item -visible 1 -fill #424542 -joinstyle miter -pen #000000 -penwidth 2.43136]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon -184.645 42.0231 -180.758 36.5418 -172.012 36.5418 -170.068 60.294 -174.927 62.121  -anchor center -maxsize 9390 -minsize 0 -place "-177.357 49.3314 1" -tags item -visible 1 -fill #737573 -joinstyle miter -pen #000000 -penwidth 2.43136]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon -197.279 64.4049 -197.602 68.4778 -198.563 72.4504 -200.138 76.2249 -202.29 79.7084 -204.964 82.815 -208.095 85.4684 -211.605 87.6031 -215.41 89.1665 -219.412 90.1203 -223.518 90.4409 -227.622 90.1203 -231.626 89.1666 -235.43 87.6032 -238.94 85.4685 -242.071 82.8151 -244.745 79.7085 -246.897 76.2251 -248.472 72.4506 -249.433 68.478 -249.757 64.4049 -249.433 60.332 -248.472 56.3594 -246.897 52.5849 -244.745 49.1014 -242.071 45.9947 -238.94 43.3414 -235.43 41.2067 -231.626 39.6433 -227.623 38.6895 -223.518 38.3689 -219.413 38.6895 -215.41 39.6432 -211.606 41.2066 -208.095 43.3413 -204.964 45.9947 -202.29 49.1013 -200.138 52.5847 -198.563 56.3592 -197.602 60.3318  -anchor center -maxsize 9390 -minsize 0 -place "-224.185 67.0748 1.13854" -tags item -visible 1 -fill #ffffff -joinstyle round -pen #000000 -penwidth 2.91759]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon -184.645 49.3314 -184.909 52.7612 -185.692 56.1066 -186.976 59.2851 -188.729 62.2186 -190.908 64.8347 -193.459 67.0691 -196.319 68.8667 -199.419 70.1833 -202.681 70.9865 -206.026 71.2564 -209.37 70.9865 -212.632 70.1834 -215.732 68.8668 -218.592 67.0692 -221.143 64.8348 -223.322 62.2187 -225.075 59.2853 -226.359 56.1068 -227.142 52.7613 -227.406 49.3314 -227.142 45.9015 -226.359 42.5562 -225.075 39.3777 -223.322 36.4442 -221.143 33.828 -218.592 31.5937 -215.732 29.7961 -212.632 28.4795 -209.371 27.6763 -206.026 27.4063 -202.682 27.6763 -199.419 28.4794 -196.319 29.796 -193.459 31.5936 -190.908 33.828 -188.729 36.4441 -186.976 39.3775 -185.692 42.556 -184.909 45.9014  -anchor center -maxsize 9390 -minsize 0 -place "-224.185 66.5548 1.13854" -tags item -visible 1 -fill #7baaff -joinstyle round -pen #000000 -penwidth 2.91759]
+lappend Pad_ObjectList $Pad_ID
+
+
+
+$PADLOAD itemconfigure 1 -visiblelayers "all -filter"
+
+
+
+	foreach id $_tmp(ids) {
+	    set src $_tmp(src$id)
+	    set dst $_tmp(dst$id)
+	    set _hyper($src.obj) $dst
+	    lappend _hyper($dst.dst) $src
+	}
+    
+

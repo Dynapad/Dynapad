@@ -1,0 +1,36 @@
+Simple mysql interface.  You can use this directly, but I recommend
+subclassing from mysql%.  See workspace.ss and worktest.ss for an
+example of subclassing.
+
+  (load-relative "/home/hci/dynapad/apps/mysql/worktest.ss")
+
+Environment variable DYNAHOME MUST BE SET, because mysql.ss and mysql.so
+are installed in $DYNAHOME/lib.
+
+Usage:
+
+  (load (build-path (getenv "DYNAHOME") "lib" "mysql.ss"))
+  (define c (make-object mysql%))
+  (send c connect "host" "user" "password")
+  (send c database "test")
+  (send c query "select * from table")
+  (send c store_result)
+
+If you get an error (return #f), you can obtain the error message with
+
+  (send c error)
+
+There are also slightly higher level methods:
+
+  (send c select "* from table")
+  (send c delete "from table where column = value")  returns affected_rows
+  (send c update "...")  returns affected_rows
+  (send c insert "into table values (value0, value1)  returns insert_id
+  (send c insert_id)
+  (send c affected_rows)
+
+You might need to use mysql_escape_string to ensure that strings are
+properly escaped for mysql.  See workspace.ss for an example.
+
+(not DrRon)
+Tue May 27 19:32:49 PDT 2003

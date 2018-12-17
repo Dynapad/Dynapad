@@ -1,0 +1,3 @@
+change Pad_Callback::Get() to call language->Get() if language is set,
+instead of just saying <C++ event handler>
+

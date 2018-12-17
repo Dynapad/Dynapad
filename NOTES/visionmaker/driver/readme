@@ -1,0 +1,28 @@
+Instructions to install the precompiled driver can be found in 
+the file SETUP. If you choose to compile the driver yourself, 
+instructions can be found in the file BUILD.
+
+These files are intended to help you get your tablet driver 
+installed and your XFree86 installation properly configured. 
+They do not cover tablet configuration or unrelated XFree86 
+issues.
+
+No warranty is provided and it is recommended that you backup 
+system critical files prior to proceeding with the installation.
+
+This driver has been tested on various Linux distributions and
+is compatible with the GTCO CalComp line of digitizer products. 
+This includes the following, and probably other models:
+
+CalComp:        CADPro (Serial, not USB)
+                DesignStation Pro
+                DrawingBoard III
+                UltraSlate
+
+Summagraphics:  SummaGrid V
+                SummaSketch III
+
+GTCO:           RollUp II
+
+See the GTCO CalComp website for more details:
+http://www.gtcocalcomp.com

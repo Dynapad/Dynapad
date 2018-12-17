@@ -1,0 +1,20 @@
+MAKE_MAP www.news.com
+return: url
+dimensions: 256 256
+dimension_type: fixed
+thumb_min_width: 10
+thumb_min_height: 10
+thumb_min_colors: 2
+thumb_min_width: 10
+layout: spiral
+thumb: http://www.news.com/Ads/Media/Images/1x1.gif?ffffffff http://x/
+thumb: http://www.news.com/Graphics/newscom.gif http://x/
+thumb: http://www.news.com/Graphics/bump.gif http://x/
+thumb: http://www.news.com/Ads/Media/Images/microsoft.portal2.portal.gif?ffffffff http://x/
+thumb: http://www.news.com/Graphics/masthead2.gif http://x/
+thumb: http://www.news.com/Ads/Media/Images/ms.triplenet2120x60.fdwindow.gif http://x/
+thumb: http://www.news.com/Images/Frontdoor/fd_1104memo_d.gif http://x/
+thumb: http://www.news.com/Images/Frontdoor/bump_5.gif http://x/
+thumb: http://www.news.com/Images/Frontdoor/fd_1104goingwireless_e.gif http://x/
+thumb: http://www.news.com/Images/Frontdoor/fd_1104fraud_d.gif http://x/
+

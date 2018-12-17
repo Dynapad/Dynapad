@@ -1,0 +1,265 @@
+C++ API Design Doc
+------------------
+
+This document describes the C++ API to Pad++.
+See the PADHOME/generic/api.h file for a complete specification
+of the API.
+
+The API was designed with the following high-level goals in mind:
+  - Written in C++
+  - Object-oriented
+  - Use safe and fast mechansim to access internal Pad++ objects
+  - Use Tcl's notion of "tags" for managing implicit groups of objects
+  - Shadow internal classes
+
+We decided to shadow internal classes instead of giving direct
+access to the Pad++ implementation classes because:
+  - We can package Pad++ in a friendly way independent of implementation
+  - We can change any internal implementation without affecting applications  
+  - Using these classes will only slow down applications a little
+
+Pad++ is a system which contains 4 kinds of things:
+Windows, Views, Surfaces, and Objects.
+Surfaces represent the dataspace that Objects sit on, where
+Objects are graphical entities that have a visible representation,
+and often support interaction.  Views represent a way to look at
+a particular part of a Surface.  Windows represent a top-level
+operating system window that are associated with a view and 
+a surface.  In addition, there is one special kind of object
+called a Portal which is an Object, and has a View that looks onto
+any Surface.
+
+Internal classes are shadowed with "handles" because they are small
+and are used to reference the internal Pad++ objects.  A handle can
+either reference a specific object, or a "tag".  A tag is a text
+string, and each object can have a list of tags.  Thus, any tag
+references all of the objects that share that tag.  In this way,
+handles can reference 0 or more objects.
+
+Handles are separate from objects.  A single object (such as a line)
+can have multiple handles or even none.  When an object is created, a
+handle can be created to reference that object if desired. Handles to
+objects are created through the Find methods (and can implicitly
+reference objects via tags.)  For this reason, deleting a handle does
+*not* delete the object referred to by that handle.  The Delete_obj()
+method must specifically be called to delete an object.
+
+Handles referencing specific objects are implemented with pointers to
+Pad++ objects, but are managed so that when a Pad++ object is deleted,
+all handles to that object are NULLed so that future references will
+just result in no operations.  This way, they are very fast, but memory
+safe.  It is impossible cause damage by using a handle to a deleted
+object.  Handles referencing objects via tags are also efficient
+because tags are implemented with hash tables.  Thus, getting all the
+objects referenced by a tag involves one hash table lookup.
+
+There is also one global instance of a Universe Manager.  The 
+Universe Manager is used to retrieve top-level things such as
+Pad++ surfaces, sounds, and animations.  That is, things that
+aren't accessible through Pad++ surfaces are accessible through
+the Universe Manager.
+
+Objects have many options which can be configured.  There are several
+options which are shared by all object types, and then many more
+options which apply to just certain object types.  In addition, there
+are some characteristics of objects which are very frequently used,
+and seem special.  Our approach to dealing with all of these options
+is to make generic Set_option() and Get_option() methods which handle
+most of the options we think will be less frequently used (both
+general and specific).  We also add specific methods for getting and
+setting object characteristics we think will be frequently used (this
+includs tags, coords, groups, bbox, and type).
+
+There are different handle types.  Every handle type is a C++ class
+that derives from the abstract base class Pad_Handle.
+  - class Pad_ObjHandle;    This is used to reference one or more graphical objects
+  - class Pad_PadHandle;    This references the Pad++ surface  
+  - class Pad_ViewHandle;   This references a view (top-level or portal)
+  - class Pad_TextHandle;   Used for text objects to do textual manipulations
+
+There are several utility classes that are used with the API:
+  - class Pad_BBox;         Specifies a bounding box
+  - class Pad_Point;        Specifies a two-dimensional point
+  - class Pad_List;         A generic growable list of (void *) pointers
+  - class Pad_HandleList;   A growable list of Pad_Handles.
+  - class Pad_PList;        A list of Pad_Point's
+  - class Pad_Iterator;     A class used to iterate over list members
+  - class Pad_TextIndex;    Used to specify position within text by (row,col) or index
+
+There are several utility types that are used with the API:
+  - Pad_Bool;               A Boolean - can be TRUE or FALSE
+  - Pad_UserOption;         User-defined option
+  - Pad_UserType;           User-defined type
+  - Pad_ObjectType;         Type of an object
+  - Pad_OptionType;         Option on an object
+  - Pad_HandleType;         Type of a handle
+  - Pad_MatchType;          Match type used by finding methods
+
+Finally, there are some macros that are quite useful:
+  - DOLIST		    Iterate over a list returning points to things 
+  - DOHANDLE                Iterate over all objects referenced by a handle
+  - DOSAFEHANDLE            Same as DOHANDLE, but deals objects getting deleted
+  - FIRSTHANDLEOBJ          Return the the first object referneced by a handle
+
+Here is some sample application code that uses this approach:
+
+    Sample(char *padName);
+    {
+        Pad_Handle handle;
+	Pad_PadHandle pad;
+        Pad_HandleList handles; // HandleList's delete handles when the list is deleted
+        Pad_Handle *handlePtr;
+        Pad_Iterator oi;
+
+	pad.Attach(padName);    // Associate pad handle with the right pad
+
+        padHandle.Create_obj(Pad_TextType, handle);       // Create a text object
+        handle.Set_option(Pad_TextOption, "foo bar");     // Set its text
+
+				// Rotate all objects with the tag "foo"
+	pad.Find_with_tagorid("foo", handles);
+	DOLIST(oi, handles, Pad_Handle, handlePtr) {
+	    handlePtr->Set_option(Pad_AngleOption, 30.0);
+	}
+    }
+
+
+The following is a sketch of the API classes.  Some classes are
+missing, and all are missing methods and parameters, but the general
+approach should be clear.  Only public methods are shown here
+
+class Pad_Handle
+{
+  public:
+    Pad_Handle();
+    Pad_Handle(Pad_Handle &handle);
+    virtual ~Pad_Handle();
+
+    virtual Pad_HandleType Get_handle_type(void) = 0;  // Return type of this handle
+
+    void * operator new(size_t size);          // Do our own memory management to avoid memory fragmentation
+    void   operator delete(void *object);
+};
+
+class Pad_ObjHandle : public Pad_Handle
+{
+  public:
+    Pad_ObjHandle();
+    Pad_ObjHandle(Pad_ObjHandle &objHandle);
+    Pad_ObjHandle(Pad_Object *obj);
+    Pad_ObjHandle(char *surfaceName, int objectId);
+    Pad_ObjHandle(Pad_SurfaceHandle &surface, int objectId);  
+    Pad_ObjHandle(Pad_SurfaceHandle &surface, char *tag);
+    Pad_ObjHandle(char *surfaceName, char *tag);
+    virtual ~Pad_ObjHandle();
+
+            void           Add_tag(char *tag);               // Add the specified tag
+            Pad_Bool       Append_coords(Pad_PList &pts);    // Append coordinates of objects
+            void           Attach(Pad_ObjHandle &objHandle); // Attach to object(s) referenced by handle
+            void           Attach(Pad_Object *obj);     // Set object referred to by this handle
+            void           Attach(Pad_SurfaceHandle &surface, int id);    // Set object by id
+            void           Attach(Pad_SurfaceHandle &surface, char *tagOrId); // Set object by tag
+            void           Attach(char *surfaceName, char *tagOrId);
+            void           Attach(char *surfaceName, int id);    // Set object by id
+    virtual void           Damage(void);                // Force this object to be redrawn
+            void           Delete_obj(void);            // Delete object associated with this handle
+            void           Delete_tag(char *tag);       // Delete the specified tag
+            void           Get_bbox(Pad_BBox &bbox);    // Returns global bbox of objects
+            void           Get_coords(Pad_PList &pts);  // Returns coordinates of object
+    virtual Pad_HandleType Get_handle_type(void);       // Return type of this handle
+            int            Get_id(void);                // Return unique id reference for this object
+            void           Get_group(Pad_ObjHandle &group); // Return group this object is a member of
+            Pad_ObjectType Get_object_type(void);       // Return type of object
+            void           Get_tags(Pad_List &tags);    // Fill in list with tags of object
+    virtual Pad_Bool       Is_mapped(void);             // Returns true if handle is mapped to an object or tag
+            Pad_Bool       Lower(void);	                // Lower objects to bottom of drawing order
+            Pad_Bool       Lower(Pad_ObjHandle &ref);   // Lower objects below reference
+            Pad_Bool       Raise(void);	                // Raise objects to top of drawing order
+            Pad_Bool       Raise(Pad_ObjHandle &ref);   // Raise objects above reference
+            Pad_Bool       Rotate(float theta);	        // Rotate objects about their anchor points
+            Pad_Bool       Rotate(float theta, Pad_Point &center); // Rotate objects about <center>
+            Pad_Bool       Scale(float x, float y, float zmult); // Scale objects
+            Pad_Bool       Slide(float dx, float dy);   // Slide objects in the plane
+            Pad_Bool       Set_coords(Pad_PList &pts);  // Set coordinates of objects
+            Pad_Bool       Set_option(Pad_OptionType optionType, ...);    // Set an option of an object
+            Pad_Bool       Set_options(Pad_OptionType optionType, ...);   // Set multiple options of an object
+            Pad_Bool       Set_transform(float x, float y, float s);      // Set transform of objects
+            Pad_Bool       Set_tags(Pad_List &tags);    // Set tags of objects
+            Pad_Bool       Set_tags(char *tags);        // Set tags of objects
+
+      // Methods related to event bindings
+            Pad_Bool       Bind(char *event, Pad_Callback *callback);
+            Pad_Bool       Get_binding(char *event);
+            Pad_Bool       Get_all_bindings(void);
+            Pad_Bool       Delete_binding(char *event);
+            void           Delete_all_bindings(void);
+};
+
+class Pad_SurfaceHandle : public Pad_Handle
+{
+  public:
+    Pad_SurfaceHandle();
+    Pad_SurfaceHandle(char *surfaceName);
+    Pad_SurfaceHandle(Pad_SurfaceHandle &surfaceHandle);
+    Pad_SurfaceHandle(Pad_WinHandle &winHandle);
+    virtual ~Pad_SurfaceHandle();
+
+            Pad_Bool       Attach(char *surfaceName);     // Set surface this handle references
+            Pad_Bool       Attach(Pad_SurfaceHandle &surfaceHandle);
+            Pad_Bool       Attach(Pad_WinHandle &winHandle);
+            Pad_Bool       Attach(Pad *pad);
+            Pad_Bool       Create_obj(Pad_ObjectType type);
+            Pad_Bool       Create_obj(Pad_ObjectType type, Pad_ObjHandle &handle);
+            Pad_Bool       Create_obj(Pad_ObjectType type, Pad_ObjHandle &handle, Pad_OptionType optionType, ...);
+    virtual void           Damage(void);                  // Force this surface to be redrawn
+            void           Find_with_tagorid(char *tagOrId, Pad_HandleList &handles, Pad_Bool groupMembers = FALSE);
+    virtual Pad_HandleType Get_handle_type(void);         // Return type of this handle
+    virtual char *         Get_name(void);                // Return the name of the pad
+            Pad_OptionType Get_option_type(char *optionName);
+    virtual Pad_Bool       Is_mapped(void);               // Returns true if handle is mapped to a surface
+
+				// Methods related to event bindings
+            void           Add_binding_modifier(char *modifier);
+            void           Delete_binding_modifier(char *modifier);
+            char *         Get_binding_modifier(void);
+            Pad_Bool       Set_binding_modifier(char *modifier);
+};
+
+class Pad_ViewHandle : public Pad_Handle
+{
+  public:
+    Pad_ViewHandle();
+    Pad_ViewHandle(Pad_ViewHandle &viewHandle);
+    Pad_ViewHandle(char *surfaceName);
+    virtual ~Pad_ViewHandle();
+
+            Pad_Bool       Attach(char *surfaceName);         // Set view referred to by this handle
+            Pad_Bool       Attach(Pad_ViewHandle &viewHandle);
+            Pad_Bool       Attach(Pad_View *view);
+    virtual Pad_HandleType Get_handle_type(void);             // Return type of this handle
+            Pad_Bool       Set_view(float xview, float yview, float zoom, 
+				    int animationTime=0, Pad_Bool twoStep=FALSE); // Set the position that this view can see
+};
+
+class Pad_WinHandle : public Pad_Handle
+{
+  public:
+    Pad_WinHandle();
+    Pad_WinHandle(Pad_WinHandle &winHandle);
+    Pad_WinHandle(char *surfaceName);
+    virtual ~Pad_WinHandle();
+
+            Pad_Bool       Attach(Pad_WinHandle &winHandle);
+            Pad_Bool       Attach(char *surfaceName);      // Set window this handle references
+            Pad_Bool       Attach(Pad_Win *win);
+    virtual Pad_HandleType Get_handle_type(void);          // Return type of this handle
+    virtual char *         Get_name(void);                 // Return the name of the pad
+};
+
+class Pad_UniverseMgr
+{
+  public:
+    Pad_Bool Create_win(Tcl_Interp *interp, char *surfaceName);  // Create a new window
+    Pad_Bool Create_win(Tcl_Interp *interp, char *surfaceName, Pad_WinHandle &win);
+    void     Get_surfaces(Pad_HandleList &handles);    // Retrieve all Pad++ surfaces
+};

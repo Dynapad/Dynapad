@@ -1,0 +1,26 @@
+# 0.2.7devo
+global Pad_ObjectList PADLOAD
+set Pad_ObjectList ""
+
+global _hyper
+    catch {unset _tmp}
+    set _tmp(ids) {}
+
+$PADLOAD config -background #8ea8ab
+set Pad_ID [$PADLOAD create polygon -104 41 -108 188 -29 70 109 129 21 5.99996 136 -114 -24 -66 -78 -187 -122 -48 -239 61 -239 61  -anchor center -maxsize 9959 -minsize 0 -place "-47.7284 0.455858 1" -tags item -visible 1 -fill #d8d802 -joinstyle miter -pen #965a96 -penwidth 4.86262]
+lappend Pad_ObjectList $Pad_ID
+
+
+
+$PADLOAD itemconfigure 1 -visiblelayers "all -filter"
+
+
+
+	foreach id $_tmp(ids) {
+	    set src $_tmp(src$id)
+	    set dst $_tmp(dst$id)
+	    set _hyper($src.obj) $dst
+	    lappend _hyper($dst.dst) $src
+	}
+    
+

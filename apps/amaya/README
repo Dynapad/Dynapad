@@ -1,0 +1,25 @@
+Incomplete example of laying out a gesture transcript.
+
+Assumes input file is tab separated.
+
+starttime endtime lefthand righthand other speaker text
+
+starttime and endtime are min:sec.
+
+Meanings of lefthand/righthand/other gestures are built into the code.
+
+Usage:
+
+  (load "amaya.ss")
+  (define x (make-object transcript% "Amaya-example.txt"))
+
+  (send x entries) ; returns list of entry% objects
+  (send entry lh)
+  (send entry text)
+  etc
+
+The layout is located at starttime in seconds times ten.
+For example, 1:01 is located at (610 0 1).
+
+Ron Stanonik
+Fri May  9 15:41:36 PDT 2003

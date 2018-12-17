@@ -1,0 +1,208 @@
+1. How to build cursor resource and put them into tk.rc
+
+   1.1 
+   Visual C++ don't support xbm file, first we need to convert the xbm file
+   in pad_devo/bitmaps to gif file using xv (unix), and then using photoshop
+   to convert the gif file to windows bmp file. 
+   
+   1.2 
+   Then in Visual C++ Microsoft Developer Studio, open \tk4.1\win\rc\tk.rc,
+   and then using menu Insert/resource, select cursor, and then click ok to
+   create a new cursor. 
+
+   1.3
+   Now open another Visual C++/Developer Studio, using Insert/resource, 
+   select cursor, and then click import, and then give the bmp file name,
+   the bmp file be imported in this resource. Now select Edit/Copy command.
+   (Note, after using this cursor import command, the imported bmp file
+   is only treated as bitmap file by VC++, not as cursor file, so we should
+   go one step further using copy/paste to a new cursor file with extension
+   .cur)
+
+   Go back to the first Develop Studio, select Edit/paste, then the bmp file
+   be put in the current cursor file. 
+
+   1.4 Continue step 1.2 and 1.3, repeat after load all the new bmp file and 
+   covert them to the cursor file. 
+
+   1.5 save tk.rc
+
+   1.6 Compare with original version of tk.rc, and get rid of all un-necessary
+   line, now try to open tk.rc in windows explorer, to see if there are
+   any problem.
+
+   1.7 recompile tk with command "nmake -f Makefile.vc"
+
+
+
+
+2. How image works in 8 bit color mode?
+
+   2.1. Tk reads image (color index) from a gif file and put its rgb 
+   value into image data.
+
+     2.1.1 ReadImage reads in a gif file which store the index of color
+       of each pixel, and convert the index to its relevent RGB 
+       value, and store it to the buffer.
+	
+	   ImgPhotoCreate (tkImgPhoto.c) ==>
+	   ImgPhotoConfigureMaster (TkImgPhoto.c) ==>
+	   FileReadGif (tkImgGif.c) ==>	
+	   ReadImage (tkImgGif.c) ==>
+
+	        buffer[ (xpos*3)  +  (ypos *len*3)] = colorMap[CM_RED][v];
+	        buffer[ (xpos*3)  +  (ypos *len*3) +1] = colorMap[CM_GREEN][v];
+	        buffer[ (xpos*3)  +  (ypos *len*3) +2] = colorMap[CM_BLUE][v];
+
+
+     2.1.2 ImgPhotoConfigureMaster(tkTmgPhoto.c) calls 
+       Tk_PhotoPutBlock to put the image data in the buffer into 
+       the image (PhotoMaster).
+
+
+
+  2.2. Tk gets image from  (PhotoMaster)master->image, converts the rgb of 
+   each pixel to color index in its ColorTable.
+
+        Tk_GetImage (tkImage.c) ==>
+        ImgPhotoGet (tkImgPhoto.c) ==>
+        ImgPhotoConfigureInstance  (tkImgPhoto.c) ==>
+        GetColorTable (tkImgPhoto.c) ==>
+        AllocateColors (tkImgPhoto.c) ==>
+
+   2.2.1 Builds ColorTable with palette of r,g,b (7,7,4), totally 
+     196 colors.
+		
+	 It allocates ColorTable colors[i], where i is 0-255, and color[i].red,
+	 colors[i].green, colors[i].blue be the value in between 
+	 0-65535. 
+
+	 Colors[i].pixel is allocated by XAllocColor, which try to
+	 find the closest available color to the specified color value,
+	 
+	 
+	    newPixel = RGB(entry.peRed, entry.peGreen, entry.peBlue);
+	    closePixel = GetNearestPaletteIndex(cmap->palette, newPixel);
+	    GetPaletteEntries(cmap->palette, closePixel, 1, &closeEntry);
+	    closePixel = RGB(closeEntry.peRed, closeEntry.peGreen,
+		                 closeEntry.peBlue);
+	 
+	 After it finds closest pixel, colors[i].pixel store the 
+	 PALETTERGB of that color entry in system colormap.
+
+    	    color[i].pixel = PALETTERGB(entry.peRed, entry.peGreen, entry.peBlue);
+
+	 The PALETTERGB macro accepts three values that represent 
+     the relative intensities (0-255) of red, green, and blue and 
+     returns a palette-relative red, green, blue (RGB) 
+     specifier consisting of 2 in the high-order byte and \
+     an RGB value in the three low-order bytes. An application
+     using a color palette can pass this specifier, instead of
+     an explicit RGB value, to functions that expect a color.
+
+	    #define RGB(r, g ,b)  ((DWORD) (((BYTE) (r) | \ 
+	    			   ((WORD) (g) << 8)) | \ 
+	    	                   (((DWORD) (BYTE) (b)) << 16))) 
+ 	    #define PALETTERGB(r, g, b)  (0x02000000 | RGB(r, g, b)) 
+
+
+    2.2.2 After allocated all of the necessary 196 colors, 
+    	tk will map each color with r (0-255), g(0-255), b(0-255)
+    	to an index (0-195) of the ColorTable, since on windows,
+    	tk acturally store index not pixel value, and it will pass
+    	its ColorTable to the TkPutImage call. 
+  
+    2.2.3 Set up quantization tables for dithering
+	    
+    	rMult = nGreen * nBlue;
+        for (i = 0; i < 256; ++i) {	
+
+		                 // calculates the index in the ColorTable
+	   r = (i * (nRed - 1) + 127) / 255;
+	   g = (i * (nGreen - 1) + 127) / 255;
+	   b = (i * (nBlue - 1) + 127) / 255;
+	    
+    	   r *= rMult;
+	   g *= nBlue;
+	   colorPtr->redValues[i] = r;
+	   colorPtr->greenValues[i] = g;
+	   colorPtr->blueValues[i] = b;
+
+			     // quantization table for dithering
+	   fr = (double) colors[r].red / 65535.0;
+	   fg = (double) colors[g].green / 65535.0;
+	   fb = (double) colors[b].blue / 65535.0;
+	    
+	   colorPtr->colorQuant[0][i] = (int)(fr * 255.99);
+	   colorPtr->colorQuant[1][i] = (int)(fg * 255.99);
+	   colorPtr->colorQuant[2][i] = (int)(fb * 255.99);
+        }
+
+
+   2.3. Dither image, store the color index of each pixel in the image
+      not its rgb value.  
+
+      ImgPhotoGet ==>
+      ImgPhotoConfigureInstance ==>
+      DitherInstance ==>
+
+    2.3.1 After creating image, dither the image by dithering three 
+       component independently, using Floyd-Steinberg dithering,
+       which propagates errors from the quantization of
+       pixels to the pixels below and to the right. 
+
+    2.3.2 Translate the quantized component values into an index
+       value, and store it in the image.
+		   
+	
+	  for (y = yStart; y < yEnd; ++y) {
+	    srcLinePtr = masterPtr->pix24 + yStart * lineLength + xStart * 3;
+        xEnd = xStart + width;
+	    imagePtr->data = (char *) ckalloc((unsigned) (imagePtr->bytes_per_line * nLines));
+	    dstLinePtr = (unsigned char *) imagePtr->data;
+            destBytePtr = dstLinePtr;
+
+	    for (x = xStart; x < xEnd; ++x) {    
+	    	for (i = 0; i < 3; ++i) {
+	    	    /*
+	    	     * Compute the error propagated into this pixel
+	    	     * for this component.
+	    	     * If e[x,y] is the array of quantization error
+	    	     * values, we compute c = e[x,y]
+	    	     *     7/16 * e[x-1,y] + 1/16 * e[x-1,y-1]
+	    	     *   + 5/16 * e[x,y-1] + 3/16 * e[x+1,y-1]
+	    	     * and round it to an integer.
+	    	     *
+	    	     * The expression ((c + 2056) >> 4) - 128
+	    	     * computes round(c / 16), and works correctly on
+	    	     * machines without a sign-extending right shift.
+	    	     */
+	    	    
+	    	    c = ((c + 2056) >> 4) - 128 + *srcPtr++;
+	    	    if (c < 0) {
+	    		c = 0;
+	    	    } else if (c > 255) {
+	    		c = 255;
+	    	    }
+	    	    col[i] = colorPtr->colorQuant[i][c];
+	    	    *errPtr++ = c - col[i];
+	    	}
+		    
+	        /*
+	         * Translate the quantized component values into
+	         * an X pixel value (index 0-195), and store it in the image.
+	         */
+
+	        i = colorPtr->redValues[col[0]]
+	    	    + colorPtr->greenValues[col[1]]
+	    	    + colorPtr->blueValues[col[2]];
+		    
+		    
+    		*destBytePtr++ = i;
+			
+
+
+   2.4. Update the pixmap for the instance with the block pixels 
+     we have just computed, by calling TkPutImage, passing in 
+     image data (color index of each pixel) and ColorTable 
+     (196 entries of color index)

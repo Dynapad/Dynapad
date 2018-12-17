@@ -1,0 +1,55 @@
+
+======== CONNECT DYNAPAD OBJECTS TO EXTERNAL OBJECTS (IMAGES, FILES, WEBPAGES)
+
+--- Motivation: Personal Information Workspace ------------------
+
+A very interesting use of Dynapad is in the manipulation of user information
+"documents".  Use dynapad's features of multiscale viewing and active
+computational behavior to display, arrange, sort, cull, and annotate all the
+elements in a user's digital life.  Examples are image files, text files,
+pdf-ps-doc files, email messages, and webpages.  (Also video, audio, and
+other multimedia filetypes).
+
+Imagine a multiscale desktop GUI.
+
+Dynapad is already used to view image files from the file system.
+
+--- Primary Issues ----------------------------------------------
+
+ - Store annotations and other meta-data about external objects
+ - Running applications and OS utilities from inside dynapad.
+ - A general mechanism for locating external objects.
+
+--- Tri-Level Representation ------------------------------------
+
+Summary:
+Dynapad content is represented/saved at three levels:
+
+I)  Content (File?) --
+    unmodified raw data
+    (e.g. image; pdf document; html page; chunk of text; movie, audio clip)
+
+    These files exist independently of dynapad, anywhere in the file system.
+
+II) Object (Page?/Element?/Document?) --
+    A situated element of a collection, augmented with metadata
+    relevant to that context/colection/workspace/activity
+
+    Objects are saved in an abstract "database", either:
+    -- an actual mysql database, or
+    -- cheap version: set of indexed files in personal .cache directory
+    In either case, the representations are:
+    -- localized (all data in one place)
+    -- directly editable (w/o dynapad)
+    -- reference shared content files
+
+III) Copy (Rendering/Token/Instance/Link/Alias) --
+     A dynapad object, in a specific location with particular visual features,
+     which is one (of many) incarnations of an object in a collection.
+
+     Presence/location/properties of a copy are a function of Views onto
+     collection (e.g. pile regions, feature halos, timelines, etc.)
+
+     Saved either implicitly (i.e. regenerated on demand by view) or
+     embedded in dynapad file
+

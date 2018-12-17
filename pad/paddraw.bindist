@@ -1,0 +1,18 @@
+#! /bin/sh
+#
+# 'pad' is a simple script which runs Pad++ (padwish)
+# with the PadDraw application.
+#
+# Change the definition of PADHOME to the complete pathname
+# of the directory that this file is in.
+#
+PADHOME=`pwd`
+export PADHOME
+TCL_LIBRARY=$PADHOME/tcl8.0
+export TCL_LIBRARY
+TK_LIBRARY=$PADHOME/tk8.0
+export TK_LIBRARY
+ELK_LOADPATH=$PADHOME/scheme-runtime
+export ELK_LOADPATH
+
+$PADHOME/padwish $PADHOME/draw/pad.tcl $*

@@ -1,0 +1,53 @@
+{ -> Button
+   0 -> X 0 -> Y
+   Button 'fill_border tclget2 -> Inactive_border
+   Button 'activefill_border tclget2 -> Active_border
+   Button 'borderwidth tclget2 -> Border_width
+   Button 'pen tclget2 -> Pen
+   Button 'active tclget2 -> Active?
+   Button 'arm tclget2 -> Arm?
+   Button 'width tclget2 -> Width
+   Button 'height tclget2 -> Height
+   Button 'font tclget2 -> Font
+   Button 'fontsize tclget2 -> Size
+   Active? ( Active_border | Inactive_border ) => Border
+   Button 'padx tclget2 -> PadX
+   Button 'pady tclget2 -> PadY
+   Button 'image tclget2 -> Image
+   Button 'text tclget2 => Text
+   Button 'boxfill tclget2 -> BoxFill
+   Button 'value tclget2 -> Value?
+
+   { -> Type
+      X Y join X Width + Y Height + join Border_width Border Type drawborder
+   } -> draw_button_border
+
+	       	                               /* Render body */
+   Arm? ( SUNKEN | RAISED ) draw_button_border
+
+                                               /* Render checkbox */
+   PadX -> X
+   PadY -> Y
+   Arm? ( X Border_width + -> X  Y Border_width - -> Y )
+   Size -> Width
+   Size -> Height
+   SUNKEN draw_button_border
+   Value? (
+      X Border_width + -> X1
+      X Size + Border_width - -> X2
+      Y Border_width + -> Y1
+      Y Size + Border_width - -> Y2
+      BoxFill setcolor
+      X1 Y1 join X2 join Y1 join X2 join Y2 join X1 join Y2 join drawpolygon
+   )
+                                               /* Render image */
+   Image "" != ( Image Xoffset Yoffset join drawimage )
+
+                                               /* Render text */
+   Pen setcolor
+   Font setfont
+   Size setfontheight
+
+   Text X Size + PadX 1.25 * + Y Border_width 2 / + join drawtext
+
+} => checkbutton_render

@@ -1,0 +1,18 @@
+Mysterx provide scheme access to COM objects.
+Mysterx must be installed separately, see www.plt-scheme.org.
+
+Here are some examples of mysterx:
+
+  tracking urls from ie
+  excel
+  mediaplayer
+
+The mediaplayer seems to require being hosted in an mx-browser.
+
+I'm working on more complete examples.
+
+See collects/mysterx/doc.txt and collects/mysterx/msdemo.ss.
+There are also two postscript documents in www.plt-scheme.org.
+
+Ron
+Fri Jun 27 14:49:27 PDT 2003

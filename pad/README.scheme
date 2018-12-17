@@ -1,0 +1,152 @@
+Pad++ now has basic scheme support included in the distribution.
+We have chosen the ELK-3.0 scheme system.  It must be built, and
+installed separately from Pad++.  It can be fetched from:
+   ftp://www.informatik.uni-bremen.de/~net/elk/dist/elk-3.0.tar.gz
+   ftp://ftp.x.org/contrib/devel_tools/elk-3.0.tar.gz
+   ftp://ftp.cs.indiana.edu/pub/scheme-repository/imp/elk-3.0.tar.gz
+The home page for Elk is
+   http://www.informatik.uni-bremen.de/~net/elk/elk.html
+
+There are two steps to building Pad++ with Scheme.  The first is to build 
+Elk, and the second is to configure Pad++ to use Elk, and then build it.
+
+=================================================================
+= Building Elk
+=================================================================
+The Elk README describes how to build it, but briefly, you must
+do the following things:
+  1) In the config directory, make a symbolic link called "system" 
+     which links to the appropriate architecture-dependent file.
+  2) Also in the config directory, edit the "site" file to change
+     the installation directories.  Change at least the "install_dir"
+     variable.
+  3) At the top level of the ELK distribution, edit the Makefile, and
+     remove the references to X-related directories in the SUBDIRS
+     variable.  It probably should end up looking like this:
+         SUBDIRS= include\
+	          scripts\
+		  src\	
+		  scm\	
+		  lib/misc\
+		  lib/unix
+  4) At the top level, type "make"
+  5) Create the installation directory that you specified in Makefile.
+     The Elk installation isn't smart enough to make this directory for you.
+  6) At the top level, type "make install"
+
+=================================================================
+= Building Pad++ with Elk support
+=================================================================
+1) Configure Pad++ by running "configure"
+2) Edit src/Makefile, and change the definition of INCLUDE_SCHEME
+   from FALSE to TRUE.  On the next line, change the definition of
+   ELK to contain the top-level directory of the ELK installation.
+   Note: You must install Elk, you can not build Pad++ using the
+   Elk directory from the Elk source tree.
+3) Type 'make'.
+4) Set the environment variable ELK_LOADPATH to specify the directory
+   that contains the ELK runtime code (specifically, it must contain
+   the initscheme.scm file).
+
+=================================================================
+= Using Elk Scheme from Pad++
+=================================================================
+Elk is accessible from Pad++ through Tcl via  the pad "scm" command.
+The "scm" command currently supports the following subcommands:
+
+   1) load - Loads a Scheme file
+      Ex: .pad scm load "test.scm"
+
+   2) eval - Evaluates a Scheme expression passed as a string
+	     to the Tcl interpreter.  Note: This is extremely
+             difficult to use because of quoting confusion 
+	     between the two languages.  It is highly recommended
+	     that you write Scheme code in a separate file and
+	     load it with the "load" command, and then evaluate
+	     a very simple expression with the "eval" command.
+      Ex: "set a [.pad scm eval "(+ 2 2)"]"
+	  This sets the Tcl variable "a" to the result of
+	  the Scheme expression (+ 2 2), and ends up containing
+	  the string "4".
+
+Elk is also accessible through a scheme top-level interpreter
+which can be accessed with the pad "settoplevel" command.
+Scheme also has a settoplevel command to return back to Tcl.
+    Ex: %
+	% .pad settoplevel scheme
+	> (+ 2 2)
+	4
+	> (settoplevel 'tcl)
+	%
+	%
+
+padwish may also be started up directly in scheme with the
+-language command option.  Ex:  padwish -language scheme
+
+=================================================================
+= Executing Pad++ code from Scheme
+=================================================================
+There is a scheme function call "pad".  It takes as its arguments
+The name of a pad widget followed by exactly the same arguments
+as would be evaluated by the Tcl interpreter.  Note however,
+that all symbols must be quoted to avoid evaluation by the
+scheme interpreter.  
+    Ex: (pad '.pad 'create 'line 0 0 100 100 '-pen 'red)
+    Ex: (set! item (pad '.pad 'create 'line 0 0 100 100))
+    Ex: (pad '.pad 'moveto 0 0 1)
+The Pad++ reference manual documents all of these functions.
+
+Callbacks (from events, timers, etc.) can be in any supported
+scripting language, including scheme.  By default, Pad++ guesses
+what language a script is written in, but this can be specified
+with the setlanguage command. The standard macro expansions occur
+for the scheme scripts in event handlers.
+    Ex: (pad '.pad 'bind item '<ButtonPress> "(pad '.pad 'ic %O '-pen 'red)")
+
+=================================================================
+= An Example of Elk Scheme and Pad++
+=================================================================
+If the following Scheme code is in the file "test.scm",
+you can execute it by typing the following two lines in
+Pad++ Tcl interpreter:
+
+% .pad scm load "test.scm"
+% .pad scm eval "(go)"
+
+Or, this can be executed by using the top-level scheme interpreter:
+
+% .pad settoplevel scheme
+> (load 'test.scm)
+> (go)
+>
+
+----- test.scm -----
+(define lines
+  (lambda (x y s)
+    (let ((item))
+      (do ((i 0 (+ i 1)))
+	  ((> i 10) #f)
+	(set! item (pad '.pad 'create 'line x y (+ x (/ 100 s)) (+ y (/ (* i 10) s))))
+	(pad '.pad 'itemconfigure item '-penwidth (/ 3.0 s) '-tags 'line)
+	(pad '.pad 'update)
+	(pad '.pad 'bind 'line '<Enter> "(pad '.pad 'ic %O '-pen 'red)")
+	(pad '.pad 'bind 'line '<Leave> "(pad '.pad 'ic %O '-pen 'black)")
+	)
+      )))
+
+(define go
+  (lambda ()
+    (let ((x 0)
+	  (y 0)
+	  (scale 0))
+      (do ((i 1 (+ i 1)))
+	  ((= i 10) #f)
+	(set! scale (exp i))
+	(pad '.pad 'moveto x y scale 1000)
+	(lines x y scale)
+	(set! x (+ x (/ 100 scale)))
+	(set! y (+ y (/ 100 scale)))
+	)
+      )
+    ))
+

@@ -1,0 +1,22 @@
+# This makefile compiles the dynapad .ss to .so.
+# Need to replace load with load/use-compiled to use the .so.
+#
+# Put this makefile in dynapad/compiled/native/i386-linux
+# and make all.
+#
+
+SSDIR=../../..
+
+%.so: $(SSDIR)/%.ss
+	mzc --extension $<
+
+OBJS= actor.so actortimer.so alist.so arrange.so bbox.so button.so \
+dynapad-c-api.so dynapad.so events.so fancy-draw.so flow.so flowdemo.so \
+geo-tools.so geometry.so menu.so menubar.so menudemo.so misc.so \
+nice_physics.so padwedge.so physics.so profile.so regions.so \
+slides.so strings.so thread.so thumbs.so workspace.so xsml.so zoom.so
+
+all: $(OBJS)
+
+clean:
+	rm -f $(OBJS)

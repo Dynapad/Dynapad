@@ -1,0 +1,219 @@
+GENERAL
+=======
+
+This driver allows you to use certain GTCO/CalComp devices under Linux
+with XFree86.
+
+This document assumes you are familiar with configuring XFree86.
+
+You should have received pre-compiled binaries. To build the driver
+yourself, refer to the BUILD file in this archive.
+
+
+INSTALLING
+==========
+
+-----------
+XFree86 4.x
+-----------
+
+Copy the file gtcc_drv.o with the rest of the XFree86 input modules.
+On many systems this will be /usr/X11R6/lib/modules/input.
+
+You must edit your XF86Config file to support your tablet. Use the
+following example when you edit your own XF86Config file:
+
+##BEGIN COPY##
+
+# You should already have a "ServerLayout" section!
+Section "ServerLayout"
+        # don't remove items already in this section!
+        InputDevice     "Tablet"        "AlwaysCore"
+EndSection
+
+Section "InputDevice"
+        Identifier      "Tablet"
+        Driver          "gtcc"
+        Option          "Device"        "/dev/ttyS0"
+        Option          "Mode"          "Absolute"
+        Option          "DataFormat"    "GTCO_Type5"
+#       Option          "DataFormat"    "GTCO_CC"
+#       Option          "DataFormat"    "Summa_MM"
+#       Option          "DataFormat"    "Summa_UIOF"
+#       Option          "EmulateMouse"  "yes" # default is no
+#       Option          "BaudRate"      "19200" # default is 9600
+        Option          "MaxX"          "12000"
+        Option          "MaxY"          "12000"
+EndSection
+
+##END COPY##
+
+-----------
+XFree86 3.x
+-----------
+
+Please try to use at least version 3.3.3.1 of XFree86 because it has
+several bug fixes relating to XInput.
+
+Copy the file xf86GtcoCC.so with the rest of the XFree86 modules. On
+many systems this will be /usr/X11R6/lib/modules.
+
+You must edit your XF86Config file to support your tablet. Use the
+following example when you edit your own XF86Config file:
+
+##BEGIN COPY##
+
+Section "Module"
+        load    "xf86GtcoCC.so"
+EndSection
+
+Section "XInput"
+        SubSection              "gtcocursor"
+                Port            "/dev/ttyS0"
+                DeviceName      "Tablet"
+                Mode            Absolute
+                DataFormat      GTCO_Type5
+#               DataFormat      GTCO_CC
+#               DataFormat      Summa_MM
+#               DataFormat      Summa_UIOF
+#               EmulateMouse    yes # default is no
+#               BaudRate        19200 # default is 9600
+                AlwaysCore
+                MaxX            12000
+                MaxY            12000
+        EndSubSection
+EndSection
+
+##END COPY##
+
+
+Device/Port
+-----------
+
+This is the serial port your tablet is plugged into.
+
+
+DeviceName/Identifier
+---------------------
+
+This can be whatever you want.
+
+
+DataFormat+BaudRate
+-------------------
+
+You must set these two values correctly for the type of tablet you have.
+
+Tablet                          DataFormat      BaudRate
+------                          ----------      --------
+CADPro                          GTCO_CC         19200
+Creation Station                GTCO_CC         9600
+Design Station                  GTCO_CC         9600
+Drawing Board (all models)      GTCO_CC         9600
+Drawing Slate (all models)      GTCO_CC         9600
+Estimat                         GTCO_CC         9600
+Ultra Slate                     GTCO_CC         9600
+A Tablet                        GTCO_Type5      9600
+AccuTab (AT)                    GTCO_Type5      9600
+CalComp Super L III             GTCO_Type5      9600
+Cordless Roll-Up                GTCO_Type5      9600
+L Tablet                        GTCO_Type5      9600
+Roll-Up                         GTCO_Type5      9600
+Roll-Up II                      GTCO_Type5      9600
+SketchMaster                    Summa_MM        9600
+Super L Tablet (SL)             GTCO_Type5      9600
+Super L II (SL2)                GTCO_Type5      9600
+Super L II Plus (SL2+)          GTCO_Type5      9600
+Super LX (SLX)                  GTCO_Type5      9600
+SurfaceLit AccuTab (SL/AT)      GTCO_Type5      9600
+Type 5 Compatible               GTCO_Type5      9600
+Type 5A                         GTCO_Type5      9600
+Ultima                          Summa_MM        9600
+Ultima II                       GTCO_CC         9600
+GTCO Type 5 Compatible          GTCO_Type5      9600
+MicroGrid                       Summa_UIOF      9600
+SummaGrid                       Summa_UIOF      9600
+SummaSketch with
+ - 4 button cursor              Summa_MM        9600
+ - 16 button cursor             Summa_UIOF      9600
+
+
+Mode
+----
+
+This may be Absolute or Relative.
+
+If you select Absolute, each point on your tablet will be directly mapped
+to one point on the screen.
+
+If you select Relative, the screen cursor will move more like a mouse.
+
+
+MaxX+MaxY
+---------
+
+This is the x and y size of your tablet in inches, times 1000. If you're
+not sure how big your tablet is, use Absolute mode, then make a guess
+here. If you can't use the entire area of your tablet to point, or if you
+can't reach a section of the screen from your tablet, quit X, change MaxX
+and MaxY, then restart X.
+
+
+BUILDING
+========
+
+There is a separate file, BUILD, that describes building the driver.
+
+
+
+MISC
+====
+
+Reconfiguring buttons
+---------------------
+
+If you are unhappy with the button layout of device, you can use the
+xinput utility, written by Frederic Lepied, to remap the buttons. You
+can obtain xinput at ftp://ftp.x.org/contrib/utilities/xinput-1.2.tar.gz
+
+To swap the first and second buttons, you'd use a command like this:
+
+xinput set-button-map Tablet 2 1
+
+
+Pressure support in The GIMP
+----------------------------
+
+If have a pressure tablet, but don't seem to be getting pressure in
+pressure in The GIMP, you may need to rebuild Gtk+ with xinput support.
+
+To add xinput support to Gtk+:
+./configure --prefix=/usr --with-xinput=xfree
+
+After rebuilding the Gtk+ library with xinput support, you must rebuild
+The GIMP.
+
+You must tell The GIMP to use your tablet in order to get it to recognize
+pressure data. To do this, go into the "Input" dialog (available under
+"File->Dialogs->InputDevices..."), and change the mode of the tablet
+to "Screen" or "Window".
+
+However, if you want to paint in The GIMP with a non-pressure pen or
+cursor, then you must do one of two things. Either the tablet must be
+disabled in the "Input" dialog, or you must enable the tablet in the
+"Input" dialog but disable the "Pressure" axis.
+
+
+Using the CadPro mouse
+----------------------
+
+To get the scrolling and proper button mapping for the CadPro mouse, you
+must use the EmulateMouse option. See the sample snippets of XF86Config
+for how to do this.
+
+
+KNOWN BUGS
+==========
+
+- X may crash if the cursor or pen is resting on the tablet when X is
+started.

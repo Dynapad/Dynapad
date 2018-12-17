@@ -1,0 +1,31 @@
+#! /bin/sh
+#
+# 'pad' is automatically generated from 'pad.in' by substitution
+# (see the configure file).
+#
+PADHOME=@PADHOME@
+export PADHOME
+TCL_LIBRARY=@TCL_LIBRARY@
+export TCL_LIBRARY
+TK_LIBRARY=@TK_LIBRARY@
+export TK_LIBRARY
+CPU=`uname -m | tr / -`
+OS=`uname -s | tr / -`
+if test "$OS" = "SunOS"; then
+    OSRELEASE=`uname -r`
+    if test $OSRELEASE -ge 5.0; then
+	OS="Solaris"
+    fi
+fi
+if test "$OS" = "AIX"; then
+    CPU=$HOSTTYPE
+fi
+if test "$OS" = "IRIX"; then
+    CPU=MIPS
+fi
+if test "$OS" = "IRIX64"; then
+    CPU=MIPS
+    OS=IRIX
+fi
+ARCH="bin-$CPU-$OS"
+$PADHOME/$ARCH/padwish $*

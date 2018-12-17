@@ -1,0 +1,31 @@
+To compile Pad++ on Windows95 or NT, you must follow these steps.
+You must have Microsoft Visual C++ Version 4.x
+
+1. Build tcl7.6/tk4.2 
+   1.1 Get Winzip32 or gnu tools 
+   1.2 Get tcl7.6.tar.gz and tk4.2.tar.gz from ftp://ftp.sunlabs.com/pub/tcl
+   1.3 Extract the files into \tcl7.6 and \tk4.2
+       Use 'gunzip tcl7.6.tar.gz |tar xvf -' 
+       or use winZip32 tools to unzip the file and extract the files.
+   1.4 Replace the tk4.2\win\rc directory with pad\win\rc directory.
+       This is necessary to allow access to the Pad++ cursors.
+       You can do this by renaming the tk4.2\win\rc directory
+       to something like origrc, and then copying pad\win\rc
+       into tk4.2\win.
+   1.5 Replace the file tk4.2\win\stubs.c with the version in
+       pad\win\stubs42.c.  This is necessary to complete Tk's
+       emulation of X.
+   1.6 Build Tcl and Tk with the following commands:
+       cd \tcl7.6\win
+       nmake -f Makefile.vc
+
+       cd \tk4.2\win
+       nmake -f Makefile.vc
+
+2. Build Pad++
+   2.1 Edit pad/win/makefile and change of the paths at the beginning
+       of the makefile to describe where components are on your system.
+   2.2 Compile Pad++ with:
+          cd pad/win
+          nmake
+

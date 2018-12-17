@@ -1,0 +1,31 @@
+To run dt-dynapad apps, you'll need a working /dev/DiamondTouch device.
+For now this is outside the scope of this document.
+
+Let DYNAPAD be the Dynapad root directory. First build the dt libraries:
+
+  $ (cd DYNAPAD/apps/dt/libdt && ./configure && make)
+
+Then build touchd:
+
+  $ (cd DYNAPAD/apps/dt/touchd && ./configure && make)
+
+Then build the mzscheme extension for reading from touchd's socket:
+
+  $ (cd DYNAPAD/apps/dt/mzdt && make)
+
+Now start touchd, the daemon that reads raw signals from
+/dev/DiamondTouch and offers the resulting processed "touch" information
+to any interested clients on a UNIX-domain datagram socket. We'll run it
+in the background:
+
+  $ DYNAPAD/apps/dt/touchd/touchd &
+
+Now you can run dt-dynapad apps. For example, to run dt-paint:
+
+  $ mred -z
+  MrEd version 202.5, Copyright (c) 1995-2002 PLT
+  > (load "DYNAPAD/dynapad.ss")
+  > (load "DYNAPAD/apps/dt-dynapad/dt-paint.ss")
+  #t
+
+Voila!

@@ -1,0 +1,39 @@
+#!/bin/tcsh
+
+# thumbify_dir        ---> thumbify current dir, size = 125
+# thumbify_dir dir    ---> thumbify dir, size = 125
+# thumbify_dir dir sz ---> thumbify dir, size = sz
+
+# could use additional testing
+
+set dir=.
+if ($1 != "") then
+  set dir=$1
+endif
+
+set size=125
+if ($2 != "") then
+  set size=$2
+endif
+
+cd $dir
+set dir=`pwd`
+
+mkdir $dir/thumbs
+mkdir $dir/thumbs/$size
+
+foreach i ( *.{jpg,Jpg,JPG,gif,Gif,GIF} )
+set f="$i"
+set f=`echo "$f" | sed -e "s,\.jpg,-$size\.jpg,g"`
+set f=`echo "$f" | sed -e "s,\.Jpg,-$size\.jpg,g"`
+set f=`echo "$f" | sed -e "s,\.JPG,-$size\.jpg,g"`
+set f=`echo "$f" | sed -e "s,\.gif,-$size\.jpg,g"`
+set f=`echo "$f" | sed -e "s,\.Gif,-$size\.jpg,g"`
+set f=`echo "$f" | sed -e "s,\.GIF,-$size\.jpg,g"`
+set t="$dir/thumbs/$size/$f"
+echo "   t = $t"
+if  (-e "$t" == 0)  then
+  thumbify thumb_max_size=$size "$i" "$t" |& grep successfully
+endif
+end
+

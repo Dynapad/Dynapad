@@ -1,0 +1,30 @@
+MAKE_MAP foo
+dimensions: 500 500
+dimension_type: min-square
+return: url
+layout: grid
+replace: overwrite
+filter: gaussian
+thumb_min_width: 10
+thumb_min_height: 11
+thumb_min_colors: 2
+thumb_max_size: 150
+background_color: 0x1f9d00
+background_thumb_url: http://www.cs.unm.edu/~jon/skull3thumb.gif
+background: tile
+rate: area-colors
+default_url: http://www.cs.unm.edu/~jon/
+thumb: http://www.cs.unm.edu/~jon/rhianna/glasses.2.jpg http://www.cs.unm.edu/~jon/rhianna/
+thumb: http://www.cs.unm.edu/~jon/manda/proposal/bhutmara2.jpg http://www.cs.unm.edu/~jon/mandala/proposal/
+thumb: http://www.cs.unm.edu/~jon/bryce/fairytale.jpg http://www.cs.unm.edu/~jon/bryce/
+thumb: http://www.cs.unm.edu/~jon/bryce/grandcanyon3.jpg http://www.cs.unm.edu/~jon/bryce/
+thumb: http://www.cs.unm.edu/~jon/bryce/shaman.jpg http://www.cs.unm.edu/~jon/bryce/
+thumb: http://www.cs.unm.edu/~jon/rhianna/card.jpg http://www.cs.unm.edu/~jon/rhianna/
+thumb: http://www.cs.unm.edu/soe/image/photo/sandia2.640.jpg http://www.cs.unm.edu/soe/
+thumb: http://www.cs.unm.edu/soe/image/photo/image08.jpg http://www.cs.unm.edu/soe/
+thumb: http://www.cs.unm.edu/~jon/jon3.gif http://www.cs.unm.edu/~jon/
+thumb: http://www.cs.unm.edu/~jon/jon4.gif http://www.cs.unm.edu/~jon/
+thumb: http://www.cs.unm.edu/~jon/test.gif http://www.cs.unm.edu/~jon/
+thumb: http://www.cs.unm.edu/~jon/skull3thumb.gif http://www.cs.unm.edu/~jon/
+thumb: http://seds.lpl.arizona.edu/nineplanets/nineplanets/gif/spinning_globe2.gif http://seds.lpl.arizona.edu/nineplanets/
+thumb: http://www.nopres.co.uk/images/bands/boxes/all.gif http://www.nopres.co.uk/

@@ -1,0 +1,130 @@
+# 0.2.7devo
+global Pad_ObjectList PADLOAD
+set Pad_ObjectList ""
+
+global _hyper
+    catch {unset _tmp}
+    set _tmp(ids) {}
+
+$PADLOAD config -background #8ea8ab
+set Pad_ID [$PADLOAD create polygon -4.75727 -339.268 -30.5775 -299.731 -6.47861 -299.731 -28.8562 -246.562 2.12816 -254.742 -27.1348 -227.476 -3.03584 -202.936 83.0317 -237.019 83.0317 -219.296 117.458 -228.839 143.279 -234.292 143.279 -219.296 169.099 -239.746 145.001 -250.652 145.001 -250.652  -anchor center -maxsize 9959 -minsize 0 -place "126.586 -250.746 0.920402" -tags item -visible 1 -fill #505050 -joinstyle miter -pen #505050 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 380.092 -316.652 377.793 -299.467 370.955 -282.705 359.745 -266.781 344.44 -252.082 325.417 -238.975 303.143 -227.78 278.167 -218.774 251.105 -212.177 222.622 -208.153 193.418 -206.8 164.217 -208.153 135.733 -212.177 108.671 -218.773 83.695 -227.78 61.4207 -238.975 42.3972 -252.082 27.0924 -266.78 15.8823 -282.705 9.04383 -299.466 6.74543 -316.652 9.04383 -333.836 15.8816 -350.598 27.0917 -366.523 42.3964 -381.221 61.4199 -394.328 83.6942 -405.523 108.67 -414.529 135.731 -421.127 164.215 -425.151 193.418 -426.503 222.62 -425.151 251.104 -421.127 278.166 -414.53 303.142 -405.524 325.416 -394.328 344.44 -381.221 359.744 -366.524 370.954 -350.598 377.793 -333.837  -anchor center -maxsize 9959 -minsize 0 -place "229.295 -321.976 0.920402" -tags item -visible 1 -fill #505050 -joinstyle round -pen #505050 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 63.1616 -374.054 59.7848 -369.986 55.1317 -366.838 49.3167 -364.69 42.4832 -363.593 34.7995 -363.576 26.4539 -364.637 17.6534 -366.751 8.61331 -369.866 -0.443604 -373.904 -9.2935 -378.768 -17.7191 -384.336 -25.5122 -390.474 -32.4816 -397.028 -38.4561 -403.836 -43.2878 -410.732 -46.8575 -417.547 -49.078 -424.111 -49.8945 -430.264 -49.2868 -435.854 -47.2696 -440.744 -43.8928 -444.813 -39.2397 -447.959 -33.4247 -450.108 -26.5912 -451.204 -18.9075 -451.222 -10.5618 -450.161 -1.76134 -448.047 7.27871 -444.932 16.3351 -440.892 25.1855 -436.029 33.6112 -430.461 41.4042 -424.323 48.3736 -417.77 54.3481 -410.961 59.1792 -404.065 62.7495 -397.25 64.9701 -390.686 65.7866 -384.533 65.1788 -378.944  -anchor center -maxsize 9959 -minsize 0 -place "87.8919 -406.966 0.920402" -tags item -visible 1 -fill #505050 -joinstyle round -pen #505050 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 322.598 -631.506 313.713 -674.456 293.407 -693.545 269.293 -686.387 257.87 -660.139 273.1 -605.258 322.598 -595.714  -anchor center -maxsize 9390 -minsize 0 -place "203.934 -362.781 1" -tags item -visible 1 -fill #737131 -joinstyle miter -pen #000000 -penwidth 1.95281]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 396.209 -627.926 402.555 -657.753 431.746 -652.981 440.63 -613.61 388.594 -574.238  -anchor center -maxsize 9390 -minsize 0 -place "326.64 -325.762 1" -tags item -visible 1 -fill #737131 -joinstyle miter -pen #000000 -penwidth 1.95281]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 252.459 -586.1 270.19 -552.763 280.041 -497.202 315.504 -424.973 348.997 -389.784 396.282 -376.82 449.476 -393.488 475.088 -428.677 484.939 -465.718 496.76 -513.871 506.611 -549.059 514.492 -562.024 538.134 -556.467 542.074 -537.947 520.403 -502.758 534.194 -460.162 571.627 -432.381 549.955 -469.422 546.015 -499.054 569.657 -521.279 581.478 -569.432 563.746 -595.36 524.343 -610.176 480.999 -600.917 486.91 -645.365 456.769 -662.581 441.596 -621.289 414.013 -641.661 390.371 -647.217 396.282 -697.222 384.46 -713.891 356.878 -717.595 337.176 -695.37 331.266 -643.513 307.55 -641.184 272.142 -663.77 236.733 -683.979 186.15 -701.81 191.209 -662.581 205.119 -620.975 241.792 -597.2  -anchor center -maxsize 9390 -minsize 0 -place "295.704 -265.359 1" -tags item -visible 1 -fill #949242 -joinstyle miter -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 458.399 -414.367 424.131 -398.858 383.518 -398.858 363.211 -419.14 330.213 -448.966 307.368 -485.951 300.523 -520.83 284.912 -550.181 274.876 -568.524 261.495 -575.338 270.562 -555.149 280.715 -502.654 297.214 -468.055 317.521 -426.298 349.25 -390.506 393.671 -379.769 449.514 -394.085 459.668 -411.981  -anchor center -maxsize 9390 -minsize 0 -place "271.426 -198.56 1" -tags item -visible 1 -fill #737131 -joinstyle miter -pen #737131 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 448.176 -568.043 443.812 -617.791 458.865 -657.623 472.203 -650.067 470.938 -623.914  -anchor center -maxsize 9390 -minsize 0 -place "371.707 -332.444 1" -tags item -visible 1 -fill #737131 -joinstyle miter -pen #737131 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 565.315 -437.644 536.36 -461.198 522.439 -502.027 529.121 -514.066 548.61 -524.011 553.621 -537.62 555.292 -528.199 558.633 -522.441 549.167 -516.159 535.246 -498.363 540.814 -472.714 551.394 -465.909  -anchor center -maxsize 9390 -minsize 0 -place "457.577 -207.385 1" -tags item -visible 1 -fill #737131 -joinstyle miter -pen #737131 -penwidth 1.67175]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create line 220.294 -659.015 241.792 -641.184  -anchor center -maxsize 9390 -minsize 0 -place "144.743 -368.251 1" -tags item -visible 1 -capstyle round -joinstyle miter -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 305.02 -638.806 327.843 -593.682 334.533 -635.087 351.81 -648.316 364.456 -687.545 368.249 -701.81 361.853 -717.372 340.108 -693.787 335.648 -639.803  -anchor center -maxsize 9390 -minsize 0 -place "249.777 -372.374 1" -tags item -visible 1 -fill #737131 -joinstyle miter -pen #737131 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 346.751 -696.46 346.713 -695.252 346.597 -694.073 346.407 -692.953 346.148 -691.919 345.825 -690.996 345.448 -690.209 345.025 -689.575 344.567 -689.112 344.085 -688.828 343.59 -688.733 343.095 -688.828 342.613 -689.111 342.155 -689.575 341.732 -690.209 341.355 -690.996 341.033 -691.918 340.773 -692.953 340.584 -694.073 340.468 -695.252 340.429 -696.46 340.468 -697.669 340.584 -698.848 340.773 -699.968 341.033 -701.001 341.355 -701.924 341.732 -702.711 342.155 -703.345 342.613 -703.808 343.095 -704.092 343.59 -704.187 344.085 -704.092 344.567 -703.809 345.025 -703.345 345.448 -702.711 345.825 -701.924 346.148 -701.002 346.407 -699.968 346.597 -698.848 346.713 -697.669  -anchor center -maxsize 9390 -minsize 0 -place "257.29 -414.612 1" -tags item -visible 1 -fill #31a652 -joinstyle round -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 370.779 -711.914 370.685 -710.52 370.407 -709.159 369.951 -707.866 369.33 -706.673 368.556 -705.61 367.651 -704.702 366.636 -703.971 365.536 -703.435 364.378 -703.108 363.191 -702.999 362.005 -703.108 360.846 -703.434 359.747 -703.97 358.732 -704.702 357.826 -705.61 357.053 -706.673 356.431 -707.866 355.975 -709.159 355.697 -710.52 355.604 -711.914 355.697 -713.309 355.975 -714.669 356.431 -715.962 357.053 -717.155 357.826 -718.218 358.732 -719.127 359.747 -719.857 360.846 -720.393 362.005 -720.72 363.191 -720.829 364.378 -720.72 365.536 -720.394 366.636 -719.858 367.651 -719.127 368.556 -718.218 369.33 -717.155 369.951 -715.962 370.407 -714.669 370.685 -713.309  -anchor center -maxsize 9390 -minsize 0 -place "276.891 -430.066 1" -tags item -visible 1 -fill #31a652 -joinstyle round -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 397.335 -703.593 397.256 -702.384 397.025 -701.206 396.645 -700.085 396.127 -699.052 395.482 -698.129 394.728 -697.342 393.881 -696.708 392.965 -696.245 392.001 -695.961 391.011 -695.866 390.022 -695.961 389.058 -696.244 388.141 -696.708 387.295 -697.342 386.54 -698.129 385.896 -699.051 385.377 -700.085 384.998 -701.206 384.767 -702.384 384.688 -703.593 384.767 -704.801 384.998 -705.98 385.377 -707.1 385.896 -708.134 386.54 -709.057 387.295 -709.844 388.141 -710.478 389.058 -710.941 390.022 -711.225 391.011 -711.32 392.001 -711.225 392.965 -710.942 393.881 -710.478 394.728 -709.844 395.482 -709.057 396.127 -708.135 396.645 -707.1 397.025 -705.98 397.256 -704.801  -anchor center -maxsize 9390 -minsize 0 -place "304.711 -421.745 1" -tags item -visible 1 -fill #31a652 -joinstyle round -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 460.563 -648.316 460.485 -646.828 460.253 -645.377 459.874 -643.999 459.356 -642.726 458.711 -641.591 457.957 -640.622 457.11 -639.843 456.194 -639.271 455.23 -638.923 454.24 -638.806 453.25 -638.923 452.286 -639.271 451.37 -639.843 450.523 -640.622 449.769 -641.591 449.124 -642.726 448.606 -643.999 448.227 -645.377 447.995 -646.828 447.917 -648.316 447.995 -649.803 448.227 -651.255 448.606 -652.633 449.124 -653.906 449.769 -655.04 450.523 -656.01 451.37 -656.789 452.286 -657.36 453.25 -657.709 454.24 -657.826 455.23 -657.709 456.194 -657.36 457.11 -656.789 457.957 -656.01 458.711 -655.04 459.356 -653.906 459.874 -652.633 460.253 -651.255 460.485 -649.803  -anchor center -maxsize 9390 -minsize 0 -place "364.595 -372.757 1" -tags item -visible 1 -fill #31a652 -joinstyle round -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 478.268 -651.882 478.181 -650.581 477.927 -649.311 477.509 -648.104 476.939 -646.991 476.231 -645.998 475.4 -645.15 474.47 -644.468 473.462 -643.968 472.4 -643.664 471.312 -643.561 470.224 -643.664 469.163 -643.968 468.155 -644.468 467.224 -645.15 466.394 -645.998 465.686 -646.991 465.115 -648.104 464.697 -649.311 464.443 -650.581 464.357 -651.882 464.443 -653.184 464.697 -654.454 465.115 -655.66 465.686 -656.774 466.394 -657.767 467.224 -658.614 468.155 -659.297 469.162 -659.796 470.224 -660.101 471.312 -660.203 472.4 -660.101 473.461 -659.796 474.47 -659.297 475.4 -658.614 476.231 -657.767 476.939 -656.774 477.509 -655.66 477.927 -654.454 478.181 -653.184  -anchor center -maxsize 9390 -minsize 0 -place "385.57 -371.082 1" -tags item -visible 1 -fill #31a652 -joinstyle round -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 493.442 -637.023 493.356 -635.629 493.102 -634.269 492.684 -632.976 492.113 -631.783 491.405 -630.719 490.575 -629.811 489.644 -629.08 488.636 -628.545 487.575 -628.217 486.487 -628.108 485.398 -628.217 484.338 -628.544 483.329 -629.079 482.398 -629.811 481.569 -630.719 480.86 -631.783 480.289 -632.976 479.871 -634.269 479.617 -635.629 479.531 -637.023 479.617 -638.418 479.871 -639.778 480.289 -641.071 480.86 -642.264 481.568 -643.328 482.398 -644.236 483.329 -644.967 484.337 -645.502 485.398 -645.83 486.487 -645.939 487.575 -645.83 488.635 -645.503 489.644 -644.968 490.575 -644.236 491.404 -643.328 492.113 -642.264 492.684 -641.071 493.102 -639.778 493.356 -638.418  -anchor center -maxsize 9390 -minsize 0 -place "400.187 -355.175 1" -tags item -visible 1 -fill #31a652 -joinstyle round -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 240.527 -656.043 240.457 -655.206 240.249 -654.39 239.906 -653.615 239.44 -652.899 238.86 -652.26 238.181 -651.715 237.42 -651.277 236.594 -650.956 235.726 -650.759 234.836 -650.694 233.946 -650.759 233.078 -650.956 232.252 -651.277 231.491 -651.715 230.812 -652.26 230.232 -652.899 229.766 -653.615 229.424 -654.39 229.215 -655.206 229.145 -656.043 229.215 -656.88 229.424 -657.695 229.766 -658.471 230.232 -659.187 230.812 -659.826 231.491 -660.37 232.252 -660.809 233.078 -661.13 233.946 -661.326 234.836 -661.392 235.726 -661.326 236.594 -661.13 237.42 -660.809 238.181 -660.37 238.86 -659.826 239.44 -659.187 239.906 -658.471 240.249 -657.695 240.457 -656.88  -anchor center -maxsize 9390 -minsize 0 -place "148.536 -374.195 1" -tags item -visible 1 -fill #31a652 -joinstyle round -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 273.761 -570.097 259.265 -594.73 232.503 -615.17 218.526 -644.629 209.642 -672.07 234.175 -680.16 190.13 -696.932 194.59 -662.34 207.413 -623.032 243.654 -600.495 255.362 -587.917 263.725 -571.669  -anchor center -maxsize 9390 -minsize 0 -place "143.791 -353.521 1" -tags item -visible 1 -fill #737131 -joinstyle miter -pen #737131 -penwidth 3.81038]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 480.609 -598.399 480.609 -571.669 485.051 -551.57 495.105 -577.958 516.781 -595.714 537.087 -596.907 570.931 -578.483 562.568 -592.109 524.098 -606.26  -anchor center -maxsize 9390 -minsize 0 -place "443.15 -293.756 1" -tags item -visible 1 -fill #737131 -joinstyle miter -pen #737131 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 272.142 -560.349 265.819 -550.839 264.554 -538.951 245.585 -525.875 227.881 -527.064 241.792 -556.783 251.908 -571.047 268.348 -572.236  -anchor center -maxsize 9390 -minsize 0 -place "162.855 -254.43 1" -tags item -visible 1 -fill #31a652 -joinstyle miter -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 275.935 -550.839 253.173 -544.895 243.056 -459.305 246.85 -435.53 268.348 -454.55 289.846 -496.156 292.375 -519.931 289.846 -533.008  -anchor center -maxsize 9390 -minsize 0 -place "185.02 -212.831 0.879718" -tags item -visible 1 -fill #31a652 -joinstyle miter -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 365.72 -401.057 387.218 -395.113 403.657 -376.093 396.07 -330.921 385.953 -291.692 372.043 -284.56 358.133 -292.881 351.81 -315.467 345.487 -376.093  -anchor center -maxsize 9390 -minsize 0 -place "292.662 -59.881 1" -tags item -visible 1 -fill #31a652 -joinstyle miter -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 406.186 -393.924 423.891 -399.868 436.536 -392.735 446.653 -358.262 445.388 -320.222 431.478 -323.788 418.832 -345.186 406.186 -373.716  -anchor center -maxsize 9390 -minsize 0 -place "339.451 -79.9536 1" -tags item -visible 1 -fill #31a652 -joinstyle miter -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 349.281 -407 335.37 -426.02 317.666 -423.643 306.285 -405.812 289.846 -371.338 296.168 -354.696 320.195 -358.262 341.693 -380.848  -anchor center -maxsize 9390 -minsize 0 -place "230.066 -113.375 1" -tags item -visible 1 -fill #31a652 -joinstyle miter -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 317.666 -448.607 308.814 -470.004 293.639 -474.759 278.464 -448.607 259.496 -403.434 272.142 -401.057 294.904 -415.322 311.343 -434.342  -anchor center -maxsize 9390 -minsize 0 -place "195.044 -170.113 1" -tags item -visible 1 -fill #31a652 -joinstyle miter -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 442.859 -399.868 454.24 -414.133 464.357 -408.189 473.209 -386.792 479.532 -354.696 456.769 -360.639 446.653 -383.226  -anchor center -maxsize 9390 -minsize 0 -place "372.219 -106.834 1" -tags item -visible 1 -fill #31a652 -joinstyle miter -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 353.074 -402.245 368.249 -395.113 368.249 -370.149 360.662 -348.752 342.958 -345.186 325.254 -359.451 325.254 -384.414 339.164 -403.434  -anchor center -maxsize 9390 -minsize 0 -place "257.254 -97.3265 1" -tags item -visible 1 -fill #31a652 -joinstyle miter -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 318.931 -440.285 326.518 -429.587 323.989 -408.189 308.814 -387.981 288.581 -387.981 297.433 -441.474  -anchor center -maxsize 9390 -minsize 0 -place "216.585 -137.744 1" -tags item -visible 1 -fill #31a652 -joinstyle miter -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 463.092 -420.077 466.886 -409.378 478.267 -390.358 489.648 -402.245 493.442 -421.265 475.738 -443.852 463.092 -433.153 456.769 -422.454  -anchor center -maxsize 9390 -minsize 0 -place "385.608 -138.744 1" -tags item -visible 1 -fill #31a652 -joinstyle miter -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 489.648 -434.342 498.5 -453.362 487.119 -472.382 474.473 -471.193 477.003 -449.795  -anchor center -maxsize 9390 -minsize 0 -place "396.99 -176.378 1" -tags item -visible 1 -fill #31a652 -joinstyle miter -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 546.554 -525.875 526.321 -512.799 526.321 -534.196 512.411 -523.498 512.411 -538.951 503.559 -519.931 506.088 -504.478 497.236 -491.401 508.617 -465.249 479.532 -477.137 487.119 -511.61 489.648 -534.196 501.03 -561.538 519.998 -572.236 540.231 -563.915 552.877 -537.763  -anchor center -maxsize 9390 -minsize 0 -place "426.707 -239.542 1" -tags item -visible 1 -fill #31a652 -joinstyle miter -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create line 495.971 -489.024 488.384 -506.855 504.823 -515.176 498.5 -533.008 499.765 -537.763 499.765 -537.763  -anchor center -maxsize 9390 -minsize 0 -place "407.106 -236.41 1" -tags item -visible 1 -capstyle round -joinstyle miter -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create line 378.366 -392.735 370.778 -346.374 370.778 -334.487 372.043 -335.676  -anchor center -maxsize 9390 -minsize 0 -place "285.075 -84.5241 1" -tags item -visible 1 -capstyle round -joinstyle miter -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create line 388.482 -389.169 389.747 -347.563 389.747 -347.563  -anchor center -maxsize 9390 -minsize 0 -place "299.617 -91.3827 1" -tags item -visible 1 -capstyle round -joinstyle miter -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create line 413.774 -393.924 413.774 -393.924  -anchor center -maxsize 9390 -minsize 0 -place "324.276 -116.941 1" -tags item -visible 1 -capstyle round -joinstyle round -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create line 423.891 -396.302 435.272 -373.716  -anchor center -maxsize 9390 -minsize 0 -place "340.084 -108.025 1" -tags item -visible 1 -capstyle round -joinstyle round -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create line 415.038 -390.358 427.684 -366.583  -anchor center -maxsize 9390 -minsize 0 -place "331.864 -101.487 1" -tags item -visible 1 -capstyle round -joinstyle round -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create line 318.931 -431.964 313.872 -407  -anchor center -maxsize 9390 -minsize 0 -place "226.904 -142.499 1" -tags item -visible 1 -capstyle round -joinstyle round -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create line 311.343 -435.53 306.285 -426.02  -anchor center -maxsize 9390 -minsize 0 -place "219.317 -153.792 1" -tags item -visible 1 -capstyle round -joinstyle round -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create line 303.756 -471.193 288.581 -458.117  -anchor center -maxsize 9390 -minsize 0 -place "206.671 -187.671 1" -tags item -visible 1 -capstyle round -joinstyle round -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create line 288.581 -525.875 279.729 -485.458  -anchor center -maxsize 9390 -minsize 0 -place "194.658 -228.683 1" -tags item -visible 1 -capstyle round -joinstyle round -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create line 272.142 -518.743 269.612 -494.968  -anchor center -maxsize 9390 -minsize 0 -place "181.379 -229.872 1" -tags item -visible 1 -capstyle round -joinstyle round -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create line 450.447 -402.245 459.299 -380.848  -anchor center -maxsize 9390 -minsize 0 -place "365.375 -114.563 1" -tags item -visible 1 -capstyle round -joinstyle round -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create line 466.886 -430.775 474.473 -420.077  -anchor center -maxsize 9390 -minsize 0 -place "381.182 -148.443 1" -tags item -visible 1 -capstyle round -joinstyle round -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create line 471.944 -435.53 483.326 -422.454  -anchor center -maxsize 9390 -minsize 0 -place "388.138 -152.009 1" -tags item -visible 1 -capstyle round -joinstyle round -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create line 513.675 -537.763 516.204 -557.971 523.792 -561.538 523.792 -561.538  -anchor center -maxsize 9390 -minsize 0 -place "427.896 -272.667 1" -tags item -visible 1 -capstyle round -joinstyle miter -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create line 525.056 -534.196 535.173 -542.518 536.438 -554.405 545.29 -537.763 545.29 -537.763  -anchor center -maxsize 9390 -minsize 0 -place "444.335 -270.167 1" -tags item -visible 1 -capstyle round -joinstyle miter -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 551.613 -447.418 545.29 -390.358 561.729 -440.285  -anchor center -maxsize 9390 -minsize 0 -place "455.053 -129.253 1" -tags item -visible 1 -fill #31a652 -joinstyle miter -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 562.994 -443.852 637.604 -404.623 561.729 -452.173 560.465 -452.173  -anchor center -maxsize 9390 -minsize 0 -place "509.733 -147.918 1" -tags item -visible 1 -fill #31a652 -joinstyle miter -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 545.29 -455.739 502.294 -436.719 552.877 -449.795 552.877 -449.795  -anchor center -maxsize 9390 -minsize 0 -place "438.284 -165.749 1" -tags item -visible 1 -fill #31a652 -joinstyle miter -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 554.142 -458.117 576.904 -492.59 561.729 -446.229 561.729 -446.229  -anchor center -maxsize 9390 -minsize 0 -place "481.754 -197.646 1" -tags item -visible 1 -fill #31a652 -joinstyle miter -pen #000000 -penwidth 3.79653]
+lappend Pad_ObjectList $Pad_ID
+set Pad_ID [$PADLOAD create polygon 544.025 -461.683 536.438 -475.948 530.115 -494.968 537.702 -515.176 545.29 -521.12 557.935 -500.911 540.231 -493.779 552.877 -477.137 545.29 -471.193  -anchor center -maxsize 9390 -minsize 0 -place "456.024 -212.17 1" -tags item -visible 1 -fill #31a652 -joinstyle miter -pen #000000 -penwidth 3.33989]
+lappend Pad_ObjectList $Pad_ID
+
+
+
+$PADLOAD itemconfigure 1 -visiblelayers "all -filter"
+
+
+
+	foreach id $_tmp(ids) {
+	    set src $_tmp(src$id)
+	    set dst $_tmp(dst$id)
+	    set _hyper($src.obj) $dst
+	    lappend _hyper($dst.dst) $src
+	}
+    
+

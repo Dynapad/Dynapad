@@ -1,0 +1,81 @@
+#!/usr/local/bin/tclsh7.5
+
+#
+# This takes a built Pad++ system and turns it into a
+# binary-only distribution.  It deletes all C++ source code,
+# simplifies the pad script, and copies in the Tcl/Tk 
+# run-time library.
+#
+
+puts "Copying new 'paddraw' script"
+exec cp -f paddraw.bindist paddraw
+exec chmod a+x paddraw
+
+puts "Removing all source code"
+exec rm -rf generic
+exec rm -rf win
+exec rm -rf unix
+exec rm -rf kpl/src
+exec rm -rf perl
+exec rm -rf testapi
+
+puts "Removing 'padwish' link"
+exec rm -f padwish
+
+puts "Moving binaries to PADHOME"
+exec mv [glob bin*]/padwish .
+catch {exec mv [glob bin*]/libpad.so .}
+
+puts "Removing libraries and .o files"
+exec rm -rf [glob bin*]
+exec rm -rf [glob kpl/bin*]
+
+puts "Copying tcl/tk run-time libraries"
+exec cp -r ../tcl7.6/library tcl7.6
+exec cp -r ../tk4.2/library tk4.2
+
+if {[file exists "../runtime"]} {
+   set runtime "../runtime"
+} elseif {[file exists "../elk/runtime"]} {
+   set runtime "../elk/runtime"
+} elseif {[file exists "/usr/local/elk/runtime"]} {
+   set runtime "/usr/local/elk/runtime"
+}
+if {[info exists runtime]} {
+   puts "Copying scheme run-time libraries"
+   exec cp -r $runtime scheme-runtime
+}
+
+puts "Removing development files"
+exec rm -f pad
+exec rm -f pad.in
+exec rm -f paddraw.bindist
+exec rm -f paddraw.in
+exec rm -f paddraw.install
+exec rm -f paddraw.install.in
+exec rm -f Makedist
+exec rm -f INSTALL
+exec rm -f Compiling.Notes
+exec rm -f Announce
+exec rm -f README.scheme
+exec rm -f README.windist
+exec rm -f README
+exec mv README.bindist README
+exec mv ChangeLog doc
+exec mv ChangeLog.old doc
+exec mv Bugs doc
+exec mv ToDo doc
+exec rm -rf CVS
+exec rm -rf bitmaps/CVS
+exec rm -rf bitmaps/animation/CVS
+exec rm -rf doc/CVS
+exec rm -rf draw/CVS
+exec rm -rf draw/window_shapes/CVS
+exec rm -rf draw/scrapbook/CVS
+exec rm -rf html/CVS
+exec rm -rf images/CVS
+exec rm -rf kpl/CVS
+exec rm -rf kpl/lib/CVS
+
+puts "Done"
+exit

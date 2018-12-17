@@ -1,0 +1,8 @@
+	- 16 bit color was not right.
+
+	- cache font does not work. It is because buffer management in Winpad,
+	  no, we assume there is only double buffer in winpad, it does not
+	  handle more than three buffer problems. It is mainly in XCopyArea
+	  funcition call. 
+
+        - fast pan broken due to the buffer problem. 

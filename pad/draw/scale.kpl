@@ -1,0 +1,279 @@
+/************************************************************
+*   Scale widget support code
+*
+*     Available functions:
+*       Scale scale_render
+*       Scale X Y scale_pick => Result
+*       Scale X Y scale_get => Value
+*
+*     Parameters:
+*       - Scale is the name of a global Tcl array controlling this scale.
+*       - X and Y specify a point in the scale's coordinate space in pixels
+************************************************************/
+
+/************************************************************
+*  scale_set_vars -> Top
+*
+*  Sets the following variables based on global Tcl Scale array.
+*  This variables should all be declared locally before calling
+*  this procedure, or they will become global variables.
+*
+*    Border_width   - Thickness of border
+*    From           - Minimum value
+*    Barsize        - Width (or Height) for bar
+*    To             - Maximum value
+*    Top            - X (or Y) start position for bar
+*    Ratio          - Ratio of Length to range of legal values
+*    Value          - Current value
+*    Vertical?      - Is the trough vertical or horizontal
+*    TX TY          - Coordinates of trough
+*    Width Height   - Dimensions of scale
+*    Troughwidth Troughheight   - Dimensions of trough
+*************************************************************/
+
+{ -> Scale
+    Scale 'borderwidth tclget2 => Border_width
+    Scale 'value tclget2 => Value
+    Scale 'from tclget2 => From
+    Scale 'to tclget2 => To
+    Scale 'orient tclget2 'v == => Vertical?
+    Scale 'barsize tclget2 => Barsize
+    Scale 'ratio tclget2 => Ratio
+    Scale 'tx tclget2 => TX
+    Scale 'ty tclget2 => TY
+
+    Vertical? (
+       Scale 'width tclget2 => Height
+       Scale 'height tclget2 => Width
+       Scale 'troughwidth tclget2 => Troughheight
+       Scale 'troughheight tclget2 => Troughwidth
+       Value From - Ratio * Border_width + TY + => Top
+     |
+       Scale 'width tclget2 => Width
+       Scale 'height tclget2 => Height
+       Scale 'troughwidth tclget2 => Troughwidth
+       Scale 'troughheight tclget2 => Troughheight
+       Value From - Ratio * Border_width + TX + => Top
+    )
+} => scale_set_vars
+
+
+/*************************************************************
+*   Scale scale_render
+*
+*     Renders specified scale
+*************************************************************/
+
+{ -> Scale
+    0 -> Border_width 0 -> From 0 -> Barsize 0 -> To 0 -> Top 0 -> Ratio
+    0 -> Value 0 -> Vertical? 0 -> X 0 -> Y 0 -> Width 0 -> Height
+    0 -> TX 0 -> TY 0 -> Troughwidth 0 -> Troughheight
+    Scale scale_set_vars
+
+    Scale 'fill_border tclget2 -> Border
+    Scale 'pen tclget2 -> Pen
+    Scale 'font tclget2 -> Font
+    Scale 'val_size tclget2 -> Vsize
+    Scale 'val_text tclget2 -> Vtext
+    Scale 'text tclget2 -> Text
+    Scale 'from_size tclget2 -> Fsize
+    Scale 'to_size tclget2 -> Tsize
+    Scale 'dh tclget2 -> Dh
+    Scale 'from_text tclget2 -> Ftext
+    Scale 'to_text tclget2 -> Ttext
+    Scale 'showrange tclget2 -> ShowRange?
+    Scale 'showvalue tclget2 -> ShowValue?
+    Scale 'state tclget2 -> Normal?
+
+    { -> Type
+        X Y join X Width + Y Height + join Border_width Border Type drawborder
+    } -> draw_scale_border
+
+				    /* Draw outer border */
+    RAISED draw_scale_border
+
+				    /* Draw label and range text */
+    Pen setcolor
+    Font setfont
+
+    Vertical? 0 == Text "" != and (
+       Text X 3 + Y Height + 7 - join drawtext
+    )
+
+    ShowRange? (
+       Vertical? (
+          Ftext X Width + Fsize 2 * - TY Border_width + Barsize 2 / + 1 + Dh - join drawtext
+          Ttext X Width + Tsize 2 * - TY Troughheight + Barsize 2 / - Border_width - 1 + Dh - join drawtext
+        |
+          Ftext TX Border_width + Barsize 2 / + Fsize - Y 2 + join drawtext
+          Ttext TX Troughwidth + Barsize 2 / - Border_width - Tsize - Y 2 + join drawtext
+       )
+    )
+
+    TX -> X
+    TY -> Y
+    Troughwidth -> Width
+    Troughheight -> Height
+
+    Normal? (
+       Scale 'active tclget2 -> Active?
+       Scale 'arm tclget2 -> Arm?
+
+                                   /* Draw scale trough */
+       Active? (
+          Scale 'activefill_border tclget2  => Border
+       )
+       SUNKEN draw_scale_border
+
+       Barsize 0 > (
+                                   /* Draw the bar */
+          Vertical? (
+             Top => Y
+	     X Border_width + => X
+             Barsize => Height
+	     Width Border_width 2 * - => Width
+           |
+             Top => X
+	     Y Border_width + => Y
+             Barsize => Width
+	     Height Border_width 2 * - => Height
+          )
+          Arm? ( SUNKEN | RAISED ) draw_scale_border
+
+                                    /* Draw ridge on bar */
+          Vertical? (
+             Y Height 2 / + => Ypos
+	     Ypos Border_width 2 / - => Y
+             Border_width => Height
+             X Border_width + => X
+             Width Border_width 2 * - => Width
+             Border_width 2 / => Border_width
+	     Arm? ( RAISED | SUNKEN ) draw_scale_border
+           |
+	     X Width 2 / + => Xpos
+	     Xpos Border_width 2 / - => X
+             Border_width 2 * => Width
+             Y Border_width + => Y
+             Height Border_width 2 * - => Height
+	     Arm? ( RAISED | SUNKEN ) draw_scale_border
+          )
+
+                                    /* Draw value text */
+          ShowValue? (
+             Vertical? (
+	        Scale 'dh tclget2 -> Dh
+                Vtext X Vsize 2 * - 1 - Ypos 1 + Dh - join drawtext
+	      |
+                Vtext Xpos Vsize - Y Height + 1 + Border_width 2 * + join drawtext
+             )
+          )
+       )
+     |
+                                    /* Draw disabled bar */
+       Vertical? (
+          Y Barsize 2 / + Border_width + -> Y
+          Top Barsize 2 / + -> Y1
+          X Width + -> X1
+	|
+          X Barsize 2 / + Border_width + -> X
+          Top Barsize 2 / + -> X1
+          Y Height + -> Y1
+       )
+       Scale 'disabledfill tclget2 setcolor
+       X Y join X join Y1 join X1 join Y1 join X1 join Y join drawpolygon
+
+                                    /* Draw value text */
+       Pen setcolor
+       ShowValue? (
+          Vertical? (
+	     Scale 'dh tclget2 -> Dh
+             Vtext X Vsize 2 * - Y1 1 + Dh - join drawtext
+	   |
+             Vtext X1 Vsize - Y1 1 + Border_width + join drawtext
+          )
+       )
+                                    /* Draw outline of trough */
+       Vertical? (
+          Y Height + Barsize - Border_width 2 * - -> Y1
+	|
+          X Width + Barsize - Border_width 2 * - -> X1
+       )
+       1 setlinewidth
+       X Y join X join Y1 join X1 join Y1 join X1 join Y join X join Y join drawline
+    )
+
+} => scale_render
+
+/*************************************************************
+*   Scale X Y scale_pick => Result Offset
+*
+*    Result is 0 for false
+*    Result is 'bar if point is on the scale's bar
+*************************************************************/
+
+{ -> Mouse_y -> Mouse_x -> Scale
+    Scale 'borderwidth tclget2 => Border_width
+    Scale 'value tclget2 => Value
+    Scale 'from tclget2 => From
+    Scale 'orient tclget2 'v == => Vertical?
+    Scale 'barsize tclget2 => Barsize
+    Scale 'ratio tclget2 => Ratio
+    Scale 'tx tclget2 => X
+    Scale 'ty tclget2 => Y
+
+    0 -> On_bar?
+    0 -> Offset
+    Vertical? (
+       Value From - Ratio * Border_width + Y + => Top
+       Mouse_y Top > Mouse_y Top Barsize + < and
+       Top Mouse_y - => Offset
+     |
+       Value From - Ratio * Border_width + X + => Top
+       Mouse_x Top > Mouse_x Top Barsize + < and
+       Top Mouse_x - => Offset
+    ) -> On_bar?
+
+    Offset On_bar? ( 'bar | 0 )
+} => scale_pick
+
+/*************************************************************
+*   Scale X Y Offset scale_get => Value
+*
+*     Converts local coord (x, y) position to legal scale value
+*     If precision=0 truncate value, else trim to precision decimal places
+*************************************************************/
+{ -> Offset -> Mouse_y -> Mouse_x -> Scale
+    0 -> From 0 -> To 0 -> Top 0 -> Ratio 0 -> Value 0 -> Vertical?
+    0 -> TX 0 -> TY
+    Scale scale_set_vars
+    Scale 'precision tclget2 => Precision?
+
+    Vertical? (
+       Mouse_y TY - -> Position
+     |
+       Mouse_x TX - -> Position
+    )
+    Offset Position + Ratio / From + -> Value
+    Value From < ( From => Value )
+    Value To > ( To => Value )
+    Precision? (			/* >= 1 decimal places */
+       10 Precision? pow => Mult
+       Value Value Mult * 1 mod Mult / - => Value
+     |					/* 0 decimal places=Integer */
+       Value Value 1 mod - => Value
+       To From - => Range
+       Range 100 <= ( 1 -> Factor
+        | Range 500 <= ( 5 -> Factor
+        | Range 1000 <= ( 10 -> Factor
+        | Range 2000 <= ( 20 -> Factor
+        | Range 5000 <= ( 50 -> Factor
+        | 100 -> Factor ) ) ) ) )
+       Value 0 < (
+          Value Factor 2 / - Factor / => Temp
+	|
+          Value Factor 2 / + Factor / => Temp
+       )
+       Temp Temp 1 mod - Factor * => Value
+    )
+    Value
+} => scale_get

@@ -1,0 +1,187 @@
+Pad++ Tour
+Jonathan Meyer
+22 Nov 1994
+
+Welcome to Pad++.
+
+Pad++ is a new interface metaphor
+which supports the exploration of
+'multiscale interfaces'. That is,
+interfaces in which zooming is a
+fundamental part of the system.
+
+Navigation in Pad++ is done by
+zooming and panning around an
+information space.
+
+(Click on the button marked 
+'next' to advance to the next 
+page in the tour).
+<page>
+You can zoom in Pad++ using the
+mouse.
+
+For example, move the pointer to
+the center of this page.
+
+Now press the middle mouse button,
+hold it down briefly and then
+release it. Pad zooms in.
+
+(If your system doesn't have a
+middle mouse button, try pressing
+the right mouse button with the
+Alt or Meta modifier held down).
+
+    To reverse the process,
+    briefly press and hold
+    down the right mouse
+    button, then release it.
+
+The system zooms out again.
+<page>
+
+
+Panning in Pad is just as easy:
+
+Press the left mouse button down,
+then move the mouse around whilst
+the mouse button is held down.
+
+The pad surface is panned as you
+move the mouse.
+
+Release the mouse to stop panning.
+
+Try it now - make sure that
+you don't loose your place in
+the tour!.
+<page>
+Pad++ has several types of builtin
+objects, including images, text,
+lines, rectangles, and others.
+Once you add zooming to a system,
+the nature of the user interface
+changes.
+
+For example, with zooming you can
+use scale as well as position to 
+convey relations.
+
+This is especially good for 
+hierarchical relations such as 
+directory structures. Zoom in
+on the following object:
+<tcl>
+bindDesktop $PAD
+import $PAD "."
+</tcl>
+In this example, zooming is
+used to change how objects render
+at different sizes. Zooming in
+yields greater detail. Zooming
+out produces overview information.
+
+You can also use zooming to:
+
+    * Convey importance - things
+      which are less significant
+      can be displayed at a
+      smaller size.
+<tcl>
+$PAD create text -text "For example, a small piece of text can be drawn like this"
+</tcl>
+Portals
+------
+
+Portals play a key role in Pad++.
+A portal is like a special hole in
+Pad space through which you see
+things.
+
+Each portal has its own pan and
+zoom capabilities. So you could
+use a portal to create a small
+representation of this page.
+<page>
+Portals such as these act as
+alternate views onto the
+current pad surface.
+
+<tcl>
+$PAD create portal 0 0 1 1 -view "0 0 .0003" -borderwidth 0
+</tcl>
+You can also have portals which
+'look onto' other pad surfaces -
+surfaces which are only visible
+through that portal.
+
+<tcl>
+$PAD create portal 0 0 1 1 -lookon .pad -view "0 0 .001" -borderwidth 0
+</tcl>
+Still other portals act as
+'magic lenses'.
+
+A magic lens is a special view
+onto the current Pad surface.
+
+When viewed through a magic lens,
+certain objects appear
+differently.
+
+e.g. a chart lense can be placed
+over a table of numbers to see the
+table drawn as a bar chart.
+
+See the Demo menu of the Pad draw
+application.
+<page>
+
+Information Physics
+-------------------
+When you create multiscale
+documents, you adopt a new way of
+thinking about how objects on the
+screen work - what they look like
+and how they behave.
+
+For example, this document is
+created as a circle - the first
+page of the tour is close to the
+reader. Subsequent pages are
+further away and are positioned in
+a circle - so that the last page
+naturally connects back to the
+first.
+
+Using this structure, it is easy
+for the reader to see where they
+are in the document, and to jump
+into the document in the middle or
+near the end.
+<page>
+Programming Pad
+---------------
+Pad++ is written in C, C++ and
+Tcl. Most Pad applications are
+coded in a combination of Tcl and
+C++. Use of other languages such
+as Scheme is planned.
+
+Pad++ comes with a comprehensive
+sample draw application created
+entirely with Tcl/Tk. You can
+use this application as the basis
+for your own Pad++ code, or
+start fresh.
+<page>
+
+You have reached the end of the
+Pad tour. Now look at the online
+programming man page for Pad,
+play with the example Pad drawing
+application, and write some of
+your own applications.
+
+Email comments to:
+    pad-comment@cs.unm.edu 

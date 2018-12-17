@@ -1,0 +1,63 @@
+README FOR DYNAPICT
+
+The dynapict.ss code wraps around drscheme's texpict collection to provide 
+functionality for appending, aligning, and superimposing dynapad objects.
+
+
+FUNCTIONS: APPENDING AND ALIGNING
+vl-append-objs		(vertical-left)
+vc-append-objs		(vertical-center)
+vr-append-objs		(vertical-right)
+ht-append-objs		(horiz-top)
+hc-append-objs		(horiz-center)
+hb-append-objs		(horiz-bottom)
+htl-append-objs		(horiz top-baseline)
+hbl-append-objs		(horiz bottom-baseline)
+
+Each of the above functions take an optional int arg for gap-size, 
+followed by an undetermined number of dynaobject args.
+
+The htl and hbl functions align text objects using their baseline rather 
+than the bounding box.  The hbl function is useful only when there are 
+multiple lines of text in a text field.
+
+Example:
+	;; vertical-left append 3 objs with spacing of 5
+	(vl-append-objs 5 obj1 obj2 obj3)
+
+	;; horizontal top-baseline append a list of objects
+	(apply htl-append-objs obj-list)
+
+
+FUNCTIONS: SUPERIMPOSING
+lt-superimpose-objs	(left-top)
+lc-superimpose-objs	(left-center)
+lb-superimpose-objs	(left-bottom)
+ct-superimpose-objs	(center-top)
+cc-superimpose-objs	(center-center)
+cb-superimpose-objs	(center-bottom)
+rt-superimpose-objs	(right-top)
+rc-superimpose-objs	(right-center)
+rb-superimpose-objs	(right-bottom)
+ltl-superimpose-objs	(left top-baseline)
+lbl-superimpose-objs	(left bottom-baseline)
+rtl-superimpose-objs	(right top-baseline)
+rbl-superimpose-objs	(right bottom-baseline)
+ctl-superimpose-objs	(center top-baseline)
+cbl-superimpose-objs	(center bottom-baseline)
+
+Each of the above functions takes an undetermined number of dynaobject 
+args.
+
+The llast 6 functions align text objects using their baseline rather than 
+bounding box, just like the append functions.
+
+Example:
+	;; Superimpose 3 dynapad objs at their right-bottom corners
+	(rb-superimpose-objs obj1 obj2 obj3)
+
+
+--------------------
+Shaun Haber
+srhaber@hci.ucsd.edu
+04/07/2004

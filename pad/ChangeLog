@@ -1,0 +1,1490 @@
+=========================
+Version 0.9b - 6/25/97
+
+  PADDRAW APPLICATION CHANGES
+  ---------------------------
+  * Changed default zooming behavior.  Now, when you move the
+    cursor while you zoom, the surface follows you as if you
+    were panning.  Same with zooming selected objects.  This approach
+    seems to be slightly less powerful, but is much easier to learn
+    as it is consistent with panning, and doesn't have "backwards"
+    behavior.  You can use the old zooming style if you want by
+    turning of "Zoom follows cursor" on the preferences panel.
+    Thanks to Ron Hightower for figuring out this one!
+
+  * Added start-up warning if running Pad++ in > 8 bit mode.
+
+  * Added (hopefully) helpful startup tips.
+
+  * Reshape handles now allow squashing and stretching of all objects
+    except text and aliases.
+  
+  PADDRAW BUG FIXES
+  -----------------
+	
+  TCL INTERFACE CHANGES
+  ---------------------
+  * INCOMPATIBLE CHANGE: Changed implementation of -width and -height
+    itemconfigure options.  They still set the width and height of objects,
+    but now they consistently squash/stretch the object (whenever possible)
+    instead of clipping it.  The only object for which this is not true
+    is text and aliases which is still clipped since we do not have the 
+    capability to squash/stretch it.
+
+    This change was necessary to make -width/-height consistent.  For
+    some objects (all the widgets and images), this is what the behavior
+    already was.  If there is a strong demand for the old clipping 
+    behavior, I will consider adding it back with -clipwidth/-clipheight
+    options.  Note that for groups, clipping behavior is available with
+    a panel object.
+
+    Specifically, the object types for which this behavior changed is:
+	portal
+	line
+	Spline
+	Polygon
+	Rectangle
+	Oval
+        Group
+        Grid
+
+  * INCOMPATIBLE CHANGE: Changed -dim parameter format of new 'grab'
+    command to be -dim {width height} instead of -dim {<width>x<height>}
+    to be more Tcl'ish.
+
+  * INCOMPATIBLE CHANGE: Added 'render draw filledborder' command, and
+    changed 'render draw border' to now draw an unfilled border.
+
+  * Added 'animate' command. The animate command allows asynchronous
+    animations of most options of items on the Pad++ surface.  An item can
+    be moved across the screen while its color is being changed while
+    another is being rotated.  This all happens in the background so that
+    Pad++ continues to process events while animations happen. 
+
+  * Added new item types
+	checkbox   w/ same itemconfigure options as button
+	menubar    w/ itemconfigure options -fill -members
+	menu       w/ itemconfigure options as button and -members -memberlabels
+	choicemenu w/ itemconfigure options as menu but witthout -text
+	menuitem   w/ itemconfigure options as button
+	checkboxmenuitem w/ itemconfigure options as button
+	Added the -menubar option to frame  
+
+  * Made 'text' command work on textarea items
+
+  C++ SUBSTRATE BUG FIXES
+  -----------------------
+
+  * Made it so Tcl errors in button and scrollbar callbacks properly
+    generate Tcl background errors.
+
+  	* Fixed bug where zoomactions didn't fire on transparent objects.
+	
+  * Detected if random() method exists.  If not, use rand().
+
+  * Fixed bug where if you clicked on an object, moved off it, and released,
+    after the release, a B1-Leave got generated instead of a Leave.  This
+    used to work in pad-0.2.7, but was broken in pad-0.9b.
+
+  * Fixed portals so visiblelayers works properly when looking on to another surface.
+
+  * Fixed many Windows memory bugs and cleaned up distribution so
+    it now compiles cleanly under Windows NT and 95, and seems
+    to work pretty well.
+
+  * Added Windows binaries to distribution.
+
+  * Fixed 'make install'.  It died because the "Register" file
+    is gone.
+
+  * Fixed bug where changing the layer of a grid would cause it to move.
+    Now it doesn't.
+
+  * Fixed 'grab' command to work with 24 bit visuals - even taking
+    into account different byte orders of X servers, etc.
+   	
+  * Hooked up vertical scrollbars to textarea widget.
+	
+  * Fixed bug with user-defined types where parameters before options
+    didn't get passed on to the Tcl procedure properly.
+
+  * Fixed a nasty portal/event bug where motion events in the portal would
+    sometimes generate bad (%i, %j) coordinates.  This had the side effect
+    that zooming within a portal would sometimes jump around.
+
+  * Fixed another portal/event bug where events didn't go through
+    portals that were members of groups properly.
+
+  * Fixed another portal/event bug where events didn't always
+    get generated when going through a portal to another pad surface.
+
+  * Fixed configure bug where the architecture wasn't set right
+    on 64 bit IRIX machines.  Now, the bin directory is
+    bin-MIPS-IRIX for all IRIX architectures.
+
+  * Fixed bug where 'center' command did not work properly when
+    centering within portals and the portal had been scaled.
+	
+=========================
+Version 0.9b - 4/27/97
+
+  SUMMARY OF IMPORTANT CHANGES
+  ----------------------------
+
+  * INCOMPATIBLE CHANGE:  Changed usage of hastag command
+    to be compatible with addtag and deletetag commands.  New usage is:
+       .pad hastag tagToCheck tagOrId
+    The order of the parameters used to be backward.
+
+  * INCOMPATIBLE CHANGE: Sticky Objects Changed/Extended
+    Reimplemented sticky objects based on constraints 
+    instead of a separate display list.  Now, sticky objects are identical
+    in every way to regular objects except that are kept on a special list.  
+    Every time the top-level view is changed, the position and size of sticky
+    objects are recomputed to behave properly.  Several new types of
+    sticky objects are now available, including objects that are sticky 
+    just in Z (but not in x, y), and "sticky view" objects that always
+    stay within the view.  See the ChangeLog or reference documentation
+    for a complete description of the new sticky objects.
+
+  * INCOMPATIBLE CHANGE: Deleted 'handle' item types.  They are replaced
+    with 'sticky z' objects.  See the description of the new sticky objects for
+    a complete explanation.
+
+  * INCOMPATIBLE CHANGE: Changed all default fonts to "Times-12",
+    and specifying a font without the size defaults to a font size of 12.
+    For backwards compatibility, if a font is specified with the old
+    filename approach, it will have a default font size of 1.
+
+  * INCOMPATIBLE CHANGE: The "find closest" command was changed to return
+    all the items within a certain distance of the specified point.
+
+  * WARNING: Many commands related to renderscripts and render resources
+    were renamed in an attempt to simplify the pad command namespace, and
+    to group commands, making them more meaningful.  Setting and getting
+    attributes of resources (such as images) are now available through a
+    configure command that works like the pad itemconfigure command.
+    There is now a single command to interact with each kind of resource.
+    For instance, there is an 'image' command to deal with images, a
+    'font' command to deal with fonts, and a 'render' command to deal
+    with all aspects of renderscripts.  All the old command names were
+    kept, but they will be removed in the next version.
+
+  * PadDraw: Thanks to discussion with Jon Meyer, we decided on a way
+    to unify the behavior of groups within PadDraw.  All behavior can
+    be summarized by the following principles:
+     - Grouping and then ungrouping should not modify the members.
+       Similarly ungrouping and then regrouping should not modify members.
+     - Modifying a group should actually modify the members of the group.
+    This applies to all properties of items.  In particular, setting
+    the fade, color, or font of a group really modifies the group members.
+    Also rewrote hyperlinks to follow these new rules.
+
+  * Reworked basic rendering mechanism to try and make pad keep up the
+    display rate, even when the scene gets complicated.  It used to have
+    a very rough idea of how fast the rendering was going, and would
+    stop rendering small objects when it thought the system was too slow.
+    Now it has a much better idea of how fast the rendering is going
+    (it looks at the system clock during the render), and if it is slower than
+    the requested frame rate, it both stops drawing small objects, 
+    and it draws medium-sized objects in a very ugly fashion 
+    (currently as gray rectangles).  These things are configurable with
+    pad widget configuration options: 
+      .pad config -desiredFrameRate  (default 10)
+      .pad config -smallObjSize      (default 10)
+      .pad config -mediumObjSize     (default 100)
+    Added controls to the PadDraw Preferences control panel to customize this.
+
+  * Rewrote internal data structures that makes a tradeoff in favor of
+    smaller datasets in Pad++.  The result is that things should work
+    better for roughly under 10,000 ungrouped objects.  But currently, 
+    more than that may be worse.  For more objects, manual grouping of
+    objects (which now works much better) lets the system scale up.  
+    In addition, loading in files, creating new objects, and animating
+    objects is all *much* faster.  We also are not done optimizing,
+    and expect the speedy # of top-level objects will increase.
+
+    This is a result of trading in a complex data structure (spatial tree) for
+    a simple one (linear list).  It turns out that computers are fast, and
+    that it is possible to go through a much longer list of things than we
+    could, say, 4 years ago when we started.  Thanks to Jon Meyer for doing some
+    initial tests to prove this.  In addition, the internal code is *much*
+    simpler and easier to deal with now.  For instance, all hierarchy and
+    clustering code is gone!
+
+  * Added new font manager mechanism. Now:
+        - fonts are specified use a new logical font naming scheme similar 
+          to Java's, rather than using a platform-specific filename as
+          a font name. 
+
+        - Pad++ uses a search path to locate font files. The search path
+          is specified using the ".pad font path" command, and is global
+          to a Pad++ session. 
+
+        - Fonts are substituted more sensibly when the original cannot 
+          be located.
+
+        - Fonts specified using the old scheme are automatically translated
+          to the new scheme.
+
+    Font names follow the format "<facename>-<stylename>-<size>", where
+    <facename> is the typeface, e.g. Times, Helvetica, etc. <stylename> is
+    "plain", "bold", "italic", or "bolditalic". <size> is the height of the font
+    in pixels. <style> is optional (default is "plain"). <size> is also 
+    optional (default is 1).
+
+  * Added binary I/O for pad objects.  In addition to saving pad objects as 
+    Tcl scripts it is possible to save them in binary formats.  The formats
+    supported are XDR (interchangable binary format among many platforms)
+    and native binary (only understood by the current platform).
+
+  * Added sound support to Pad++ for the Irix and Linux platforms.
+    See the README for information on how to configure for sound.
+    Then, look at the tcl interface section for a description of 
+    how to use the sound interface. 
+	
+  * Added new 'layout' command.  It performs various kinds of one-time layouts.
+    That is, it repositions and resizes objects based on subcommands, but
+    does not manage the objects in the future.  The current layout subcommands are:
+    align, distribute, position, snap, and size.  Attaching a layout call
+    to a <Modify> event provides a way to define custom layout managers.
+
+  * Added new 'rotate' command.  It rotates objects or groups by a specified
+    number of degrees.  Also added -angle itemconfigure option which sets
+    the angle of an object absolutely.
+
+  * Restructured Pad++ internals so that it can run with or without Tk.
+    A standalone C++ application can create an X window and attach Pad++ to it,
+    and then write Pad++ applications entirely in C++.  This does not affect
+    Tcl/Tk users, but is the first step to hooking pad up to Java.
+
+  * Restructured organization of Pad++ code to get it ready to work with 
+    Windows95/NT.  There are now generic, unix, and win directories.
+	
+  * Significantly enhanced the 'find' command.  It now operates on any
+    logical expression of searches.  So it is possible to search for
+    all the items that satisfy one criteria, but not another.  For example,
+        .pad find enclosed $x0 $y0 $x1 $y1 && !withtype line
+    will return all the items within the specified bounding box
+    that aren't lines.  See details in the reference documentation.
+
+  * Reworked colors.  Now there are always a reasonable number of colors,
+    and colors are approximated with available colors much better.  In addition,
+    images now always allocate a proper 6x6x6 colorcube (with approximations
+    if necessary), so images look good - even when running pad wth lots
+    of other applications that use colors.
+	
+  * Added 'Telnet' to PadDraw Demo menu. This is the start of a telnet 
+    VT-100 terminal emulator that runs inside Pad++. It isn't complete yet, 
+    but gives you a flavor of what is possible.
+
+  * Added caching for Pad objects.  It only works for images but it can be 
+    extedned for other types.  The cache manager can be configued for the 
+    cacheDir and cacheSize and other parameters for selecting objects.
+    Essentialy, when an image is not visible it becomes a cache out candidate;
+    it's large data buffers are written out and deallocated from memory.
+    When a cached out image must become visible its data is brought back and 
+    displayed.  The actual reading and reconstruction of image data is 
+    delayed until the user is done manipulating the view (a filled box is 
+    displayed instead of the image data), and so, caching has minimal effect 
+    while the user is changing the view.  cacheDir and its contents are
+    removed upon exit or when set to a new directory (so be careful what you 
+    set it to!).
+
+  * Reworked handling of resources (so far colors and borders) internally 
+    in the C++ code, to make cleaner separation between X and Pad.
+
+  * Changed KPL paths (newpath, moveto, lineto, curveto, stroke, fill) in C++ so that 
+    they use the renderer directly to draw beziers.
+	
+  SUMMARY OF TCL INTERFACE CHANGES
+  --------------------------------
+    Deleted 'handle' item types
+
+    Deleted '-debugStatus'   widget configuration option
+    Deleted '-colorCubeSize' widget configuration option
+    Deleted '-enableOpaque'  widget configuration option
+
+    Depricated '-visible' itemconfigure option
+    Depricated '-place', '-x', 'y', and '-z' itemconfigure options
+
+    Deleted these commands:
+      islinked    (use Tk 'winfo ismapped')
+      shape       (use windowshape)
+
+    Change hastag command by flipping order of parameters
+
+    Removed many options from the 'info' command and added them
+    to other commands.
+
+    These commands are now obsolete and will be removed in a future version:  
+        allocimage
+        freeimage
+        allocborder
+        freeborder
+        alloccolor
+        freecolor
+        addmodifier
+        deletemodifier
+        setmodifier
+        getmodifier
+        drawborder
+        drawimage
+        drawline
+        drawpolygon
+        drawtext
+        setcapstyle
+        setjoinstyle
+        setlinewidth
+        setcolor  
+        setfont
+        setfontheight
+        getlevel
+        getmag
+        getportals
+        gettextbbox
+
+    Added padwish command-line options:
+        -norgb
+
+    Added new item types
+        button  w/ itemconfigure options -command -fill -font -pen -relief -state -text
+	label  w/ itemconfigure options -font -fill -pen -text
+	frame  w/ itemconfigure options -divisible -fill -members
+	textarea  w/ itemconfigure options -font -fill -pen -text -editable
+	textfield  w/ itemconfigure options -font -fill -pen -text -editable
+	scrollbar  w/ itemconfigure options -command -fill -from -to -orientation -linesize -pagesize -value
+
+    These are new commands:
+        border alloc <borderName>
+	border free <borderName>
+
+        color alloc <colorName>
+        color free <colorName>
+
+        font bbox <string> <font> [<fontheight>]
+
+	getview [portalID ...]
+
+	pathName grab [-root | -path pathName | -win winId] [-dim <width>x<height>] x y width height
+
+        hastag tagToCheck tagOrId
+	
+        html configure [option [value] ...]          (options are -source, -type, -lastchangedate and -length)
+        html anchor configure [option [value] ...]   (options are -html, -image, -ismap, -name, -state and -url)
+
+        image alloc <fileName>
+	image free <imageToken>
+	image names
+	image configure [option [value] ...]    (options are -dimensions, -name and -rgb)
+
+        isvisible tagOrId [portalID ...]
+
+	layer create <layerName>
+	layer delete <layerName>
+	layer names
+
+	layout align <type> [-anchor] [-coords {x y ...} [-overlaponly]] tagOrId [tagOrId ...]
+            <type> can be -left, -right, -top, or -bottom
+        layout distribute <type> [-space space] tagOrId [tagOrId ...]
+            <type> must be "-horizontal", "-vertical", or "-coords {x1 y1 x2 y2 ...}"
+        layout position [-time animationTime] x1 y1 <type> x2 y2 tagOrId [tagOrId ...]
+            <type> must be "-ref tagOrId" or "-bbox {bbx1 bby1 bbx2 bby2}"
+        layout size <type> [-ref tagOrId] [-scale scale] tagOrId [tarOrId ...]
+            <type> must be "-width", "-height"
+        layout snap grid tagOrId [tagOrId ...]
+
+        modifier create <modifier>
+	modifier delete <modifier>
+	modifier get
+	modifier set <modifier>
+
+	random <min> <max>
+
+        render scale <dz>
+	render translate <dx> <dy>
+	render draw border <borderToken> <relief> <width> <x1> <y1> <x2> <y2>
+	render draw image <imageToken> <x> <y>
+	render draw line <x1> <y1> ...
+	render draw polygon <x1> <y1> <x2> <y2> ...
+	render draw text <string> <x> <y>
+	render configure [option [value] ...]
+	    (options are -capstyle, -joinstyle, -linewidth, -color, -font, -fontheight,
+	                 -level, -mag and -portals)
+
+        rotate tagOrId angle [xctr yctr]
+
+        sound ...	
+
+	warp dx dy
+
+    These are new command options:
+        info status render
+        info status sharedmemory
+        write [-format type] [-relative] filename [tagOrId ...]
+	find withsticky <type>
+	slide tagOrId [x y [animationTime]]
+        scale tagOrId [scaleAmount [centerX centerY [animationTime]]]
+
+    These are new pad widget configure options:
+	-smallObjSize    (Size below which objects are considered small (not rendered when system is slow))
+        -mediumObjSize   (Size below which objects are considered medium (rendered ugly when system is slow))
+	-defaultEventHandlers (Controls if default navigation event handlers are activated)
+
+    These are new itemconfigure options:
+	-angle degrees
+	-anglectr "degrees xctr yctr"
+        -writeformat [copy | reference]          (for image and textfile objects)
+        -view "x y z"   (now applies to pad surface in addition to portals)
+	-rposition      (Replaces -place)
+	-position       (Absolute positioning)
+	-anchorpt	(Point anchor specifies)
+	-scale          (Scale of object)
+
+    These are modified itemconfigure options:
+        -sticky [1 | x | y | z | view]
+
+    Pad++ now manages a cache for (currently) image objects.
+    The cache manager can be manipulated through the cache command
+    whose usage is:
+	.pad cache in tagOrId
+	.pad cache out tagOrId
+	.pad cache configure [option [value]] ...
+	   Where option can be -dir, -size, -viewmultiple, or -delay.
+
+	The cache directory will be [-dir]/<pid> for this process and it is
+        removed upon process exit (pid is the process id and it will be
+	appended to path).  Path should be on a local disk for reasonable 
+	I/O performance.  It is not set by default and caching is disabled 
+	until the cache dir is explicitly set by the application.
+
+        -size is the total memory available to cache manager
+        before it cache out objects.  It defaults to two mega-bytes.
+        Caching can be disabled by setting cacheSize to zero.
+
+        -viewmultiple specifies a multiple of the view area the cache manager
+        should use when deciding object visibility for purposes of caching.  
+        Its default value is 2 (so objects visible within twice the view are 
+        not cache out candidates).  Setting it to one will cause images to
+	be potentailly cached out when not immidiately in view.
+
+	-delay specifies the interval (in seconds) the cache manager
+	should check and perform any actual cache outs.  Its defauls value
+	is 5 seconds.  Setting it to 0 will cause immidiate cache outs.
+
+  	The following criterias are used for caching:
+    	   - When an object has to be rendered the cache manager is requested 
+           to cache it in if necessary (ensures its data intensive components 
+           are in memory).  Other objects may be selected cached out to make
+           room for this object.
+
+           - When an object doesn't need to be rendered the cache manager
+           marks it as a cache out candidate.
+
+       Cache out candiadtes are selected by a least-recently-rendered policy.
+       The cache manager only selects from objects that have been marked for
+       cache out and does not attempt to select objects currently rendered (or 
+       visible within its multiple of the view area).
+
+       Explicit cache in/out requests can be made from Tcl by:
+          .pad cache [in | out] tagOrId
+	
+  TCL INTERFACE CHANGES
+  ---------------------
+
+  * Added 'grab' command to do a screengrab.  This captures a rectangular
+    portion of the screen and makes an imagedata out of it which can then
+    be used like any other imagedata.  For instance, a Pad++ image item
+    can be created with it.  The grab command takes a region
+    (x, y, width, height) which specify the area to grab.  This can either
+    be relative to a specific Tk window (if a Tk window path) is specified,
+    relative to any X window, or can be relative to the screen if -root is 
+    specified.  It is relative to the pad window if no window is specified. 
+    Note that y represents the top of the region.  If a dimension is specified, 
+    then the image is decimated to produce the desired resolution before it is returne.
+    Images can only be shrunk, not grown with the dimension flag.  Note
+    that images can be distorted by setting a dimension with a different
+    aspect ratio than the source.
+    Usage is:
+	pathName grab [-root | -path pathName | -win winId] [-dim <width>x<height>] x y width height
+    Grab returns an imagedata token that could be used to create an image with:
+	pathName create image -image $imagedata
+	
+  * Added 'warp' command to allow ability to warp (i.e., move)
+    the pointer.  Usage is 'pathName warp dx dy'
+	
+  * Upgraded itemconfigure options related to object positions:
+      Added -rposition to replace -place
+      Added -position.  This is an absolute position independent of group membership.
+      Added -anchorpt to mean first two elements of -position
+      Added -scale to mean last element of -position
+      Depricated -place.  It is still supported, but is obsolete and replaced by -rposition
+      Depricated -x, -y, and -z.  They are still supported, but are obsolete.
+
+  * Renamed 'pad' script to 'paddraw', and added a new script 
+    called 'pad' which just runs padwish with the environment
+    variables set properly.
+	
+  * Added mechanism to turn on and off default panning and zooming
+    event handlers to a pad widget.  There is a new widget
+    configuration option called -defaultEventHandlers that can
+    be set to 1 or 0.  It's default is 1.
+
+  * Made it legal to create a line, rectangle, polygon, or portal
+    without any coordinates, and then add them later.
+
+  * Added new "Line" font which replaces the old "System" font.
+    The Line font is identical to the System font except that it has
+    a default font size of 12 while the System font still has a default
+    font size of 1.
+
+  * Added a new tree command, setlinkmode, that sets the penwidth of treelinks to fixed 
+    width 1 pixel.  The change is applied to all descendants of the specified treenode.
+      .pad tree setlinkmode tagOrId  [fixed | scaling]
+
+  * Made find enclosed and overlapping accept bounding boxes with points
+    in any order.  That is, it doesn't matter if points are specified
+    lower-left,upper-right or vice versa, etc.
+
+  * Added new 'isvisible' command.  From Tcl, it returns whether
+    the specified item is visible wthin the specified portal.
+    Can be used to determine if an object is transparent or
+    faded out.  Usage is:
+       .pad isvisible tagOrId [portalID ...]
+
+  * Added three new font commands:
+
+      .pad font path [[+]<path>]
+         Set or get the global font path used in Pad++. <path> is a 
+         list of directory names, separated by spaces. Font files in these
+         directories are expected to have the extension ".pfa".
+	 If the '+' character is specified, then the path is added to
+	 the existing path - otherwise it replaces the existing path.
+
+      .pad loadbitmaps <font>
+         Attempts to load a set of X Bitmaps for <font>, which are used for
+         drawing text at small sizes. e.g. ".pad loadbitmaps Helvetica-bold".
+
+      .pad font names
+         Returns the names of all the font faces/styles available on the current
+         system as a list. 
+
+  * Added the first set of widgets to Pad++ to be used by Java.
+    This new object set will be accessibly by Tcl, but is designed
+    to be particularly easy to access from Java.  That is, it
+    implements calls that are very similiar to the AWT.  There is
+    the Pad_Component class that is a base class of all widgets,
+    and is a Pad_Object.  So far, I've written 
+	* Labels     - A basic java-like label with text
+	* Buttons    - A basic java-like text button with default
+		       event handlers and a motif look & feel
+	* Containers - A basic java-like container which is
+		       really an extended group with a
+		       fixed (non-shrink wrapping) size
+		       Adding components to a container places them relative
+		       to the container's lower-left corner.
+        * Panel -      A container with a background render method
+        * Frame -      A container that will eventually simulate
+		       a top-level window, but now has only trivial
+		       window dressing.
+        * Textfield -  A one line text-entry
+	    -fill
+	    -pen
+	    -font
+	    -text
+	    -editable
+	* TextArea -   A multi-line text-entry with scrollbars
+	    -fill
+	    -pen
+	    -font
+	    -text
+	    -editable
+	* Scrollbar -  A scrollbar
+	    -command
+	    -fill
+	    -from
+	    -to
+	    -orientation
+	    -linesize
+	    -pagesize
+	    -value
+
+  * Added some C++ default event handlers.  They are off by default,
+    and can be turned on by configuring the pad widget -defaultEventHandlers
+    option.  The handlers are:
+
+      * Pan pad with button 1
+	  <ButtonPress-1>   on "all"
+	  <B1-Motion>       on "all"
+	  <ButtonRelease-1> on "all"
+	
+      * Zoom pad with buttons 2/3
+	  <ButtonPress-2>   on "all"
+	  <B2-Motion>       on "all"
+	  <ButtonRelease-2> on "all"
+	  <ButtonPress-3>   on "all"
+	  <B3-Motion>       on "all"
+	  <ButtonRelease-3> on "all"
+
+      * Interact with Button widgets
+	  <Run-ButtonPress-1>   on "Button"
+	  <Run-B1-Motion>       on "Button"
+	  <Run-ButtonRelease-1> on "Button"
+
+      * Interact with Scrollbar widgets
+	  <Run-ButtonPress-1>   on "Scrollbar"
+	  <Run-B1-Motion>       on "Scrollbar"
+	  <Run-ButtonRelease-1> on "Scrollbar"
+
+      * Interact with Text widgets
+	  <Run-KeyPress>        on "Text"
+	  <Run-ButtonPress-1>   on "Text"
+	  <Run-B1-Motion>       on "Text"
+	  <Run-ButtonRelease-1> on "Text"
+	  <Run-ButtonPress-2>   on "Text"
+	  <Run-B2-Motion>       on "Text"
+	  <Run-ButtonRelease-2> on "Text"
+
+      * Interact with TextArea widgets
+	  <Run-KeyPress>        on "TextArea"
+	  <Run-ButtonPress-1>   on "TextArea"
+	  <Run-B1-Motion>       on "TextArea"
+	  <Run-ButtonRelease-1> on "TextArea"
+	  <Run-ButtonPress-2>   on "TextArea"
+	  <Run-B2-Motion>       on "TextArea"
+	  <Run-ButtonRelease-2> on "TextArea"
+
+      * Interact with Frame widgets
+	  <Motion>              on "Frame"
+	  <Leave>               on "Frame"
+	  <Run-ButtonPress-1>   on "Frame"
+	  <Run-B1-Motion>       on "Frame"
+	  <Run-ButtonRelease-1> on "Frame"
+	  <ButtonPress-2>       on "Frame"
+	  <B2-Motion>           on "Frame"
+	  <ButtonRelease-2>     on "Frame"
+	  <ButtonPress-3>       on "Frame"
+	  <B3-Motion>           on "Frame"
+	  <ButtonRelease-3>     on "Frame"
+
+  * Added pad 'random' function.  It returns a random integer
+    between the specified min and max points, includsively.  Usage is:
+       .pad random min max
+
+  * Extended slide and scale commands to take an optional <animationTime>
+    parameter which makes the motion animate over the specified period of
+    milliseconds with a simple linear SISO motion.  The APIs are:
+       .pad slide tagOrId [x y [animationTime]]
+       .pad scale tagOrId [scaleAmount [centerX centerY [animationTime]]]
+	
+  * A sound command was added for the Irix and Linux platforms. Currently the
+    only supported sound format is the .au format. This can easily be
+    extended if the need arises. The following subcommands to pad sound
+    exist:
+    
+    .pad sound load /full/path/to/sound/file.au
+    	this command returns a sound token that can be used to play the
+    	stored sound later.
+
+    .pad sound play load_token [-volume master_volume]
+	this will play the sound if the audio device has been configured
+	(see the README for instructions on configuring sound). Play
+	returns a token that is used to stop the sound if needed -  this
+	is here for later support of simultaneous sounds.
+
+    .pad sound stop play_token
+	this stops the sound referenced by token
+
+    .pad sound configure -sounds
+	this prints a list of the currently loaded sounds to stdout.
+
+    .pad sound configure -volume 
+	this returns a list of the left and right speaker volumes
+
+    .pad sound configure -volume master_volume
+	this sets the left and right speaker volumes to be
+	master_volume. It, too returns a list of the left and right
+	speaker volumes. 
+
+    .pad sound configure -volume left_volume right_volume
+	this sets the right and left volumes seperately. It, too returns a
+	list of the left and right speaker volumes. 
+	
+  * The Tcl array Pad_NewID maps between original and new object ids (Pad_ID) 
+    as objects are written and read (to and from pad files).
+
+  * INCOMPATIBLE CHANGE: Changed center and centerbbox commands so
+    that meaning of <x> and <y> is slightly different.  They used to refer
+    to the position of the center of the bbox of the thing being centered.
+    I.e., (0, 0) would put the center of the bbox in the lower left corner
+    of the view and (0.5, 0.5) would center it.  Now the portion of the bbox
+    that <x> and <y> refer to interpolates along with <x> and <y>. 
+    I.e., (0, 0) now puts the lower left corner of the bbox in the lower left
+    corner of the view.  (0.5, 0.5) still centers, and (1.0, 1.0) now puts
+    the upper right corner of the bbox in the upper right corner of the view.
+
+  * INCOMPATIBLE CHNAGE: Changing a portal's view generates a <Modify> event 
+    for the portal.
+
+  * INCOMPATIBLE CHANGE: When setting the -width or -height of objects to
+    a value smaller than their default, so the object is clipped, the 
+    clipping now occurs based on the objects anchor type, rather than
+    always clipping from the center.
+
+  * INCOMPATIBLE CHANGE: Reimplemented sticky objects based on constraints 
+    instead of a separate display list.  Now, sticky objects are identical
+    in every way to regular objects except that are kept on a special list.  
+    Every time the top-level view is changed, the position and size of sticky
+    objects are recomputed to behave properly.  There are several advantages
+    to this approach.  They are:
+
+      - The implementation of sticky objects is *much* easier and there are
+        no special cases (except for the view changes).  As a result, several
+	nagging	bugs with sticky objects (particularly sticky portals) are now
+	fixed.
+
+      - There are now multiple kinds of sticky objects.  Because a constraint
+        is evaluated whenever the view changes, it is easy (in C++) to 
+        implement different constraints.  The result is that the notion of
+        sticky has been extended to mean that an item's scale doesn't change
+	when the view is zoomed.  See below for a description of the new kinds
+	of stickiness.
+
+      - Manipulation of sticky objects is simpler.  There is no longer any need
+        for special cases when writing code for sticky objects at the application
+	level.  Now, they get created and modified *exactly* the same as regular
+	objects, but they just move differently then other objects do when the
+	view changes.
+
+      - The behavior of sticky objects is now richer.  Much of the previous 
+        behavior was a side-effect of the implementation.  For example, sticky
+	objects used to always get rendered after non-sticky objects, and they
+	were never visible within any portals.  That exact behavior is still 
+	possible through the reimplementation of layers, but is no longer enforced
+	(nor is it the default).  By default, sticky objects act just like any
+	other in terms of drawing order.
+
+	In addition, sticky objects can now be members of groups.  
+
+    Aside from drawing order, the only command whose meaning has changed as
+    a result of the reimplementation of sticky objects is the 'coords' command
+    when applied to sticky objects.  It used to operate in a special 'sticky'
+    coordinate system.  Now, it operates exactly like it does on all other objects.
+
+    There are now four kinds of sticky objects.  They are:
+
+      - Regular sticky objects.  These don't move at all as the top-level view changes.
+
+      - "Sticky Z" objects.  These do not zoom, but they pan normally.  That is, they
+        when the view changes, their (x, y) position does not change, but their
+	scale is recalculated so their size does not change.  This can be appropriate
+	for handles or labels where you don't want their size to change, but you do
+	want them to stay with other related objects.  As a result of this, the
+	old 'handle' object type has now been deleted.  The previous handles never
+	worked quite right within portals (they left screen turds), and their
+	functionality is almost completely replaced by sticky z objects.  Note that 
+	one thing sticky z objects can not do that handles did do is that sticky z
+	objects don't scale only at the top-level view.  Since they are otherwise
+	regular objects, they can appear scaled within portals.
+
+	Example:  The following code creates a rectangle with 4 non-zooming "handles"
+	          on its corners.
+
+		  set rect [.pad create rectangle 0 0 100 100 -fill white]
+		  .pad create rectangle 0 0 6 6 -fill lightblue -place "  0   0 1" -sticky z
+		  .pad create rectangle 0 0 6 6 -fill lightblue -place "100   0 1" -sticky z
+		  .pad create rectangle 0 0 6 6 -fill lightblue -place "  0 100 1" -sticky z
+		  .pad create rectangle 0 0 6 6 -fill lightblue -place "100 100 1" -sticky z
+
+      - "Sticky X" objects.  This is like sticky z, but the objects
+        also don't pan in X.
+
+      - "Sticky Y" objects.  This is like sticky z, but the objects
+        also don't pan in Y.
+
+      - "Sticky view" objects.  This is like sticky z, but the
+        object always stays within the view - and the new position is
+        remembered, so that the object does not "want" to stay in its original
+        position as it does with the other sticky types.  Instead, once it is
+        moved to stay within the view, the new position is its preferred
+        position, and it sticks there.
+
+  * INCOMPATIBLE CHANGE: Deleted 'handle' item types.  They are replaced
+    with 'sticky z' objects.  See the description of the new sticky objects for
+    a complete explanation.
+
+  * INCOMPATIBLE CHANGE: Deleted the following items.  Previously, they were each
+    noted with a warning that they were obsolete and would be deleted:
+      - The -visible flag has been deleted.  Use -transparency 0
+        where you currently use -visible.
+      - The 'islinked' command has been deleted.  Instead, use the
+        Tk 'winfo ismapped' command.
+      - The 'shape' command has been renamed to 'windowshape'
+
+   * WARNING: Many commands related to renderscripts and render resources
+     were renamed in an attempt to simplify the pad command namespace, and
+     to group commands, making them more meaningful.  Setting and getting
+     attributes of resources (such as images) are now available through a
+     configure command that works like the pad itemconfigure command.
+     There is now a single command to interact with each kind of resource.
+     For instance, there is an 'image' command to deal with images, a
+     'font' command to deal with fonts, and a 'render' command to deal
+     with all aspects of renderscripts.  All the old command names were
+     kept, but they will be removed in the next version.
+
+     To summarize, the new commands are:
+        border
+        color
+        font
+        html
+        image
+        modifier
+        render
+     And the removed commands are:
+        allocimage
+        freeimage
+        allocborder
+        freeborder
+        alloccolor
+        freecolor
+        addmodifier
+        deletemodifier
+        setmodifier
+        getmodifier
+        drawborder
+        drawimage
+        drawline
+        drawpolygon
+        drawtext
+        setcapstyle
+        setjoinstyle
+        setlinewidth
+        setcolor  
+        setfont
+        setfontheight
+        getlevel
+        getmag
+        getportals
+        gettextbbox
+
+     Here is a list of all the commands that were removed,
+     and the commands that replace them:
+        allocimage
+        freeimage
+        info image
+        => image alloc
+           image free
+           image names                   * NEW *
+           image configure -dimensions   (read only)
+           image configure -name  (read only)
+           image configure -rgb   (only set to 0)
+
+        allocborder
+        freeborder
+        => border alloc
+           border free
+
+        alloccolor
+        freecolor
+        => color alloc
+           color free
+
+        addmodifier
+        deletemodifier
+        setmodifier
+        getmodifier
+        => modifier create
+           modifier delete
+           modifier get 
+           modifier set
+
+        drawborder
+        drawimage
+        drawline
+        drawpolygon
+        drawtext
+        setcapstyle
+        setjoinstyle
+        setlinewidth
+        setcolor  
+        setfont
+        setfontheight
+        getlevel
+        getmag
+        getportals
+        => render scale dz           * NEW *
+           render translate dx dy    * NEW *
+           render draw border bordertoken relief width x1 y1 x2 y2
+           render draw image imagetoken x y
+           render draw line x1 y1 ...
+           render draw polygon x1 y1 x2 y2 ...
+           render draw text string x y
+           render configure -capstyle
+           render configure -joinstyle
+           render configure -linewidth
+           render configure -color
+           render configure -font
+           render configure -fontheight
+           render configure -level        (read-only)
+           render configure -mag          (read-only)
+           render configure -portals      (read-only)
+
+        info html
+        info htmlanchor
+        htmlanchor config -html, -image, -ismap, -url, -state
+        => html configure tagOrId -source         (read-only)
+           html configure tagOrId -type           (read-only)
+           html configure tagOrId -lastchangedate (read-only)
+           html configure tagOrId -length         (read-only)
+           html anchor configure tagOrId -html  (read-only)
+           html anchor configure tagOrId -image (read-only)
+           html anchor configure tagOrId -ismap (read-only)
+           html anchor configure tagOrId -name  (read-only)
+           html anchor configure tagOrId -state
+           html anchor configure tagOrId -url   (read-only)
+
+        gettextbbox
+        => font bbox string font [fontheight]
+
+        The 'info' command is left with just a few options:
+          info status render
+          info status sharedmemory
+
+
+	  #####################################################################
+	  # Example code that demonstrates the new commands for a renderscript
+	  #####################################################################
+          #
+          # Create an item with a complex render script.
+          # Allocate the graphical resources this item will need
+          # to render itself.  Create a <Delete> callback to
+          # free up the resources when the item is deleted.
+          #
+          proc Create_test_item {} {
+              global env _test
+          
+              set id [.pad create rectangle 0 0 200 150 -fill white -pen none -renderscript Render_item]
+              .pad color alloc red
+              .pad color alloc blue
+              .pad color alloc black
+              .pad border alloc green4
+              set _test(image) [.pad image alloc $env(PADHOME)/images/unm_logo.gif]
+          
+              .pad bind $id <Delete> {
+          	.pad color free red
+          	.pad color free blue
+          	.pad color free black
+          	.pad border free green4
+          	.pad image free $_test(image)
+              }
+          }
+          
+          #
+          # This is the render method for the test item.  It gets called every time
+          # the item is rendered.  It uses the 'render' command to draw a complex
+          # item consisting of many components - lines, polygon, images, 3D borders,
+          # and text.
+          #
+          proc Render_item {} {
+              global _test
+          
+              .pad renderitem
+              .pad render config -color red
+              .pad render draw line 40 5 45 15 50 5 55 15 60 5
+              .pad render draw line 140 5 145 15 150 5 155 15 160 5
+              .pad render config -color blue
+              .pad render draw polygon 0 0 20 0 0 20
+              .pad render draw polygon 180 0 200 0 200 20
+              .pad render draw polygon 200 130 200 150 180 150
+              .pad render draw polygon 0 130 20 150 0 150
+              .pad render config -color black -font System -fontheight 12
+              .pad render draw text "UNM" 85 4
+              .pad render config -color black -linewidth 1
+              .pad render draw line 0 0 200 0 200 150 0 150 0 0
+              set dim [.pad image config $_test(image) -dim]
+              set bd 4
+              set x1 [expr 2*$bd + [lindex $dim 0]]
+              set y1 [expr 2*$bd + [lindex $dim 1]]
+              .pad render translate 30 40
+              .pad render scale 0.4
+              .pad render draw border green4 raised $bd 0 0 $x1 $y1
+              .pad render draw image $_test(image) $bd $bd
+          }
+          
+          Create_test_item
+	  ###################################################################
+	  # End of example code
+	  ###################################################################
+
+  * INCOMPATIBLE CHANGE: Reimplemented layers to be more efficent and flexible
+    for future additions.  But primarily, the fundamental change is that layers
+    are now ordered.  It used to be that layers were used only to control visibility. 
+    Now in addition, each layer is rendered completely before other layers are
+    rendered.  That is, layers can not be staggered.  This gives much more flexibility
+    for forcing certain objects to always appear above or below other objects, and
+    applies to sticky objects just like all others.  However, there may be some
+    backward compatibility problems where layers were used for lenses.
+
+    The specific changes to layers are:
+      - Changed semantics of layers.  Now they are ordered
+      - Addition of 'none' option to -visiblelayers
+      - Implemented new layer data structure - constant time using array of ids
+      - Fixed efficiency bug where objects on invisible layers no longer get damaged
+      - Added -layer option to raise and lower commands to affect entire layers.
+	Usage is: pathName raise -layer layerId1 ?layerId2?
+                  pathName lower -layer layerId1 ?layerId2?
+
+        If only one layer is specified then it is raised/lowered to top/bottom.
+	Otherwise, layer1 is raised/lowered one above/below layer2 (if there
+	are no objects in layer2 then layer1 objects are raised/lowered using
+	the previous/next non-empty layer). 
+
+  * Added new 'getzoom' command.  This is exactly like 'getview', but
+    returns only the zoom.  Usage is:
+	pathName getzoom ?portalID ...?
+
+  * Added new 'rotate' command.  It rotates objects or groups by a specified
+    number of degrees.  Usage is:
+       pathName rotate tagOrId angle [xctr yctr]
+    Also added -angle itemconfigure option which sets the
+    angle of an object absolutely (in degrees).
+    -angle accepts just an angle, and the item is rotated around its anchor.
+    -anglectr accepts a list of three numbers where the the first
+    number specifies the angle, and the second two specify the anchor point.
+
+  * Added new 'layer' command.  It controls creation and deletion
+    of layers, and provides a method to return the current layers.
+    While layers are implicitly defined when they are used,
+    this command allows the creation of a layer before it is used,
+    and thus ordering of layers can be defined before objects are
+    created.  The usage is:
+       pathName layer subcommand [args ...]
+    where subcommand can be:
+       pathName layer create layerName
+       pathName layer delete layerName
+       pathName layer names
+
+  * Added the -writeformat option to image and textfile objects.
+    Possible values for this option are "copy" and "reference".
+    With this option it is possible to directly output the image
+    and textfile data when the object is saved (as opposed to saving 
+    a reference to the data file).  If the output is done as Tcl script
+    then the copy writeformat results in making copies of the original 
+    datafiles.  For the binary output it results in writing the data
+    in the output.
+
+  * Added new 'layout' command.  It performs various kinds of one-time layouts.
+    That is, it repositions and resizes objects based on subcommands, but
+    does not manage the objects in the future.  The current layout subcommands are:
+    align, distribute, position, snap, and size.  Attaching a layout call
+    to a <Modify> event provides a way to define custom layout managers.
+    Usages follow:
+
+       Align: Align the specified items so that their bboxs line up on the specified 
+       side.  If -anchor is specified, then line up by anchor point instead of by bbox.
+       If coordinates are specified, then align items to the path specified by
+       those coordinates.  Otherwise, use the item furthest in the alignment direction 
+       to align the others to.  If -coords is specified, then -overlaponly may be specified 
+       which means that items should only be aligned if they overlap the specified path.
+      
+           .pad layout align <type> [-anchor] [-coords {x y ...} [-overlaponly]] tagOrId [tagOrId ...]
+               <type> can be -left, -right, -top, or -bottom
+      
+       Distribute: Distribute the specified items so that the space 
+       between them is equalized horizontally or vertically (by bbox).
+       Alternatively, -coords can be specified in which case the items
+       will be distributed along the path specified by the coordinates
+       with equal spacing between items.
+       -space can be specified in which case the items will be distributed 
+       so there is <space> between each item.
+       If -space and -coords is specified, then the items will be
+       distributed along with the path specified by the coordinates
+       with <space> between each item.  If the items take up more space
+       than is available on the specified path, they will continue along
+       an extension of the last portion of the path.
+      
+           .pad layout distribute <type> [-space space] tagOrId [tagOrId ...]
+               <type> must be "-horizontal", "-vertical", or "-coords {x1 y1 x2 y2 ...}"
+
+       Position: Position the specified objects relative to a target 
+       object, or a bounding box.
+       Specify target point by a point on the unit square, and
+       specify the source point by a point on the unit square.
+      
+           .pad layout position [-time animationTime] x1 y1 <type> x2 y2 tagOrId [tagOrId ...]
+               <type> must be "-ref tagOrId" or "-bbox {bbx1 bby1 bbx2 bby2}"
+      
+       Size: Scale the specified objects so that their bounding boxes
+       are scaled (width or height) to the target.
+       If a reference object is specified, then scale relative
+       to that object.  Otherwise, scale to an absolute dimension.
+       Objects are scaled around their anchor points.
+      
+           .pad layout size <type> [-ref tagOrId] [-scale scale] tagOrId [tarOrId ...]
+               <type> must be "-width", "-height"
+
+       Snap: Position the objects so that their anchor points
+       are snapped to <grid>.
+      
+           .pad layout snap grid tagOrId [tagOrId ...]
+      
+  * Modified write command to allow relative pathnames and to do binary file I/O.
+    Relative pathnames means that images and textfiles filenames are stored
+    relative to the file that was saved, instead of absolute.  This makes it
+    easier to move .pad files between machines, etc.  New usage is:
+       pathName write [-format type] [-relative] filename ?tagOrId ...?
+    Where the format type may be:
+       text                Old text format, default
+       binary-interchange  Binary in a machine-independent format
+       binary-native       Binary in a machine-dependent format.  The fastest and smallest.
+
+  * Allocimage and textfile creation now take any kind of file name,
+    including those with '~'s.
+
+  * Added status option to info command.  New usage is
+       .pad info status render
+    This returns information about the most recent render
+      O: Total # of objects on surface
+      C: # of objects checked for rendering
+      R: # of objects actually rendered
+      L: Render level
+
+  * Removed 'Real-time image zooming supported' message that shows on startup,
+    and replaced it with a command to find out if it is supported.  Use
+    'pathName info status sharedmemory'
+
+  * Deleted -debugStatus config option, and replaced it with
+    a regular item defined in PadDraw using the new info status
+    command.
+
+  * Reworked image allocation.  Now, images are allocated with reference
+    counting.  So if you allocate an image with the same filename as one
+    that was previously allocated, the first one is reused.  Then, the
+    image is only actually freed when freeimage is actually called once
+    for each time it was allocated.  
+
+    Note that this is different than manually using a single image token
+    for more than one image object.  In this case, freeing the image token
+    will make any image objects that use that token go blank.
+
+  * Rewrote 3D border rendering code.  The only side effect is that KPL and
+    Tcl renderscripts that draw borders must now use standard Tk relief codes
+    (see tk.h) instead of the now obsolete pad relief codes.
+
+  * Extended 'find' command to allow searching for sticky objects.
+    New usage is ".pad find withsticky stickyType"
+    where <stickyType> can be any valid sticky type (1, z, view, or label)
+    or "all" which means return all sticky objects.
+
+  * Added "-norgb" command-line option to padwish to make it so that
+    all images loaded for this session are loaded without RGB information
+    resulting in lower memory usage.  Images without rgb information
+    use 1 byte/pixel instead of 5 bytes/pixel.
+
+  * Made Pad_Version variable available when padwish starts, before
+    any pad widgets have been created.
+
+  * Added oval primitive.  Parameters and usage are similar to that of rectangles.
+
+  PADDRAW APPLICATION CHANGES
+  ---------------------------
+
+  * Replaced old properties panel with George Hartogensis' 
+    properties widget within PadDraw.  You can use it either by
+    Tools/Properties in which case it acts like a lens, or you
+    can select a number of objects and then select
+    Objects/Properties and a widget is created for each selected item.
+
+  * Removed padrc file, and PadDraw no longer uses the X Option Database.
+
+  * Rewrote the hyperlink code from scratch.  The code had
+    gotten quite grody, and was getting unmaintainable.  Also, I wanted
+    to unify the hyperlinks.  The interaction for creating and using hyperlinks
+    is still similar, but it is somewhat refined.  The major difference
+    is how hyperlinks work with groups.  Also, entering hyperlink mode
+    shows all of the hyperlinks in the space.  While creating hyperlinks,
+    the potential link items are highlighted to give feedback.
+
+    Hyperlinks are now implemented through application-defined configuration 
+    options on items.  All items now have the three following options in PadDraw:
+
+      -linkto      Where the item is linked to.  May be a tagOrId or a bounding box.
+      -linkstyle   The style of the link: "box", "underline", "destbox", or "none".
+      -linkcolor   The color the link is rendered with.
+
+    Also, the Hyperlink Properties menu (under Object) is revamped, and gives
+    mechanisms to configure the style and color of one or more selected links.
+    It also lets you remove a link.
+
+    Hyperlinks now work properly, safely, and consistently with groups.
+    They follow the standard group mechanisms.  Making a link to a group either
+    makes a link to a single member, or all of the group members depending on
+    whether group members are currently selectable (controlled by the selection
+    control panel).  In either case, ungrouping and then regrouping will not
+    affect the link.  Removing the link removes the link to all of the group members.
+
+    Grouping several items that each have their own links preserves those links. 
+    After the items are grouped, their individual links can still be followed.
+    Then, making a link from a group depends on whether group members are selectable.
+    If they are, then the link comes from a single item.  However, if group members
+    are not selectable, the link is made from each of the group members - overwriting
+    any individual links they had.  When all group members link to the same place, 
+    the mouse-over indicator hilights the whole group.
+
+    Hyperlinks can be copied and pasted.  Copying an item which is a hyperlink
+    source results in a new item with a link to the same place the original
+    item linked to.  Copying an item which is a hyperlink destination does not
+    affect the original link, and the copied item will not be a destination
+    of any links.
+
+    There is a filter to read in files with the old hyperlink format.  This
+    filter gets executed automatically, and there should be no incompatibilities
+    reading old files.
+
+  * Added new "Selection" control panel from the Tools menu.
+    This gives a lot of control over how selection works.  
+    There is now control over what gets selected (small or large items,
+    group members, or transparent items), and how selection looks 
+    (handles, bounds, or nothing).  In addition, there is a mechanism
+    to select by tags.
+
+  * Overhauled color tool.  Among other things, added multiple palettes,
+    and made the option of putting palettes on drawing tool menu or
+    making a local tool.
+  	
+  * Made it so importing a .tcl file sources that file as Tcl code
+
+  * Added Poetry demo.  These are visualizations of a few
+    poems (Thanks Allison!)
+
+  * Made text cursor disappear while editing pad text.
+
+  * Added "Object/Make same size" menu option.  This makes
+    all the selected objects the "same size".  For this option, 
+    non-text objects are made to have the same height, and text
+    objects are made to have the same font size.  All objects
+    are made the same size as the largest selected object.
+
+  * Modified File/Import command so that importing a .pad file
+    will center it on the screen in the same way that other
+    files (like images) are.  In addition, the imported objects
+    are selected, and drawing mode is changed to Selection.
+
+  * Updated parts of the Pad++ Web browser.  This includes:
+      - Added parent/previous/forward/back buttons.
+      - Added scrollbars to long pages and gave them a max size so
+        the layout doesn't get messed up with long pages.
+      - Also modified layout so that new links are positioned
+        in the tree in the same relative order as their links.  It used to
+        be that the order was controlled strictly by the order in which
+        links were followed, but this seemed to be confusing.
+      - Fine-tuned some of the layout parameters
+      - Clicking on a focused page unfocuses it so that none of the pages
+	are focused, and then the newly small page is centered.
+      - Focusing on a page puts it at the top-center of the screen instead
+	of the top-left.
+
+  * Added interfaces to align and distribute items like "normal" applications.
+    Also made direct manipulation local tools for aligning and distributing.
+    Not quite finished, and there is a crashing bug, but it is very cool,
+    and quite demoable.  See Tools/Layout menu.
+
+  * Made general preferences get saved between executions
+    of PadDraw.  These get saved in the ~/.padsetup file.
+
+  * Added 'Telnet' to PadDraw Demo menu. This is the start of a telnet 
+    VT-100 terminal emulator that runs inside Pad++. It isn't complete yet, 
+    but gives you a flavor of what is possible.
+
+  * Added "Select With Handles" option to preferences menu.
+    If false, selected objects don't show their selection handles.
+    This makes selection faster, and avoids accidently picking
+    a selection handle and then reshaping an object.
+    Added a "Resize" option to the Object menu to allow resizing
+    of an individual object without having to change the preferences
+    for all objects.
+    NOTE: Default is true.
+
+  * Added facility to allow multiple pad windows open at the same time.
+    See the File/New Pad menu option.  Secondary windows have a File/Close option
+    which closes that window without exiting PadDraw.  The original window is
+    somewhat special in that it's geometry is remembered from run to run, and
+    it can not be closed without quitting the application.
+
+  * Put a marker around text objects when they are being edited.
+
+  * Modified file dialog box to offer options for saving files with relative
+    pathnames, and what file format (text, binary-interchange or binary-native).
+    Also, when saving files, make a backup of the old file
+    if there was one (oldfile~).  This way, in addition to
+    providing a backup, it gives some insurance if pad has
+    trouble when saving.  Also, added options when reading files to
+    control whether images get rgb data loaded, and whether
+    images and textfiles should be imported by copy or reference.
+    Now, textfiles imported by reference no longer are editable.
+
+  * Moved DoubleBuffer and X Sync options from preferences to debug menu.
+
+  * Changed the sticky object menu to allow creation of all kinds of sticky objects.
+    Note:  To create a sticky label, select more than one object.  The lowest
+    object will be the reference object, and all other objects will become sticky
+    relative to that object.
+
+  * Deleted zoomaction menu item - had been broken for some time.
+
+  * Added image that gets shown when PadDraw is iconified.
+
+  PADDRAW BUG FIXES
+  -----------------
+
+  * Fixed bug where zooming wouldn't zoom around cursor in all modes.
+    Now it does.
+
+  * Made Pad++ deal with bug in Tcl7.5p1/Tk4.1p1 where
+    <Destroy> event handlers don't have access to the window.
+    With this version of tcl/tk, pad won't remember window geometry,
+    but at least there won't be any Tcl errors.
+
+  * Fixed bug where the fade in/out/cross options didn't work exactl right
+    all of the time.  There was a bug if the window was oblong, and the
+    object was oblong along the same axis...
+
+  * Fixed bug where shift-selecting an item that was a member of a group
+    would remove it from the group.
+
+  * Fixed problem where deleting the last animated bug, and then
+    creating a new one would result in a bug that didn't move.
+    Also, cleaned up global Tcl variables when bugs are deleted.
+
+  C++SUBSTRATE BUG FIXES
+  ----------------------
+
+  * Fixed long-standing bug where events did not get generated
+    properly when going through a portal to another pad surface.
+    Now they do.
+
+  * add_node_safe() is a new version of add_node() that ignores attempts
+    to attach a treenode to one of its descendants.  add_node() is still
+    used for internal operations on trees.
+
+  * Fixed -portals flag on padxy command.  It was completely broken.
+
+  * Fixed bug where zooming a group member zoomed the member incorrectly
+    with the result that in PadDraw, it didn't stay synchronized with 
+    its selection handles.  Did this by adding a transformp flag
+    to Pad_Object::Scale() ala Slide().
+
+  * Fixed bug where the text bbox command didn't work properly on text
+    that was a member of a group.  This had the effect in PadDraw that
+    editing a group member could cause a view change.
+
+  * Fixed grid code so it does not have hard-coded limits on grid size.
+
+  * Fixed center command so that when it is applied to a tag, it centers
+    all items sharing that tag - not just the first one as it used to do.
+
+  * Fixed bug where zooming far into an image would make the pixels
+    jump around unpredictably.  Now, you can zoom into an image as far
+    as you'd like until it fades out.  The pixels can get *very* large.
+
+  * Fixed pad's use of colors.  It deals much better now with running out
+    of colors.  Also, now setting a color to a symbolic name and then asking 
+    for the name returns the symbolic name (it used to always return a hex 
+    rgb string).
+
+    With the newly working color approximation, I redid the colorcube
+    used by images to *ALWAYS* allocate a 6x6x6 colorcube - even though
+    some of the colors may only be approximations.  This works even
+    if there NO colors available from the X server.  As a side effect,
+    it is no longer necessary to change the color cube size at run-time,
+    so I removed -colorCubeSize as a configuration option from pad.
+
+  * Fixed html bug where if there was an error loading the
+    last inline image, then the done script would not get called.
+
+  * Fixed bug where destroying a second pad widget that had the pad focus
+    could crash.
+
+  * Fixed bug with text command where "insert" was supposed to be a
+    synonym for "point", but wasn't.
+
+  * Fixed bug where the default arrowshape wasn't being set
+    correctly for lines created within coordinate frames.
+
+  * Made -renderscript work on pad surface, item #1.  It works
+    the same way as other items, so that without a call to
+    renderitem, the pad surface does not get rendered.
+
+  * Fixed coords command to work properly on group members.
+    Before, the coords command applied to a group member
+    actually set the coords relative to the group.  Now is
+    global as expected (unless the -objectcoords flag is specified).
+
+  * Fixed bug where dealing with groups of groups could give
+    incorrect results.  I.e., sliding a sub-group member and then
+    manipulating the top-level group could make items move incorrectly.
+
+  * Fixed bug where before, you couldn't delete group members directly.  Now you can.
+
+  * Fixed bug where previously, changing the size of the pad window through 'wm geometry' 
+    wouldn't properly update an internal data structure (Pad_View->view_bbox) with the
+    result that items would get rendered improperly.
+
+  C++ SUBSTRATE CHANGES
+  ---------------------
+  * Changed .pad file format so view isn't saved with file anymore.  Instead,
+    This is left to the application.  PadDraw has been changed to have its
+    own mechanism for dealing with views.  If there is a "start" item
+    (an item with a "start" tag), that item will be centered - otherwise 
+    all items will be.
+  
+  * Restructured organization of Pad++ code to get it ready to work with 
+    Windows95/NT.  The src directory is gone and is replace with:
+      generic  - C++ code shared by all systems
+      unix     - C++ code specific to unix   
+      win      - C++ code specific to Windows
+    The bin directories and the 'pad' script remain where they were
+    (off the top-level), but configure and make have moved to unix.
+    Note that all the makefiles were merged into a single one.  So,
+    cd to unix, and type configure, followed by make.
+  
+    Because things changed so drastically, I might not risk
+    trying to update your source code tree with cvs     
+    (although you're welcome to try with 'cvs -d update')
+    You might be better off removing all your code, and checking
+    out a new tree with 'cvs checkout pad_devo'
+	
+  * Converted Pad_Script to Pad_Callback to allow C++ callbacks
+    wherever a script was allowed - including event bindings.
+    Renamed script.C/h to callback.C/h
+
+  * Made Pad_Objects use less memory for options.  Pad_Object now has a list 
+    of Pad_Trait objects for infrequently used options such as info, 
+    viewScript, renderScript, timer, zoomActions, prevSizes, etc.  
+  
+  * Speeded up HTML rendering by clipping items within the page.
+    Now only the items that are visible get rendered.
+
+  * Fixed the math of zooming internally so that now you
+    can zoom the full depth no matter what the (x, y) offset.
+    Implemented this by changing the renderer stack of transformations
+    to maintain a separate stack of views, and when an object is pushed
+    on, it is combined with the current view, and the combination is
+    pushed onto the stack.
+
+    Note that this fix only applies to objects whose transformation
+    (i.e., -place) is panned over very far.  It does not fix the problem
+    of having an item with a small -place, but coordinates that are very
+    large.
+
+  * Added capability in HTML to follow "index" anchors.  These are the type
+    of anchors that index to a specific part of a page with a ...#foo url.
+    One change I had to make to do this is to allow anchors to exist that
+    have no href.  In the past, if an anchor didn't have an href, it was treated
+    as regular text.  Sine index destinations are implemented by anchors
+    without hrefs, these kind must now be valid anchors.
+
+  * Renamed many variables to conform to the new coding conventions.
+    See src/CodingConventions for a description of the new standards.
+
+  * added the Pad_Oval class as a subclass of Pad_Rectangle

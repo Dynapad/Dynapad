@@ -1,0 +1,152 @@
+Pad++ Version 0.9p2
+
+By the Pad++ Consortium
+  University of New Mexico
+  New York University
+
+Bugs:         pad-bug@cs.unm.edu
+Info Request: pad-info@cs.unm.edu
+Comments:     pad-comment@cs.unm.edu
+Registration: pad-register@cs.unm.edu
+User Group:   pad-users@cs.unm.edu
+
+1. Introduction
+---------------
+
+This directory contains the root of the tree containing sources and
+documentation for Pad++, a zooming interface widget for Tcl/Tk.
+
+Pad++ is Free Access Software.  It is not public domain, but may be licensed
+for free for education, research and internal use.  See the files
+"License", "LicenseTerms", and "Register" for more information.  
+
+2. Documentation
+----------------
+
+The best way to get started with Pad++ is to first learn Tcl/Tk, and
+then to read the programmers guide (in doc/guide.ps) followed by
+the reference manual (in doc/reference.ps).
+
+3. Running pre-built version of Pad++
+-------------------------------------
+
+If you download a pre-built version of Pad++, you will get the minimal
+code necessary to run the complete Pad++ system and PadDraw application.
+This includes the 'padwish' executable, and a 'paddraw' script that will
+run Pad++ with the PadDraw application.  This system will allow you to
+do any Tcl with Pad++.  To do any C++ development, you must get the
+complete source tree and build Pad++ yourself (see the next item).
+It also include the shared library, libpad.so, so pad may be loaded
+into an existing wish executable (only available on SGI and Linux platforms).
+
+4. Compiling and installing Pad++ on Unix
+-----------------------------------------
+
+This release should compile and run "out of the box" on any UNIX-like
+system that approximates POSIX, BSD, or System V.  We know that it runs
+on workstations from Sun (SunOS and Solaris), IBM (AIX), Silicon Graphics, 
+HP, and on PC's running Linux.  To compile Pad++, do the following:
+
+    (a) Install Tcl/Tk on your system (tcl/tk 8.0)
+	Access from http://www.scriptics.com
+
+    (b) Optionally install JPEG on your system.  Pad++ will be able to
+        read jpeg images if it is built with the jpeg library,
+        available from ftp://ftp.uu.net/graphics/jpeg/jpegsrc.v6a.tar.gz
+
+    (c) Optionally install TIFF on your system.  Pad++ will be able to
+        read tiff images if it is built with the tiff library,
+        available from ftp://ftp.sgi.com/graphics/tiff
+
+    (d) Optionally install SCHEME on your system.  Pad++ will be able to
+        use the ELK version of Scheme as a scripting language in addition
+	to Tcl if Pad++ is built with the Elk library, available from 
+        http://www.informatik.uni-bremen.de/~net/elk/elk.html
+	See the README.scheme file for more information on Scheme.
+
+    (e) Optionally configure Pad++ to run with sound.  Sound is supported
+        only on SGI and Linux platforms.  On SGIs, after running
+        configure - step (g), edit unix/Makefile, and set INCLUDE_SOUND
+	to TRUE.  On Linux, you must install sound support for
+        the operating system.  This can be done in two ways.  The free way is
+        to recompile your kernel with support for the proper sound card.  This
+        requires that you know what sound card you have and several of its
+        parameters.  Alternatively, for around $20, you can purchase OSS, a
+        commercial sound library which dynamically loads into your kernel.
+        Get this at http://www.4front-tech.com.  After you have done this,
+        then set the INCLUDE_SOUND variable to TRUE as for SGIs.
+
+    (f) Type "cd unix".  This will change the working directory to 'unix'.
+
+    (g) Type "./configure" in this directory.  This runs a configuration
+	script created by GNU autoconf, which configures Pad++ for your
+	system and creates a Makefile.  The configure script allows you
+	to customize the Pad++ configuration for your site.
+
+    (h) Type "make".  You must use the GNU make facility.  Sometimes, this
+        is called "gmake".  This will create a library archive called "libpad.a"
+	and an interpreter application called "padwish" that allows you to type
+	Tcl commands interactively or execute script files.  It will also
+        create a 'paddraw' script to run the PadDraw application, and
+        a 'pad' script to set up some environment variables, and run padwish.
+
+    (i) If the make fails then you'll have to personalize the Makefile
+        for your site or possibly modify the distribution in other ways.
+	If you need to modify Makefile, there are comments at the
+	beginning of it that describe the things you might want to
+	change and how to change them.
+
+
+5. Compiling and installing Pad++ on Windows95/NT
+-------------------------------------------------
+
+    Pad++ now runs on Windows95/NT but is still buggy.
+    It is especially buggy on Windows95.  If you want to see how
+    it works with the current experimental version, you can try
+    compiling it by going to the win subdirectory and using
+    Makefile.vc for Microsoft Visual C++ version 4.0.
+
+6. Test suite
+-------------
+
+none
+
+7. Summary of changes in recent releases
+----------------------------------------
+
+  See ChangeLog file for complete description of all changes
+
+8. Support and bug fixes
+------------------------
+
+We are very interested in receiving bug reports and suggestions for
+improvements.  Bugs usually get fixed quickly (particularly if they
+are serious), but enhancements may take a while and may not happen at
+all unless there is widespread support for them.
+
+Send bug reports to pad-bug@cs.unm.edu
+
+9. Credits
+----------
+The scripting language interface to the Pad++ widget was greatly
+inspired by John K. Ousterhout's canvas widget in Tk. The zooming
+concept was originally described by Ken Perlin and David Fox at New
+York University in SIGGRAPH'93.
+
+Pad++ is being developed by an ARPA funded consortium led by Jim Hollan
+at the University of New Mexico in collaboration with New York University.
+
+The development group is being led by Ben Bederson (UNM), and consists
+of people at UNM: Jim Hollan, Allison Druin, Ron Hightower, Mohamad Ijadi,
+Jason Stewart, David Thompson, Ying Zhao and people at NYU: 
+Ken Perlin, Jon Meyer, and Duane Whitehurst.
+
+In addition, other people that have been involved with the Pad++
+project include: David Bacon, Duco Das, Eric De Mund, David Fox,
+David Proft, David Rogers, Mark Rosenstein, Larry Stead, David Vick,
+Kent Wittenburg.  
+
+We also especially appreciate Paul Haeberli (of SGI) who gave us
+code to read and render Adobe Type 1 fonts.
+
+Pad++ is supported in part by ARPA contract #N66001-94-C-6039.

@@ -1,0 +1,74 @@
+This file contains notes that may help you compile Pad++.
+
+General
+-------
+* If you get very strange compiler errors such as:
+  "gcc: Internal compiler error: program cc1plus got fatal signal 9"
+  It could be due to your computer running out of memory in the middle
+  of the compile.  Try killing some applications and recompiling.
+
+* You can also get strange errors if you run out of temporary disk space
+  during compiles.  If you think this might be a problem, try setting
+  your TMPDIR environment variable to some place that has room.
+
+* If you run out of disk space when creating the libpad.a library
+  with the 'ar' command, your tmp directory may be full.  The first
+  solution is to set your TMPDIR environment variable which will tell
+  ar to use another location for the temporary files.  If that doesn't
+  work, you can give ar the 'l' flag which says to use the current
+  directory for temporary files.  You should add this to the ar line in
+  unix/Makefile that starts with ../$(ARCH)/libpad.a.
+
+* If you get strange compiler warnings such as:
+      .../gcc-lib/sparc-sun-solaris2.5/2.7.2.1/include/sys/types.h:34: \
+      warning: abstract declarator used as declaration
+  It could be because configure was run with the system compiler (cc)
+  while Pad++ is being compiled with gcc.  To solve this, tell configure
+  to use gcc.  You can do this by setting the environment variables
+      CC  = gcc
+      CXX = g++
+
+
+SGI
+---
+* To compile on an SGI Onyx in 64 bit mode with the SGI CC compiler, you must
+    - Edit the Makefile, and change the definition of CCFLAGS and CCXFLAGS to
+         CXXFLAGS = -g -64 -woff 1682 -woff 1681
+         CCFLAGS = -g -64 -woff 1682 -woff 1681
+    - Edit unix/config.h, and change the definition of SIGNAL_ARGS
+      from '...' to 'int'.
+
+* There has been trouble connecting to the display.  In this case, rebuild Tk
+  without the -lsockets entry for LIBS in the Makefile.
+
+* If you build any of the external libraries with gcc, and then try and build
+  pad with CC, you can potentially end up with undefined symbol errors when
+  linking pad.  This is because the external libraries may access some system
+  function which is defined in libgcc.a which won't be included when you compile
+  pad with CC.  (E.g., this happens with libtiff.a where compiling it with
+  gcc uses eprintf which isn't defined by CC's library).  To solve this problem,
+  compile all libraries with the same compiler you compile pad with.
+
+Linux
+-----
+* On some versions of linux, compiling with -g causes g++ to be unable
+  to find some libraries (the libc library at least).  One solution is
+  to alter the Makefile by explicitly telling g++ to use the
+  link library by putting -L/lib -lc in the g++ link command.
+
+Solaris
+-------
+* Some Solaris machines (at least one Solaris 5.4 machine)
+  crashes and the X server dies when Pad++ is used with shared
+  memory.  Shared memory can be disabled by running padwish
+  with shared memory disabled with the -sharedmemory command line flag.
+  Try: "padwish -sharedmemory 0"
+
+* Some solaris machines aren't configured with cc.  In order for 'configure'
+  to run properly, you must set the CC environment variable to be the name
+  of the C compiler installed, such as "gcc".
+
+HPUX
+----
+* There have been reported problems building Pad++ on HUPX with gcc 2.6.3.
+  These problems were reported to have disappeared with gcc 2.7.2.

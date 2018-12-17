@@ -1,0 +1,72 @@
+Some notes about rendering strings.
+
+Pad_Object has three virtual rendering methods:
+I thought I could use the Render method to decide when to
+antialias freetype, but 
+
+  Render()
+  Render_medium()
+  Render_fast()
+
+Pad_Text has three levels (0-low res, 2-max res)
+I thought I could use the level (2-max res) to decide when to
+antialias freetype, but the level seems to always be 2 (max res).
+
+Pad_Restorer has five modes:
+
+Modes
+  RESTORE_UNDEFINED  0
+  RESTORE_NOW        1
+  RESTORE_WHEN_IDLE  2
+  RESTORE_REFINE     3
+  RESTORE_RESTORE    4
+
+Pad_Restorer also has refinementLevel (how far has refinement got).
+
+Each Restorer "encapsulates a region (X Region)" that it restores.
+
+What's the mapping from Restorer mode+refinementLevel to Object
+Render method to Text level?
+
+
+Panning is performed by scheme code that binds Run-B1-Motion to
+a callback that does a Moveto; ie, panning is repeated Moveto's.
+At the level of the Restorer, the result seems to be repeated NOW,
+finished by REPAIR.  I modified Draw_string to render freetype
+without antialiasing if the mode is NOW.  Because the last rendering
+during panning uses REPAIR, freetype is rendered antialiased after
+panning stops.
+
+Zooming is performed by scheme code that starts and stops a timer,
+whose callback does a Zoom_around, which calls Set_view; ie, zooming
+is repeated Set_view's.  At the level of the Restorer, the result
+seems to be repeated WHEN_IDLE.  So, freetype is always rendered with
+antialiasing; ie, nothing is done for faster rendering during zoom.
+
+Pan    NOW ... REPAIR
+Zoom   WHEN_IDLE ...
+
+Following a hyperlink calls Animate_to, which makes repeated calls
+to Set_view.  At the level of the Restorer, the result seems to be
+repeated NOW.  I modified Animate_to so that the final Set_view uses
+WHEN_IDLE mode.  So, freetype is rendered without antialiasing during
+animation and with antialiasing when animation ends.
+
+Moveto WHEN_IDLE
+Moveto NOW ... (when animated)
+Which I changed to
+Moveto NOW ... WHEN_IDLE (when animated)
+so that I'd know when the move finished and can antialias
+
+Set_view
+  if ...
+    Schedule RESTORE_NOW
+    Schedule RESTORE_REPAIR
+  else
+    Schedule RESTORE_NOW 
+
+Damage
+  Schedule  RESTORE_WHEN_IDLE
+
+I don't understand when RESTORE_REFINE occurs, because what I thought
+should be REFINE of text, seems instead to be REPAIR.

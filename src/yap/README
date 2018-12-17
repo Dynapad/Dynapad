@@ -1,0 +1,69 @@
+Yet Another Physics
+
+I added a few fields/methods to dynaobject% to implement a simple physics.
+
+  physics?
+  mass
+  force fx fy
+  velocity vx vy
+  prevxy prevx prevy
+
+I modified src/events/drag.ss Start-Drag and Finish-Drag to stop and
+start physics (physics?) for dragged objects, so that dragged objects
+obey the drag and don't run away.
+
+I added a simple example of physics
+
+  barneshut.ss
+  bounce.ss
+
+Barneshut is an efficient calculation of force on objects within a group.
+It builds a tree from the objects by dividing each rectangle enclosing
+objects into four smaller rectangles, calculating the cumulative mass and
+center of mass for each rectangle.  The efficiency comes when calculating
+the force on an object.  If the distance from the object to the center of
+mass of a rectangle not enclosing the object is larger than the size of the
+rectangle, then the rectangle is treated as one object when calculating the
+force.  That is, force isn't calculated between every pair of objects,
+which is n^2, but mostly between objects and rectangles, which is n*log(n).
+Usually the force calculation uses 1/r^2, but I'm using 1/r because 1/r^2
+is too short range; only having an effect when the centers of mass are
+nearly the equal.
+
+bounce.ss includes several types of force.
+  barneshut - attactive, but can be repulsive
+  drag      - friction, reduce v by 0.9 each time around the loop
+  view      - bounce off the edge of the view so doesn't leave the view
+  comeback  - if out of view, move toward the view
+
+(load "dynapad.ss")
+(appload "uberapp")
+(load "barneshut.ss")
+(load "bounce.ss")
+(define objs ... list of dynaobjects ...)
+(define t (run objs))  - start physics thread
+(set! nbforce #t)      - start barneshut force calculation
+...
+(set! nbforce #f)      - stop barneshut force calculation
+(kill-thread t)        - stop physics
+
+Physics is implemented as a loop in a separate scheme thread.
+The loop has a 20ms sleep.
+The loop starts by setting the force for each object to (0 0).
+If the object has physics then
+  Each object's position is changed by (vx vy).
+  Each type of force is calculated for the object and accumulated in (fx fy).
+  The object velocity is changed by (fx fy).
+If the object doesn't have physics then
+  (vx vy) is set to (x-prevx, y-prevy)
+  This is so that objects being dragged, which have their physics
+  turned off during drag, acquire the speed of the drag when drag
+  ends, so that they continue to slide.
+(prevx prevy) is set to (x y)
+
+Yes, this is still a hack.  Need a way to add and remove types of
+physics while running.  Need to think about the force calculations,
+sometimes the current force is modified, as in barneshut, but sometimes
+the current velocity is modified, as in bouncing off the view edge.
+
+(not DrRon)

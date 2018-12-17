@@ -1,0 +1,6 @@
+expand and refine touchd protocol (touchd and mzdt)
+  variable number of touches
+  identify the user?
+do touch tracking with newer touch structure; have dtviz and touchd use it
+use libtool for libdt (and mzdt?)
+handle overlapping touches

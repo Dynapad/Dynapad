@@ -1,0 +1,354 @@
+/* --- Copyright NYU Media Research Laboratory 1995. All rights reserved. ---
+ > File:             $improv/lib/std.kpl
+ > Purpose:          Standard KPL definitions
+ > Author:           Ken Perlin
+ > Related Files:
+ > Documentation:    See the KPL Manual.
+ */
+
+/*-------- Standard kpl definitions --------*/
+
+3.14159265 => PI
+1 => TRUE
+
+{ pnoise } => nois
+
+{ -> Max -> Min
+   clock 1:1:1 * 123.456 * nois 1 + 100000 * Max Min - mod truncate Min +
+} => random
+
+/*--- Pick randomly from a weighted list of choices ---*/
+
+{ -> choices
+
+   0 1000 random 1000 / -> T		/* pick random T in [0..1] */
+
+   { choices }
+   0 -> Total
+   { -> Item -> Weight
+      Weight Total + => Total
+   } rmap				/* add up total weight */
+
+   '_No_choice -> Choice
+
+   { choices }
+   0 -> Sum				/* choose when weight sum */
+   { -> Item -> Weight			/* over total exceeds T */
+      Weight Sum + => Sum
+      Choice '_No_choice == ( Sum Total / T > ( Item => Choice ) )
+   } rmap
+
+   Choice
+
+} => pick_one
+
+{ setv ` } => gets		/* implement arrays */
+{ setv = } => sets
+
+{ strcat } => property
+{ property ` } => get_property
+{ property = } => set_property
+
+{ push_var = }       => pushv
+{ -> Var
+   Var `
+   Var pop_var pop } => popv
+
+{ length 0 < } => symbol?
+{ length abs } => symbol_number
+
+{ -> op -> Var
+   Var ` op Var =
+} => tweak
+
+{ { 1 + } tweak } => incr
+{ { 1 - } tweak } => decr
+
+{ ` }						=> value
+{ strcat }					=> &&
+{ -> B -> A		A ( B | FALSE )	}	=> and
+{ -> A			A A }			=> dup
+{ -> T -> B -> A	A T ( B A - T * + ) } 	=> lerp
+{ -> B -> A		A B A B < lerp }	=> max
+{ -> B -> A		A B A B > lerp }	=> min
+{ "\n" print }					=> nl
+{ ( 0 | 1 ) }					=> not
+{ -> B -> A		A ( TRUE | B ) }	=> or
+{ -> A }					=> pop
+{ -> B -> A		B A }			=> swap
+
+{ -> for_body -> for_incr -> for_test -> for_init
+   for_init -> For_I
+   [ For_I for_test ?
+     For_I for_body
+     For_I for_incr => For_I
+   ]
+} => for
+
+{ vec eval_spline } => spline
+
+{ map_join } => vec
+
+{ { 0 swap = }       map } => set_to_zero
+{ { swap = }        imap } => enum
+{ -> Var { Var swap sets } imap } => set_to
+{ -> Ith
+   0 -> Ith_item
+   { Ith == ( => Ith_item | pop ) } imap
+   Ith_item
+} => ith
+
+{ { clock - } tweak } => timer_on
+{ { clock + .0002 - } tweak } => timer_off
+
+/*-------- support for 3d kinematics --------*/
+
+{ Matrix
+  'Matrix push_var =  }				=> Push
+{ 'Matrix pop_var pop }				=> Popp
+{ 180 / PI * }					=> degrees
+{ dup dot sqrt }				=> magnitude
+{ 1:1:1 *	movmat  tweak_matrix }		=> move
+{ 1:0:0 *	movmat	tweak_matrix }		=> movx
+{ 0:1:0 *	movmat	tweak_matrix }		=> movy
+{ 0:0:1 *	movmat	tweak_matrix }		=> movz
+{ 'Matrix pop_var pop }				=> mpop
+{ Matrix
+  'Matrix push_var =  }				=> mpush
+{ -> V
+   V V dot -> S
+   V S ( S sqrt / ) }				=> normalize
+{ 0:0:0 Matrix xform }				=> origin
+{ -> V
+   V Matrix transpose xform V - move }		=> pivot
+{ -> A  A ( A degrees 		 rotmat	tweak_matrix ) } => rotate
+{ -> A  A ( A degrees 1:0:0 swap rotmat	tweak_matrix ) } => rotx
+{ -> A  A ( A degrees 0:1:0 swap rotmat	tweak_matrix ) } => roty
+{ -> A  A ( A degrees 0:0:1 swap rotmat	tweak_matrix ) } => rotz
+{ scamat tweak_matrix }				=> scale
+{ 'Matrix { mult } tweak }			=> tweak_matrix
+{ 1:0:0:0 Matrix xform }			=> xdir
+{ 0:1:0:0 Matrix xform }			=> ydir
+{ 0:0:1:0 Matrix xform }			=> zdir
+
+/*-------- support for tk panels --------------*/
+
+"" => Tk_host
+
+{
+   "kplwish " Tk_host strcat pump_open -> P
+/*
+   "/graphics.b/newkpl-april/bin/kplwish " Tk_host strcat pump_open -> P
+   { "source lib/kpl_panel.tcl\n" } P pump_nput
+*/
+   { "source $env(improv)/lib/panel.tcl\n" } P pump_nput
+   P
+} => panel_open
+
+{ -> Panel
+   Panel ` ( "destroy .\n" Panel ` pump_put )
+   0 Panel =
+} => panel_close
+
+{ join => S } => tk
+
+1 => New?
+
+{ -> P
+   level -> L
+   P pump_readeval
+   [ level L > ? pop ]
+} => pump_re
+
+{ -> proc -> Panel
+      Panel
+      (
+         : -> S
+	 [
+            Panel New? ( pump_re | pump_read => S )
+	    First_panel_set ?
+	    S length 0 == ?
+	 ]
+	 FALSE => First_panel_set
+
+         { 0 } { S length < } { 2 + } { -> I
+            S I index S I 1 + index proc } for
+      )
+} => panel_set_values
+
+{ -> proc
+   0 -> Niter { 'Loop_items Niter sets  'Niter incr } map
+   [ 'Niter decr
+     'Loop_items Niter gets proc
+     Niter ?
+   ]
+} => iterate
+
+
+{ { print } rmap } => nprint
+
+{ -> P
+
+   { dup
+      P pump_put
+      "'" != ( " " P pump_put )
+   } rmap
+   P pump_flush
+
+} => pump_nput
+
+/*--------------- support for sliders -------------------*/
+
+{ -> Name
+   1 -> I
+   [  I Nsliders <= ?
+      Name 'Slider_names I gets != ?
+      'I incr
+   ]
+   I Nsliders > (
+      Name 'Slider_names I sets
+      I => Nsliders
+   )
+'Slider_values I gets } => slider
+
+{ '// slider lerp } => //
+
+{
+   "cp " input_file && " bak;" &&
+   "eval_slider <bak >" && input_file && " " && '// slider &&
+   system
+
+} => writeback
+
+{ -> Status
+   { 1 } { Nsliders <= } { 1 + } { -> I
+      'Slider_values I gets "Slider_" 'Slider_names I gets strcat =
+   } for
+   Nsliders => Nsliders_prev
+   0 => Nsliders
+   Status ( TRUE => New_sliders? | 'Sliders_panel panel_close )
+   Status exit
+} => quit
+
+{
+   { Sliders_panel pump_put } -> &&
+
+   Nsliders (
+      New_sliders? Sliders_panel 0 == or (
+	 Sliders_panel (
+            { 1 } { Nsliders_prev <= } { 1 + } { -> I
+	       "destroy ." && I && "\n" &&
+	    } for
+	    "set f 0\n" &&
+         |
+	    panel_open => Sliders_panel
+	 )
+         { 1 } { Nsliders <= } { 1 + } { -> I
+            "slider " && 'Slider_names I gets && "\n" &&
+            "Slider_" 'Slider_names I gets strcat ` -> T
+	    T length ( "." && I && ".0 set " && T 100 * && "\n" && )
+         } for
+         FALSE => New_sliders?
+      )
+
+      0 -> Si
+      Sliders_panel
+      { => Sv => Si
+         Sv 100 / 'Slider_values Si sets } panel_set_values
+      Si ( 1 exit )
+   )
+} => update_sliders
+
+/*------ support for events --------------*/
+
+{ 0 index }				=> ascii
+{ ascii Event_key == }			=> key?
+{ g_event => The_event
+  The_event 0 index => Event_key }	=> get_event
+
+256 => TIME_CLICK
+257 => TABLET_PEN
+TABLET_PEN 1 + => LEFT_MOUSE_BUTTON
+TABLET_PEN 2 + => MIDDLE_MOUSE_BUTTON
+TABLET_PEN 3 + => RIGHT_MOUSE_BUTTON
+TABLET_PEN 4 + => MOUSE_MOTION
+TABLET_PEN 5 + => LEFT_ARROW
+TABLET_PEN 7 + => RIGHT_ARROW
+TABLET_PEN 8 + => UP_ARROW
+TABLET_PEN 9 + => DOWN_ARROW
+
+/*----------- support for sets ------------*/
+
+{ 2 *     } => set_x
+{ 2 * 1 + } => set_y
+
+{ -> Set -> proc
+
+   { Set I_for_set set_x gets } -> abcissa
+   { Set I_for_set set_y gets } -> ordinate
+
+   { 1 } { Set 0 gets <= } { 1 + } { -> I_for_set
+       abcissa proc
+   } for
+
+} => for_set
+
+{ -> Set -> Item
+   0 { Item == ( I_for_set + ) } Set for_set
+} => in_set
+
+{ -> Set -> Item -> Value
+
+   Item Set in_set -> I
+   Value length (
+      I ( |
+         Set 0 gets 1 + => I
+         Item Set I set_x sets
+         I    Set 0       sets
+      )
+      Value Set I set_y sets
+   |
+      I (
+         Set 0 gets -> N
+         Set N set_x gets Set I set_x sets
+         Set N set_y gets Set I set_y sets
+         N 1 -            Set 0       sets
+      )
+   )
+
+} => assoc
+
+{ -> Set -> Item
+   Item Set in_set -> I
+   I ( Set I set_y gets | : )
+} => assoc_value
+
+{ -> Set                 0 Set 0 sets } => clear_set
+{ -> Set -> Item  TRUE Item Set assoc } => add_to_set
+{ -> Set -> Item  :    Item Set assoc } => delete_from_set
+
+{ -> Set2 -> Set1
+
+   { -> Item
+      Item Set2 in_set ( | Item )
+   } Set1 for_set
+
+} => difference_set
+
+/*----------- auxiliary vector routines -------------*/
+
+{ -> Vname
+  Vname ` ( | new_vec Vname = )
+  Vname `
+} => vvalue
+
+/*----------- support for gated triggers ------------*/
+
+{ -> Gate
+   FALSE -> Triggered?
+   { Gate > ( TRUE => Triggered? ) } map
+   Triggered?
+} => gate_at?
+
+{ .5 gate_at? } => gate?
+

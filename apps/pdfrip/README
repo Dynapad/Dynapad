@@ -1,0 +1,16 @@
+Some images, extracted with pdfimages, were flipped about the X axis.
+
+Unlike Xpdf, pdfimages (included with Xpdf) doesn't apply the CTM
+(current transformation matrix) from the image dictionary, so some
+extracted images are flipped.  (Why only some?  Perhaps because images
+can be stored in different formats in PDFs; eg, JPEG versus ???.)
+
+I modified padimages (ImageOutputDev.cc) to flip the image based on Sy from the CTM.
+
+I notified the Xpdf maintainer about the problem and my fix, but haven't received
+a response, so I don't know if the fix will be applied to the Xpdf distribution.
+So, I'm including here a context diff and the patched ImageOutputDev.cc for
+reference, in case the patch must be applied to future versions of Xpdf.
+
+Ron Stanonik
+Wed Mar 26 08:56:05 PST 2003

@@ -1,0 +1,13 @@
+#! /bin/sh
+#
+# 'pad' is automatically generated from 'pad.in' by substitution
+# (see the configure file).
+#
+prefix=@prefix@
+PADHOME=@exec_prefix@/lib/pad
+export PADHOME
+TCL_LIBRARY=@TCL_LIBRARY@
+export TCL_LIBRARY
+TK_LIBRARY=@TK_LIBRARY@
+export TK_LIBRARY
+@exec_prefix@/bin/padwish $PADHOME/draw/pad.tcl $*

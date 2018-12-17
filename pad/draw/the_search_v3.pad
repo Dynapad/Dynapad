@@ -1,0 +1,99 @@
+# 0.3devo
+global Pad_ObjectList PADLOAD
+set Pad_ObjectList ""
+
+
+$PADLOAD config -background #8ea8ab
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "-203.621 148.298 81.9349" -tags "item text link linkto27 link36 linkdest" -linkto link27 -font Utopia-bold-1 -pen #505050 -text "Se a r  c   h"]
+set Pad_NewID(114) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(114)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "-284.496 136.31 38.9995" -tags "item text" -font Helvetica-bold-1 -pen #ffffff -text The]
+set Pad_NewID(115) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(115)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "47.6968 49.8927 23.0557" -tags "item text" -font Utopia-bold-1 -pen #c4cfa1 -text "by Shel Sliverstien"]
+set Pad_NewID(116) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(116)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 9.34175% -place "-37.1704 58.4079 3.81703" -tags "item text" -font Helvetica-bold-1 -pen #ffffff -text "I went to find\nthe pot of gold,"]
+set Pad_NewID(117) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(117)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 9.34175% -place "-36.9173 58.5315 3.81703" -tags "item text link27 linkdest link linkto28" -linkto link28 -font Helvetica-bold-1 -pen #dbce85 -text "I went to find\nthe pot of gold,"]
+set Pad_NewID(118) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(118)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 5.94099% -place "-19.4744 52.5314 0.180544" -tags "item text link28 linkdest link linkto29" -linkto link29 -font Utopia-bolditalic-1 -pen #dbce85 -text "the rainbow ends..."]
+set Pad_NewID(119) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(119)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 3.35823% -place "-19.4453 52.5873 0.0883236" -tags "item text" -font Helvetica-bold-1 -pen #ffffff -text "That's waiting where"]
+set Pad_NewID(120) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(120)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 10.8902% -place "-16.597 52.5959 0.221586" -tags "item text link29 linkdest link linkto30" -linkto link30 -font Helvetica-bold-1 -pen #505050 -text "I searched,"]
+set Pad_NewID(121) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(121)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 9.88193% -place "-14.0405 52.3677 0.238729" -tags "item text link linkto31" -linkto link31 -font Utopia-bolditalic-1 -pen #505050 -text "And then"]
+set Pad_NewID(122) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(122)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 12.1909% -place "-14.6409 52.5447 0.187913" -tags "item text link30 linkdest" -font Helvetica-bold-1 -pen #000000 -text "and searched, "]
+set Pad_NewID(123) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(123)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 24.46% -place "-12.9528 52.1529 0.0467359" -tags "item text link31 linkdest link linkto32" -linkto link32 -font Helvetica-bold-1 -pen #dbce85 -text "There it was,"]
+set Pad_NewID(124) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(124)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 14.8956% -place "-12.8009 52.1537 0.00780618" -tags "item text link32 linkdest link linkto33" -linkto link33 -font Helvetica-bold-1 -pen #19512a -text "deep in\nthe grass"]
+set Pad_NewID(125) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(125)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 2.30849% -place "-12.7667 52.1449 0.00258193" -tags "item text link linkto34" -linkto link34 -font Utopia-bold-1 -pen #ffffff -text old]
+set Pad_NewID(126) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(126)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 1.71329% -place "-12.7692 52.142 0.000969657" -tags "item text" -font Helvetica-bold-1 -pen #ffffff -text and]
+set Pad_NewID(127) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(127)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 1.1987% -place "-12.7716 52.1402 0.000969657" -tags "item text" -font Helvetica-bold-1 -pen #ffffff -text t]
+set Pad_NewID(128) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(128)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 1.1987% -place "-12.771 52.1398 0.000969657" -tags "item text" -font Helvetica-bold-1 -pen #ffffff -text w]
+set Pad_NewID(129) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(129)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 1.1987% -place "-12.7699 52.1402 0.000969657" -tags "item text" -font Helvetica-bold-1 -pen #ffffff -text i]
+set Pad_NewID(130) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(130)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 1.0017% -place "-12.7693 52.14 0.000969657" -tags "item text" -font Helvetica-bold-1 -pen #ffffff -text s]
+set Pad_NewID(131) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(131)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 1.0017% -place "-12.7686 52.1404 0.000969657" -tags "item text" -font Helvetica-bold-1 -pen #ffffff -text t]
+set Pad_NewID(132) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(132)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 1.1987% -place "-12.768 52.1405 0.000969657" -tags "item text" -font Helvetica-bold-1 -pen #ffffff -text y]
+set Pad_NewID(133) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(133)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 2.20258% -place "-12.7718 52.1431 0.000969657" -tags "item text" -font Helvetica-bold-1 -pen #505050 -text "under an"]
+set Pad_NewID(134) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(134)
+set Pad_ID [$PADLOAD create rectangle -12.7721 52.1444 -12.761 52.1382  -events 1 -layer main -minsize 3.68708% -place "-12.7665 52.1413 1" -tags "item link33 linkdest" -transparency 0 -joinstyle miter -pen #505050 -penwidth 7.5201e-05]
+set Pad_NewID(135) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(135)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 1.86206% -place "-12.7667 52.1407 0.00105265" -tags "item text" -font Helvetica-bold-1 -pen #ffffff -text bough]
+set Pad_NewID(136) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(136)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -minsize 2.63926% -place "-12.7403 52.1429 0.00117414" -tags "item text link34 linkdest link linkto35" -linkto link35 -font Helvetica-bold-1 -pen #000000 -text "it's mine!"]
+set Pad_NewID(137) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(137)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "-11.849 52.3022 0.0219039" -tags "item text link35 linkdest" -font Helvetica-bold-1 -pen #ffffff -text "it's mine!"]
+set Pad_NewID(138) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(138)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "3301.87 4177.88 1641.63" -tags "item text" -font Utopia-bolditalic-1 -pen #505050 -text now]
+set Pad_NewID(139) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(139)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "-8496.68 3384.39 923.622" -tags "item text link linkto36 link37 linkdest" -linkto link36 -font Helvetica-bold-1 -pen #ffffff -text "What do I search for           ?"]
+set Pad_NewID(140) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(140)
+set Pad_ID [$PADLOAD create text  -anchor nw -events 1 -layer main -place "-11.8619 52.3127 0.0161081" -tags "item text link linkto37" -linkto link37 -font Utopia-bolditalic-1 -pen #000000 -text "it's mine at last!"]
+set Pad_NewID(141) $Pad_ID
+lappend Pad_ObjectList $Pad_NewID(141)
+
+$PADLOAD itemconfigure 1 -visiblelayers "all"
+
+set view [$PADLOAD getview]
+$PADLOAD moveto 49.4977 25.5272 0.859283
+if [info exists Pad_NewID(2)] {$PADLOAD ic $Pad_NewID(2) -sticky 1}
+eval $PADLOAD moveto $view
+set _pad(StartView) "-317.668671 -247.374573 416.664093 298.429016"
+

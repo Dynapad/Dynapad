@@ -1,0 +1,137 @@
+global env menu tcl_platform
+global _color _pad _file
+
+#
+# Global variables set for all pads
+#
+
+set _pad(cacheDir)       ""             ;# No caching and cacheDir by defaul
+set _pad(cacheSize)      0              ;# No caching by default
+set _pad(cacheDelay)     5              ;# Delay interval before any cacheout is done.
+
+set _pad(PadFileName)    ""             ;# Default filename to save as
+set _pad(PadDirName)     ""             ;# Default directory (if no file) to load from/save into
+set _pad(PadBitmaps)     $env(PADHOME)/bitmaps
+set _pad(Gamma)          1              ;# Default gamma (brightness)
+set _pad(DissolveSpeed)  2              ;# Dissolve speed upon refinement
+set _pad(SplashScreen)   1              ;# Start PadDraw with a splash screen
+set _pad(Help)           1              ;# True if system help is wanted
+set _pad(StartupTips)    1              ;# Startup tip # to display (0 for none)
+set _pad(8bitWarning)    1              ;# True if want warning on non-8 bit displays
+
+set _pad(FadeTime)       500            ;# Time in milliseconds objects should take when fading to delete
+set _pad(Click)          10             ;# No. of pixels below which a motion counts as a click when following links
+
+set _pad(Undulate)       0              ;# True if rough lines should undulate (animate waviness)
+set _pad(Roughness)      0.0            ;# Roughness of certain objects
+set _pad(PenWidth)       5              ;# Width of pen (in pixels)
+set _pad(PenColor)       #000000
+set _pad(FillColor)      #ffffff
+set _pad(TextSize)       12             ;# Size of new text objects in pixels
+set _pad(HTMLTextSize)   8              ;# Size of html pages in font size when a pages is focused
+set _pad(Font)           Times-1        ;# Set to font in family-style-size format
+
+					# Default pad widget dimensions
+set _pad(Width)          400
+set _pad(Height)         400
+set _pad(X)              200
+set _pad(Y)              100
+
+set _pad(ArrowA)         8              ;# Dimension A of arrow
+set _pad(ArrowB)         10             ;# Dimension B of arrow
+set _pad(ArrowC)         3              ;# Dimension C of arrow
+set _pad(LineArrow)      none           ;# Arrow heads (none, first, last, or both)
+set _pad(CapStyle)       round          ;# Line cap style (round, butt, or projecting)
+set _pad(JoinStyle)      miter          ;# Line join style (round, bevel, or miter)
+
+set _pad(ShowLinks)      1              ;# True to show all links when in hyperlink mode
+set _pad(ShowCoords)     0              ;# True to show current coordinates in status line
+set _pad(Selection)      show           ;# Control what gets created when selected: "show", "showbounds", or "hide"
+set _pad(SelectGroupMembers) 0          ;# True if group members should be selectable
+set _pad(SelectLargeItems) 0            ;# True if large items should be selectable
+set _pad(SelectSmallItems) 1            ;# True if small items should be selectable
+set _pad(SelectTransparentItems) 0      ;# True if transparent items should be selectable
+set _pad(SmallObject)    5              ;# Definition of a "small" object
+set _pad(DoubleBuffer)   1
+set _pad(XSync)          0
+set _pad(StatusLine)     1              ;# Show status line
+set _pad(TextBuffer)     1              ;# Show text buffer
+set _pad(DebugStatusLine) 0             ;# Show debug status line
+
+set _file(RelativePathnames) 1          ;# True if items should be stored with relative pathnames
+set _file(Format)        Text           ;# Default file format to write with.  
+set _file(WriteFormat)   reference      ;# "copy" or "reference" to control how file should be save
+set _file(RGB)           1              ;# True if image RGB data should be loaded
+set _file(SelectItems)   0              ;# True if items should be selected when they are imported
+
+set menu(.draw)          0              ;# Show Drawing tools
+set menu(.ce)            0              ;# Show Color pallette
+set menu(.nav)           0              ;# Show Navigation tools
+set menu(.pref)          0              ;# Show Preferences
+set menu(.search)        0              ;# Show Search menu
+
+				        ;# ZoomInEvent and ZoomOutEvent specify on what
+				        ;# event zooming occurs.  The format
+				        ;# is standard Tcl event sequence format.
+				        ;# Reasonable examples are:
+				        ;#    <ButtonPress-2>
+				        ;#    <Meta-ButtonPress-2>
+				        ;#    <KeyPress-z>
+if {($tcl_platform(platform) == "unix") ||
+    ([info exists _pad(MouseButtons)] && ($_pad(MouseButtons) == 3))} {
+    set _pad(ZoomInEvent)   <ButtonPress-2>
+    set _pad(ZoomOutEvent)  <ButtonPress-3>
+} else {
+    set _pad(ZoomInEvent)   <ButtonPress-3>
+    set _pad(ZoomOutEvent)  <Shift-ButtonPress-3>
+}
+
+				# Fonts
+set _font(menu)	        -*-helvetica-bold-r-normal-*-*-120-*
+set _font(tools)        -*-helvetica-medium-r-normal-*-*-120-*
+
+				# Pad background color
+set _color(padbg)        #8ea8ab
+
+				# Colors used for HTML
+set _color(htmlcamera)       #749292
+set _color(htmlborder)       #363d58
+set _color(htmlactiveborder) yellow
+set _color(htmllink)         #363d58
+set _color(htmlactivelink)   yellow
+
+
+				# These colors used for tools
+set _color(toolbg)       #a5b6bb
+set _color(toolactivebg) #dce6e6
+set _color(toolselbg)    #749292
+
+				# These colors used for menus
+set _color(menubg)       #b3c1c5
+set _color(menuactivebg) #dce6e6
+
+				# Color palettes for color menu in hex RGB format
+set _color(Palettes)     {Palette1 Palette2 Palette3 Palette4 Palette5}
+set _color(Palette1)	 {#000000 #505050 #ffffff #dbcea9 #969675 #928748 #d2003c #da8000
+	                  #d2da35 #448665 #4b8000 #454765 #3562b8 #6200fe #78009b #ce00ce}
+set _color(Palette2)	 {#000000 #414141 #626262 #747474 #878787 #969696 #9e9e9e #adadad
+	                  #bcbcbc #cbcbcb #dadada #e9e9e9 #ffffff #d2003c #4b8000 #6200fe}
+set _color(Palette3)	 {#000000 #505050 #a0a0a0 #ffffff #db8867 #aba64d #dbce85 #c4cfa1 
+                          #9ebfa0 #33a756 #4fb1b1 #7aaabc #afb6cf #cbc7ce #cba5be #bc7cb8}
+set _color(Palette4)	 {#000000 #ffffff #ffffce #ffff00 #e1bf71 #00ff00 #00ffff #0000ff 
+                          #71a1a9 #a1c7ff #b8cef8 #daffff #ffc3ff #ff9aff #ff00ff #78009b}
+set _color(Palette5)	 {#000000 #44381a #4f4717 #5e6529 #6d7847 #83834b #929665 #a5a98f
+	                  #bcbfa1 #cbcbb0 #dddac3 #f4e9ce #ffffff #d2003c #4b8000 #6200fe}
+
+#
+# Zooming related variables
+#
+set _pad(ZoomSpeed)      5       ;# Zooming speed (usually between 1 and 10)
+set _pad(ZoomStyle)      "FollowCursor"   ;# "FollowCursor" pans following cursor while zooming
+                                           # "AroundCursor" zooms around cursor
+set _pad(AnimationSpeed) 1000    ;# The time in milliseconds for automatic animations
+
+set _pad(DesiredFrameRate) 10    ;# Requested frames per second.  Below this speed, things get rendered ugly
+set _pad(SmallObjSize)     10    ;# Size below which objects are considered small (not rendered when system is slow)
+set _pad(MediumObjSize)    100   ;# Size below which objects are considered medium (rendered ugly when system is slow)
+

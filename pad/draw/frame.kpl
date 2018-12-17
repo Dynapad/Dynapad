@@ -1,0 +1,44 @@
+
+{ -> Height -> Width -> Y1 -> X1
+   X1 Width + -> X2 
+   Y1 Height + -> Y2 
+   newpath
+   X1 Y1 join moveto
+   X2 Y1 join lineto
+   X2 Y2 join lineto
+   X1 Y2 join lineto
+   closepath fill
+} => rect
+
+{ -> Frame
+   Frame 'fill_border tclget2 -> Border
+   Frame 'borderwidth tclget2 -> Border_width
+   Frame 'relief_num tclget2 -> Relief
+   Frame 'pen tclget2 -> Pen
+   Frame 'fill tclget2 -> Fill
+   Frame 'x tclget2 -> X
+   Frame 'y tclget2 -> Y
+   Frame 'width tclget2 -> Width
+   Frame 'height tclget2 -> Height
+   Frame 'font tclget2 -> Font
+
+   Fill setcolor
+
+   X .1 + Y .1 + join X Width .99 * + Y Height 0.9 * + join 
+   Border_width Border Relief drawborder
+
+   X Width .1 * + -> X1
+   Y Height .85 * + -> Y1
+   Height .07 * -> Size
+   Size Text strlen * => W
+   X1 Y1 W Height .2 * rect
+
+   Frame 'text tclget2 => Text
+
+   Pen setcolor
+   1 set_line_width
+   Font setfont
+   Text 
+   X1 Y1 join Size join 2 join drawtext
+   => x => x
+} => frame_render

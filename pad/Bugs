@@ -1,0 +1,86 @@
+6/25/97:  Playing sound with a long file on SGIs has been known to crash.
+
+6/24/97:  Grid's columnconfigure -weight doesn't work (appears to be ignored).
+
+5/15/97:  Open index on help by default.  Add current view within index.
+
+5/15/97:  Scrollbar on properties viewer on windows is misplaced.
+
+5/12/97:  Windows version of pad crashes if path contains a space
+
+3/10/97:  Importing items puts them all on the "main" layer.
+
+2/19/97:  Disable -viewscript callbacks while reading a file
+
+2/12/97:  Pad_result should be changed from an array to a Pad_String.
+
+1/30/97:  Shift-resize group to 0 divides by zero.
+
+1/22/97:  Updating group members doesn't force aliases to get updated.
+
+11/31/96: Textarea scrollbars aren't connected.
+
+10/27/96: Text objects should have a default anchor of "center"
+
+10/13/96: Import messes up hyperlinks to specific positions
+
+8/30/96: Tab groups: In motif and windows, there is the concept
+         of a tab group which is group of  widgets in a container,
+         pressing the TAB key should move you from one widget
+         to the next
+
+8/30/96: Grab the mouse and move it around both in std java
+         3D cube and zjava. You'll notice that Java keeps
+         delivering events, *even* if the mouse cursor is now
+         outside the window. We need to do the same.
+
+8/25/96: Text objects do indeed clip as specified - EXCEPT that when clipping
+	height, the bottom edge of the clipped object does not move - the other sides
+	do, even if the object is anchor nw. Does that make sense? I'll try to
+	clarify:
+
+        If I create a text object with a height of 100 and anchor nw, when
+	I set the height to 80, I would expect the object to stay stationary, and
+	the bottom 20 pixels 'cut-off' (and the bbox shrink-wraps around it). 
+	Indeed, this is the behavior for other objects. What happens is that the
+	objects does get its bottom 20 pixels 'cut-off', and the object appears to
+	slide to where the original bottom of the object was.
+
+8/20/96: Make push and pop clipping available in the renderer.
+
+8/20/96: Lines and splines are one pixel longer in pad than they are in canvas.
+	This can show up as assymetries in lines that the user expects
+	to be divisible by two, and hence expects to be symmetric.
+	You can see the difference in line length with:
+		 $ padwish
+		 pack [pad .p] [canvas .c]
+		 .p create line 20 30 21 30
+		 .c create line 20 30 21 30
+	Also try this:
+		 $ padwish
+		 pack [pad .p] [canvas .c]
+		 .p create line 20 19 60 21
+		 .p create line 20 21 60 19
+		 .c create line 20 19 60 21
+		 .c create line 20 21 60 19
+	If you look closely you will see that the transitions from one row 
+	of pixels to the next occur at different points.
+
+8/2/96:  Deleting yourself within a renderscript crashes
+
+2/25/96: Can't change -url of an html item once it has been set once,
+	 or it can crash.
+
+2/13/96: Aliases don't work properly for:
+	   - Text level of detail
+           - Groups
+           - Writing out
+
+12/9/95: HTML inline images should get re-used
+
+10/26/95: KPL bombs when stack turds are left around, and exits pad.
+
+Image rendering is sometimes one pixel off
+
+Kpl memory not being freed when object is deleted (or script is changed).
+

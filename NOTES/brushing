@@ -1,0 +1,117 @@
+How Dynapad Brushing Works
+(Dan Bauer, 10/05)
+
+I'm writing this because I've completely forgotten,
+and might as well harvest as I relearn...
+
+ENCODING RELATIONS
+
+Representing an arbitrary relation R among N elements (a..n) requires an
+NxN binary matrix: cell (a,b) is 1 iff aRb.
+
+In the worst case, each cell must be enumerated separately, but in general
+the matrix can be simplified into Karnaugh blocks.
+EX1:
+  a b c d
+a     1 1    a -->  cd
+b   1 1 1    b --> bcd
+c   1   1    c -->  bd
+d       1    d -->   d
+
+EX2:
+  a b c d
+a   1   1    a --> bd
+b 1   1      b --> ac    so   ac --> bd
+c   1   1    c --> bd         bd --> ac
+d 1   1      d --> ac
+
+EX3:
+  a b c d
+a     1 1
+b     1 1   abcd --> cd
+c     1 1
+d     1 1
+
+Here, let a "Karnaugh set" (kset) mean a subset of objects {a-n}
+(e.g. ac, bd)
+in either the domain or range of a Karnaugh block (e.g. ac-->bd).
+So kblock is a tuple of ksets,
+and each source kset has zero or more target ksets.
+EX1: 7 ksets: (a>cd, b>bcd, c>bd, d>d, cd>-, bcd>-, abd>-)
+EX2: 2 ksets: (ac>bd, bd>ac)
+EX3: 2 ksets: (abcd>cd, cd>-)
+
+Note that by allowing more than one target,
+fewer ksets may be needed:
+EX1: 4 ksets (a>c,d;  b>b,c,d;  c>b,d;   d>d)
+Thus a relation can have multiple representations.
+
+An exhaustive kset targets itself (and perhaps others):
+The only examples here are (b>b,c,d) and  (d>d).
+Exhaustive relations (the only ones currently in dynapad)
+have a single exhaustive kset (abcd>abcd).
+
+MULTIPLE RELATIONS:
+Each relation could be represented by a separate set of ksets.
+But if they often share ksets, we can also compress across relations
+by marking each kset target with a set of relations.
+Here's one way of combining the three example relations above:
+
+(a>cd:R1, bd:R2)
+(b>bcd:R1,ac:R2)
+(c>bd:(R1,R2) )
+(d>d:R1,ac:R2)
+(cd>-)
+(bcd>-)
+(bd>cd:R3)         (bd>-)
+(ac>cd:R3)    or   (ac>-)
+                   (abcd>cd:R3)
+
+All else equal, fewer ksets are better.
+But fewer ksets mean longer enumerations for each, plus duplication:
+(a>cd:R1,R3, bd:R2)        or (a>R1:cd, R2:bd, R3:cd)
+(b>bcd:R1, ac:R2, cd:R3)
+(c>bd:R1,R2, cd:R3)           (c>R1:bd, R2:bd, R3:cd)
+(d>d:R1, ac:R2, cd:R3)
+
+This config is most efficient when accessing by source object
+(as with brushing).
+But it's inefficient when accessing by Relation, especially
+in the frequent cases where ksets are large and mostly exhaustive
+(abcd>abcd)
+
+So in general, we'll make no commitment to optimality in either direction.
+
+IMPLEMENTATION:
+
+A relation-subdomain% (formerly called brush-set%) object
+implements a kset.
+It has members (objects a-n) and targets (ksets, possibly itself)
+indexed by relation%s.
+
+Each relation% links to the set of all its relation-subsets%,
+which together constitute its entire domain.
+And each relation% specifies a brush%, which determines how its
+relation-subsets% highlight members of their targets.
+
+
+
+
+Every brush set encodes its relation with a targets(source) lambda
+(_target-objs-fn)
+
+BINDINGS
+
+Brushing seems to be coded for efficiency rather than conceptual simplicity.
+Specifically, brush sets are not treated independently,
+which would require separate bindings for each.
+Instead, a source obj uses the same brush-lambda
+for all sets in which it is a source.
+
+Enabling/disabling brushing sets and clears binding,
+rather than merely supressing result.
+
+Disabling brush set clears bindings for all memers.
+
+Even when unbound, an object's brush-lambds are stored in a 'brush-lambdas entry
+in its alist.

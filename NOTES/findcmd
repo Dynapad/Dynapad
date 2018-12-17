@@ -1,0 +1,5 @@
+find . -name '*.c' -o -name '*.h' -o -name '*.cpp' -exec grep ' \<Tk[^ ]*(' {} \; > /tmp/Tk
+
+Find the X, Tcl, and Tk calls in pad as the first step to removing Tcl/Tk
+and port X to ... DirectX.  The results of the find, after a little filtering
+are in the files X, Tcl, and Tk.

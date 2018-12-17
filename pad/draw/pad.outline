@@ -1,0 +1,176 @@
+Introduction
+
+* Sistine Chapel
+
+* Push the interface metaphor
+
+* History
+
+** Ivan Sutherland
+SketchPad, 1963
+
+** William Donelson
+MIT, 1978
+
+** George Furnas
+Fisheye Views - Bellcore, 1986
+
+** Ken Perlin, David Fox
+PAD - NYU, 1993
+
+Pad++ Description
+
+* Substrate for building
+zooming applications
+
+* PadDraw Application
+
+* Portals
+
+* Images
+
+** [import $PAD "$env(PADHOME)/images/pad.gif"]
+
+** [import $PAD "$env(PADHOME)/images/unm_logo_orig.gif"]
+
+** [import $PAD "$env(PADHOME)/images/nyu_logo.gif"]
+
+* Navigation
+
+** Visual
+
+** Content-based search
+
+** Bookmarks
+
+* Lenses
+
+* Semantic Zooming
+
+Visualizations
+
+* Layout issues
+
+* Hypertext Markup Language (HTML)
+
+# ** [import $PAD "$env(PADHOME)/html/home-page.html"]
+
+* Directory browser
+
+# ** [import $PAD "$env(PADHOME)"]
+
+* Oval document layout
+
+* Timeline
+
+Implementation
+
+* Efficiency
+
+** Spatial Indexing
+
+** Clustering
+
+** Refinement
+
+** Level-of-detail
+
+** Region management
+
+*** Only draw what changes
+
+*** Refine regions
+
+*** Fast panning
+
+*** Opaque object hiding
+
+*** Break refinements into stripes
+
+** Adaptive small object rendering
+
+** Image caching
+
+** Clipping
+
+** Adjustable frame rate
+
+** Interruption
+
+** Ephemeral objects
+
+* Scripting Language Interface
+
+** Tcl Interface
+
+* Events
+
+** Modes
+
+** Event searching protocol
+
+** PortalIntercept event
+
+** Passing events
+
+* Messages
+
+* Callbacks
+
+** Render callbacks
+
+** Timer callbacks
+
+** Zooming callbacks
+
+* Extensions
+
+** Tcl defined widgets
+
+*** [global entryid; $PAD create button -text Hello]
+
+*** [global entryid; $PAD create scale]
+
+Classroom Tool
+
+* Searching (arrows)
+
+** Marilyn Loser
+John Lawton
+Josh Saiz
+Ramesh Vellanki
+
+* PadGolf
+
+** Tom Claus
+Yoshiko Okazaki
+Clarman Cruz
+
+** global env; exec $env(PADHOME)/padgolf/golf
+
+Future
+
+* Substrate improvements
+Display lists
+
+* Active multiscale documents - MSML
+
+* Networking - CSCW
+
+* GUI Builder - Make available for non-programmers
+
+# * KidPad
+
+# ** if {[winfo exists .t]} {raise .t; return}; \
+ toplevel .t; pad .t.pk; button .t.b \
+ -text "Close" \
+ -command {destroy .t}; pack .t.pk; \
+ pack .t.b -expand t -fill x; \
+ makeKidPad .t.pk; return ""
+
+* Leverage existing applications - Window Manager
+
+* URL: http://www.cs.unm.edu
+
+* Post-doc, programmer, and funded grad student 
+  positions available

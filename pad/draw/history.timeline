@@ -1,0 +1,354 @@
+1935 - Start of timeline
+1995 - End of timeline
+Computer Technology and User Interfaces
+
+1940:1945 War development of first computers
+1939 Dickenson files patent
+   & for electronic storage element
+1940 First color
+   & TV broadcast
+1941 Konrad Zuse
+   & completes the Z3
+   &   64 word memory,
+   &   3 secs/multiplication
+1942 Colossus helps British
+   & crack German codes
+1943 Government funds Eckert & Mauchly's
+   & work on ENIAC - the Electrical Numerical
+   & Integrator and Computer - for use in
+   & computing ballistics tables
+   &   Use of subroutines
+   &   18,000 tubes, 360 multiplications/sec
+1944 Harvard Mark I 
+   & dedicated
+   &   6 secs/multiplication
+1945 September 9, 1945: first "bug"
+   & logged at 15:45 hours
+1945 John von Neumann's EDVAC
+   & report on the idea of a general
+   & purpose, stored-program computer
+1945 Vannevar Bush's article, "As We May Think,"
+   & appears in Atlantic Monthly,
+   & forseeing use of Hypertext
+1946 John von Neumann begins influential
+   & IAS project at Princeton
+1946 Herman Goldstine
+   & invents flowcharts
+1947 First computer company
+   & the Eckert-Mauchly Corporation
+   & is founded
+1947 Transistor invented
+   & Bell Labs
+1947 ACM founded
+1948 Manchester Mark I goes operational
+   & (Experimental stored-program computer)
+   &   800 multiplications/second
+1949 Alan Turing's letter to the
+   & London Times on artifical intelligence
+1949 EDSAC, the first production stored
+   & program computer, runs its first program
+1950 Remington-Rand acquires Eckert-Mauchly
+1951 Microprogramming announced
+   & Wilkes
+1951 Forrester and Everett design
+   & Whirlwind at MIT
+1951 IEEE Computer Society founded
+1951 Census Bureau takes delivery of
+   & Remington-Rand UNIVAC I
+   &   16,000 pounds
+   &   5,000 vacuum tubes
+   &   1,000 calculations/second
+   &   $159,000
+1951 First programming error at
+   & Census Bureau, June 16
+1952 IBM 701 "Defense Calculator"
+1952 Alan Turing dies
+1952 UNIVAC I program correctly predicts
+   & outcome of Eisenhower-Stevenson
+   & election.
+1953 IBM 702, 650
+   & drum memory
+1953 First use of magnetic dore memory,
+   & on Whirlwind
+   & Jay Forrester
+1954 First assembler
+   & Nat Rochester on IBM 701
+1955 ENIAC turned off for the last time
+1955 GE's UNIVAC put to work on payroll:
+   & first commercial application
+1956 First direct keyboard input to a computer
+1956 ERMA at Bank of America
+   & revolutionizes commercial banking
+1957 Digital Equipment Corporation
+   & and CDC Corporation founded
+1957 First FORTRAN program is run
+   & John Backus
+1957 First photograph scanned, processed,
+   & and redisplayed by computer
+1958 Air Force SAGE
+   &   40,000 square feet for each two-system
+   &   installation.
+   &   3 megawatts of power per system
+   &   30,000 tubes per system
+   &   4kx32 bit word magnetic core memory
+1958 LISP
+   & John McCarthy at MIT
+1958 ALGOL 58
+1959 IBM 1401
+   & Transistors
+1959 Whirlwind shut down
+1959 DEC announced PDP-1
+   &   4K 18 bit words of core
+   &   paper tape
+   &   CRT
+   &   $159,000
+1959 Backus-Naur Form
+1959 Robert Noyce (TI) conceives idea for
+   & integrated circuit on Jan. 23, gives
+   & public demo of IC on March 24.
+   & Jack Kilby (Fairchild) independently
+   & develops IC.
+1959 Laser invented
+1960 Early warning system detects rising
+   & moon as incoming missles
+1960 COBOL
+1961 IBM 7090
+1962 Burroughs 6500
+1962 CTSS Time-sharing system
+   & Corbato at MIT
+1962 IBM Stretch
+   & Operating system concept,
+   & interrupts, timer, supervisory mode,
+   & I/O channels
+1962 First computer science department
+   & Purdue
+1963 American Sirlines
+   & SABRE system
+1963 Sketchpad
+   & Ivan Sutherland
+1963 [import $PAD /nfs/u3/bederson/images/sketchpad.gif]
+1964 DEC PDP-8
+   & First mass-produced minicomputer
+1964 IBM 360
+   & Binary addressing,
+   & cheap feasible time-sharing
+   & virtual memory
+1964 PL/1
+1964 Chip in a DIP
+1964 BASIC
+   & Kemeny and Kurtz
+1964 CDC 6600
+   & 350,000 FLOPS
+1965 Ivan Sutherland demonstrates stereo
+   & head-mounted display with position
+   & sensors - the first virtual reality
+   & helmet.
+1965 APL
+   & IBM
+   & Ken Iverson
+1965 Eliza
+   & Weizenbaum
+1967 CMOS integrated circuits
+1968 First Ph.D. in Computer Science
+   & Wexelblat at U. Penn
+1968 First mouse
+   & Doug Englebart
+1968 Dijkstra's letter to CACM
+   & "GoTo statement considered harmful"
+1969 Edgar Codd proposes
+   & relational database 
+   & model to IBM
+1969 FTC antitrust suit against IBM
+1969 UNIX
+   & Thomson and Ritchie at AT&T
+1970 Floppy diskette
+1970 Gene Amdahl forms Amdahl Corp
+1971 Pascal
+   & Niklaus Wirth
+1971 First advertisement for a microprocessor
+   & Intel offers its 4004 (Robert Noyce
+   & and Ted Hoff) in Electronics News.
+   & 4 bit, 60,000 instructions/second
+   & $300
+1971 Poketronic
+   & first pocket calculator
+1972 Intel 8008
+1972 Smalltalk at Xerox PARC
+1972 Nolan Bushell's PONG
+   & First video game
+1972 Hewlett Packard HP-35 calculator
+   & $395
+1972 Seymour Cray
+   & founds Cray Research
+1972 Pacemakers with chips
+1973 Winchester disk drives
+1973 IBM System 370
+1973 Ethernet
+   & Metcalfe at Xerox PARC
+1974 Intel 8080
+1974 First SIGGRAPH
+1975 First microcomputer BASIC
+   & Bill Gates and Paul Allen
+1975 Zilog Z80, MOS 6502, Motorola 6800
+1975 John Cocke begins RISC project
+   & IBM
+1975 MITS Altair
+   & 8080, 256 bytes RAM
+   & $498
+1976 Alan Kay and Adele Goldberg's
+   & Dynabook paper
+1976 Cray-1 supercomputer
+   & 138 MegaFLOPS
+1976 Adventure
+   & Crowther and Woods
+1977 Radio Shack TRS80
+1977 Apple II
+   & 6502, 16K RAM, 16K ROM
+   & $1298
+1977 Commodore PET
+   & 6502, 4K RAM, 14K ROM
+   & $595
+1977 CP/M
+   & Gary Kildall
+1978 Visicalc
+   & Dan Bricklin
+   & Bob Frankston
+1978 Intel 8086, 8088
+1978 William Donelson
+   & MIT
+   & Spatial Data Management System (SDMS)
+1979 Xerox, DEC, and Intel
+   & announce Ethernet support
+1979 NORAD: 50 false alerts in 1979
+1979 George Tate launches 
+   & Ashton Tate, dBase II
+1980 ADA
+1980 Scribe, first word processor
+   & Brian Reid
+1980 65 Kbit DRAM
+1980 32 bit micros
+   & Motorola 68000
+   & Intel 80186
+   & NS 16000
+1980 Apple III
+1980 Richard Bolt
+   & MIT
+   & Put-That-There
+1981 Xerox Alto
+   & mouse, Ethernet, Smalltalk
+1981 Hayes 300 Smartmodem with
+   & AT command set
+1981 Xerox Star - introduction of
+   & desktop interface
+1981 IBM PC
+1981 Osborne I - first portable
+   & 23 pounds, Z80, 64K RAM, CP/M
+1982 Commodore 64
+   & 6510, 64K RAM, 20K ROM, $595
+1982 SONY announces CD technology
+1983 IBM PC Jr.
+1983 AT&T divestiture
+1983 Apple's Lisa
+1983 Microsoft announces Windows
+1983 UNIX System V
+1984 Apple Macintosh introduced
+   & 68000, 128K RAM, $2495
+1985 Commodre Amiga,
+   & Atari 520 ST
+1985 C++
+1985 Microsoft ships windows
+1985 Aldus PageMaker for Macintosh
+1986 Max Headroom debuts
+1986 Large computer-induced stock swings
+1986 Connection Machine
+   & Danny Hillis
+1986 Adobe Postscript
+1986 Video Display terminal
+   & repetitive motion syndrome
+   & safety issues
+1986 George Furnas
+   & Bell Labs
+   & Fisheye Views
+1987 IBM PS/2
+1987 IBM OS/2
+1987 Hypercard
+1987 4 Meg DRAM
+1987 Colin Ware
+   & Eye Tracking
+1987 Randall Smith
+   & The Alternate Reality Kit (ARK)
+1987 Thomas Zimmerman
+   & Hand Gesture Interface
+1988 NeXT computer
+1988 Robert Morris' worm
+   & floods ARPANet
+1989 Intel i486, i860
+1989 US satellite positioning system
+   & cracked by 14 year old
+1989 1,000 US hospital computer
+   & system die
+   & 2^15 days after 1/1/1900
+1990 Motorola 68040
+1990 14 year-old boy cracks TRW credit
+   & orders $11,000 in merchandise
+   & 12 year-old arrested for tapping
+   & TRW credit files
+1990 AT&T congestion attributed to
+   & SWITCH...IF...BREAK in SS-7
+   & switching system.
+1990 Margaret Minsky
+   & MIT
+   & Force Feedback Joystick
+1991 Stuart Card
+   & George Robertson
+   & Jock Makinlay
+   & Xerox Parc
+   & Information Visualizer
+1991 Jock Makinlay
+   & George Robertson
+   & Stuart Card
+   & Xerox Parc
+   & Perspective Wall
+1992 Apple announces PDA
+1992 Tom Brinck
+   & Bellcore
+   & CSCW - Whiteboards
+1991 Marc Brown
+   & Digital SRC
+   & Algorithm Animation
+10/1/1992:9/1/1993 Experiment with lisp-based pad
+9/1/1993:4/1/1994 Write Pad++
+1993 Intel P5 chip
+   & 100 MIPS
+   & 3.5M transistors
+1993 IBM/Apple/Motorla
+   & PowerPC
+1993 Introduction of Mosaic
+1993 Steve Feiner
+   & Columbia
+   & Video Augmented Reality
+1993 Glorianna Davenport
+   & MIT
+   & Immersive Environments
+1993 Will Hill
+   & Bellcore
+   & Read Wear/Edit Wear
+1993 Ken Perlin
+   & NYU
+   & Pad
+1994 Will Hill
+   & Bellcore
+   & Vide Recommender
+1994 Allison Druin
+   & New York University (NYU)
+   & Immersive Environments
+1993 Ben Bederson
+   & Bellcore
+   & Pad++
+1994 Ben Bederson
+   & University of New Mexico (UNM)
+   & Pad++
+1994 [import $PAD images/pad.gif]
+1965:1969 Project MAC at MIT
+   & MULTICS
+1975:1995 Graphical User Interfaces

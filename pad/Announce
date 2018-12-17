@@ -1,0 +1,30 @@
+Pad++ is a substrate for developing zooming graphical interfaces.  It
+is built as a widget for Tcl/Tk (an interpreted scripting language and
+motif-compliant user interface library).  It is thus possible to
+create complete applications writing only Tcl code (and no C/C++).
+There is a sample drawing application written entirely in Tcl that
+uses the Pad++ widget called PadDraw.
+
+Pad++ currently runs on Windows95/NT and most Unix boxes including
+SGI's, Sun's (SunOS and Solaris), Dec's, RS-6000's, HP's, and PC's
+running Linux and FreeBSD.  To use it, just type: paddraw
+
+There is documentation describing the Tcl interface to pad in the 
+doc subdirectory.
+
+To access the interpreter, run the pad script.  Alternately, run the
+padwish executable in the appropriate bin subdirectory (i.e., 
+bin-i586-Linux for Linux).  To do this, you must set three shell
+environment variables:
+  PADHOME      - Pad++ home directory
+  TCL_LIBRARY  - Location of runtime Tcl libraries
+  TK_LIBRARY   - Location of runtime Tk libraries
+Then you can start the drawing application by executing this Tcl command:
+"source draw/pad.tcl"
+
+For more information about Pad++ and to download sources or pre-compiled
+binaries for several architectures, see 
+http://www.cs.unm.edu/pad++
+
+Pad++ is available for free for non-commercial use including research, 
+education, and in-house use.

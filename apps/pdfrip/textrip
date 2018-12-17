@@ -1,0 +1,47 @@
+#!/bin/sh
+
+if [ "${DYNAHOME}" = "" ]; then
+  echo "DYNAHOME not set"
+  exit 1
+fi
+
+riptext() {
+  pdf=$1
+  
+  if [ ! -f $pdf ]; then
+    echo "$0: $pdf not a file"
+    return
+  fi
+  
+  suf=`expr $pdf : '.*\(...\)' | tr [:upper:] [:lower:]`
+  if [ "$suf" != "pdf" ]; then
+    echo "$0: $pdf no pdf suffix"
+    return
+  fi
+  
+  if ! file -L $pdf | grep PDF >/dev/null ; then
+    echo "$0: $pdf not a pdf"
+    return
+  fi
+  
+  dir=`dirname $pdf`
+  pdf=`basename $pdf`
+  dir=$dir/.$pdf
+  
+  if [ ! -d $dir ]; then
+    echo "$0: $dir missing"
+    return
+  fi
+  
+  cd $dir
+  pdf=../$pdf
+  
+  pdftotext $pdf text
+}
+
+pwd=`pwd`
+for pdf in $*; do
+  cd $pwd
+  echo $pdf
+  riptext $pdf
+done

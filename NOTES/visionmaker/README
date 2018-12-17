@@ -1,0 +1,27 @@
+gtco_driver.tgz is an X Input Extension driver for calcomp digitizers.
+It came from calcomp, www.gtcocalcomp.com.  I modified it slightly to
+build on redhat 9.  The result is in the driver directory.
+
+test.ss is a demonstration of pressure and tilt.
+
+s20.c reads directly from the pen (serial port); ie, doesn't use the X driver.
+s20 is useful for trying to understand the pen commands and output.
+
+xinput-1.2.tar.gz is a utility for listing and testing X Input Extensions.
+It also serves as an example of X Input Extension programming.
+Look at list.c and test.c.
+
+gsumi-1.1.0.tar.gz is a drawing tool, which uses X Input Extensions to
+get pressure information from a Summagraphics digitizer.  Alas, it doesn't
+work with the gtco driver, but it might serve as an example of X Input
+Extension programming.
+
+lib.pdf, port.pdf, and proto.pdf are documentation for X Input Extensions.
+They came with XFree85 4.3.0, /usr/share/doc/XFree86-doc-4.3.0/Xi/*.ps.gz.
+I turned them into pdf's for reading.
+
+XInput.h is the X Input Extensions include and is included with the pdf's
+just for reference.
+
+Ron Stanonik
+Thu Apr 29 07:46:44 PDT 2004

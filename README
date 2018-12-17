@@ -1,0 +1,42 @@
+Interface DrScheme to Pad++ by running Tcl/Tk Pad++ as a DrScheme thread,
+providing scheme calls to Pad++ C functions.
+
+dynapad.cpp - C half of the DrScheme interface to Pad++.  Pad++ C functions
+  are made available as sch_XXX; for example, sch_makerect, sch_slide, etc.
+  The sch_makeXXX functions return an opaque scheme object, cptr, containing
+  the C pointer to the C++ object.  Scheme must pass the cptr back when
+  manipulating the object; for example, (sch_slide cptr dx dy) to slide an
+  object.  Pad++ classes were modified to include an opaque pointer, userdata,
+  to the corresponding Scheme object because sometimes you need to return the
+  scheme object; for example, sch_find returns a list of scheme objects under
+  the cursor.  The Pad++ find returns a list of Pad++ objects, userdata allows
+  dynapad.cpp to turn that into list of scheme objects, which is returned.
+  Pad++ classes were modified to include a findable field; for example,
+  a select% object should not be findable.
+
+dynapad-c-api.ss - DrScheme half of the interface to Pad++.  Yes, you could just
+  call the sch_XXXX functions, but why not create classes and have the
+  methods call the sch_XXX functions.  For example, when you
+  (make-object rect%), the constructor calls sch_makerect.  When you
+  (send object slide dx dy), the method calls sch_slide.  dynapad.ss
+  defines classes, but not behaviours; ie, there are no event bindings.
+
+dynapad.ss - Adds some behaviours and a simple menubar to create things,
+  save, and load.  text% subclasses basetext% to allow inserting text.
+  image% subclasses baseimage% to provide highres/lowres switching.
+
+workspace.ss - Not really anything to do with workspaces ... yet.
+  Adds an arrange function and button to load and arrange images.
+
+
+tclSchemeNotify.c - hooks Tcl/Tk into the DrScheme eventloop.
+builtin.cpp - Sigh.  DrScheme overrides new/delete causing Pad++ C++ objects to
+  be garbage collected.  builtin.cpp defines new/delete to use malloc/free and
+  is linked -Bsymbolic with dynapad.cpp to produce dynapad.so.  Since there are
+  many other references in dynapad.cpp (to scheme functions) which aren't
+  resolved until dynapad.so is loaded into DrScheme, the linker complains, but
+  it works.
+
+
+Ron Stanonik
+Tue Jul 23 14:14:55 PDT 2002

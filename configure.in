@@ -1,0 +1,121 @@
+AC_INIT(dynapad.cpp)
+
+AC_CHECKING([machine architecture])
+CPU=`uname -m | tr ' /' '_-'`
+OS=`uname -s | tr ' /' '_-'`
+if test "$OS" = "SunOS"; then
+    OSRELEASE=`uname -r`
+    if test $OSRELEASE -ge 5.0; then
+	OS="Solaris"
+    fi
+fi
+if test "$OS" = "AIX"; then
+    CPU=$HOSTTYPE
+fi
+if test "$OS" = "IRIX" -o "$OS" = "IRIX64"; then
+    CPU=MIPS
+    OS=IRIX
+fi
+if expr "$OS" : "CYGWIN.*" >/dev/null; then
+    OS=CYGWIN
+fi
+ARCH="bin-$CPU-$OS"
+AC_SUBST(OS)
+AC_SUBST(ARCH)
+
+PLT=/home/hci/plt
+AC_ARG_WITH(plt, [  --with-plt=DIR], PLT=$withval)
+if test ! -f $PLT/include/scheme.h; then
+  AC_ERROR(PLT directory $PLT not found)
+fi
+AC_SUBST(PLT)
+
+IINC=""
+LLIB=""
+case $OS in
+  Darwin*)
+    IINC=-I/sw/include
+    LLIB=-L/sw/lib
+    ;;
+esac
+AC_SUBST(IINC)
+AC_SUBST(LLIB)
+
+dirs="/usr/local/include \
+    /sw/include \
+    /usr/include"
+
+AC_ARG_WITH(Magick, [  --with-Magick=DIR       $DIR/include/magick/magick.h $DIR/lib/libMagick.a], MAGICK=$withval)
+
+if test -n "$MAGICK"; then
+  if test ! -f $MAGICK/include/magick/magick.h; then
+    AC_ERROR($MAGICK/include/magick/magick.h not found)
+  fi
+  if test ! -f $MAGICK/lib/libMagick.a; then
+    AC_ERROR($MAGICK/lib/libMagick.a not found)
+  fi
+  MAGICKH=-I$MAGICK/include
+  MAGICKLIB=-L$MAGICK/lib
+fi
+
+if test -z "$MAGICK"; then
+    dirs="/usr/local \
+          /sw \
+          /usr"
+    
+    AC_CHECKING([for magick.h and libMagick.a])
+    DIR=
+    for i in $dirs ; do
+        if test -r $i/include/magick/magick.h; then
+            if test ! -r $i/lib/libMagick.a; then
+                 AC_ERROR( found $i/include/magick/magick.h but not $i/lib/libMagick.a );
+            fi
+	    DIR=$i
+	    break
+        fi
+    done
+
+    if test -z "$DIR"; then
+      AC_ERROR( /usr/include/magick/magick.h not found );
+    fi
+fi
+
+AC_SUBST(MAGICKH)
+AC_SUBST(MAGICKLIB)
+
+AC_CHECK_PROG(PDFIMAGES, pdfimages, found, missing)
+if test $PDFIMAGES = "missing"; then
+  AC_ERROR([pdfimages not found])
+fi
+
+#--------------------------------------------------------------------
+# Check for db header file, because hashtab uses it
+# instead of Tcl_Hash routines
+#--------------------------------------------------------------------
+AC_CHECK_HEADER([db.h], DB=found, DB=missing)
+if test "$DB" = "missing"; then
+  AC_ERROR(db.h not found)
+fi
+
+AC_CHECKING([for freetype2])
+  if test -d /usr/include/freetype2; then
+    FT2INCLUDE=-I/usr/include/freetype2
+  elif test -d /usr/X11R6/include/freetype2; then
+    FT2INCLUDE=-I/usr/X11R6/include/freetype2
+  fi
+  if test "$FT2INCLUDE" = ""; then
+    AC_MSG_WARN(freetype2 directory missing)
+  fi
+AC_SUBST(FT2INCLUDE)
+
+SHARED="-shared -Wl,-Bsymbolic,--warn-once"
+case $OS in
+  Darwin*)
+    SHARED="-bundle -flat_namespace -undefined suppress -lxml2 -llcms -ltiff -lbz2"
+    ;;
+esac
+AC_SUBST(SHARED)
+
+AC_OUTPUT(makefile)
+
+[(cd pad/unix; ./configure)]

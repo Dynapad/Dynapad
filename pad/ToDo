@@ -1,0 +1,237 @@
+***************************************************************************
+These are the following major items on our list of Pad++ development:
+  - Java:       Make Pad++ a Netscape plug-in that can be controlled 
+		with Java applets.  The goal is that applications will
+		be able to be written in Java instead of Tcl (although
+		Tcl will not go away).
+  - Window'95:  Port Pad++ to Windows'95
+***************************************************************************
+These are good projects for other people to do
+  - Port to Macintosh
+  - Make a test suite
+***************************************************************************
+
+These are the myriad things we have thought of that we hope to someday
+get into Pad++:
+
+6/16/97:  Add -scrollregion mechanism a la canvas
+
+6/13/97:  Make rendering level smarter to depend on time.  Small text,
+          for instance, shouldn't be rendered as dashes unless the system
+          is too slow.
+
+5/30/97:  Fast portals by having a display list per view.
+
+5/30/97:  Add aliases to objects on other surfaces.
+
+5/13/97:  Add 'find ingroup' or withgroup to search just within a specific
+          group.
+
+4/8/97:   Layout should have an option to move all objects specified
+          by layout command as a group so that they don't move
+          relative to each other.
+
+4/8/97:   Layout should have an option to not actually do any layout,
+	  but instead, calculate it and return the positions of objects
+          were they to have been moved so that this information can
+          then be animated with the animation engine.
+
+4/6/97:   Allow de-resing of image data items.
+
+4/4/97:   Allow properties to deal with multiple selected objects.
+
+3/11/97:  Make a properties picker analogous to the color picker
+
+1/27/97:  Speed up Pad_Object::Get_aliases().  Objects should probably
+          store a list of objects referencing them.
+
+1/7/97:   Provide a mechanism to control how often portal's get updated.
+
+12/12/96: Would be nice having another selection option that only exposed a
+          single level of group members as opposed to making the entire group
+          hierarchy flat.
+
+12/11/96: It seems that aliases should at least have an option of inheriting
+          its referent's event bindings
+
+12/11/96: Supplement -minsize/-maxsize with options for min/max width and height.
+
+12/7/96:  Add -alwaysrender to mean percentage below which the 
+          system can decide not to render if too slow.
+
+12/7/96:  Be able to control minsize by height or width independently.
+
+12/2/96:  Add 'baseline' anchor type to fonts.
+
+11/13/96: I think at some point we should consider replacing "float" with
+          "Pad_Real" in the cpp source code, and making it possible for Pad_Real to
+          either be "float" or "double". What's your opinion?
+
+11/11/96: There should be a generic error handling mechanism
+
+10/13/96: Pick on text should pick the pixels that actually get rendered
+          instead of just bounding boxes.
+
+8/24/96: Change anchorpt to be local instead of local*transform.
+	 The current approach is quite confusing for group members.
+
+8/15/96: Add <Map> and <Unmap> events to all objects.
+
+8/2/96:  Need to change Set_renderscript to Set_render_callback,
+	 and make it accept a Pad_Callback instead of a char *.
+	 Write a sample C++ program for Maurice/Sal.
+
+7/5/96:  Consider reworking interface of -place and coords on group members.
+	 It would be nice if there was an easy way to deal with these
+	 things relative to the group.
+
+7/2/96:  Wrapping text in text items
+
+7/2/96:  The ability to make the background of a portal transparent, but the objects
+         that it shows opaque
+
+6/26/96: Object Hierarchy redesign:
+         line, rectangle, and polygon inheritance should be improved by
+         using composition when it suits
+         Pad_View should not be a Pad_Object 
+
+6/26/96: Interface for creating new Pad_Object subclasses:
+         Is_portal(), etc... methods for core types to eliminate type names
+         Is_extension_type() defined to return TRUE for Pad_Object and
+             overloaded to return FALSE for the core types
+         Registration procedure akin to Pad_Language
+         Look into pointers to static Class functions 
+
+6/25/96: Fix memory leaks.  Primary ones are that fonts and languages
+         don't get freed up - although these aren't too important since
+         they don't typically get deleted until the application exits anyway.
+
+6/12/96: Break up pad-tcl-cmd.C into several smaller files.
+
+6/11/96: Allow more control on layers:
+	   - Add locking
+	   - Add transparency 
+	   - Add transparency per view
+
+6/11/96: Support rotation of objects with coordinates in substrate
+
+6/8/96:  Consider making an event go to groups if it doesn't go to any
+	 group members.
+
+5/24/96: Add new anchor type to all pad objects.  Seems like an anchor
+	 should be able to be specified by a specific point.  This might
+	 be determined by a group member for a group, or a point for a
+	 regular object.
+
+5/15/96: Add X selection so text (and maybe graphics) can be copied
+	 in and out of Pad++ to other applications.
+
+5/15/96: Add auto-panning to PadDraw (like auto-scroll in text editors).
+
+5/10/96: Add GroupIntercept event (ala PortalIntercept).
+
+5/10/96: Add generateevent command that allows an application to simulate
+	 events exactly as if they had actually occurred.
+
+5/3/96:  Redo properties and line properties panels as discussed with Jon.
+
+4/27/96: HTML pages block while connection to server is being made.
+         Rewrite URL fetching code with new asynchronous Tcl socket I/O.
+
+4/9/96: Make Pad_Object's low-weight and much more efficient.
+
+4/9/96: Simplify restorers so there is one primary, and one refining restorer.
+
+4/9/96: Make a -canvasCampat widget configuration option
+    1. pad uses "slide" instead of "move"
+    2. canvas accepts "-tag" where pad requires "-tags"
+    3. canvas has "-bd" option
+    4. cavas line colors are controlled by "-fill" where pad uses 
+       "-pen"   This caused me to add a test for line item types.
+    5. canvas has "canvasx" and "canvasy" where pad has "padxy"
+    6. pad y orientation is inverted from canvas
+    7. pad is missing -relief option (probably this is related to -bd ?)
+    8. syntax for coordinates of text items is different
+             "x y"   versus  "-place {x y z}"
+    9. pad is missing -scrollregion
+
+4/1/96:  Think about import command automatically scaling and centering objects
+         within current view rather than where it was originally.
+
+3/18/96: Documentation
+	   - Explain importance of divisibility with groups, and how making
+	     an event binding on a divisible group doesn't do anything.
+	   - Describe difference between 'after ms' and 'after idle', and the
+	     importance of their priorities.
+           - Describe clipping of objects with -width and -height, especially groups
+	     along with an example.
+	   - Fix description of -zoomaction to say Tcl strings, rather than
+ 	     procedures.  Give example of calling with ids.
+	   - Described that searching for an empty string on find withtext returns all text items
+	   - Describe what -place does to group members (it is local!)
+	   - Describe rendering model, and exactly when things are actually
+	     rendered.
+	   - Rewrite example code for coordinate frames to single instead
+	     of double recursion.
+	   - Document scale comment to be clear about where a set of objects
+	     is scaled around when the scale command is applied to a tag.
+	   - On page 43, in the -renderscript option, the 
+	     3rd sentence is "By default, the object will not get rendered."  At first 
+	     I thought it should say WILL get rendered.  But after I read it again, I 
+	     figured it out, it was talking about the script not Pad.  I think it 
+	     should read something like:
+	     "By default, if the script is defined, the object will not get rendered."  
+	     I think the reason I was confused was because other options give
+	     defaults for when the item is not defined.  For example: -events ..
+             Defaults to true (1). 
+	   - Describe that event firing order of tags does not change
+	     when going between specific and general event firings.
+           - Indicate which 'find' searches are fast (i.e., indexed),
+             and which are slow (must look at every object).
+	   - drawborder isn't in list at beginning of reference manual
+	   - Change the Ref. Manual to so that it does not say scale around center 
+             (instead, scale around anchor)
+	   - Document existence of find above and below, and fix error msg.
+
+3/13/96: Timer scripts should only fire when an object is visible.  If you want 
+         a timer to fire all the time, just use the Tk standard timers.
+
+3/11/96: Make default starting zoom settable in paddefaults.
+
+2/8/96: Make some kind of box and arrow application so you can stick
+     arrows to things and have them stay stuck as the thing moves around.
+
+1/18/96: Allow color tool to work with hex or decimal numbers.
+
+1/18/96: Allow undo of object creation and deletion
+
+1/16/96: Add acceleration to zooming
+
+9/28/95: Allow picking of colors from images
+
+8/15/95: Document structure of Pad++ software, and protocol
+	 of creating and deleting Pad_Object's.
+
+5/20/95: Fix timeline (so slow to be unusable.  why?)
+
+5/20/95: Calculate oval points in advance
+
+5/19/95: Add -defaultFontSize configure option
+
+5/19/95: Add validmove interface for portals (so they can't cover a view)
+
+5/19/95: Make zooming more infinite
+
+Pad doesn't come up if no free colors
+
+Add pixels_per_second animations
+
+Make a form for registering in the Pad++ home page.
+
+Dragging objects off a screen boundary should automatically pan the pad
+
+Scaling objects too large or small should automatically zoom the view
+
+Button to center selected object(s)
+
+Backup trajectory

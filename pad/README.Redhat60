@@ -1,0 +1,53 @@
+Compiling pad-0.9p5 on Solaris 7
+
+pad-0.9p5.tar (tcl version) requires gnu make, perl, tcl, tk, jpeg, and gnu cc.
+It compiled successfully using the following packages,
+
+	make-3.77-sol7-sparc-local
+	libstdc++-2.8.1.1-sol7-sparc-local
+	perl-5.005_03-sol7-sparc-local
+	tcl-8.0.3-sol7-sparc-local
+	tk-8.0.3-sol7-sparc-local
+	jpeg-6b-sol7-sparc-local
+	gcc-2.95.2-sol7-sparc-local
+
+which were available from a sun contractor providing freeware
+
+	http://www.sunfreeware.com/
+
+As root, install the packages.
+
+	pkgtran whatever-local .
+	pkgadd -d .
+
+Copy tclRegexp.h from the tcl source to /usr/local/include.
+
+Add /usr/local/bin to your and root's path.
+
+If /usr/openwin/bin is in your path, then remove it temporarily,
+because it causes configure to find X includes in /usr/openwin/include.
+Yes, you'd expect that to be okay, but it isn't.  Compilation fails.
+
+Then cd pad-0.9p5/unix, configure, gmake, and gmake install.
+Only the install needs to be performed as root.
+
+Add /usr/local/lib to your LD_LIBRARY_PATH.
+
+Ron Stanonik
+Wed Oct  4 13:34:26 PDT 2000
+
+ps. To compile on RedHat 6.0, just configure, gmake, and gmake install.
+
+WARNING WARNING WARNING
+The configure script looks first in ../.. for a jpeg directory,
+then in /usr/lib and /usr/local/lib for libjpeg.a and libjpeg.so.
+If it finds a jpeg directory containing libjpeg.*, it assumes it has
+found the location of the jpeg library.  If it is wrong, then it
+will compile WITHOUT jpeg support, and attempts to import jpegs will
+silently fail.
+
+History
+Started with pad-0.9p2
+pad-0.9p3 - minor changes to compile on Redhat 6.0.
+pad-0.9p4 - minor changes to compile on Solaris 7.
+pad-0.9p5 - fix bugs related to moving buttons or group'ed ovals

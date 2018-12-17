@@ -1,0 +1,4 @@
+AC_INIT(dt,0.1)
+AM_INIT_AUTOMAKE(dt,0.1)
+AC_CONFIG_SUBDIRS(libdt dt_xmouse touchd) # dtviz requires xss; mzdt doesn't get configured
+AC_OUTPUT(Makefile)

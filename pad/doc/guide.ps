@@ -1,0 +1,4374 @@
+%!PS-Adobe-3.0
+%%BoundingBox: (atend)
+%%Pages: (atend)
+%%PageOrder: (atend)
+%%DocumentFonts: (atend)
+%%Creator: Frame 5.0
+%%DocumentData: Clean7Bit
+%%EndComments
+%%BeginProlog
+%
+% Frame ps_prolog 5.0, for use with Frame 5.0 products
+% This ps_prolog file is Copyright (c) 1986-1995 Frame Technology
+% Corporation.  All rights reserved.  This ps_prolog file may be
+% freely copied and distributed in conjunction with documents created
+% using FrameMaker, FrameMaker/SGML and FrameViewer as long as this 
+% copyright notice is preserved.
+%
+% FrameMaker users specify the proper paper size for each print job in the
+% "Print" dialog's "Printer Paper Size" "Width" and "Height~ fields.  If the
+% printer that the PS file is sent to does not support the requested paper
+% size, or if there is no paper tray of the proper size currently installed, 
+% then the job will not be printed.  The following flag, if set to true, will
+% cause the job to print on the default paper in such cases.
+/FMAllowPaperSizeMismatch            false def
+%
+% Frame products normally print colors as their true color on a color printer
+% or as shades of gray, based on luminance, on a black-and white printer. The
+% following flag, if set to true, forces all non-white colors to print as pure
+% black. This has no effect on bitmap images.
+/FMPrintAllColorsAsBlack             false def
+%
+% Frame products can either set their own line screens or use a printer's 
+% default settings. Three flags below control this separately for no 
+% separations, spot separations and process separations. If a flag
+% is true, then the default printer settings will not be changed. If it is
+% false, Frame products will use their own settings from a table based on
+% the printer's resolution.
+/FMUseDefaultNoSeparationScreen      true  def
+/FMUseDefaultSpotSeparationScreen    true  def
+/FMUseDefaultProcessSeparationScreen false def
+%
+% For any given PostScript printer resolution, Frame products have two sets of 
+% screen angles and frequencies for printing process separations, which are 
+% recomended by Adobe. The following variable chooses the higher frequencies
+% when set to true or the lower frequencies when set to false. This is only
+% effective if the appropriate FMUseDefault...SeparationScreen flag is false.
+/FMUseHighFrequencyScreens true def
+%
+% The following is a set of predefined optimal frequencies and angles for various
+% common dpi settings. This is taken from "Advances in Color Separation Using
+% PostScript Software Technology," from Adobe Systems (3/13/89 P.N. LPS 0043)
+% and corrolated with information which is in various PPD (4.0) files.
+%
+% The "dpiranges" figure is the minimum dots per inch device resolution which
+% can support this setting. The "low" and "high" values are controlled by the
+% setting of the FMUseHighFrequencyScreens flag above. The "TDot" flags control
+% the use of the "Yellow Triple Dot" feature whereby the frequency id divided by
+% three, but the dot function is "trippled" giving a block of 3x3 dots per cell.
+%
+% PatFreq is a compromise pattern frequency for ps Level 2 printers which is close
+% to the ideal WYSIWYG pattern frequency of 9 repetitions/inch but does not beat
+% (too badly) against the screen frequencies of any separations for that DPI.
+/dpiranges   [  2540    2400    1693     1270    1200     635      600      0      ] def
+/CMLowFreqs  [ 100.402  94.8683 89.2289 100.402  94.8683  66.9349  63.2456 47.4342 ] def
+/YLowFreqs   [  95.25   90.0    84.65    95.25   90.0     70.5556  66.6667 50.0    ] def
+/KLowFreqs   [  89.8026 84.8528 79.8088  89.8026 84.8528  74.8355  70.7107 53.033  ] def
+/CLowAngles  [  71.5651 71.5651 71.5651 71.5651  71.5651  71.5651  71.5651 71.5651 ] def
+/MLowAngles  [  18.4349 18.4349 18.4349 18.4349  18.4349  18.4349  18.4349 18.4349 ] def
+/YLowTDot    [  true    true    false    true    true     false    false   false   ] def
+/CMHighFreqs [ 133.87  126.491 133.843  108.503 102.523  100.402   94.8683 63.2456 ] def
+/YHighFreqs  [ 127.0   120.0   126.975  115.455 109.091   95.25    90.0    60.0    ] def
+/KHighFreqs  [ 119.737 113.137 119.713  128.289 121.218   89.8026  84.8528 63.6395 ] def
+/CHighAngles [  71.5651 71.5651 71.5651  70.0169 70.0169  71.5651  71.5651 71.5651 ] def
+/MHighAngles [  18.4349 18.4349 18.4349  19.9831 19.9831  18.4349  18.4349 18.4349 ] def
+/YHighTDot   [  false   false   true     false   false    true     true    false   ] def
+/PatFreq     [	10.5833 10.0     9.4055  10.5833 10.0	  10.5833  10.0	   9.375   ] def
+%
+% PostScript Level 2 printers contain an "Accurate Screens" feature which can
+% improve process separation rendering at the expense of compute time. This 
+% flag is ignored by PostScript Level 1 printers.
+/FMUseAcccurateScreens true def
+%
+% The following PostScript procedure defines the spot function that Frame
+% products will use for process separations. You may un-comment-out one of
+% the alternative functions below, or use your own.
+%
+% Dot function
+/FMSpotFunction {abs exch abs 2 copy add 1 gt 
+		{1 sub dup mul exch 1 sub dup mul add 1 sub }
+		{dup mul exch dup mul add 1 exch sub }ifelse } def
+%
+% Line function
+% /FMSpotFunction { pop } def
+%
+% Elipse function
+% /FMSpotFunction { dup 5 mul 8 div mul exch dup mul exch add 
+%		sqrt 1 exch sub } def
+%
+%
+/FMversion (5.0) def 
+/fMLevel1 /languagelevel where {pop languagelevel} {1} ifelse 2 lt def
+/FMPColor
+	fMLevel1 {
+		false
+		/colorimage where {pop pop true} if
+	} {
+		true
+	} ifelse
+def
+/FrameDict 400 dict def 
+systemdict /errordict known not {/errordict 10 dict def
+		errordict /rangecheck {stop} put} if
+% The readline in PS 23.0 doesn't recognize cr's as nl's on AppleTalk
+FrameDict /tmprangecheck errordict /rangecheck get put 
+errordict /rangecheck {FrameDict /bug true put} put 
+FrameDict /bug false put 
+mark 
+% Some PS machines read past the CR, so keep the following 3 lines together!
+currentfile 5 string readline
+00
+0000000000
+cleartomark 
+errordict /rangecheck FrameDict /tmprangecheck get put 
+FrameDict /bug get { 
+	/readline {
+		/gstring exch def
+		/gfile exch def
+		/gindex 0 def
+		{
+			gfile read pop 
+			dup 10 eq {exit} if 
+			dup 13 eq {exit} if 
+			gstring exch gindex exch put 
+			/gindex gindex 1 add def 
+		} loop
+		pop 
+		gstring 0 gindex getinterval true 
+		} bind def
+	} if
+/FMshowpage /showpage load def
+/FMquit /quit load def
+/FMFAILURE { 
+	dup = flush 
+	FMshowpage 
+	/Helvetica findfont 12 scalefont setfont
+	72 200 moveto show
+	72 220 moveto show
+	FMshowpage 
+	FMquit 
+	} def 
+/FMVERSION {
+	FMversion ne {
+		(Frame product version does not match ps_prolog!  Check installation;)
+		(also check ~/fminit and ./fminit for old versions) FMFAILURE
+		} if
+	} def 
+/FMBADEPSF { 
+	(Adobe's PostScript Language Reference Manual, 2nd Edition, section H.2.4)
+	(says your EPS file is not valid, as it calls X              )
+	dup dup (X) search pop exch pop exch pop length 
+	5 -1 roll 
+	putinterval 
+	FMFAILURE
+	} def
+/fmConcatProcs
+	{
+	/proc2 exch cvlit def/proc1 exch cvlit def/newproc proc1 length proc2 length add array def
+	newproc 0 proc1 putinterval newproc proc1 length proc2 putinterval newproc cvx
+}def
+FrameDict begin [
+	/ALDsave
+	/FMdicttop
+	/FMoptop
+	/FMpointsize
+	/FMsaveobject
+	/b
+	/bitmapsave
+	/blut
+	/bpside
+	/bs
+	/bstring
+	/bwidth
+	/c
+	/cf
+	/cs
+	/cynu
+	/depth
+	/edown
+	/fh
+	/fillvals
+	/fw
+	/fx
+	/fy
+	/g
+	/gfile
+	/gindex
+	/grnt
+	/gryt
+	/gstring
+	/height
+	/hh
+	/i
+	/im
+	/indx
+	/is
+	/k
+	/kk
+	/landscape
+	/lb
+	/len
+	/llx
+	/lly
+	/m
+	/magu
+	/manualfeed
+	/n
+	/offbits
+	/onbits
+	/organgle
+	/orgbangle
+	/orgbfreq
+	/orgbproc
+	/orgbxfer
+	/orgfreq
+	/orggangle
+	/orggfreq
+	/orggproc
+	/orggxfer
+	/orgmatrix
+	/orgproc
+	/orgrangle
+	/orgrfreq
+	/orgrproc
+	/orgrxfer
+	/orgxfer
+	/pagesave
+	/paperheight
+	/papersizedict
+	/paperwidth
+	/pos
+	/pwid
+	/r
+	/rad
+	/redt
+	/sl
+	/str
+	/tran
+	/u
+	/urx
+	/ury
+	/val
+	/width
+	/width
+	/ws
+	/ww
+	/x
+	/x1
+	/x2
+	/xindex
+	/xpoint
+	/xscale
+	/xx
+	/y
+	/y1
+	/y2
+	/yelu
+	/yindex
+	/ypoint
+	/yscale
+	/yy
+] { 0 def } forall
+/FmBD {bind def} bind def
+systemdict /pdfmark known {
+	/fMAcrobat true def
+	
+	/FmPD /pdfmark load def
+	
+	
+	/FmPT /show load def
+	
+	
+	currentdistillerparams /CoreDistVersion get 2000 ge {
+	
+		
+		/FmPD2 /pdfmark load def
+		
+		
+		
+		
+		
+		/FmPA { mark exch /Dest exch 5 3 roll 
+				/View [ /XYZ null 6 -2 roll FmDC exch pop null] /DEST FmPD 
+		}FmBD
+	} {
+		
+		/FmPD2 /cleartomark load def
+		/FmPA {pop pop pop}FmBD
+	} ifelse
+} {
+	
+	/fMAcrobat false def
+	/FmPD /cleartomark load def
+	/FmPD2 /cleartomark load def
+	/FmPT /pop load def
+	/FmPA {pop pop pop}FmBD
+} ifelse
+/FmDC {
+	transform fMDefaultMatrix itransform cvi exch cvi exch
+}FmBD
+/FmBx {
+	dup 3 index lt {3 1 roll exch} if 
+	1 index 4 index lt {4 -1 roll 3 1 roll exch 4 1 roll} if
+}FmBD
+/FMnone 0 def
+/FMcyan 1 def
+/FMmagenta 2 def
+/FMyellow 3 def
+/FMblack 4 def
+/FMcustom 5 def
+/fMNegative false def 
+/FrameSepIs FMnone def 
+/FrameSepBlack 0 def
+/FrameSepYellow 0 def
+/FrameSepMagenta 0 def
+/FrameSepCyan 0 def
+/FrameSepRed 1 def
+/FrameSepGreen 1 def
+/FrameSepBlue 1 def
+/FrameCurGray 1 def
+/FrameCurPat null def
+/FrameCurColors [ 0 0 0 1 0 0 0 ] def 
+/FrameColorEpsilon .001 def	
+/eqepsilon {		
+	sub dup 0 lt {neg} if
+	FrameColorEpsilon le
+} bind def
+/FrameCmpColorsCMYK { 
+	2 copy 0 get exch 0 get eqepsilon {
+		2 copy 1 get exch 1 get eqepsilon {
+			2 copy 2 get exch 2 get eqepsilon {
+				3 get exch 3 get eqepsilon
+			} {pop pop false} ifelse
+		}{pop pop false} ifelse
+	} {pop pop false} ifelse
+} bind def
+/FrameCmpColorsRGB { 
+	2 copy 4 get exch 0 get eqepsilon {
+		2 copy 5 get exch 1 get eqepsilon {
+			6 get exch 2 get eqepsilon
+		}{pop pop false} ifelse
+	} {pop pop false} ifelse
+} bind def
+/RGBtoCMYK { 
+	1 exch sub 
+	3 1 roll 
+	1 exch sub 
+	3 1 roll 
+	1 exch sub 
+	3 1 roll 
+	3 copy 
+	2 copy 
+	le { pop } { exch pop } ifelse 
+	2 copy 
+	le { pop } { exch pop } ifelse 
+	dup dup dup 
+	6 1 roll 
+	4 1 roll 
+	7 1 roll 
+	sub 
+	6 1 roll 
+	sub 
+	5 1 roll 
+	sub 
+	4 1 roll 
+} bind def
+/CMYKtoRGB { 
+	dup dup 4 -1 roll add 						  
+	5 1 roll 3 -1 roll add 						  
+	4 1 roll add 								  
+	1 exch sub dup 0 lt {pop 0} if 3 1 roll 	  
+	1 exch sub dup 0 lt {pop 0} if exch 	      
+	1 exch sub dup 0 lt {pop 0} if exch	  		  
+} bind def
+/FrameSepInit {
+	1.0 RealSetgray
+} bind def
+/FrameSetSepColor { 
+	/FrameSepBlue exch def
+	/FrameSepGreen exch def
+	/FrameSepRed exch def
+	/FrameSepBlack exch def
+	/FrameSepYellow exch def
+	/FrameSepMagenta exch def
+	/FrameSepCyan exch def
+	/FrameSepIs FMcustom def
+	setCurrentScreen	
+} bind def
+/FrameSetCyan {
+	/FrameSepBlue 1.0 def
+	/FrameSepGreen 1.0 def
+	/FrameSepRed 0.0 def
+	/FrameSepBlack 0.0 def
+	/FrameSepYellow 0.0 def
+	/FrameSepMagenta 0.0 def
+	/FrameSepCyan 1.0 def
+	/FrameSepIs FMcyan def
+	setCurrentScreen	
+} bind def
+ 
+/FrameSetMagenta {
+	/FrameSepBlue 1.0 def
+	/FrameSepGreen 0.0 def
+	/FrameSepRed 1.0 def
+	/FrameSepBlack 0.0 def
+	/FrameSepYellow 0.0 def
+	/FrameSepMagenta 1.0 def
+	/FrameSepCyan 0.0 def
+	/FrameSepIs FMmagenta def
+	setCurrentScreen
+} bind def
+ 
+/FrameSetYellow {
+	/FrameSepBlue 0.0 def
+	/FrameSepGreen 1.0 def
+	/FrameSepRed 1.0 def
+	/FrameSepBlack 0.0 def
+	/FrameSepYellow 1.0 def
+	/FrameSepMagenta 0.0 def
+	/FrameSepCyan 0.0 def
+	/FrameSepIs FMyellow def
+	setCurrentScreen
+} bind def
+ 
+/FrameSetBlack {
+	/FrameSepBlue 0.0 def
+	/FrameSepGreen 0.0 def
+	/FrameSepRed 0.0 def
+	/FrameSepBlack 1.0 def
+	/FrameSepYellow 0.0 def
+	/FrameSepMagenta 0.0 def
+	/FrameSepCyan 0.0 def
+	/FrameSepIs FMblack def
+	setCurrentScreen
+} bind def
+ 
+/FrameNoSep { 
+	/FrameSepIs FMnone def
+	setCurrentScreen
+} bind def
+/FrameSetSepColors { 
+	FrameDict begin
+	[ exch 1 add 1 roll ]
+	/FrameSepColors  
+	exch def end
+	} bind def
+/FrameColorInSepListCMYK { 
+	FrameSepColors {  
+       		exch dup 3 -1 roll 
+       		FrameCmpColorsCMYK 
+       		{ pop true exit } if
+    	} forall 
+	dup true ne {pop false} if
+	} bind def
+/FrameColorInSepListRGB { 
+	FrameSepColors {  
+       		exch dup 3 -1 roll 
+       		FrameCmpColorsRGB 
+       		{ pop true exit } if
+    	} forall 
+	dup true ne {pop false} if
+	} bind def
+/RealSetgray /setgray load def
+/RealSetrgbcolor /setrgbcolor load def
+/RealSethsbcolor /sethsbcolor load def
+end 
+/setgray { 
+	FrameDict begin
+	FrameSepIs FMnone eq
+		{ RealSetgray } 
+		{ 
+		FrameSepIs FMblack eq 
+			{ RealSetgray } 
+			{ FrameSepIs FMcustom eq 
+			  FrameSepRed 0 eq and
+			  FrameSepGreen 0 eq and
+			  FrameSepBlue 0 eq and {
+			  	RealSetgray
+			  } {
+				1 RealSetgray pop 
+			  } ifelse
+			} ifelse
+		} ifelse
+	end
+} bind def
+/setrgbcolor { 
+	FrameDict begin
+	FrameSepIs FMnone eq
+	{  RealSetrgbcolor }
+	{
+		3 copy [ 4 1 roll ] 
+		FrameColorInSepListRGB
+		{
+				FrameSepBlue eq exch 
+			 	FrameSepGreen eq and exch 
+			 	FrameSepRed eq and
+			 	{ 0 } { 1 } ifelse
+		}
+		{
+			FMPColor {
+				RealSetrgbcolor
+				currentcmykcolor
+			} {
+				RGBtoCMYK
+			} ifelse
+			FrameSepIs FMblack eq
+			{1.0 exch sub 4 1 roll pop pop pop} {
+			FrameSepIs FMyellow eq
+			{pop 1.0 exch sub 3 1 roll pop pop} {
+			FrameSepIs FMmagenta eq
+			{pop pop 1.0 exch sub exch pop } {
+			FrameSepIs FMcyan eq
+			{pop pop pop 1.0 exch sub } 
+			{pop pop pop pop 1} ifelse } ifelse } ifelse } ifelse 
+		} ifelse
+		RealSetgray
+	} 
+	ifelse
+	end
+} bind def
+/sethsbcolor {
+	FrameDict begin
+	FrameSepIs FMnone eq 
+	{ RealSethsbcolor } 
+	{
+		RealSethsbcolor 
+		currentrgbcolor  
+		setrgbcolor 
+	} 
+	ifelse
+	end
+} bind def
+FrameDict begin
+/setcmykcolor where {
+	pop /RealSetcmykcolor /setcmykcolor load def
+} {
+	/RealSetcmykcolor {
+		4 1 roll
+		3 { 3 index add 0 max 1 min 1 exch sub 3 1 roll} repeat 
+		RealSetrgbcolor pop
+	} bind def
+} ifelse
+userdict /setcmykcolor { 
+		FrameDict begin
+		FrameSepIs FMnone eq
+		{ RealSetcmykcolor } 
+		{
+			4 copy [ 5 1 roll ]
+			FrameColorInSepListCMYK
+			{
+				FrameSepBlack eq exch 
+				FrameSepYellow eq and exch 
+				FrameSepMagenta eq and exch 
+				FrameSepCyan eq and 
+				{ 0 } { 1 } ifelse
+			}
+			{
+				FrameSepIs FMblack eq
+				{1.0 exch sub 4 1 roll pop pop pop} {
+				FrameSepIs FMyellow eq
+				{pop 1.0 exch sub 3 1 roll pop pop} {
+				FrameSepIs FMmagenta eq
+				{pop pop 1.0 exch sub exch pop } {
+				FrameSepIs FMcyan eq
+				{pop pop pop 1.0 exch sub } 
+				{pop pop pop pop 1} ifelse } ifelse } ifelse } ifelse 
+			} ifelse
+			RealSetgray
+		}
+		ifelse
+		end
+	} bind put
+fMLevel1 { 
+	
+	
+	
+	/patScreenDict 7 dict dup begin
+		<0f1e3c78f0e1c387> [ 45  { pop } {exch pop} 		.5   2 sqrt] FmBD
+		<0f87c3e1f0783c1e> [ 135 { pop } {exch pop}			.5   2 sqrt] FmBD
+		<cccccccccccccccc> [ 0   { pop } dup				.5   2	   ] FmBD
+		<ffff0000ffff0000> [ 90  { pop } dup				.5   2	   ] FmBD
+		<8142241818244281> [ 45  { 2 copy lt {exch} if pop}	dup .75  2 sqrt] FmBD
+		<03060c183060c081> [ 45  { pop } {exch pop}			.875 2 sqrt] FmBD
+		<8040201008040201> [ 135 { pop } {exch pop}			.875 2 sqrt] FmBD
+	end def
+} { 
+	
+	/patProcDict 5 dict dup begin
+		<0f1e3c78f0e1c387> { 3 setlinewidth -1 -1 moveto 9 9 lineto stroke 
+											4 -4 moveto 12 4 lineto stroke
+											-4 4 moveto 4 12 lineto stroke} bind def
+		<0f87c3e1f0783c1e> { 3 setlinewidth -1 9 moveto 9 -1 lineto stroke 
+											-4 4 moveto 4 -4 lineto stroke
+											4 12 moveto 12 4 lineto stroke} bind def
+		<8142241818244281> { 1 setlinewidth -1 9 moveto 9 -1 lineto stroke
+											-1 -1 moveto 9 9 lineto stroke } bind def
+		<03060c183060c081> { 1 setlinewidth -1 -1 moveto 9 9 lineto stroke 
+											4 -4 moveto 12 4 lineto stroke
+											-4 4 moveto 4 12 lineto stroke} bind def
+		<8040201008040201> { 1 setlinewidth -1 9 moveto 9 -1 lineto stroke 
+											-4 4 moveto 4 -4 lineto stroke
+											4 12 moveto 12 4 lineto stroke} bind def
+	end def
+	/patDict 15 dict dup begin
+		/PatternType 1 def		
+		/PaintType 2 def		
+		/TilingType 3 def		
+		/BBox [ 0 0 8 8 ] def 	
+		/XStep 8 def			
+		/YStep 8 def			
+		/PaintProc {
+			begin
+			patProcDict bstring known {
+				patProcDict bstring get exec
+			} {
+				8 8 true [1 0 0 -1 0 8] bstring imagemask
+			} ifelse
+			end
+		} bind def
+	end def
+} ifelse
+/combineColor {
+    FrameSepIs FMnone eq
+	{
+		graymode fMLevel1 or not {
+			
+			[/Pattern [/DeviceCMYK]] setcolorspace
+			FrameCurColors 0 4 getinterval aload pop FrameCurPat setcolor
+		} {
+			FrameCurColors 3 get 1.0 ge {
+				FrameCurGray RealSetgray
+			} {
+				fMAcrobat not FMPColor graymode and and {
+					0 1 3 { 
+						FrameCurColors exch get
+						1 FrameCurGray sub mul
+					} for
+					RealSetcmykcolor
+				} {
+					4 1 6 {
+						FrameCurColors exch get
+						graymode {
+							1 exch sub 1 FrameCurGray sub mul 1 exch sub
+						} {
+							1.0 lt {FrameCurGray} {1} ifelse
+						} ifelse
+					} for
+					RealSetrgbcolor
+				} ifelse
+			} ifelse
+		} ifelse
+	} { 
+		FrameCurColors 0 4 getinterval aload
+		FrameColorInSepListCMYK {
+			FrameSepBlack eq exch 
+			FrameSepYellow eq and exch 
+			FrameSepMagenta eq and exch 
+			FrameSepCyan eq and
+			FrameSepIs FMcustom eq and
+			{ FrameCurGray } { 1 } ifelse
+		} {
+			FrameSepIs FMblack eq
+			{FrameCurGray 1.0 exch sub mul 1.0 exch sub 4 1 roll pop pop pop} {
+			FrameSepIs FMyellow eq
+			{pop FrameCurGray 1.0 exch sub mul 1.0 exch sub 3 1 roll pop pop} {
+			FrameSepIs FMmagenta eq
+			{pop pop FrameCurGray 1.0 exch sub mul 1.0 exch sub exch pop } {
+			FrameSepIs FMcyan eq
+			{pop pop pop FrameCurGray 1.0 exch sub mul 1.0 exch sub } 
+			{pop pop pop pop 1} ifelse } ifelse } ifelse } ifelse 
+		} ifelse
+		graymode fMLevel1 or not {
+			
+			[/Pattern [/DeviceGray]] setcolorspace
+			FrameCurPat setcolor
+		} { 
+			graymode not fMLevel1 and {
+				
+				dup 1 lt {pop FrameCurGray} if
+			} if
+			RealSetgray
+		} ifelse
+	} ifelse
+} bind def
+/savematrix {
+	orgmatrix currentmatrix pop
+	} bind def
+/restorematrix {
+	orgmatrix setmatrix
+	} bind def
+/fMDefaultMatrix matrix defaultmatrix def
+/fMatrix2 matrix def
+/dpi    72 0 fMDefaultMatrix dtransform
+    dup mul exch   dup mul add   sqrt def
+	
+/freq dpi dup 72 div round dup 0 eq {pop 1} if 8 mul div def
+/sangle 1 0 fMDefaultMatrix dtransform exch atan def
+	sangle fMatrix2 rotate 
+	fMDefaultMatrix fMatrix2 concatmatrix 
+	dup 0 get /sflipx exch def
+	    3 get /sflipy exch def
+/screenIndex {
+	0 1 dpiranges length 1 sub { dup dpiranges exch get 1 sub dpi le {exit} {pop} ifelse } for
+} bind def
+/getCyanScreen {
+	FMUseHighFrequencyScreens { CHighAngles CMHighFreqs} {CLowAngles CMLowFreqs} ifelse
+		screenIndex dup 3 1 roll get 3 1 roll get /FMSpotFunction load
+} bind def
+/getMagentaScreen {
+	FMUseHighFrequencyScreens { MHighAngles CMHighFreqs } {MLowAngles CMLowFreqs} ifelse
+		screenIndex dup 3 1 roll get 3 1 roll get /FMSpotFunction load
+} bind def
+/getYellowScreen {
+	FMUseHighFrequencyScreens { YHighTDot YHighFreqs} { YLowTDot YLowFreqs } ifelse
+		screenIndex dup 3 1 roll get 3 1 roll get { 3 div
+			{2 { 1 add 2 div 3 mul dup floor sub 2 mul 1 sub exch} repeat
+			FMSpotFunction } } {/FMSpotFunction load } ifelse
+			0.0 exch
+} bind def
+/getBlackScreen  {
+	FMUseHighFrequencyScreens { KHighFreqs } { KLowFreqs } ifelse
+		screenIndex get 45.0 /FMSpotFunction load 
+} bind def
+/getSpotScreen {
+	getBlackScreen
+} bind def
+/getCompositeScreen {
+	getBlackScreen
+} bind def
+/FMSetScreen 
+	fMLevel1 { /setscreen load 
+	}{ {
+		8 dict begin
+		/HalftoneType 1 def
+		/SpotFunction exch def
+		/Angle exch def
+		/Frequency exch def
+		/AccurateScreens FMUseAcccurateScreens def
+		currentdict end sethalftone
+	} bind } ifelse
+def
+/setDefaultScreen {
+	FMPColor {
+		orgrxfer cvx orggxfer cvx orgbxfer cvx orgxfer cvx setcolortransfer
+	}
+	{
+		orgxfer cvx settransfer
+	} ifelse
+	orgfreq organgle orgproc cvx setscreen
+} bind def
+/setCurrentScreen {
+	FrameSepIs FMnone eq {
+		FMUseDefaultNoSeparationScreen {
+			setDefaultScreen
+		} {
+			getCompositeScreen FMSetScreen
+		} ifelse
+	} {
+		FrameSepIs FMcustom eq {
+			FMUseDefaultSpotSeparationScreen {
+				setDefaultScreen
+			} {
+				getSpotScreen FMSetScreen
+			} ifelse
+		} {
+			FMUseDefaultProcessSeparationScreen {
+				setDefaultScreen
+			} {
+				FrameSepIs FMcyan eq {
+					getCyanScreen FMSetScreen
+				} {
+					FrameSepIs FMmagenta eq {
+						getMagentaScreen FMSetScreen
+					} {
+						FrameSepIs FMyellow eq {
+							getYellowScreen FMSetScreen
+						} {
+							getBlackScreen FMSetScreen
+						} ifelse
+					} ifelse
+				} ifelse
+			} ifelse
+		} ifelse
+	} ifelse 
+} bind def
+end
+	
+/FMDOCUMENT { 
+	array /FMfonts exch def 
+	/#copies exch def
+	FrameDict begin
+	0 ne /manualfeed exch def
+	/paperheight exch def
+	/paperwidth exch def
+	0 ne /fMNegative exch def 
+	0 ne /edown exch def 
+	/yscale exch def
+	/xscale exch def
+	fMLevel1 {
+		manualfeed {setmanualfeed} if
+		/FMdicttop countdictstack 1 add def 
+		/FMoptop count def 
+		setpapername 
+		manualfeed {true} {papersize} ifelse 
+		{manualpapersize} {false} ifelse 
+		{desperatepapersize} {false} ifelse 
+		{papersizefailure} if
+		count -1 FMoptop {pop pop} for
+		countdictstack -1 FMdicttop {pop end} for 
+		}
+		{2 dict
+		 dup /PageSize [paperwidth paperheight] put
+		 manualfeed {dup /ManualFeed manualfeed put} if
+		 {setpagedevice} stopped {papersizefailure} if
+		}
+	ifelse 
+	
+	FMPColor {
+		currentcolorscreen
+			cvlit /orgproc exch def
+				  /organgle exch def 
+				  /orgfreq exch def
+			cvlit /orgbproc exch def
+				  /orgbangle exch def 
+				  /orgbfreq exch def
+			cvlit /orggproc exch def
+				  /orggangle exch def 
+				  /orggfreq exch def
+			cvlit /orgrproc exch def
+				  /orgrangle exch def 
+				  /orgrfreq exch def
+			currentcolortransfer 
+			fMNegative {
+				1 1 4 { 
+					pop { 1 exch sub } fmConcatProcs 4 1 roll
+				} for
+				4 copy
+				setcolortransfer
+			} if
+			cvlit /orgxfer exch def
+			cvlit /orgbxfer exch def
+			cvlit /orggxfer exch def
+			cvlit /orgrxfer exch def
+	} {
+		currentscreen 
+			cvlit /orgproc exch def
+				  /organgle exch def 
+				  /orgfreq exch def
+				  
+		currenttransfer 
+		fMNegative {
+			{ 1 exch sub } fmConcatProcs
+			dup settransfer
+		} if 
+		cvlit /orgxfer exch def
+	} ifelse
+	end 
+} def 
+/FMBEGINPAGE { 
+	FrameDict begin 
+	/pagesave save def
+	3.86 setmiterlimit
+	/landscape exch 0 ne def
+	landscape { 
+		90 rotate 0 exch dup /pwid exch def neg translate pop 
+	}{
+		pop /pwid exch def
+	} ifelse
+	edown { [-1 0 0 1 pwid 0] concat } if
+	0 0 moveto paperwidth 0 lineto paperwidth paperheight lineto 
+	0 paperheight lineto 0 0 lineto 1 setgray fill
+	xscale yscale scale
+	/orgmatrix matrix def
+	gsave 
+} def 
+/FMENDPAGE {
+	grestore 
+	pagesave restore
+	end 
+	showpage
+	} def 
+/FMFONTDEFINE { 
+	FrameDict begin
+	findfont 
+	ReEncode 
+	1 index exch 
+	definefont 
+	FMfonts 3 1 roll 
+	put
+	end 
+	} def 
+/FMFILLS {
+	FrameDict begin dup
+	array /fillvals exch def
+	dict /patCache exch def
+	end 
+	} def 
+/FMFILL {
+	FrameDict begin
+	 fillvals 3 1 roll put
+	end 
+	} def 
+/FMNORMALIZEGRAPHICS { 
+	newpath
+	1 setlinewidth
+	0 setlinecap
+	0 0 0 sethsbcolor
+	0 setgray 
+	} bind def
+/FMBEGINEPSF { 
+	end 
+	/FMEPSF save def 
+	/showpage {} def 
+% See Adobe's "PostScript Language Reference Manual, 2nd Edition", page 714.
+% "...the following operators MUST NOT be used in an EPS file:" (emphasis ours)
+	/banddevice {(banddevice) FMBADEPSF} def
+	/clear {(clear) FMBADEPSF} def
+	/cleardictstack {(cleardictstack) FMBADEPSF} def 
+	/copypage {(copypage) FMBADEPSF} def
+	/erasepage {(erasepage) FMBADEPSF} def
+	/exitserver {(exitserver) FMBADEPSF} def
+	/framedevice {(framedevice) FMBADEPSF} def
+	/grestoreall {(grestoreall) FMBADEPSF} def
+	/initclip {(initclip) FMBADEPSF} def
+	/initgraphics {(initgraphics) FMBADEPSF} def
+	/quit {(quit) FMBADEPSF} def
+	/renderbands {(renderbands) FMBADEPSF} def
+	/setglobal {(setglobal) FMBADEPSF} def
+	/setpagedevice {(setpagedevice) FMBADEPSF} def
+	/setshared {(setshared) FMBADEPSF} def
+	/startjob {(startjob) FMBADEPSF} def
+	/lettertray {(lettertray) FMBADEPSF} def
+	/letter {(letter) FMBADEPSF} def
+	/lettersmall {(lettersmall) FMBADEPSF} def
+	/11x17tray {(11x17tray) FMBADEPSF} def
+	/11x17 {(11x17) FMBADEPSF} def
+	/ledgertray {(ledgertray) FMBADEPSF} def
+	/ledger {(ledger) FMBADEPSF} def
+	/legaltray {(legaltray) FMBADEPSF} def
+	/legal {(legal) FMBADEPSF} def
+	/statementtray {(statementtray) FMBADEPSF} def
+	/statement {(statement) FMBADEPSF} def
+	/executivetray {(executivetray) FMBADEPSF} def
+	/executive {(executive) FMBADEPSF} def
+	/a3tray {(a3tray) FMBADEPSF} def
+	/a3 {(a3) FMBADEPSF} def
+	/a4tray {(a4tray) FMBADEPSF} def
+	/a4 {(a4) FMBADEPSF} def
+	/a4small {(a4small) FMBADEPSF} def
+	/b4tray {(b4tray) FMBADEPSF} def
+	/b4 {(b4) FMBADEPSF} def
+	/b5tray {(b5tray) FMBADEPSF} def
+	/b5 {(b5) FMBADEPSF} def
+	FMNORMALIZEGRAPHICS 
+	[/fy /fx /fh /fw /ury /urx /lly /llx] {exch def} forall 
+	fx fw 2 div add fy fh 2 div add  translate
+	rotate
+	fw 2 div neg fh 2 div neg translate
+	fw urx llx sub div fh ury lly sub div scale 
+	llx neg lly neg translate 
+	/FMdicttop countdictstack 1 add def 
+	/FMoptop count def 
+	} bind def
+/FMENDEPSF {
+	count -1 FMoptop {pop pop} for 
+	countdictstack -1 FMdicttop {pop end} for 
+	FMEPSF restore
+	FrameDict begin 
+	} bind def
+FrameDict begin 
+/setmanualfeed {
+%%BeginFeature *ManualFeed True
+	 statusdict /manualfeed true put
+%%EndFeature
+	} bind def
+/max {2 copy lt {exch} if pop} bind def
+/min {2 copy gt {exch} if pop} bind def
+/inch {72 mul} def
+/pagedimen { 
+	paperheight sub abs 16 lt exch 
+	paperwidth sub abs 16 lt and
+	{/papername exch def} {pop} ifelse
+	} bind def
+/setpapername { 
+	/papersizedict 14 dict def 
+	papersizedict begin
+	/papername /unknown def 
+		/Letter 8.5 inch 11.0 inch pagedimen
+		/LetterSmall 7.68 inch 10.16 inch pagedimen
+		/Tabloid 11.0 inch 17.0 inch pagedimen
+		/Ledger 17.0 inch 11.0 inch pagedimen
+		/Legal 8.5 inch 14.0 inch pagedimen
+		/Statement 5.5 inch 8.5 inch pagedimen
+		/Executive 7.5 inch 10.0 inch pagedimen
+		/A3 11.69 inch 16.5 inch pagedimen
+		/A4 8.26 inch 11.69 inch pagedimen
+		/A4Small 7.47 inch 10.85 inch pagedimen
+		/B4 10.125 inch 14.33 inch pagedimen
+		/B5 7.16 inch 10.125 inch pagedimen
+	end
+	} bind def
+/papersize {
+	papersizedict begin
+		/Letter {lettertray letter} def
+		/LetterSmall {lettertray lettersmall} def
+		/Tabloid {11x17tray 11x17} def
+		/Ledger {ledgertray ledger} def
+		/Legal {legaltray legal} def
+		/Statement {statementtray statement} def
+		/Executive {executivetray executive} def
+		/A3 {a3tray a3} def
+		/A4 {a4tray a4} def
+		/A4Small {a4tray a4small} def
+		/B4 {b4tray b4} def
+		/B5 {b5tray b5} def
+		/unknown {unknown} def
+	papersizedict dup papername known {papername} {/unknown} ifelse get
+	end
+	statusdict begin stopped end 
+	} bind def
+/manualpapersize {
+	papersizedict begin
+		/Letter {letter} def
+		/LetterSmall {lettersmall} def
+		/Tabloid {11x17} def
+		/Ledger {ledger} def
+		/Legal {legal} def
+		/Statement {statement} def
+		/Executive {executive} def
+		/A3 {a3} def
+		/A4 {a4} def
+		/A4Small {a4small} def
+		/B4 {b4} def
+		/B5 {b5} def
+		/unknown {unknown} def
+	papersizedict dup papername known {papername} {/unknown} ifelse get
+	end
+	stopped 
+	} bind def
+/desperatepapersize {
+	statusdict /setpageparams known
+		{
+		paperwidth paperheight 0 1 
+		statusdict begin
+		{setpageparams} stopped 
+		end
+		} {true} ifelse 
+	} bind def
+/papersizefailure {
+	FMAllowPaperSizeMismatch not
+		{
+(The requested paper size is not available in any currently-installed tray)
+(Edit the PS file to "FMAllowPaperSizeMismatch true" to use default tray)
+		 FMFAILURE } if
+	} def
+/DiacriticEncoding [
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/.notdef /.notdef /.notdef /.notdef /space /exclam /quotedbl
+/numbersign /dollar /percent /ampersand /quotesingle /parenleft
+/parenright /asterisk /plus /comma /hyphen /period /slash /zero /one
+/two /three /four /five /six /seven /eight /nine /colon /semicolon
+/less /equal /greater /question /at /A /B /C /D /E /F /G /H /I /J /K
+/L /M /N /O /P /Q /R /S /T /U /V /W /X /Y /Z /bracketleft /backslash
+/bracketright /asciicircum /underscore /grave /a /b /c /d /e /f /g /h
+/i /j /k /l /m /n /o /p /q /r /s /t /u /v /w /x /y /z /braceleft /bar
+/braceright /asciitilde /.notdef /Adieresis /Aring /Ccedilla /Eacute
+/Ntilde /Odieresis /Udieresis /aacute /agrave /acircumflex /adieresis
+/atilde /aring /ccedilla /eacute /egrave /ecircumflex /edieresis
+/iacute /igrave /icircumflex /idieresis /ntilde /oacute /ograve
+/ocircumflex /odieresis /otilde /uacute /ugrave /ucircumflex
+/udieresis /dagger /.notdef /cent /sterling /section /bullet
+/paragraph /germandbls /registered /copyright /trademark /acute
+/dieresis /.notdef /AE /Oslash /.notdef /.notdef /.notdef /.notdef
+/yen /.notdef /.notdef /.notdef /.notdef /.notdef /.notdef
+/ordfeminine /ordmasculine /.notdef /ae /oslash /questiondown
+/exclamdown /logicalnot /.notdef /florin /.notdef /.notdef
+/guillemotleft /guillemotright /ellipsis /.notdef /Agrave /Atilde
+/Otilde /OE /oe /endash /emdash /quotedblleft /quotedblright
+/quoteleft /quoteright /.notdef /.notdef /ydieresis /Ydieresis
+/fraction /currency /guilsinglleft /guilsinglright /fi /fl /daggerdbl
+/periodcentered /quotesinglbase /quotedblbase /perthousand
+/Acircumflex /Ecircumflex /Aacute /Edieresis /Egrave /Iacute
+/Icircumflex /Idieresis /Igrave /Oacute /Ocircumflex /.notdef /Ograve
+/Uacute /Ucircumflex /Ugrave /dotlessi /circumflex /tilde /macron
+/breve /dotaccent /ring /cedilla /hungarumlaut /ogonek /caron
+] def
+/ReEncode { 
+	dup 
+	length 
+	dict begin 
+	{
+	1 index /FID ne 
+		{def} 
+		{pop pop} ifelse 
+	} forall 
+	0 eq {/Encoding DiacriticEncoding def} if 
+	currentdict 
+	end 
+	} bind def
+FMPColor 
+	
+	{
+	/BEGINBITMAPCOLOR { 
+		BITMAPCOLOR} def
+	/BEGINBITMAPCOLORc { 
+		BITMAPCOLORc} def
+	/BEGINBITMAPTRUECOLOR { 
+		BITMAPTRUECOLOR } def
+	/BEGINBITMAPTRUECOLORc { 
+		BITMAPTRUECOLORc } def
+	/BEGINBITMAPCMYK { 
+		BITMAPCMYK } def
+	/BEGINBITMAPCMYKc { 
+		BITMAPCMYKc } def
+	}
+	
+	{
+	/BEGINBITMAPCOLOR { 
+		BITMAPGRAY} def
+	/BEGINBITMAPCOLORc { 
+		BITMAPGRAYc} def
+	/BEGINBITMAPTRUECOLOR { 
+		BITMAPTRUEGRAY } def
+	/BEGINBITMAPTRUECOLORc { 
+		BITMAPTRUEGRAYc } def
+	/BEGINBITMAPCMYK { 
+		BITMAPCMYKGRAY } def
+	/BEGINBITMAPCMYKc { 
+		BITMAPCMYKGRAYc } def
+	}
+ifelse
+/K { 
+	FMPrintAllColorsAsBlack {
+		dup 1 eq 2 index 1 eq and 3 index 1 eq and not
+			{7 {pop} repeat 0 0 0 1 0 0 0} if
+	} if 
+	FrameCurColors astore 
+	pop combineColor
+} bind def
+/graymode true def
+fMLevel1 {
+	/fmGetFlip {
+		fMatrix2 exch get mul 0 lt { -1 } { 1 } ifelse
+	} FmBD
+} if
+/setPatternMode {
+	fMLevel1 {
+		2 index patScreenDict exch known {
+			pop pop
+			patScreenDict exch get aload pop 
+			freq 								
+			mul									
+			5 2 roll							
+			fMatrix2 currentmatrix 1 get 0 ne {
+				3 -1 roll 90 add 3 1 roll 		
+				sflipx 1 fmGetFlip sflipy 2 fmGetFlip neg mul
+			} {  								
+				sflipx 0 fmGetFlip sflipy 3 fmGetFlip mul 
+			} ifelse
+			0 lt {exch pop} {pop} ifelse 		
+			fMNegative { 
+				{neg} fmConcatProcs 			
+			} if
+			bind
+			
+			
+			
+			systemdict /setscreen get exec		
+			/FrameCurGray exch def
+		} {
+			/bwidth  exch def
+			/bpside  exch def
+			/bstring exch def
+			/onbits 0 def  /offbits 0 def
+			freq sangle landscape {90 add} if 
+				{/ypoint exch def
+				 /xpoint exch def
+				 /xindex xpoint 1 add 2 div bpside mul cvi def
+				 /yindex ypoint 1 add 2 div bpside mul cvi def
+				 bstring yindex bwidth mul xindex 8 idiv add get
+				 1 7 xindex 8 mod sub bitshift and 0 ne fMNegative {not} if
+				 {/onbits  onbits  1 add def 1}
+				 {/offbits offbits 1 add def 0}
+				 ifelse
+				}
+				setscreen
+			offbits offbits onbits add div fMNegative {1.0 exch sub} if
+			/FrameCurGray exch def
+		} ifelse
+	} { 
+		pop pop
+		dup patCache exch known {
+			patCache exch get
+		} { 
+			dup
+			patDict /bstring 3 -1 roll put
+			patDict 
+			9 PatFreq screenIndex get div dup matrix scale
+			makepattern
+			dup 
+			patCache 4 -1 roll 3 -1 roll put
+		} ifelse
+		/FrameCurGray 0 def
+		/FrameCurPat exch def
+	} ifelse
+	/graymode false def
+	combineColor
+} bind def
+/setGrayScaleMode {
+	graymode not {
+		/graymode true def
+		fMLevel1 {
+			setCurrentScreen
+		} if
+	} if
+	/FrameCurGray exch def
+	combineColor
+} bind def
+/normalize {
+	transform round exch round exch itransform
+	} bind def
+/dnormalize {
+	dtransform round exch round exch idtransform
+	} bind def
+/lnormalize { 
+	0 dtransform exch cvi 2 idiv 2 mul 1 add exch idtransform pop
+	} bind def
+/H { 
+	lnormalize setlinewidth
+	} bind def
+/Z {
+	setlinecap
+	} bind def
+	
+/PFill {
+	graymode fMLevel1 or not {
+		gsave 1 setgray eofill grestore
+	} if
+} bind def
+/PStroke {
+	graymode fMLevel1 or not {
+		gsave 1 setgray stroke grestore
+	} if
+	stroke
+} bind def
+/X { 
+	fillvals exch get
+	dup type /stringtype eq
+	{8 1 setPatternMode} 
+	{setGrayScaleMode}
+	ifelse
+	} bind def
+/V { 
+	PFill gsave eofill grestore
+	} bind def
+/Vclip {
+	clip
+	} bind def
+/Vstrk {
+	currentlinewidth exch setlinewidth PStroke setlinewidth
+	} bind def
+/N { 
+	PStroke
+	} bind def
+/Nclip {
+	strokepath clip newpath
+	} bind def
+/Nstrk {
+	currentlinewidth exch setlinewidth PStroke setlinewidth
+	} bind def
+/M {newpath moveto} bind def
+/E {lineto} bind def
+/D {curveto} bind def
+/O {closepath} bind def
+/L { 
+ 	/n exch def
+	newpath
+	normalize
+	moveto 
+	2 1 n {pop normalize lineto} for
+	} bind def
+/Y { 
+	L 
+	closepath
+	} bind def
+/R { 
+	/y2 exch def
+	/x2 exch def
+	/y1 exch def
+	/x1 exch def
+	x1 y1
+	x2 y1
+	x2 y2
+	x1 y2
+	4 Y 
+	} bind def
+/rarc 
+	{rad 
+	 arcto
+	} bind def
+/RR { 
+	/rad exch def
+	normalize
+	/y2 exch def
+	/x2 exch def
+	normalize
+	/y1 exch def
+	/x1 exch def
+	mark
+	newpath
+	{
+	x1 y1 rad add moveto
+	x1 y2 x2 y2 rarc
+	x2 y2 x2 y1 rarc
+	x2 y1 x1 y1 rarc
+	x1 y1 x1 y2 rarc
+	closepath
+	} stopped {x1 y1 x2 y2 R} if 
+	cleartomark
+	} bind def
+/RRR { 
+	/rad exch def
+	normalize /y4 exch def /x4 exch def
+	normalize /y3 exch def /x3 exch def
+	normalize /y2 exch def /x2 exch def
+	normalize /y1 exch def /x1 exch def
+	newpath
+	normalize moveto 
+	mark
+	{
+	x2 y2 x3 y3 rarc
+	x3 y3 x4 y4 rarc
+	x4 y4 x1 y1 rarc
+	x1 y1 x2 y2 rarc
+	closepath
+	} stopped
+	 {x1 y1 x2 y2 x3 y3 x4 y4 newpath moveto lineto lineto lineto closepath} if
+	cleartomark
+	} bind def
+/C { 
+	grestore
+	gsave
+	R 
+	clip
+	setCurrentScreen
+} bind def
+/CP { 
+	grestore
+	gsave
+	Y 
+	clip
+	setCurrentScreen
+} bind def
+/F { 
+	FMfonts exch get
+	FMpointsize scalefont
+	setfont
+	} bind def
+/Q { 
+	/FMpointsize exch def
+	F 
+	} bind def
+/T { 
+	moveto show
+	} bind def
+/RF { 
+	rotate
+	0 ne {-1 1 scale} if
+	} bind def
+/TF { 
+	gsave
+	moveto 
+	RF
+	show
+	grestore
+	} bind def
+/P { 
+	moveto
+	0 32 3 2 roll widthshow
+	} bind def
+/PF { 
+	gsave
+	moveto 
+	RF
+	0 32 3 2 roll widthshow
+	grestore
+	} bind def
+/S { 
+	moveto
+	0 exch ashow
+	} bind def
+/SF { 
+	gsave
+	moveto
+	RF
+	0 exch ashow
+	grestore
+	} bind def
+/B { 
+	moveto
+	0 32 4 2 roll 0 exch awidthshow
+	} bind def
+/BF { 
+	gsave
+	moveto
+	RF
+	0 32 4 2 roll 0 exch awidthshow
+	grestore
+	} bind def
+/G { 
+	gsave
+	newpath
+	normalize translate 0.0 0.0 moveto 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath 
+	PFill fill
+	grestore
+	} bind def
+/Gstrk {
+	savematrix
+    newpath
+    2 index 2 div add exch 3 index 2 div sub exch 
+    normalize 2 index 2 div sub exch 3 index 2 div add exch 
+    translate
+    scale 
+    0.0 0.0 1.0 5 3 roll arc 
+    restorematrix
+    currentlinewidth exch setlinewidth PStroke setlinewidth
+    } bind def
+/Gclip { 
+	newpath
+	savematrix
+	normalize translate 0.0 0.0 moveto 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath 
+	clip newpath
+	restorematrix
+	} bind def
+/GG { 
+	gsave
+	newpath
+	normalize translate 0.0 0.0 moveto 
+	rotate 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath
+	PFill
+	fill
+	grestore
+	} bind def
+/GGclip { 
+	savematrix
+	newpath
+    normalize translate 0.0 0.0 moveto 
+    rotate 
+    dnormalize scale 
+    0.0 0.0 1.0 5 3 roll arc 
+    closepath
+	clip newpath
+	restorematrix
+	} bind def
+/GGstrk { 
+	savematrix
+    newpath
+    normalize translate 0.0 0.0 moveto 
+    rotate 
+    dnormalize scale 
+    0.0 0.0 1.0 5 3 roll arc 
+    closepath 
+	restorematrix
+    currentlinewidth exch setlinewidth PStroke setlinewidth
+	} bind def
+/A { 
+	gsave
+	savematrix
+	newpath
+	2 index 2 div add exch 3 index 2 div sub exch 
+	normalize 2 index 2 div sub exch 3 index 2 div add exch 
+	translate 
+	scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	restorematrix
+	PStroke
+	grestore
+	} bind def
+/Aclip {
+	newpath
+	savematrix
+	normalize translate 0.0 0.0 moveto 
+	dnormalize scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	closepath 
+	strokepath clip newpath
+	restorematrix
+} bind def
+/Astrk {
+	Gstrk
+} bind def
+/AA { 
+	gsave
+	savematrix
+	newpath
+	
+	3 index 2 div add exch 4 index 2 div sub exch 
+	
+	normalize 3 index 2 div sub exch 4 index 2 div add exch
+	translate 
+	rotate 
+	scale 
+	0.0 0.0 1.0 5 3 roll arc 
+	restorematrix
+	PStroke
+	grestore
+	} bind def
+/AAclip {
+	savematrix
+	newpath
+    normalize translate 0.0 0.0 moveto 
+    rotate 
+    dnormalize scale 
+    0.0 0.0 1.0 5 3 roll arc 
+    closepath
+	strokepath clip newpath
+	restorematrix
+} bind def
+/AAstrk {
+	GGstrk
+} bind def
+/BEGINPRINTCODE { 
+	/FMdicttop countdictstack 1 add def 
+	/FMoptop count 7 sub def 
+	/FMsaveobject save def
+	userdict begin 
+	/showpage {} def 
+	FMNORMALIZEGRAPHICS 
+	3 index neg 3 index neg translate
+	} bind def
+/ENDPRINTCODE {
+	count -1 FMoptop {pop pop} for 
+	countdictstack -1 FMdicttop {pop end} for 
+	FMsaveobject restore 
+	} bind def
+/gn { 
+	0 
+	{	46 mul 
+		cf read pop 
+		32 sub 
+		dup 46 lt {exit} if 
+		46 sub add 
+		} loop
+	add 
+	} bind def
+/cfs { 
+	/str sl string def 
+	0 1 sl 1 sub {str exch val put} for 
+	str def 
+	} bind def
+/ic [ 
+	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0223
+	0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0223
+	0
+	{0 hx} {1 hx} {2 hx} {3 hx} {4 hx} {5 hx} {6 hx} {7 hx} {8 hx} {9 hx}
+	{10 hx} {11 hx} {12 hx} {13 hx} {14 hx} {15 hx} {16 hx} {17 hx} {18 hx}
+	{19 hx} {gn hx} {0} {1} {2} {3} {4} {5} {6} {7} {8} {9} {10} {11} {12}
+	{13} {14} {15} {16} {17} {18} {19} {gn} {0 wh} {1 wh} {2 wh} {3 wh}
+	{4 wh} {5 wh} {6 wh} {7 wh} {8 wh} {9 wh} {10 wh} {11 wh} {12 wh}
+	{13 wh} {14 wh} {gn wh} {0 bl} {1 bl} {2 bl} {3 bl} {4 bl} {5 bl} {6 bl}
+	{7 bl} {8 bl} {9 bl} {10 bl} {11 bl} {12 bl} {13 bl} {14 bl} {gn bl}
+	{0 fl} {1 fl} {2 fl} {3 fl} {4 fl} {5 fl} {6 fl} {7 fl} {8 fl} {9 fl}
+	{10 fl} {11 fl} {12 fl} {13 fl} {14 fl} {gn fl}
+	] def
+/ms { 
+	/sl exch def 
+	/val 255 def 
+	/ws cfs 
+	/im cfs 
+	/val 0 def 
+	/bs cfs 
+	/cs cfs 
+	} bind def
+400 ms 
+/ip { 
+	is 
+	0 
+	cf cs readline pop 
+	{	ic exch get exec 
+		add 
+		} forall 
+	pop 
+	
+	} bind def
+/rip { 
+	   
+	  
+	  bis ris copy pop 
+      is
+      0
+      cf cs readline pop 
+      {       ic exch get exec 
+              add 
+              } forall 
+	  pop pop 
+	  ris gis copy pop 
+	  dup is exch 
+	  
+      cf cs readline pop 
+      {       ic exch get exec 
+              add 
+              } forall 
+	  pop pop
+	  gis bis copy pop 
+	  dup add is exch 
+	  
+      cf cs readline pop 
+      {       ic exch get exec 
+              add 
+              } forall 
+      pop 
+      
+      } bind def
+/rip4 { 
+	   
+	  
+	  kis cis copy pop 
+      is
+      0
+      cf cs readline pop 
+      {       ic exch get exec 
+              add 
+              } forall 
+	  pop pop 
+	  cis mis copy pop 
+	  dup is exch 
+	  
+      cf cs readline pop 
+      {       ic exch get exec 
+              add 
+              } forall 
+	  pop pop
+	  mis yis copy pop 
+	  dup dup add is exch 
+	  
+      cf cs readline pop 
+      {       ic exch get exec 
+              add 
+              } forall 
+	  pop pop
+	  yis kis copy pop 
+	  3 mul is exch 
+	  
+      cf cs readline pop 
+      {       ic exch get exec 
+              add 
+              } forall 
+      pop 
+      
+      } bind def
+/wh { 
+	/len exch def 
+	/pos exch def 
+	ws 0 len getinterval im pos len getinterval copy pop
+	pos len 
+	} bind def
+/bl { 
+	/len exch def 
+	/pos exch def 
+	bs 0 len getinterval im pos len getinterval copy pop
+	pos len 
+	} bind def
+/s1 1 string def
+/fl { 
+	/len exch def 
+	/pos exch def 
+	/val cf s1 readhexstring pop 0 get def
+	pos 1 pos len add 1 sub {im exch val put} for
+	pos len 
+	} bind def
+/hx { 
+	3 copy getinterval 
+	cf exch readhexstring pop pop 
+	} bind def
+/wbytes { 
+      dup dup
+      8 gt { pop 8 idiv mul }
+      { 8 eq {pop} {1 eq {7 add 8 idiv} {3 add 4 idiv} ifelse} ifelse } ifelse
+	} bind def
+/BEGINBITMAPBWc { 
+	1 {} COMMONBITMAPc
+	} bind def
+/BEGINBITMAPGRAYc { 
+	8 {} COMMONBITMAPc
+	} bind def
+/BEGINBITMAP2BITc { 
+	2 {} COMMONBITMAPc
+	} bind def
+/COMMONBITMAPc { 
+		 
+	/cvtProc exch def
+	/depth exch def
+	gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/height exch def /width exch def
+	/lb width depth wbytes def 
+	sl lb lt {lb ms} if 
+	/bitmapsave save def 
+	cvtProc                
+	/is im 0 lb getinterval def 
+	ws 0 lb getinterval is copy pop 
+	/cf currentfile def 
+	width height depth [width 0 0 height neg 0 height] 
+	{ip} image 
+	bitmapsave restore 
+	grestore
+	} bind def
+/BEGINBITMAPBW { 
+	1 {} COMMONBITMAP
+	} bind def
+/BEGINBITMAPGRAY { 
+	8 {} COMMONBITMAP
+	} bind def
+/BEGINBITMAP2BIT { 
+	2 {} COMMONBITMAP
+	} bind def
+/COMMONBITMAP { 
+	/cvtProc exch def
+	/depth exch def
+	gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/height exch def /width exch def
+	/bitmapsave save def 
+	cvtProc              
+	/is width depth wbytes string def
+	/cf currentfile def 
+	width height depth [width 0 0 height neg 0 height] 
+	{cf is readhexstring pop} image
+	bitmapsave restore 
+	grestore
+	} bind def
+/ngrayt 256 array def
+/nredt 256 array def
+/nbluet 256 array def
+/ngreent 256 array def
+fMLevel1 {
+/colorsetup {
+	currentcolortransfer
+	/gryt exch def
+	/blut exch def
+	/grnt exch def
+	/redt exch def
+	0 1 255 {
+		/indx exch def
+		/cynu 1 red indx get 255 div sub def
+		/magu 1 green indx get 255 div sub def
+		/yelu 1 blue indx get 255 div sub def
+		/kk cynu magu min yelu min def
+		/u kk currentundercolorremoval exec def
+%		/u 0 def
+		nredt indx 1 0 cynu u sub max sub redt exec put
+		ngreent indx 1 0 magu u sub max sub grnt exec put
+		nbluet indx 1 0 yelu u sub max sub blut exec put
+		ngrayt indx 1 kk currentblackgeneration exec sub gryt exec put
+	} for
+	{255 mul cvi nredt exch get}
+	{255 mul cvi ngreent exch get}
+	{255 mul cvi nbluet exch get}
+	{255 mul cvi ngrayt exch get}
+	setcolortransfer
+	{pop 0} setundercolorremoval
+	{} setblackgeneration
+	} bind def
+}
+{
+/colorSetup2 {
+	[ /Indexed /DeviceRGB 255 
+		{dup red exch get 255 div 
+		 exch dup green exch get 255 div 
+		 exch blue exch get 255 div}
+	] setcolorspace
+} bind def
+} ifelse
+/fakecolorsetup {
+	/tran 256 string def
+	0 1 255 {/indx exch def 
+		tran indx
+		red indx get 77 mul
+		green indx get 151 mul
+		blue indx get 28 mul
+		add add 256 idiv put} for
+	currenttransfer
+	{255 mul cvi tran exch get 255.0 div}
+	exch fmConcatProcs settransfer
+} bind def
+/BITMAPCOLOR { 
+	/depth 8 def
+	gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/height exch def /width exch def
+	/bitmapsave save def
+	fMLevel1 {	
+		colorsetup
+		/is width depth wbytes string def
+		/cf currentfile def 
+		width height depth [width 0 0 height neg 0 height] 
+		{cf is readhexstring pop} {is} {is} true 3 colorimage 
+	} {
+		colorSetup2
+		/is width depth wbytes string def
+		/cf currentfile def 
+		7 dict dup begin
+			/ImageType 1 def
+			/Width width def
+			/Height height def
+			/ImageMatrix [width 0 0 height neg 0 height] def
+			/DataSource {cf is readhexstring pop} bind def
+			/BitsPerComponent depth def
+			/Decode [0 255] def
+		end image	
+	} ifelse
+	bitmapsave restore 
+	grestore
+	} bind def
+/BITMAPCOLORc { 
+	/depth 8 def
+	gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/height exch def /width exch def
+	/lb width depth wbytes def 
+	sl lb lt {lb ms} if 
+	/bitmapsave save def 
+	fMLevel1 {	
+		colorsetup
+		/is im 0 lb getinterval def 
+		ws 0 lb getinterval is copy pop 
+		/cf currentfile def 
+		width height depth [width 0 0 height neg 0 height] 
+		{ip} {is} {is} true 3 colorimage
+	} {
+		colorSetup2
+		/is im 0 lb getinterval def 
+		ws 0 lb getinterval is copy pop 
+		/cf currentfile def 
+		7 dict dup begin
+			/ImageType 1 def
+			/Width width def
+			/Height height def
+			/ImageMatrix [width 0 0 height neg 0 height] def
+			/DataSource {ip} bind def
+			/BitsPerComponent depth def
+			/Decode [0 255] def
+		end image	
+	} ifelse
+	bitmapsave restore 
+	grestore
+	} bind def
+/BITMAPTRUECOLORc { 
+	/depth 24 def
+        gsave
+ 	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/height exch def /width exch def
+	/lb width depth wbytes def 
+	sl lb lt {lb ms} if 
+	/bitmapsave save def 
+        
+	/is im 0 lb getinterval def	
+	/ris im 0 width getinterval def	
+	/gis im width width getinterval def	
+	/bis im width 2 mul width getinterval def 
+        
+	ws 0 lb getinterval is copy pop 
+	/cf currentfile def 
+	width height 8 [width 0 0 height neg 0 height] 
+	{width rip pop ris} {gis} {bis} true 3 colorimage
+	bitmapsave restore 
+	grestore
+	} bind def
+/BITMAPCMYKc { 
+	/depth 32 def
+        gsave
+ 	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/height exch def /width exch def
+	/lb width depth wbytes def 
+	sl lb lt {lb ms} if 
+	/bitmapsave save def 
+        
+	/is im 0 lb getinterval def	
+	/cis im 0 width getinterval def	
+	/mis im width width getinterval def	
+	/yis im width 2 mul width getinterval def 
+	/kis im width 3 mul width getinterval def 
+        
+	ws 0 lb getinterval is copy pop 
+	/cf currentfile def 
+	width height 8 [width 0 0 height neg 0 height] 
+	{width rip4 pop cis} {mis} {yis} {kis} true 4 colorimage
+	bitmapsave restore 
+	grestore
+	} bind def
+/BITMAPTRUECOLOR { 
+        gsave
+		
+		3 index 2 div add exch	
+		4 index 2 div add exch	
+		translate		
+		rotate			
+		1 index 2 div neg	
+		1 index 2 div neg	
+		translate		
+		scale			
+		/height exch def /width exch def
+        /bitmapsave save def 
+        /is width string def
+        /gis width string def
+        /bis width string def
+        /cf currentfile def 
+        width height 8 [width 0 0 height neg 0 height] 
+        { cf is readhexstring pop } 
+        { cf gis readhexstring pop } 
+        { cf bis readhexstring pop } 
+        true 3 colorimage 
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPCMYK { 
+        gsave
+		
+		3 index 2 div add exch	
+		4 index 2 div add exch	
+		translate		
+		rotate			
+		1 index 2 div neg	
+		1 index 2 div neg	
+		translate		
+		scale			
+		/height exch def /width exch def
+        /bitmapsave save def 
+        /is width string def
+        /mis width string def
+        /yis width string def
+        /kis width string def
+        /cf currentfile def 
+        width height 8 [width 0 0 height neg 0 height] 
+        { cf is readhexstring pop } 
+        { cf mis readhexstring pop } 
+        { cf yis readhexstring pop } 
+        { cf kis readhexstring pop } 
+        true 4 colorimage 
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPTRUEGRAYc { 
+	/depth 24 def
+        gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/height exch def /width exch def
+	/lb width depth wbytes def 
+	sl lb lt {lb ms} if 
+        /bitmapsave save def 
+        
+	/is im 0 lb getinterval def	
+	/ris im 0 width getinterval def	
+	/gis im width width getinterval def	
+	/bis im width 2 mul width getinterval def 
+        ws 0 lb getinterval is copy pop 
+        /cf currentfile def 
+        width height 8 [width 0 0 height neg 0 height] 
+        {width rip pop ris gis bis width gray} image
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPCMYKGRAYc { 
+	/depth 32 def
+        gsave
+	
+	3 index 2 div add exch	
+	4 index 2 div add exch	
+	translate		
+	rotate			
+	1 index 2 div neg	
+	1 index 2 div neg	
+	translate		
+	scale			
+	/height exch def /width exch def
+	/lb width depth wbytes def 
+	sl lb lt {lb ms} if 
+        /bitmapsave save def 
+        
+	/is im 0 lb getinterval def	
+	/cis im 0 width getinterval def	
+	/mis im width width getinterval def	
+	/yis im width 2 mul width getinterval def 
+	/kis im width 3 mul width getinterval def 
+        ws 0 lb getinterval is copy pop 
+        /cf currentfile def 
+        width height 8 [width 0 0 height neg 0 height] 
+        {width rip pop cis mis yis kis width cgray} image
+        bitmapsave restore 
+        grestore
+        } bind def
+/cgray { 
+        /ww exch def
+        /k exch def
+        /y exch def
+        /m exch def
+        /c exch def
+        0 1 ww 1 sub { /i exch def c i get m i get y i get k i get CMYKtoRGB
+				.144 mul 3 1 roll .587 mul 3 1 roll .299 mul add add
+				c i 3 -1 roll floor cvi put } for
+        c
+ 		} bind def
+/gray { 
+        /ww exch def
+        /b exch def
+        /g exch def
+        /r exch def
+        0 1 ww 1 sub { /i exch def r i get .299 mul g i get .587 mul
+			b i get .114 mul add add r i 3 -1 roll floor cvi put } for
+        r
+        } bind def
+/BITMAPTRUEGRAY { 
+        gsave
+		
+		3 index 2 div add exch	
+		4 index 2 div add exch	
+		translate		
+		rotate			
+		1 index 2 div neg	
+		1 index 2 div neg	
+		translate		
+		scale			
+		/height exch def /width exch def
+        /bitmapsave save def 
+        /is width string def
+        /gis width string def
+        /bis width string def
+        /cf currentfile def 
+        width height 8 [width 0 0 height neg 0 height] 
+        { cf is readhexstring pop 
+          cf gis readhexstring pop 
+          cf bis readhexstring pop width gray}  image
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPCMYKGRAY { 
+        gsave
+		
+		3 index 2 div add exch	
+		4 index 2 div add exch	
+		translate		
+		rotate			
+		1 index 2 div neg	
+		1 index 2 div neg	
+		translate		
+		scale			
+		/height exch def /width exch def
+        /bitmapsave save def 
+        /is width string def
+        /yis width string def
+        /mis width string def
+        /kis width string def
+        /cf currentfile def 
+        width height 8 [width 0 0 height neg 0 height] 
+        { cf is readhexstring pop 
+          cf mis readhexstring pop 
+          cf yis readhexstring pop 
+          cf kis readhexstring pop width cgray}  image
+        bitmapsave restore 
+        grestore
+        } bind def
+/BITMAPGRAY { 
+	8 {fakecolorsetup} COMMONBITMAP
+	} bind def
+/BITMAPGRAYc { 
+	8 {fakecolorsetup} COMMONBITMAPc
+	} bind def
+/ENDBITMAP {
+	} bind def
+end 
+	/ALDmatrix matrix def ALDmatrix currentmatrix pop
+/StartALD {
+	/ALDsave save def
+	 savematrix
+	 ALDmatrix setmatrix
+	} bind def
+/InALD {
+	 restorematrix
+	} bind def
+/DoneALD {
+	 ALDsave restore
+	} bind def
+/I { setdash } bind def
+/J { [] 0 setdash } bind def
+%%EndProlog
+%%BeginSetup
+(5.0) FMVERSION
+1 1 0 0 612 792 0 1 7 FMDOCUMENT
+0 0 /Times-Roman FMFONTDEFINE
+1 0 /Times-Italic FMFONTDEFINE
+2 0 /Helvetica-Bold FMFONTDEFINE
+3 0 /Helvetica FMFONTDEFINE
+4 0 /Courier-Bold FMFONTDEFINE
+5 0 /Courier FMFONTDEFINE
+32 FMFILLS
+0 0 FMFILL
+1 0.1 FMFILL
+2 0.3 FMFILL
+3 0.5 FMFILL
+4 0.7 FMFILL
+5 0.9 FMFILL
+6 0.97 FMFILL
+7 1 FMFILL
+8 <0f1e3c78f0e1c387> FMFILL
+9 <0f87c3e1f0783c1e> FMFILL
+10 <cccccccccccccccc> FMFILL
+11 <ffff0000ffff0000> FMFILL
+12 <8142241818244281> FMFILL
+13 <03060c183060c081> FMFILL
+14 <8040201008040201> FMFILL
+16 1 FMFILL
+17 0.9 FMFILL
+18 0.7 FMFILL
+19 0.5 FMFILL
+20 0.3 FMFILL
+21 0.1 FMFILL
+22 0.03 FMFILL
+23 0 FMFILL
+24 <f0e1c3870f1e3c78> FMFILL
+25 <f0783c1e0f87c3e1> FMFILL
+26 <3333333333333333> FMFILL
+27 <0000ffff0000ffff> FMFILL
+28 <7ebddbe7e7dbbd7e> FMFILL
+29 <fcf9f3e7cf9f3f7e> FMFILL
+30 <7fbfdfeff7fbfdfe> FMFILL
+%%EndSetup
+%%Page: "14" 1
+%%BeginPaperSize: Letter
+%%EndPaperSize
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+J
+0 0 0 1 0 0 0 K
+72 746 540 756 R
+7 X
+0 0 0 1 0 0 0 K
+V
+72 33.32 540 43.32 R
+V
+0 10 Q
+0 X
+(Page) 508.06 36.66 T
+(14) 530 36.66 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 72 540 720 R
+7 X
+V
+0 X
+(For a list of known bugs, see the) 72 713.33 T
+1 F
+(Bugs) 204.49 713.33 T
+0 F
+( file in the Pad++ home directory.) 224.49 713.33 T
+2 12 Q
+(CHANGES) 72 692 T
+0 10 Q
+(For a list of changes since prior version, see the) 72 679.33 T
+1 F
+(ChangeLog) 265.02 679.33 T
+0 F
+( file in the Pad++ home directory.) 311.69 679.33 T
+2 12 Q
+(CONTACT) 72 658 T
+0 10 Q
+(Please use the following email address for contacting us:) 72 645.33 T
+1 F
+(\245 pad-bug@cs.unm.edu:) 93.6 625.33 T
+0 F
+(Bug reports.) 195.45 625.33 T
+1 F
+(\245 pad-comment@cs.unm.edu:) 93.6 605.33 T
+0 F
+(Comments, questions, suggestions, etc.) 214.05 605.33 T
+1 F
+(\245 pad-info@cs.unm.edu:) 93.6 585.33 T
+0 F
+( Information requests.) 193.51 585.33 T
+1 F
+(\245 pad-users@cs.unm.edu:) 93.6 565.33 T
+0 F
+( List of people currently using Pad++.) 196.56 565.33 T
+(p) 348.66 565.33 T
+(ad users.) 353.66 565.33 T
+52 562 54 572 R
+V
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "14" 1
+%%Page: "13" 2
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+72 746 540 756 R
+7 X
+0 0 0 1 0 0 0 K
+V
+72 33.32 540 43.32 R
+V
+0 10 Q
+0 X
+(Page) 508.06 36.66 T
+(13) 530 36.66 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 72 540 720 R
+7 X
+V
+0 X
+0.92 (quicker in the middle, and ends slowly - resulting in smoother feeling animations. This does not affect the) 100.8 713.33 P
+2.41 (time the animation takes because time is effectively stolen from the middle to put at the ends. User-) 100.8 701.33 P
+(controlled animations are specified precisely by the user, and there is no distortion of the motion speed.) 100.8 689.33 T
+2 12 Q
+(LOGO) 72 668 T
+0 10 Q
+(The first Pad++ widget created within a session has a small logo in the bottom right corner of the screen.) 72 655.33 T
+2 12 Q
+(PADDRAW SAMPLE APPLICATION) 72 634 T
+0 10 Q
+0.43 (Pad++ comes with a sample application called PadDraw. It is written entirely in Tcl and allows interactive creation) 72 621.33 P
+1.6 (of multiscale items and navigation within the Pad++ dataspace. This can be executed by running the ') 72 609.33 P
+1 F
+1.6 (paddraw) 502.64 609.33 P
+0 F
+1.6 (') 538.2 609.33 P
+(script in the top-level Pad++ directory.) 72 597.33 T
+2.21 (PadDraw is contained in the draw subdirectory of the Pad++ distribution. It is intended to be both a sample) 72 577.33 P
+0.14 (application for experimenting with the Pad++ widget from a user's level - as well as being a model for the developer) 72 565.33 P
+0.63 (of new Pad++ applications. There are several files that may be useful to the application programmer. In particular,) 72 553.33 P
+1 F
+(events.tcl) 72 541.33 T
+0 F
+( contains all the event-handler code that can be used for creating panning and zooming behavior.) 109.49 541.33 T
+3 F
+(Startup Files) 72 521.33 T
+0 F
+1.14 (When PadDraw starts up, several different kinds of files are loaded that control the look of PadDraw, as well as) 72 509.33 P
+1.33 (defining more specific things. Some of these files come with the Pad++ distribution, and some are available for) 72 497.33 P
+(individual customization. They are loaded after the Pad++ System file) 72 485.33 T
+1 F
+(~/.padinit) 355.19 485.33 T
+0 F
+(, in the following order:) 394.22 485.33 T
+1 F
+1.07 (\245 padrc  -) 93.6 465.33 P
+0 F
+1.07 (Distribution file: Contains X resource file. Specifies default colors, sizes, and fonts for system in) 138.06 465.33 P
+(standard X resource file format.) 93.6 453.33 T
+1 F
+1.29 (\245 ~/.padrc  -) 93.6 433.33 P
+0 F
+1.29 (Customization file: Put your own changes to the X resource file here. They will override any) 149.61 433.33 P
+(definitions in the padrc file.) 93.6 421.33 T
+1 F
+0.44 (\245 paddefaults  -) 93.6 401.33 P
+0 F
+0.44 (Distribution file: Contains Tcl code. Specifies defaults for the PadDraw application, including) 158.85 401.33 P
+(colors.) 93.6 389.33 T
+1 F
+0.75 (\245 ~/.padsetup  -) 93.6 369.33 P
+0 F
+0.75 (Program generated file: Do Not Modify! This is used to store information about the setup of) 160.22 369.33 P
+(PadDraw between runs. For instance, the visibility and geometry of tool palettes are stored here.) 93.6 357.33 T
+1 F
+1.06 (\245 ~/.paddefaults -) 93.6 337.33 P
+0 F
+1.06 (Customization file: Put your own changes to the paddefaults here. They will override any) 168.47 337.33 P
+(definitions in the paddefaults file. For example, your could redefine the color palette.) 93.6 325.33 T
+2 12 Q
+(CREDITS) 72 292 T
+0 10 Q
+0.23 (The scripting language interface to the Pad++ widget was greatly inspired by John K. Ousterhout's canvas widget in) 72 279.33 P
+2.11 (Tk. The zooming concept was originally described by Ken Perlin and David Fox at New York University in) 72 267.33 P
+(SIGGRAPH'93.) 72 255.33 T
+0.63 (Pad++ is being developed by a) 72 235.33 P
+0.63 ( DA) 198.38 235.33 P
+0.63 (RPA funded consortium led by Jim Hollan at the University of New Mexico in) 215.95 235.33 P
+(collaboration with New York University.) 72 223.33 T
+0.38 (The development group is being led by Ben Bederson \050UNM\051, and consists of people at UNM: Jim Hollan, Allison) 72 203.33 P
+1.59 (Druin,) 72 191.33 P
+1.59 (Ron Hightower, M) 101.92 191.33 P
+1.59 (ohamad Ijadi,) 180.94 191.33 P
+1.59 (J) 241.61 191.33 P
+1.59 (ason Stewart) 245.5 191.33 P
+1.59 (, David Thompson, Ying Zhao) 298.48 191.33 P
+1.59 (, and people at NYU: Ken) 427.62 191.33 P
+(Perlin,) 72 179.33 T
+(J) 100.89 179.33 T
+(on Meyer) 104.78 179.33 T
+( and Duane Whitehurst) 143.38 179.33 T
+(.) 235.86 179.33 T
+0.82 (In addition, other people that have been involved with the Pad++ project include: David Bacon, Duco Das, David) 72 159.33 P
+(Fox, David Vick, Eric De Mund,) 72 147.33 T
+(David Rogers,) 206.15 147.33 T
+(Mark Rosenstein, Larry Stead, and Kent Wittenburg.) 266.42 147.33 T
+(We also especially appreciate Paul Haeberli \050of SGI\051 who gave us code to read and render Adobe Type 1 fonts.) 72 127.33 T
+(P) 72 107.33 T
+(ad++ is supported in part by) 77.56 107.33 T
+(D) 192.72 107.33 T
+(ARPA contract #N66001-94-C-6039.) 199.94 107.33 T
+2 12 Q
+(BUGS) 72 86 T
+52 232 54 242 R
+V
+52 176 54 198 R
+V
+52 104 54 154 R
+V
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "13" 2
+%%Page: "12" 3
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+72 746 540 756 R
+7 X
+0 0 0 1 0 0 0 K
+V
+72 33.32 540 43.32 R
+V
+0 10 Q
+0 X
+(Page) 508.06 36.66 T
+(12) 530 36.66 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 72 540 720 R
+7 X
+V
+0 X
+0.54 (widgets. See the description of) 100.8 713.33 P
+1 F
+0.54 (Portal Items) 229.04 713.33 P
+0 F
+0.54 ( in the reference manual, as well as the description of the) 279.3 713.33 P
+4 F
+1.3 (bind) 516 713.33 P
+0 F
+(command for more information about portals.) 100.8 701.33 T
+1 F
+(\245 Events) 93.6 681.33 T
+0 F
+0.84 (It is possible to attach event handlers to items on the Pad++ surface so that when a specific event \050such as) 100.8 661.33 P
+0.58 (ButtonPress\051 reaches an item, that event handler fires, and an associated command is executed. This system) 100.8 649.33 P
+0.58 (operates much as it does with the Tk Canvas widget, but there are several significant additions. See the pad) 100.8 637.33 P
+4 F
+(bind) 100.8 625.33 T
+0 F
+( command for complete details, but the extensions fall into the following three categories:) 124.8 625.33 T
+(\245 Extra macro expansions are added) 136.8 605.33 T
+(\245 New events are added: <Create>, <Modify>, <Delete>, <Write>, and <PortalIntercept>.) 136.8 593.33 T
+(\245 User-specified modifiers are added.) 136.8 581.33 T
+1 F
+(\245 Callbacks) 93.6 549.33 T
+0 F
+2.43 (In addition to the event bindings that every item may have, every Pad++ item can define Tcl scripts) 100.8 529.33 P
+(associated with it which will get evaluated at special times. There are four types of these callbacks:) 100.8 517.33 T
+1 F
+(\245 Render Callbacks) 115.2 497.33 T
+0 F
+1.5 (A render callback script gets evaluated every time the item is rendered. See the) 122.4 477.33 P
+5 F
+3.61 (-renderscript) 462 477.33 P
+0 F
+(itemconfigure option for more detail.) 122.4 465.33 T
+1 F
+(\245 Timer Callbacks) 115.2 445.33 T
+0 F
+1.4 (A timer callback script gets evaluated at regular intervals, independent of whether the item is being) 122.4 425.33 P
+0.79 (rendered, or receiving events. See the) 122.4 413.33 P
+5 F
+1.9 (-timerscript) 279.89 413.33 P
+0 F
+0.79 ( and) 351.89 413.33 P
+5 F
+1.9 (-timerrate) 372.91 413.33 P
+0 F
+0.79 ( itemconfigure options for) 432.91 413.33 P
+(more detail.) 122.4 401.33 T
+1 F
+(\245 Zooming Callbacks) 115.2 381.33 T
+0 F
+2.32 (A zooming callback script gets evaluated when an item gets rendered at a different size than its) 122.4 361.33 P
+1.64 (previous render - where the relevant size thresholds are definable. This is a simple way of making) 122.4 349.33 P
+1.45 ("semantically zoomable" items - that is, items that look different when the are rendered at different) 122.4 337.33 P
+(sizes. See the) 122.4 325.33 T
+5 F
+(-zoomaction) 178.5 325.33 T
+0 F
+( itemconfigure option for more detail.) 244.5 325.33 T
+1 F
+(\245 View Change Callbacks) 115.2 305.33 T
+0 F
+0.54 (A view change callback gets evaluated whenever the view onto the Pad++ surface changes \050as a result) 122.4 285.33 P
+0.44 (of commands such as) 122.4 273.33 P
+4 F
+1.06 (moveto) 212.49 273.33 P
+0 F
+0.44 (,) 248.49 273.33 P
+4 F
+1.06 (center) 253.93 273.33 P
+0 F
+0.44 (, etc.\051 See the) 289.93 273.33 P
+5 F
+1.06 (-viewscript) 348.36 273.33 P
+0 F
+0.44 ( itemconfigure option for more) 414.36 273.33 P
+(detail.) 122.4 261.33 T
+1 F
+(\245 Extensions) 93.6 241.33 T
+0 F
+0.52 (It is possible to add user-defined types and options to Pad++ entirely with Tcl scripts \050i.e., no C/C++ code\051.) 100.8 221.33 P
+0.48 (This provides a mechanism to define new compound item types that are treated like first-class Pad++ items.) 100.8 209.33 P
+0.56 (That is, they can be created, configured, saved, etc. with the same commands you use to interact with built-) 100.8 197.33 P
+0.59 (in items, such as lines or text. These extensions are particularly well-suited for widgets, but can be used for) 100.8 185.33 P
+(anything. See the) 100.8 173.33 T
+1 F
+(Application-Defined Item Types and Options) 172.46 173.33 T
+0 F
+( section above for a detailed description.) 351.89 173.33 T
+1 F
+(\245 Animation) 93.6 153.33 T
+0 F
+1.79 (Pad++ has several methods for producing animations. The) 100.8 133.33 P
+4 F
+4.29 (moveto) 351.07 133.33 P
+0 F
+1.79 ( command animates the view of the) 387.07 133.33 P
+1.06 (surface to any new point in a specified time. Individual items can be animated with either render or timer) 100.8 121.33 P
+0.36 (callbacks. Finally, panning and zooming is animated under user-control, defined by scripts supplied with the) 100.8 109.33 P
+(PadDraw application.) 100.8 97.33 T
+2.44 (All automatic animations use) 100.8 77.33 P
+1 F
+2.44 (slow-in-slow-out) 229.99 77.33 P
+0 F
+2.44 ( motion. This means that the motion starts slowly, goes) 297.22 77.33 P
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "12" 3
+%%Page: "11" 4
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+72 746 540 756 R
+7 X
+0 0 0 1 0 0 0 K
+V
+72 33.32 540 43.32 R
+V
+0 10 Q
+0 X
+(Page) 508.06 36.66 T
+(11) 530 36.66 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 72 540 720 R
+7 X
+V
+0 X
+1.78 (command is called. Many commands implicitly damage items, but damage can be triggered manually with the) 72 713.33 P
+4 F
+(damage) 72 701.33 T
+0 F
+( command.) 108 701.33 T
+2 12 Q
+(EFFICIENCY) 72 680 T
+0 10 Q
+0.84 (Several techniques are used internally for Pad++ to work efficiently, even when there are large numbers of items.) 72 667.33 P
+(Understanding these techniques may help the application designer build faster programs. The techniques are) 72 655.33 T
+(:) 505.25 655.33 T
+1 F
+(\245) 93.6 635.33 T
+(R) 99.6 635.33 T
+(efinement) 105.71 635.33 T
+0 F
+1.44 (Pad++ renders the scene at different resolutions depending on how much time is available. For example,) 100.8 615.33 P
+1.7 (while panning or zooming and during other forms of interaction, Pad++ attempts to render the scene as) 100.8 603.33 P
+0.56 (quickly as possible. It does this by not drawing items that are very small, and drawing larger items at lower) 100.8 591.33 P
+0.3 (resolution. When the interaction is over, after a short pause, the system refines the scene a bit at a time, until) 100.8 579.33 P
+(it is drawn at its highest resolution.) 100.8 567.33 T
+0.36 (These iterative refinements each have numbers. Refinement level 0 \050sometimes referred to as render level 0\051) 100.8 547.33 P
+0.86 (is the fastest, and thus lowest-resolution rendering. Each ensuing refinement is labeled with the next larger) 100.8 535.33 P
+1.24 (integer. The starting refinement level \050which is usually 0\051 can be controlled with the -defaultRenderLevel) 100.8 523.33 P
+(configuration option.) 100.8 511.33 T
+1 F
+(\245 Level of detail) 93.6 491.33 T
+0 F
+0.58 (Some built-in items are drawn differently depending on how much time is available to draw them, and how) 100.8 471.33 P
+0.74 (big the item appears on the screen. The two main examples are images and text. Images are drawn at user-) 100.8 459.33 P
+0.34 (specifiable resolutions at low levels of refinement, and at high-resolution at higher refinement levels. Text is) 100.8 447.33 P
+(drawn as hashmarks, at small sizes, and as horizontal lines at extremely small sizes.) 100.8 435.33 T
+0.17 (In addition, facilities are provided so that user-defined items can be drawn with different levels of detail. The) 100.8 415.33 P
+0.94 (render and zooming callbacks can be used in combination with the) 100.8 403.33 P
+4 F
+2.24 (getsize) 380.21 403.33 P
+0 F
+0.94 (,) 422.21 403.33 P
+0.94 ( and) 424.71 403.33 P
+4 F
+2.24 (render) 446.02 403.33 P
+0 F
+0.94 ( c) 482.02 403.33 P
+0.94 (ommands to) 489.89 403.33 P
+(modify the way the item is drawn depending on the refinement level and size of the item.) 100.8 391.33 T
+1 F
+(\245 Region management) 93.6 371.33 T
+0 F
+(See the above section on Region Management and Screen Updating.) 100.8 351.33 T
+1 F
+(\245 Adjustable frame rate) 93.6 331.33 T
+0 F
+3.39 (Pad++ adjusts the frame rate during animations and zooming to maintain constant perceptual flow,) 100.8 311.33 P
+0.93 (independent of processor speed, scene complexity, or window size. For example, if a specific animation is) 100.8 299.33 P
+1.21 (specified to take 750 milliseconds, just enough animation frames are rendered so that the animation takes) 100.8 287.33 P
+(750 milliseconds.) 100.8 275.33 T
+1 F
+(\245 Interruptible) 93.6 255.33 T
+0 F
+0.68 (Whenever the system is doing a slow task, such as refining or animating, any event \050such as a key-press or) 100.8 235.33 P
+1.12 (mouse-click\051, will interrupt the task and control will immediately be given back to the user. For example,) 100.8 223.33 P
+0.49 (pressing the space-bar during an animation will immediately bring you to the end of the animation. Panning) 100.8 211.33 P
+1 (during a refinement will immediately stop the refinement and go on with high-speed panning. Interruption) 100.8 199.33 P
+(can be turned off with the) 100.8 187.33 T
+5 F
+(-interruptible) 206.33 187.33 T
+0 F
+( configuration option.) 290.33 187.33 T
+2 12 Q
+(UNIQUE PAD++ FEATURES) 72 166 T
+0 10 Q
+0.57 (While Pad++ is modeled after the Tk Canvas widget, there are several unique features of Pad++, in addition to the) 72 153.33 P
+(basic multiscale concept.) 72 141.33 T
+1 F
+(\245 Portals) 93.6 121.33 T
+0 F
+1.97 (Portals are a special type of item in Pad++ that sit on the Pad++ surface with a view onto a different) 100.8 101.33 P
+0.99 (location. Because each portal has its own view, the surface might be visible at several locations, each at a) 100.8 89.33 P
+0.95 (different magnification, through various portals. In addition, portals can look onto surfaces of other Pad++) 100.8 77.33 P
+52 632 54 662 R
+V
+52 400 54 410 R
+V
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "11" 4
+%%Page: "10" 5
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+72 746 540 756 R
+7 X
+0 0 0 1 0 0 0 K
+V
+72 33.32 540 43.32 R
+V
+0 10 Q
+0 X
+(Page) 508.06 36.66 T
+(10) 530 36.66 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 72 540 720 R
+7 X
+V
+0 X
+0.32 (a moment, the equivalent X font is loaded and replaces the Pad++ rendering of the text.  For this reason, Times and) 72 713.33 P
+0.98 (Helvetica fonts look better than other Type 1 fonts. After this refinement, the fonts at that size are much prettier.) 72 701.33 P
+0.71 (You can control when and for which size X fonts are used.  Font types are specified with the same style that Java) 72 689.33 P
+1.53 (fonts are specified.  A single string with font family, style, and size completely specifies a font.  For example,) 72 677.33 P
+1.97 (") 72 665.33 P
+5 F
+4.72 (Helvetica-bold-14) 76.08 665.33 P
+0 F
+1.97 (" specifies a 14 point bold Helvetica font.  If the style is not specified then plain is) 178.08 665.33 P
+0.76 (assumed, and if size is not specified, then a default of 12 points is used.  These font strings can be used wherever) 72 653.33 P
+(Pad++ is expecting a font, such as in the) 72 641.33 T
+4 F
+(-font) 236.04 641.33 T
+0 F
+( itemconfigure option available for many item types.) 266.04 641.33 T
+1 (In order for Pad++ to use Adobe Type 1 fonts, it must be able to find them.  These fonts are stored in files with) 72 621.33 P
+2.84 (") 72 609.33 P
+1 F
+2.84 (.pfa) 76.08 609.33 P
+0 F
+2.84 (" extension.  They are typically stored in the) 91.36 609.33 P
+1 F
+2.84 (/usr/lib/X11/fonts/Type1) 296.51 609.33 P
+0 F
+2.84 ( or) 393.75 609.33 P
+1 F
+2.84 (/usr/X11R6/lib/X11/fonts/Type1) 412.76 609.33 P
+0 F
+0.32 (directories.  These directories are examined by default to see if any Type 1 fonts are stored there.  If they are stored) 72 597.33 P
+0.4 (elsewhere, Pad++ can be directed to search other directories with the ") 72 585.33 P
+5 F
+0.97 (font path) 358.39 585.33 P
+0 F
+0.4 (" command \050i.e., you could use) 413.36 585.33 P
+0.25 (a command such as ") 72 573.33 P
+5 F
+0.59 (.pad font path /tmp/type1) 157.6 573.33 P
+0 F
+0.25 (".\051  You can find which fonts are available on the current) 309.38 573.33 P
+-0.07 (system with the ") 72 561.33 P
+5 F
+-0.16 (font names) 141.15 561.33 P
+0 F
+-0.07 (" command \050i.e., ") 200.99 561.33 P
+5 F
+-0.16 (.pad font names) 273.93 561.33 P
+0 F
+-0.07 (".\051 See the) 363.61 561.33 P
+4 F
+-0.16 (font) 407.47 561.33 P
+0 F
+-0.07 ( command for more detail.) 431.47 561.33 P
+0.4 (Pad++ comes with a font named ") 72 541.33 P
+1 F
+0.4 (Line) 210.28 541.33 P
+0 F
+0.4 (") 228.06 541.33 P
+0.4 (.  This is a fixed-width vector-font, modeled on courier.  It is quite fast, and) 232.14 541.33 P
+(while readable at smaller sizes, is not very pretty when magnified.) 72 529.33 T
+2 12 Q
+(IMAGES) 72 508 T
+0 10 Q
+2.12 (Pad++ supports real-time zooming of images where the rendering speed is dependent only on the size of the) 72 495.33 P
+0.82 (resulting image.  It is independent of the source image size.  This real-time image zooming is only possible when) 72 483.33 P
+1.4 (the Pad++ program is being displayed on the console of the machine Pad++ is running on \050i.e., it is quite a bit) 72 471.33 P
+(slower when Pad++ is being displayed across a network\051.) 72 459.33 T
+2 12 Q
+(DISPLAY LISTS) 72 438 T
+0 10 Q
+0.3 (There) 72 425.33 P
+0.3 (is a single d) 98.12 425.33 P
+0.3 (isplay list) 146.51 425.33 P
+0.3 ( m) 185.43 425.33 P
+0.3 (aintained by Pad++) 196.01 425.33 P
+0.3 ( which controls the order in which items are drawn.  The drawing) 274.54 425.33 P
+1.47 (order of items can be changed with the) 72 413.33 P
+4 F
+3.53 (raise) 241.52 413.33 P
+0 F
+1.47 ( and) 271.52 413.33 P
+4 F
+3.53 (lower) 293.9 413.33 P
+0 F
+1.47 ( commands. Pad++ also supports a notion of layers) 323.9 413.33 P
+0.75 (which can be used to force certain items to be drawn above or below other items.  Every item sits on a layer, and) 72 401.33 P
+0.27 (every item on a layer is drawn sequentially before items on any other layers are drawn.  In addition, the visibility of) 72 389.33 P
+1.15 (layers can be turned on and off so layers can be used to quickly control visibility.  See the) 72 377.33 P
+4 F
+2.76 (layer) 455.48 377.33 P
+0 F
+1.15 ( command to) 485.48 377.33 P
+(define new layers and the) 72 365.33 T
+4 F
+(-visiblelayers) 176.69 365.33 T
+0 F
+( itemconfigure option to control visibility of layers.) 260.69 365.33 T
+0.28 (Pad++ also supports sticky items.  These are items that do not move as the view changes, but instead always appear) 72 345.33 P
+2.03 (at a fixed position relative to the screen.  Sticky items can be used to implement things like status lines and) 72 333.33 P
+1 (windows.  Sticky items are put on the regular display list and can appear above or below any other item.  If you) 72 321.33 P
+0.12 (want sticky items to appear above other items, then you should put them on a special layer which is raised above the) 72 309.33 P
+(main layer.) 72 297.33 T
+2 12 Q
+(S) 72 276 T
+(TARTUP FILE) 80 276 T
+0 10 Q
+1.31 (When Pad++ starts up, the file) 72 263.33 P
+1 F
+1.31 (~/.padinit) 204.2 263.33 P
+0 F
+1.31 ( automatically gets loaded before anything else. The file) 243.23 263.33 P
+1 F
+1.31 (~/.padinit) 482.23 263.33 P
+0 F
+1.31 ( is a) 521.26 263.33 P
+1.71 (standard Tcl script that can contain any code the user wants. A typical use for this file is to start up a Pad++) 72 251.33 P
+0.48 (application. To make the PadDraw \050described below\051 application start up automatically) 72 239.33 P
+0.48 ( when you run padwish) 426.49 239.33 P
+0.48 (, put) 521.74 239.33 P
+(this line in your) 72 227.33 T
+1 F
+(~/.padinit) 137.56 227.33 T
+0 F
+( file:) 176.59 227.33 T
+5 F
+(source $env\050PADHOME\051/draw/pad.tcl) 93.6 207.33 T
+0 F
+(The PadDraw application uses several other startup files as well. They are described below in the PadDraw section.) 72 183.33 T
+2 12 Q
+(REGION MANAGEMENT AND SCREEN UPDATING) 72 162 T
+0 10 Q
+1.22 (Only the portions of the screen that change get rendered. This makes many operations much faster. Specifically,) 72 149.33 P
+0.18 (modifying or dragging individual items, or panning the view is much more efficient. Notably, zooming is no faster -) 72 137.33 P
+(and still requires re-rendering the entire view.) 72 125.33 T
+0.64 (This screen updating is controlled by) 72 105.33 P
+1 F
+0.64 (region management) 226.38 105.33 P
+0 F
+0.64 ( which uses the concepts of damage and repair. When an) 306.73 105.33 P
+0.32 (item changes, the region within its bounding box is automatically damaged. The act of damaging a region adds it to) 72 93.33 P
+1.99 (a list that gets scheduled for repair. The repair doesn't happen until either the system is idle, or the) 72 81.33 P
+4 F
+4.77 (update) 504 81.33 P
+52 538 54 720 R
+V
+52 456 54 466 R
+V
+52 272 54 432 R
+V
+52 236 54 246 R
+V
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "10" 5
+%%Page: "9" 6
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+72 746 540 756 R
+7 X
+0 0 0 1 0 0 0 K
+V
+72 33.32 540 43.32 R
+V
+0 10 Q
+0 X
+(Page) 513.06 36.66 T
+(9) 535 36.66 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 72 540 720 R
+7 X
+V
+5 F
+0 X
+(> \050pad '.pad 'bind 22 '<Leave> "\050pad '.pad 'ic %O '-pen 'black\051"\051) 93.6 713.33 T
+(> \050settoplevel 'tcl\051) 93.6 701.33 T
+(> %) 93.6 689.33 T
+(% puts [expr 2 + 2]) 93.6 677.33 T
+(4) 93.6 665.33 T
+(% .pad create line 0 0 0 50) 93.6 653.33 T
+(23) 93.6 641.33 T
+(% .pad settoplevel scheme) 93.6 629.33 T
+(scheme) 93.6 617.33 T
+(% >) 93.6 605.33 T
+(>) 93.6 593.33 T
+(> \050exit\051) 93.6 581.33 T
+(surf[165]) 93.6 569.33 T
+0 F
+1 (Adding a new interpreted scripting language to Pad++ requires creating some C++ interface code, and modifying) 72 545.33 P
+1.65 (the Pad++ C++ substrate to access that code, and build a new padwish executable. To add a language, several) 72 533.33 P
+2.14 (callback procedures must be defined, and then a new instance of the Pad_Language class must be created in) 72 521.33 P
+(tkMain.C.  The necessary callback procedures are:) 72 509.33 T
+1 F
+0.16 (\245 Callback when a pad widget is created.) 93.6 489.33 P
+0 F
+0.16 ( Whenever a new Pad++ widget is created, this routines gets called so) 258.78 489.33 P
+(a function for accessing that new widget can be created in the new scripting language.) 93.6 477.33 T
+5 F
+(Pad_CreateProc   *create_proc;) 108 457.33 T
+1 F
+0.87 (\245 Callback to process pad command.) 93.6 433.33 P
+0 F
+0.87 ( From Tcl, there should be a command for accessing the new scripting) 248.17 433.33 P
+0.38 (language without using the top-level interpreter.  For example, it should be possible to load and evaluate files,) 93.6 421.33 P
+0.51 (and access variables from that language.  This routine gets called when that Tcl command is evaluated, and it) 93.6 409.33 P
+(must implement this functionality.) 93.6 397.33 T
+5 F
+(Pad_CommandProc  *command_proc;) 108 377.33 T
+1 F
+0.5 (\245 Callback specifies if command is complete and should be evaluated.) 93.6 353.33 P
+0 F
+0.5 (  This routines, given a command in the) 377.38 353.33 P
+0.7 (scripting language, typically counts parenthesis, quotes, and braces, and determines if the command is partial) 93.6 341.33 P
+1.43 (or complete.  This routine is called whenever the user presses the return key at the top-level interpreter to) 93.6 329.33 P
+(determine if the command should be evaluated yet.) 93.6 317.33 T
+5 F
+(Pad_CompleteProc *complete_proc;) 108 297.33 T
+1 F
+0.3 (\245 Callback to generate a prompt.) 93.6 273.33 P
+0 F
+0.3 ( Given a flag specifying whether the command is complete or not \050according) 229.19 273.33 P
+(to the complete_proc, this routine should generate a distinctive prompt for this language.) 93.6 261.33 T
+5 F
+(Pad_PromptProc   *prompt_proc;) 108 241.33 T
+1 F
+2.22 (\245 Callback to evaluate a string.) 93.6 217.33 P
+0 F
+2.22 ( This routine should evaluate the specified string as a command in the) 234 217.33 P
+(scripting language.) 93.6 205.33 T
+5 F
+(Pad_EvalProc     *eval_proc;) 108 185.33 T
+0 F
+0.69 (There are several relevant C++ files that should be examined to see how Scheme is currently connected to Pad++.) 72 161.33 P
+0.82 (The files are all in the PADHOME/src directory.) 72 149.33 P
+1 F
+0.82 (pad-scheme.C) 279.32 149.33 P
+0 F
+0.82 ( implements all of the callback routines that form) 336.25 149.33 P
+1.4 (the connection between C++ and scheme.) 72 137.33 P
+1 F
+1.4 (script.h) 253.58 137.33 P
+0 F
+1.4 ( declares the Pad_Language and Pad_Script classes.) 283.86 137.33 P
+1 F
+1.4 (script.C) 508.05 137.33 P
+0 F
+(implements those classes.) 72 125.33 T
+1 F
+(tkMain.C) 180.05 125.33 T
+0 F
+( instantiates the Pad_Language class for each available scripting language.) 217.55 125.33 T
+2 12 Q
+(FONTS) 72 92 T
+0 10 Q
+0.14 (Pad++ supports Adobe Type 1 fonts) 72 79.33 P
+0.14 (.  The Times and Helvetica fonts are special in that when the system sits idle for) 217.57 79.33 P
+52 76 54 86 R
+V
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "9" 6
+%%Page: "8" 7
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+72 746 540 756 R
+7 X
+0 0 0 1 0 0 0 K
+V
+72 33.32 540 43.32 R
+V
+0 10 Q
+0 X
+(Page) 513.06 36.66 T
+(8) 535 36.66 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 72 540 720 R
+7 X
+V
+5 F
+0 X
+($PAD ic $option_id -text "$value: ") 198 713.33 T
+(} else {) 171 701.33 T
+(set value [$PAD ic $option_id -text]) 198 689.33 T
+(set len [expr [string length $value] - 3]) 198 677.33 T
+(set value [string range $value 0 $len]) 198 665.33 T
+(}) 171 653.33 T
+(}) 144 641.33 T
+(-value {      ;# Handle "-value" option) 144 629.33 T
+(set option_id [lindex [$PAD ic $id -members] 1]) 171 617.33 T
+(if {$got_value} {) 171 605.33 T
+($PAD ic $option_id -text "$value") 198 593.33 T
+(} else {) 171 581.33 T
+(set value [$PAD ic $option_id -text]) 198 569.33 T
+(}) 171 557.33 T
+(}) 144 545.33 T
+(default {return -code error "Unknown option: $option"}) 144 521.33 T
+(}) 117 509.33 T
+(return $value) 117 485.33 T
+(}) 93.6 473.33 T
+0 F
+1.48 (The property item can be created and accessed just like any built-in item.  The following code shows how one) 72 449.33 P
+(might use a property item.) 72 437.33 T
+5 F
+(set prop [.pad create property]) 93.6 417.33 T
+(.pad itemconfig $prop -option "color") 93.6 405.33 T
+(.pad itemconfig $prop -value "blue") 93.6 393.33 T
+(set color [.pad itemconfig $prop -value]) 93.6 381.33 T
+(puts "color of property is $color") 93.6 369.33 T
+2 12 Q
+(SCRIPTING LANGUAGES) 72 342 T
+0 10 Q
+1.99 (Pad++ is a prototyping system, and as such, is intrinsically connected to an interpreted scripting language for) 72 329.33 P
+0.16 (writing programs that create items and interact with them.  By default Pad++ comes with the Tcl scripting language,) 72 317.33 P
+0.64 (however, other languages may be added. Note that these other scripting languages can access the full functionality) 72 305.33 P
+0.49 (of Pad++, but can not access any of the Tk interface system. The substrate) 72 293.33 P
+0.49 ( s) 375.43 293.33 P
+0.49 (upports a fairly general mechanism for) 382.31 293.33 P
+5.12 (incorporating new scripting languages.  We have done this with the Elk version) 72 281.33 P
+5.12 (of) 459.09 281.33 P
+5.12 (Scheme.  The) 475.05 281.33 P
+0.24 (README.SCHEME file describes specifically how to build Pad++ with Scheme support, and how to access Pad++) 72 269.33 P
+1 (from scheme.  If Pad++ is built with Scheme included, then the) 72 257.33 P
+4 F
+2.4 (setlanguage) 339.72 257.33 P
+0 F
+1 ( and) 405.72 257.33 P
+4 F
+2.4 (settoplevel) 427.17 257.33 P
+0 F
+1 ( commands) 493.17 257.33 P
+(will apply to Scheme as well as Tcl.  These commands control which language is to be used.) 72 245.33 T
+0.3 (The) 72 225.33 P
+4 F
+0.73 (setlanguage) 90.35 225.33 P
+0 F
+0.3 ( command specifies what language is to be used to evaluate all callback scripts that are created) 156.35 225.33 P
+2.07 (in the future.  The) 72 213.33 P
+4 F
+4.98 (settoplevel) 156.8 213.33 P
+0 F
+2.07 ( command specifies what language the toplevel interpreter should use.  In) 222.8 213.33 P
+1.39 (addition, the padwish executable has a -language option that specifies what language the interpreter should start) 72 201.33 P
+(using.  It defaults to Tcl. The following session trace shows how the two languages work together:) 72 189.33 T
+5 F
+(surf[164] padwish -language scheme) 93.6 169.33 T
+(Real-time image zooming supported.) 93.6 157.33 T
+(> \050+ 2 2\051) 93.6 145.33 T
+(4) 93.6 133.33 T
+(> \050pad '.pad 'create 'line 0 0 50 50\051) 93.6 121.33 T
+(22) 93.6 109.33 T
+(> \050pad '.pad 'itemconfig 22 '-penwidth 5\051) 93.6 97.33 T
+(> \050pad '.pad 'bind 22 '<Enter> "\050pad '.pad 'ic %O '-pen 'red\051"\051) 93.6 85.33 T
+52 278 54 300 R
+V
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "8" 7
+%%Page: "7" 8
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+72 746 540 756 R
+7 X
+0 0 0 1 0 0 0 K
+V
+72 33.32 540 43.32 R
+V
+0 10 Q
+0 X
+(Page) 513.06 36.66 T
+(7) 535 36.66 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 72 540 720 R
+7 X
+V
+0 X
+0.47 (regular way with the) 72 713.33 P
+4 F
+1.14 (itemconfigure) 158.88 713.33 P
+0 F
+0.47 ( command, and will get written out with the) 236.88 713.33 P
+4 F
+1.14 (write) 418.93 713.33 P
+0 F
+0.47 ( command.  Similar to) 448.93 713.33 P
+1.75 (the) 72 701.33 P
+4 F
+4.21 (addtype) 88.47 701.33 P
+0 F
+1.75 ( command,) 130.48 701.33 P
+4 F
+4.21 (addoption) 180.93 701.33 P
+0 F
+1.75 ( defines a script that gets evaluated whenever the user-defined option is) 234.93 701.33 P
+0.8 (accessed for an item of the specified type.  The script must return the new value of the option. When the script is) 72 689.33 P
+(evaluated, two or sometimes three extra parameters are added on to the end of the string. They are:) 72 677.33 T
+1 F
+(\245 pathName:) 93.6 657.33 T
+0 F
+(The name of the pad widget the item is on.) 151.54 657.33 T
+1 F
+(\245 item:) 93.6 645.33 T
+0 F
+(The id of the item being configured.) 151.5 645.33 T
+1 F
+(\245 [value]:) 93.6 633.33 T
+0 F
+(Optional value.  If value is specified, then the option must be set to this value.) 151.5 633.33 T
+0.3 (The following example shows how to define a new "property" type that has two slots, -option and -value.  When an) 72 613.33 P
+0.3 (item of type property is created, It appears as text with the option on the left and the value on the right separated by) 72 601.33 P
+(a colon and some space.) 72 589.33 T
+5 F
+(#) 93.6 569.33 T
+(# Add new "property" type) 93.6 557.33 T
+(#) 93.6 545.33 T
+(.pad addtype property propCreate) 93.6 533.33 T
+(#) 93.6 509.33 T
+(# Define script to handle creation of property item) 93.6 497.33 T
+(#) 93.6 485.33 T
+(proc propCreate {PAD} {) 93.6 473.33 T
+(set option [.pad create text -anchor e -text "option: "]) 117 461.33 T
+(set value [.pad create text -anchor w -text "value"]) 117 449.33 T
+(set group [.pad create group -members "$option $value") 117 437.33 T
+(]) 441 437.33 T
+(return $group) 117 413.33 T
+(}) 93.6 401.33 T
+(#) 93.6 377.33 T
+(# Add "-option" and "-value" options to the property type) 93.6 365.33 T
+(#) 93.6 353.33 T
+(.pad addoption property -option "propConfig -option" "option") 93.6 341.33 T
+(.pad addoption property -value  "propConfig -value"  "value") 93.6 329.33 T
+(#) 93.6 305.33 T
+(# Handle property item configuration) 93.6 293.33 T
+(#) 93.6 281.33 T
+(proc propConfig {args} {) 93.6 269.33 T
+(set option [lindex $args 0]) 117 257.33 T
+(set PAD [lindex $args 1]) 117 245.33 T
+(set id [lindex $args 2]) 117 233.33 T
+(set got_value 0) 117 221.33 T
+(# Access arguments) 93.6 197.33 T
+(if {[llength $args] >= 4} {) 117 185.33 T
+(set value [lindex $args 3]) 144 173.33 T
+(set got_value 1) 144 161.33 T
+(} else {) 117 149.33 T
+(set value "") 144 137.33 T
+(}) 117 125.33 T
+(switch -exact -- $option {) 117 113.33 T
+(-option {     ;# Handle "-option" option) 144 101.33 T
+(set option_id [lindex [$PAD ic $id -members] 0]) 171 89.33 T
+(if {$got_value} {) 171 77.33 T
+52 434 54 444 R
+V
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "7" 8
+%%Page: "6" 9
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+72 746 540 756 R
+7 X
+0 0 0 1 0 0 0 K
+V
+72 33.32 540 43.32 R
+V
+0 10 Q
+0 X
+(Page) 513.06 36.66 T
+(6) 535 36.66 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 72 540 720 R
+7 X
+V
+0 X
+0.75 (If we zoom in a bit with the) 72 701.33 P
+4 F
+1.8 (moveto) 191.32 701.33 P
+0 F
+0.75 ( command, both items will appear larger.  This, however, is not the same as) 227.32 701.33 P
+0.25 (magnifying each item with the) 72 689.33 P
+4 F
+0.6 (scale) 197.95 689.33 P
+0 F
+0.25 ( command.  Changing the view affects the way all items are rendered \050except) 227.95 689.33 P
+1 F
+(sticky) 72 677.33 T
+0 F
+( items, see below\051.  Transforming items changes just the way those items are rendered.) 94.77 677.33 T
+5 F
+(.pad moveto 0 0 2) 93.6 657.33 T
+0 F
+(We can find the current view with the) 72 465.33 T
+4 F
+(getview) 225.85 465.33 T
+0 F
+( command:) 267.85 465.33 T
+5 F
+(.pad getview) 93.6 445.33 T
+(=> "0 0 2") 360 445.33 T
+2 12 Q
+(EVENT BINDINGS) 72 412 T
+0 10 Q
+0.5 (It is easy to attach Tcl scripts to items so that when the user interacts with that item \050via a mouse button press, key) 72 399.33 P
+0.86 (press, or whatever\051, the Tcl script is evaluated.  This is implemented with the) 72 387.33 P
+4 F
+2.06 (bind) 394.79 387.33 P
+0 F
+0.86 ( command.  For example, the) 418.79 387.33 P
+0.14 (following code creates two squares.  Clicking on the left one zooms in a bit, and clicking on the right one zooms out) 72 375.33 P
+(a bit.) 72 363.33 T
+5 F
+(.pad create rectangle 0 0 50 50 -tags rect1 -fill black) 93.6 343.33 T
+(.pad create rectangle 100 0 150 50 -tags rect2 -fill white) 93.6 331.33 T
+(.pad bind rect1 <ButtonPress> {.pad moveto 0 0 2 1000}) 93.6 319.33 T
+(.pad bind rect2 <ButtonPress> {.pad moveto 0 0 1 1000}) 93.6 307.33 T
+2 12 Q
+(APPLICATION-DEFINED ITEM TYPES AND OPTIONS) 72 282 T
+0 10 Q
+0.8 (Pad++ may be extended entirely with Tcl scripts \050i.e., no C/C++ code\051. This provides a mechanism to define new) 72 269.33 P
+0.77 (Pad++ types and a way to define options for those types \050or built-in types\051.  These user-defined types and options) 72 257.33 P
+2.35 (are treated like first-class Pad++ objects. That is, they can be created, configured, saved, etc. with the same) 72 245.33 P
+1.27 (commands you use to interact with built-in objects, such as lines or text. These extensions are particularly well-) 72 233.33 P
+(suited for widgets, but can be used for anything.) 72 221.33 T
+3.06 (For example, the) 72 201.33 P
+3.06 (P) 151.16 201.33 P
+3.06 (adDraw application defines) 156.72 201.33 P
+3.06 (a few sample w) 278.36 201.33 P
+3.06 (idgets) 350.01 201.33 P
+3.06 (such as a check) 379.46 201.33 P
+3.06 (button) 450.55 201.33 P
+3.06 ( w) 476.11 201.33 P
+3.06 (ith the type) 488.89 201.33 P
+(mechanism.  It also defines) 72 189.33 T
+5 F
+(-roughness) 183.65 189.33 T
+0 F
+( and) 243.65 189.33 T
+5 F
+(-undulate) 263.09 189.33 T
+0 F
+( options for the built-in line type.) 317.09 189.33 T
+2.33 (Types and options are defined with the) 72 169.33 P
+4 F
+5.6 (addtype) 246.36 169.33 P
+0 F
+2.33 ( and) 288.36 169.33 P
+4 F
+5.6 (addoption) 312.47 169.33 P
+0 F
+2.33 ( commands, respectively. The) 366.47 169.33 P
+4 F
+5.6 (addtype) 498 169.33 P
+0 F
+0.53 (command defines a new type with a script that gets evaluated whenever a new item of that type is created with the) 72 157.33 P
+4 F
+0.49 (create) 72 145.33 P
+0 F
+0.2 ( command.  The pathname of the pad widget is added on to the script as an extra parameter when the script) 108 145.33 P
+0.48 (is evaluated.  The script must return the id of an item that it creates that is to be treated as the new type.  Any item) 72 133.33 P
+0.79 (type can be created for this purpose, and it will be treated as the new type.  If a) 72 121.33 P
+5 F
+1.89 (-renderscript) 404.37 121.33 P
+0 F
+0.79 ( is attached to) 482.37 121.33 P
+0.69 (this item, then this item type can have any desired visual look.  Alternatively, the script might create a group with) 72 109.33 P
+(members that define the item\325s look.) 72 97.33 T
+0.98 (The) 72 77.33 P
+4 F
+2.36 (addoption) 91.03 77.33 P
+0 F
+0.98 ( command defines a new option for a built-in or user-defined type.  This option is accessed the) 145.03 77.33 P
+72 72 540 720 C
+234 498 378 642 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+234 498 378 642 R
+5 X
+0 0 0 1 0 0 0 K
+V
+324 588 360 624 R
+7 X
+V
+0.5 H
+2 Z
+0 X
+N
+234 570 306 642 R
+V
+N
+234 498 378 642 R
+2 H
+0 Z
+N
+72 72 540 720 C
+0 0 612 792 C
+52 198 54 208 R
+0 X
+0 0 0 1 0 0 0 K
+V
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "6" 9
+%%Page: "5" 10
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+72 746 540 756 R
+7 X
+0 0 0 1 0 0 0 K
+V
+72 33.32 540 43.32 R
+V
+0 10 Q
+0 X
+(Page) 513.06 36.66 T
+(5) 535 36.66 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 72 540 720 R
+7 X
+V
+0 X
+0.57 (position and size. Items can be moved and scaled with the above mentioned commands, but the anchor and anchor) 72 713.33 P
+1.92 (point can also be accessed directly with the) 72 701.33 P
+5 F
+4.61 (-anchor) 262.9 701.33 P
+0 F
+1.92 (, and) 304.9 701.33 P
+5 F
+4.61 (-) 330.68 701.33 P
+4.61 (position) 336.68 701.33 P
+0 F
+1.92 ( i) 384.68 701.33 P
+1.92 (temconfigure options.) 391.89 701.33 P
+5 F
+4.61 (-) 486 701.33 P
+4.61 (position) 492 701.33 P
+0 F
+0.41 (c) 72 689.33 P
+0.41 (onsists of a list of three values where the first two values specify the position of an item relative to its anchor, and) 76.44 689.33 P
+1.44 (the third value specify its size.  For example, an image with a) 72 677.33 P
+5 F
+3.46 (-position) 338.77 677.33 P
+0 F
+1.44 ( o) 392.77 677.33 P
+1.44 (f "25 30 2" and an) 401.71 677.33 P
+5 F
+3.46 (-anchor) 485.73 677.33 P
+0 F
+1.44 ( of) 527.73 677.33 P
+1.1 (") 72 665.33 P
+5 F
+2.63 (center) 76.08 665.33 P
+0 F
+1.1 (" will appear centered at the point \05025, 30\051 with a magnification of 2.  Changing its anchor to ") 112.08 665.33 P
+4 F
+2.63 (w) 510.76 665.33 P
+0 F
+1.1 (" will) 516.76 665.33 P
+(make the west side of the image appear at the point \05025, 30\051.) 72 653.33 T
+2.19 (Some items \050such as text and images\051 get created with a) 72 633.33 P
+5 F
+5.25 (-position) 322.41 633.33 P
+0 F
+2.19 ( o) 376.41 633.33 P
+2.19 (f \0500, 0, 1\051.  Items with coordinates,) 386.1 633.33 P
+0.85 (however,  \050lines, rectangles, polygons, and portals\051 are special in that these items get created with a) 72 621.33 P
+5 F
+2.03 (-position) 486 621.33 P
+0 F
+0.2 (t) 72 609.33 P
+0.2 (hat is determined by the coordinates.  So,) 74.78 609.33 P
+0.2 (if we) 244.13 609.33 P
+0.2 (creat) 267.3 609.33 P
+0.2 (e a) 286.73 609.33 P
+0.2 ( rectangle from \0500, 0\051 to \05050, 50\051 with a center anchor gets a) 298.31 609.33 P
+5 F
+0.66 (-position) 72 597.33 P
+0 F
+0.28 ( o) 126 597.33 P
+0.28 (f "25 25 1".) 133.77 597.33 P
+0.28 (  Note that) 181.09 597.33 P
+4 F
+0.66 (-anchorpt) 226.63 597.33 P
+0 F
+0.28 ( is a shorthand way of accessing the first two components of the) 280.63 597.33 P
+5 F
+(-position) 72 585.33 T
+0 F
+(, and) 126 585.33 T
+5 F
+(-scale) 147.94 585.33 T
+0 F
+( accesses the last.) 183.94 585.33 T
+(Let\325s look at how the various transformations work.  We\325ll start by creating two squares at the origin.) 72 565.33 T
+5 F
+(.pad create rectangle 0 0 100 100 -tags "rect1" -fill black) 93.6 545.33 T
+(.pad create rectangle 0 0 100 100 -tags "rect2" -fill white) 93.6 533.33 T
+0 F
+1.3 (Notice that only the white rectangle is visible because both rectangles are drawn at the same place, and the one) 72 345.33 P
+(drawn last appears on top.  We now slide the black rectangle to the left and shrink the white one.) 72 333.33 T
+5 F
+(.pad slide rect1 -100 0) 93.6 313.33 T
+(.pad scale rect2 .5) 93.6 301.33 T
+0 F
+0.26 (These commands operate by modifying the item\325s transformation.  We can see this by using the) 72 121.33 P
+4 F
+0.63 (itemconfigure) 462 121.33 P
+0 F
+(command to look at them.) 72 109.33 T
+5 F
+(.pad itemconfigure rect1 -place) 93.6 89.33 T
+(=> "-50 50 1") 360 89.33 T
+(.pad itemconfigure rect2 -place) 93.6 77.33 T
+(=> "50 50 .5") 360 77.33 T
+72 72 540 720 C
+234 374 378 518 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+234 374 378 518 R
+5 X
+0 0 0 1 0 0 0 K
+V
+306 446 342 482 R
+7 X
+V
+0.5 H
+2 Z
+0 X
+N
+234 374 378 518 R
+2 H
+0 Z
+N
+72 72 540 720 C
+0 0 612 792 C
+72 72 540 720 C
+234 142 378 286 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+234 142 378 286 R
+5 X
+0 0 0 1 0 0 0 K
+V
+315 223 333 241 R
+7 X
+V
+0.5 H
+2 Z
+0 X
+N
+270 214 306 250 R
+V
+N
+234 142 378 286 R
+2 H
+0 Z
+N
+72 72 540 720 C
+0 0 612 792 C
+52 674 54 708 R
+0 X
+0 0 0 1 0 0 0 K
+V
+52 630 54 640 R
+V
+52 582 54 616 R
+V
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "5" 10
+%%Page: "4" 11
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+72 746 540 756 R
+7 X
+0 0 0 1 0 0 0 K
+V
+72 33.32 540 43.32 R
+V
+0 10 Q
+0 X
+(Page) 513.06 36.66 T
+(4) 535 36.66 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 72 540 720 R
+7 X
+V
+0 X
+0.16 (But we can use relative coordinate frames to do this. Pad++ maintains a stack of coordinate frames. Each coordinate) 72 713.33 P
+0.5 (frame is a bounding box on the Pad++ surface. All coordinates are specified as a unit square within this coordinate) 72 701.33 P
+0.41 (frame, i.e., \0500, 0\051-\0501, 1\051. That is, when a coordinate frame is specified, coordinates are no longer absolute units, and) 72 689.33 P
+0.53 (instead, are relative to the specific frame. Coordinate frames may be specified by an item, or as any bounding box.) 72 677.33 P
+0.61 (Note that pen width and minsize and maxsize are also relative to the coordinate frame. In these cases, a value of 1) 72 665.33 P
+(refers to the average of the width and height of the frame.) 72 653.33 T
+0.21 (This example draws a box with four boxes inside of it, and four boxes inside of each of those, and so on, four levels) 72 633.33 P
+0.14 (deep. \050Note that from now on, the examples assume a pad widget called .pad has already been created with pixels as) 72 621.33 P
+(the current units.\051) 72 609.33 T
+5 F
+(proc draw_a_box {x1 y1 x2 y2 level} {) 93.6 589.33 T
+(set id [.pad create rectangle $x1 $y1 $x2 $y2 -penwidth .01]) 108 577.33 T
+(puts $id) 108 565.33 T
+(.pad pushcoordframe $id) 108 553.33 T
+(draw_nested_boxes [expr $level + 1]) 108 541.33 T
+(.pad popcoordframe) 108 529.33 T
+(}) 93.6 517.33 T
+(proc draw_nested_boxes {level} {) 93.6 493.33 T
+(if {$level >= 5} {return}) 108 481.33 T
+(draw_a_box .1  .1  .45 .45 $level) 108 469.33 T
+(;# Draw lower-left box) 324 469.33 T
+(draw_a_box .55 .1   .9 .45 $level) 108 457.33 T
+(;# Draw lower-right box) 324 457.33 T
+(draw_a_box .1  .55 .45  .9 $level) 108 445.33 T
+(;# Draw upper-left box) 324 445.33 T
+(draw_a_box .55 .55  .9  .9 $level) 108 433.33 T
+(;# Draw upper-right box) 324 433.33 T
+(}) 93.6 421.33 T
+(draw_a_box 0 0 300 300 1) 93.6 397.33 T
+0 F
+(See the) 72 231.74 T
+4 F
+(pushcoordframe) 103.66 231.74 T
+0 F
+(,) 187.66 231.74 T
+4 F
+(popcoordframe) 192.66 231.74 T
+0 F
+(, and) 270.66 231.74 T
+4 F
+(resetcoordframe) 292.6 231.74 T
+0 F
+( commands for more information.) 382.6 231.74 T
+2 12 Q
+(TRANSFORMATIONS) 72 210.4 T
+0 10 Q
+0.47 (Pad++ maintains a distinction between the surface and the view. All graphical items sit at a distinct location on the) 72 197.74 P
+(surface with a given size. The view shows any given location on the surface at any magnification.) 72 185.74 T
+0.59 (Initially the view onto the Pad++ surface looks at the origin \0500, 0\051 with a magnification of 1.0. The view is always) 72 165.74 P
+2.19 (represented by a list of 3 numbers representing the \050x, y\051 position and magnification, respectively. The point) 72 153.74 P
+0.28 (specifying the view is always rendered at the center of the window. It is possible to adjust the view onto the surface) 72 141.74 P
+0.95 (by using the) 72 129.74 P
+4 F
+2.27 (moveto) 126.23 129.74 P
+0 F
+0.95 ( widget command. The) 162.23 129.74 P
+4 F
+2.27 (getview) 260.73 129.74 P
+0 F
+0.95 ( command returns the current view. Individual items may) 302.73 129.74 P
+2.46 (be moved or scaled using the widget commands) 72 117.74 P
+4 F
+5.91 (slide) 286.12 117.74 P
+0 F
+2.46 ( and) 316.12 117.74 P
+4 F
+5.91 (scale) 340.48 117.74 P
+0 F
+2.46 (, respectively. Currently, rotation is not) 370.48 117.74 P
+(supported for either individual items, or the view.) 72 105.74 T
+1.71 (Every item on the Pad++ surface has an anchor and an anchor point associated with it that controls the item's) 72 85.74 P
+72 72 540 720 C
+248.4 252.4 363.6 370 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+248.4 252.4 363.6 370 R
+5 X
+0 0 0 1 0 0 0 K
+V
+259.2 263.8 352.8 359.2 R
+0.5 H
+2 Z
+0 X
+N
+266.4 316 302.4 352 R
+N
+270 335.8 282.6 348.4 R
+N
+271.8 343 275.4 346.6 R
+N
+277.2 343 280.8 346.6 R
+N
+271.8 337.6 275.4 341.2 R
+N
+277.2 337.6 280.8 341.2 R
+N
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+286.2 335.8 298.8 348.4 R
+N
+288 343 291.6 346.6 R
+N
+293.4 343 297 346.6 R
+N
+288 337.6 291.6 341.2 R
+N
+293.4 337.6 297 341.2 R
+N
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+270 319.6 282.6 332.2 R
+N
+271.8 326.8 275.4 330.4 R
+N
+277.2 326.8 280.8 330.4 R
+N
+271.8 321.4 275.4 325 R
+N
+277.2 321.4 280.8 325 R
+N
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+286.2 319.6 298.8 332.2 R
+N
+288 326.8 291.6 330.4 R
+N
+293.4 326.8 297 330.4 R
+N
+288 321.4 291.6 325 R
+N
+293.4 321.4 297 325 R
+N
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+266.4 272.8 302.4 308.8 R
+N
+270 292.6 282.6 305.2 R
+N
+271.8 299.8 275.4 303.4 R
+N
+277.2 299.8 280.8 303.4 R
+N
+271.8 294.4 275.4 298 R
+N
+277.2 294.4 280.8 298 R
+N
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+286.2 292.6 298.8 305.2 R
+N
+288 299.8 291.6 303.4 R
+N
+293.4 299.8 297 303.4 R
+N
+288 294.4 291.6 298 R
+N
+293.4 294.4 297 298 R
+N
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+270 276.4 282.6 289 R
+N
+271.8 283.6 275.4 287.2 R
+N
+277.2 283.6 280.8 287.2 R
+N
+271.8 278.2 275.4 281.8 R
+N
+277.2 278.2 280.8 281.8 R
+N
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+286.2 276.4 298.8 289 R
+N
+288 283.6 291.6 287.2 R
+N
+293.4 283.6 297 287.2 R
+N
+288 278.2 291.6 281.8 R
+N
+293.4 278.2 297 281.8 R
+N
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+309.6 272.8 345.6 308.8 R
+N
+313.2 292.6 325.8 305.2 R
+N
+315 299.8 318.6 303.4 R
+N
+320.4 299.8 324 303.4 R
+N
+315 294.4 318.6 298 R
+N
+320.4 294.4 324 298 R
+N
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+329.4 292.6 342 305.2 R
+N
+331.2 299.8 334.8 303.4 R
+N
+336.6 299.8 340.2 303.4 R
+N
+331.2 294.4 334.8 298 R
+N
+336.6 294.4 340.2 298 R
+N
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+313.2 276.4 325.8 289 R
+N
+315 283.6 318.6 287.2 R
+N
+320.4 283.6 324 287.2 R
+N
+315 278.2 318.6 281.8 R
+N
+320.4 278.2 324 281.8 R
+N
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+329.4 276.4 342 289 R
+N
+331.2 283.6 334.8 287.2 R
+N
+336.6 283.6 340.2 287.2 R
+N
+331.2 278.2 334.8 281.8 R
+N
+336.6 278.2 340.2 281.8 R
+N
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+309.6 316 345.6 352 R
+N
+313.2 335.8 325.8 348.4 R
+N
+315 343 318.6 346.6 R
+N
+320.4 343 324 346.6 R
+N
+315 337.6 318.6 341.2 R
+N
+320.4 337.6 324 341.2 R
+N
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+329.4 335.8 342 348.4 R
+N
+331.2 343 334.8 346.6 R
+N
+336.6 343 340.2 346.6 R
+N
+331.2 337.6 334.8 341.2 R
+N
+336.6 337.6 340.2 341.2 R
+N
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+313.2 319.6 325.8 332.2 R
+N
+315 326.8 318.6 330.4 R
+N
+320.4 326.8 324 330.4 R
+N
+315 321.4 318.6 325 R
+N
+320.4 321.4 324 325 R
+N
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+329.4 319.6 342 332.2 R
+N
+331.2 326.8 334.8 330.4 R
+N
+336.6 326.8 340.2 330.4 R
+N
+331.2 321.4 334.8 325 R
+N
+336.6 321.4 340.2 325 R
+N
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+248.4 252.4 363.6 370 R
+2 H
+0 Z
+N
+72 72 540 720 C
+0 0 612 792 C
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "4" 11
+%%Page: "3" 12
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+72 746 540 756 R
+7 X
+0 0 0 1 0 0 0 K
+V
+72 33.32 540 43.32 R
+V
+0 10 Q
+0 X
+(Page) 513.06 36.66 T
+(3) 535 36.66 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 72 540 720 R
+7 X
+V
+5 F
+0 X
+(.pad itemconfigure 3 -penwidth) 93.6 713.33 T
+0 F
+1.17 (returns the current penwidth of item #3.  If no options are specified, then a list of all the options and values are) 72 689.33 P
+0.3 (returned.  This is a good way to find out what options are available for a specific item type. Note that) 72 677.33 P
+4 F
+0.72 (ic) 485.16 677.33 P
+0 F
+0.3 ( is an alias) 497.16 677.33 P
+(for) 72 665.33 T
+4 F
+(itemconfigure) 86.16 665.33 T
+0 F
+(, so an equivalent command is:) 164.16 665.33 T
+5 F
+(.pad ic 3 -penwidth) 93.6 645.33 T
+2 12 Q
+(COORDINATES) 72 612 T
+0 10 Q
+0.2 (All coordinates relating to the Pad++ surface are stored as floating-point numbers. Coordinates are specified and are) 72 599.33 P
+0.33 (returned in the current Pad++ units, and defaults to pixels \050see) 72 587.33 P
+5 F
+0.79 (-units) 326.84 587.33 P
+0 F
+0.33 ( configuration option\051. All coordinates refer) 362.84 587.33 P
+3.36 (to the Pad++ surface and are independent of the current view. Therefore if the view happens to have a) 72 575.33 P
+0.73 (magnification of 2.0, and you create an item that is 50 pixels wide, it will appear 100 pixels wide for this specific) 72 563.33 P
+(view.) 72 551.33 T
+1.2 (Larger y-coordinates refer to points higher on the screen; larger x-coordinates refer to points farther to the right.) 72 531.33 P
+(Notice that the y coordinate is inverted as compared to the Tk canvas.) 72 519.33 T
+(The following code draws a simple ruler:) 72 499.33 T
+5 F
+(pad .pad -units inches) 93.6 479.33 T
+(pack .pad) 93.6 467.33 T
+(.pad create rectangle 0 0 5 1 -fill white -penwidth .05) 93.6 455.33 T
+(for {set x 0} {$x <= 5} {set x [expr $x + 0.125]} {) 93.6 443.33 T
+(if {[expr int\050$x\051 == $x]} {) 108 431.33 T
+(# Draw inch markers) 216 419.33 T
+(.pad create line $x .5 $x 1 -penwidth .04) 144 407.33 T
+(} elseif {[expr int\050$x / .5\051 * .5 == $x]} {) 108 395.33 T
+(# Draw half-inch markers) 216 383.33 T
+(.pad create line $x .65 $x 1 -penwidth .04) 144 371.33 T
+(} elseif {[expr int\050$x / .25\051 * .25 == $x]} {) 108 359.33 T
+(# Draw quarter-inch markers) 216 347.33 T
+(.pad create line $x .8 $x 1 -penwidth .04) 144 335.33 T
+(} else {) 108 323.33 T
+(# Draw eighth-inch markers) 216 311.33 T
+(.pad create line $x .9 $x 1 -penwidth .04) 144 299.33 T
+(}) 108 287.33 T
+(}) 93.6 275.33 T
+(.pad config -units pixels   ;# Return to default units) 93.6 263.33 T
+0 F
+0.82 (Suppose you wanted to create a layout of nested boxes.  These coordinates wouldn\325t be quite as easy to compute.) 72 75.33 P
+72 72 540 720 C
+226.8 104 385.2 248 C
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+226.8 104 385.2 248 R
+5 X
+0 0 0 1 0 0 0 K
+V
+234 168.8 378 197.6 R
+7 X
+V
+0.5 H
+2 Z
+0 X
+N
+237.6 197.6 237.6 194 2 L
+N
+244.8 197.6 244.8 194 2 L
+N
+248.4 197.6 248.4 186.8 2 L
+N
+241.2 197.6 241.2 190.4 2 L
+N
+252 197.6 252 194 2 L
+N
+259.2 197.6 259.2 194 2 L
+N
+255.6 197.6 255.6 190.4 2 L
+N
+262.8 197.6 262.8 179.6 2 L
+N
+266.4 197.6 266.4 194 2 L
+N
+273.6 197.6 273.6 194 2 L
+N
+277.2 197.6 277.2 186.8 2 L
+N
+270 197.6 270 190.4 2 L
+N
+280.8 197.6 280.8 194 2 L
+N
+288 197.6 288 194 2 L
+N
+284.4 197.6 284.4 190.4 2 L
+N
+291.6 197.6 291.6 179.6 2 L
+N
+295.2 197.6 295.2 194 2 L
+N
+302.4 197.6 302.4 194 2 L
+N
+306 197.6 306 186.8 2 L
+N
+298.8 197.6 298.8 190.4 2 L
+N
+309.6 197.6 309.6 194 2 L
+N
+316.8 197.6 316.8 194 2 L
+N
+313.2 197.6 313.2 190.4 2 L
+N
+320.4 197.6 320.4 179.6 2 L
+N
+324 197.6 324 194 2 L
+N
+331.2 197.6 331.2 194 2 L
+N
+334.8 197.6 334.8 186.8 2 L
+N
+327.6 197.6 327.6 190.4 2 L
+N
+338.4 197.6 338.4 194 2 L
+N
+345.6 197.6 345.6 194 2 L
+N
+342 197.6 342 190.4 2 L
+N
+349.2 197.6 349.2 179.6 2 L
+N
+352.8 197.6 352.8 194 2 L
+N
+360 197.6 360 194 2 L
+N
+363.6 197.6 363.6 186.8 2 L
+N
+356.4 197.6 356.4 190.4 2 L
+N
+367.2 197.6 367.2 194 2 L
+N
+374.4 197.6 374.4 194 2 L
+N
+370.8 197.6 370.8 190.4 2 L
+N
+226.8 104 385.2 248 R
+2 H
+0 Z
+N
+72 72 540 720 C
+0 0 612 792 C
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "3" 12
+%%Page: "2" 13
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+72 746 540 756 R
+7 X
+0 0 0 1 0 0 0 K
+V
+72 33.32 540 43.32 R
+V
+0 10 Q
+0 X
+(Page) 513.06 36.66 T
+(2) 535 36.66 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 72 540 720 R
+7 X
+V
+1 F
+0 X
+(padwish) 72 713.33 T
+0 F
+(.) 105.34 713.33 T
+(  This can be done automatically by running the ") 107.84 713.33 T
+1 F
+(pad) 305.23 713.33 T
+0 F
+(" script.) 320.23 713.33 T
+2.09 (The environment variables to set are) 72 693.33 P
+5 F
+5.02 (TCL_LIBRARY) 232.84 693.33 P
+0 F
+2.09 ( and) 298.84 693.33 P
+5 F
+5.02 (TK_LIBRARY) 322.47 693.33 P
+0 F
+2.09 ( \050which point to the Tcl/Tk run-time) 382.47 693.33 P
+0.2 (libraries\051, and) 72 681.33 P
+5 F
+0.48 (PADHOME) 130.44 681.33 P
+0 F
+0.2 ( \050which points to the Pad++ run-time library and the PadDraw application\051.  Looking at the) 172.44 681.33 P
+(") 72 669.33 T
+1 F
+(pad) 76.08 669.33 T
+0 F
+(" script will show you what to set these environment variables to.) 91.08 669.33 T
+0.45 (Once you\325ve run) 72 649.33 P
+1 F
+0.45 (padwish) 143.06 649.33 P
+0 F
+0.45 (, the Pad++ windowing shell, you can start writing your own applications, or you can run) 176.4 649.33 P
+(PadDraw by typing in the interpreter:) 72 637.33 T
+5 F
+(source $env\050PADHOME\051/draw/pad.tcl) 93.6 617.33 T
+2 12 Q
+(ITEM IDS AND TAGS) 72 584 T
+0 10 Q
+0.51 (Items on a Pad++ widget may be named in either of two ways: by) 72 571.33 P
+1 F
+0.51 (id) 344.85 571.33 P
+0 F
+0.51 ( or by) 352.63 571.33 P
+1 F
+0.51 (tag) 380 571.33 P
+0 F
+0.51 (. Each item has a unique identifying) 392.78 571.33 P
+0.31 (number which is assigned to that item when it is created. The id of an item never changes and id numbers are never) 72 559.33 P
+1.15 (re-used within the lifetime of a pad widget. The surface itself always gets an id of '1'. \050It is sometimes useful to) 72 547.33 P
+(manually set the id of an item.  This is possible with the) 72 535.33 T
+4 F
+(setid) 298.11 535.33 T
+0 F
+( command.\051) 328.11 535.33 T
+0.48 (Each item may also have any number of tags associated with it. A tag is just a string of characters, and it may take) 72 515.33 P
+0.21 (any form except that of an integer. For example, "x123" is OK but "123" isn't. The same tag may be associated with) 72 503.33 P
+1.34 (many different items. This is commonly done to group items in various interesting ways; for example, all items) 72 491.33 P
+0.26 (associated with one user might have a tag with that user's name. Note that Pad++ also has a special) 72 479.33 P
+4 F
+0.63 (group) 475.03 479.33 P
+0 F
+0.26 ( item for) 505.03 479.33 P
+(creating hierarchical groups.) 72 467.33 T
+0.33 (The tag) 72 447.33 P
+1 F
+0.33 (all) 105.44 447.33 P
+0 F
+0.33 ( is implicitly associated with every item on the Pad++ widget; it may be used to invoke operations on all) 116 447.33 P
+(the items in the pad.) 72 435.33 T
+1.06 (The tag) 72 415.33 P
+1 F
+1.06 (current) 106.9 415.33 P
+0 F
+1.06 ( is managed automatically. It applies to the current item, which is the topmost item whose drawn) 136.34 415.33 P
+0.9 (area covers the position of the mouse cursor. Note that events only go to the) 72 403.33 P
+1 F
+0.9 (current) 392.11 403.33 P
+0 F
+0.9 ( item. Since an item gets the) 421.55 403.33 P
+1 F
+0.25 (current) 72 391.33 P
+0 F
+0.25 ( tag only if the cursor is over the drawn area, this means that an item receives events only when the cursor is) 101.44 391.33 P
+0.64 (over the drawn area. For example, a rectangle with no fill color will not respond to events when the cursor is over) 72 379.33 P
+0.84 (the undrawn interior. If the mouse is not in the) 72 367.33 P
+0.84 (Pa) 268.97 367.33 P
+0.84 (d) 278.97 367.33 P
+0.84 (++) 283.97 367.33 P
+0.84 ( widget or is not over an item, then no item has the current) 295.25 367.33 P
+2.6 (tag. Portal items are treated somewhat differently, however, as described in the) 72 355.33 P
+4 F
+6.24 (bind) 421.73 355.33 P
+0 F
+2.6 ( command and in the) 445.73 355.33 P
+(description of) 72 343.33 T
+1 F
+(Portal Items) 129.77 343.33 T
+0 F
+( in the reference manual.) 179.49 343.33 T
+0.82 (When specifying items in Pad++ widget commands, if the specifier is an integer then it is assumed to refer to the) 72 323.33 P
+0.37 (single item with that id. If the specifier is not an integer, then it is assumed to refer to all of the items on the Pad++) 72 311.33 P
+0.96 (widget that have a tag matching that specifier. The symbol) 72 299.33 P
+1 F
+0.96 (tagOrId) 318.48 299.33 P
+0 F
+0.96 ( is used to indicate that an argument specifies) 350.7 299.33 P
+0.49 (either an id that selects a single item or a tag that selects zero or more items. Some widget commands only operate) 72 287.33 P
+0.14 (on a single item at a time; if tagOrId is specified in a way that names multiple items) 72 275.33 P
+0.14 ( and the command only operates) 409.61 275.33 P
+0.45 (on a single item,) 72 263.33 P
+0.45 ( then the normal behavior is for the command to use the first \050lowest\051 of these items in the display) 139.47 263.33 P
+(list that is suitable for the command. Exceptions are noted in the widget command descriptions.) 72 251.33 T
+0.67 (There are commands to find what the tags of a specific item are \050) 72 231.33 P
+4 F
+1.6 (gettags) 340.9 231.33 P
+0 F
+0.67 (\051, and to find all the items that share a) 382.9 231.33 P
+0.72 (tag \050) 72 219.33 P
+4 F
+1.73 (find) 90.77 219.33 P
+0 F
+0.72 (\051.  Tags can be added to items with the) 114.77 219.33 P
+4 F
+1.73 (addtag) 278.88 219.33 P
+0 F
+0.72 ( command or deleted with the) 314.88 219.33 P
+4 F
+1.73 (deletetag) 440.84 219.33 P
+0 F
+0.72 ( command) 494.84 219.33 P
+0.72 (,) 537.5 219.33 P
+(and the) 72 207.33 T
+4 F
+(hastag) 103.66 207.33 T
+0 F
+( command determines if an item has a particular tag.) 139.66 207.33 T
+2 12 Q
+(ITEM CONFIGURATION) 72 186 T
+0 10 Q
+0.4 (In addition to the commands that are available for manipulating items, every item also has several options that may) 72 173.33 P
+0.32 (be configured with the) 72 161.33 P
+4 F
+0.76 (itemconfigure) 166.03 161.33 P
+0 F
+0.32 ( command. Certain options are shared by all item types \050for example, see) 244.03 161.33 P
+1 F
+1.44 (-transparency) 72 149.33 P
+0 F
+1.44 ( and) 128.1 149.33 P
+1 F
+1.44 (-) 150.42 149.33 P
+1.44 (position) 153.75 149.33 P
+0 F
+1.44 (\051) 185.98 149.33 P
+1.44 (, while some options are specific to item types \050like) 189.31 149.33 P
+1 F
+1.44 (-font) 412.3 149.33 P
+0 F
+1.44 (\051. Multiple options can be) 431.19 149.33 P
+0.72 (changed with a single itemconfigure command by alternating options and values.  If the value of the last option is) 72 137.33 P
+(not specified, then the current value of that option is returned.  Thus) 72 125.33 T
+5 F
+(.pad itemconfigure foo -maxsize 50 -) 93.6 105.33 T
+(transparency 0.5) 309.6 105.33 T
+0 F
+(sets the maximum size of all items with the tag) 72 81.33 T
+1 F
+(foo) 262.55 81.33 T
+0 F
+( to 50, and makes them all) 275.33 81.33 T
+(transparent.) 383.1 81.33 T
+52 710 54 720 R
+V
+52 364 54 374 R
+V
+52 260 54 282 R
+V
+52 204 54 226 R
+V
+52 146 54 156 R
+V
+52 78 54 112 R
+V
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "2" 13
+%%Page: "1" 14
+612 792 0 FMBEGINPAGE
+[0 0 0 1 0 0 0]
+[ 0 0 0 0 1 1 1]
+[ 0 1 1 0 1 0 0]
+[ 1 0 1 0 0 1 0]
+[ 1 1 0 0 0 0 1]
+[ 1 0 0 0 0 1 1]
+[ 0 1 0 0 1 0 1]
+[ 0 0 1 0 1 1 0]
+ 8 FrameSetSepColors
+FrameNoSep
+0 0 0 1 0 0 0 K
+72 746 540 756 R
+7 X
+0 0 0 1 0 0 0 K
+V
+72 33.32 540 43.32 R
+V
+0 10 Q
+0 X
+(Page) 513.06 36.66 T
+(1) 535 36.66 T
+0 0 0 1 0 0 0 K
+0 0 0 1 0 0 0 K
+72 72 540 720 R
+7 X
+V
+2 24 Q
+0 X
+(Pad++ Programmer\325s Guide) 147.94 704 T
+(\050Version 0.9\051) 233.98 675 T
+2 12 Q
+(URL:  http://www.cs.unm.edu/pad++) 72 634 T
+(KEYWORDS) 72 606 T
+0 10 Q
+(Pad, Pad++, Widget, Zoom, Graphical User Interface, Multi-Scale, Zoomable Interfaces, Tcl, Tk.) 72 593.33 T
+2 12 Q
+(INTRODUCTION) 72 572 T
+0 10 Q
+0.99 (Pad++ is a structured graphics widget for Tcl/Tk based on zooming. It adds scale as a first class parameter to all) 72 559.33 P
+1.79 (items, as well as mechanisms for navigation through the multi-scale space of the Pad++ widget. It has special) 72 547.33 P
+0.66 (mechanisms to maintain efficiency for large numbers of graphical items, and also supports special item types such) 72 535.33 P
+(as HTML and portals.) 72 523.33 T
+1.22 (Pad++ is connected to Tcl, a scripting language that provides a high-level interface to the complex graphics and) 72 503.33 P
+1.01 (interactions available. While the scripting language runs slowly, it is used as a glue language for rapidly creating) 72 491.33 P
+1.75 (interfaces and putting them together. The actual interaction and rendering is performed by the Pad++ substrate) 72 479.33 P
+0.47 (\050written in C++\051. This approach allows people to develop applications for Pad++ at a high level while avoiding the) 72 467.33 P
+(complexities inherent in this type of system.  Pad++ also supports Scheme as an alternative to Tcl.) 72 455.33 T
+0.49 (Pad++ provides an alternative to the Canvas widget in Tk. While it does not offer everything that the Canvas does,) 72 435.33 P
+0.74 (Pad++ offers several extra) 72 423.33 P
+0.74 ( features,) 179.63 423.33 P
+0.74 ( and is designed with the Canvas spirit in mind, maintaining similar syntax for) 217.03 423.33 P
+(interacting with it.) 72 411.33 T
+1.01 (Pad++ widgets implement structured, multi-scale graphics.) 72 391.33 P
+1.01 (It d) 316.52 391.33 P
+1.01 (isplays any number of items, which may be things) 331.13 391.33 P
+1.24 (like rectangles, lines, text, and images. Items are manipulated \050e.g. moved or re-colored\051 and commands may be) 72 379.33 P
+0.3 (associated with items in much the same way that the Tk) 72 367.33 P
+4 F
+0.72 (bind) 301.11 367.33 P
+0 F
+0.3 ( command allows commands to be bound to widgets.) 325.11 367.33 P
+0.73 (For example, a particular command may be associated with the <Button-1> event so that the command is invoked) 72 355.33 P
+0.12 (whenever button 1 is pressed with the mouse cursor over an item. This means that items in a pad can have behaviors) 72 343.33 P
+(defined by the Tcl scripts bound to them.) 72 331.33 T
+(Note that change bars appear wherever this document differs from the previous version.) 72 311.33 T
+2 12 Q
+(AVAILABILITY) 72 290 T
+0 10 Q
+0.81 (Pad++ is Free Access Software. It is not public-domain, but is available for free for education, research, and non-) 72 277.33 P
+(commercial use. You must obtain a Free Access License to use Pad++.) 72 265.33 T
+1.28 (As a Free Access Licensee, you have the right to use the Pad++ System as long as it is not combined with any) 72 245.33 P
+0.61 (product or service in any way. Use of the Pad++ System with commercially acquired software that depends on the) 72 233.33 P
+0.32 (Pad++ System in any way requires the commercial software supplier to have negotiated a Distribution License with) 72 221.33 P
+(the Pad++ Consortium.) 72 209.33 T
+(See the files) 72 189.33 T
+1 F
+(License) 123.38 189.33 T
+0 F
+( and) 153.93 189.33 T
+1 F
+(LicenseTerms) 173.37 189.33 T
+0 F
+( for more information.) 228.92 189.33 T
+2 12 Q
+(RUNNING PAD++) 72 168 T
+0 10 Q
+1.15 (To run) 72 155.33 P
+1.15 (a sample) 103.74 155.33 P
+1.15 (Pad++) 143.82 155.33 P
+1.15 ( application) 170.1 155.33 P
+1.15 (, simply type ") 218.19 155.33 P
+1 F
+1.15 (pad) 280.17 155.33 P
+1.15 (draw) 295.17 155.33 P
+0 F
+1.15 (" \050assuming Pad++ has been properly installed.\051  This) 315.73 155.33 P
+0.2 (runs a demo application,) 72 143.33 P
+1 F
+0.2 (PadDraw) 173.62 143.33 P
+0 F
+0.2 (.  PadDraw shows off many of Pad++\325s abilities.  It is written entirely in Tcl, and) 212.51 143.33 P
+0.38 (looking at its code is a good way to learn how to create Pad++ applications.  There is currently no documention for) 72 131.33 P
+(PadDraw.) 72 119.33 T
+2.02 (Running PadDraw in this fashion does not give access to the Tcl interpreter.  This is because the ") 72 99.33 P
+1 F
+2.02 (pad) 500.36 99.33 P
+2.02 (draw) 515.36 99.33 P
+0 F
+2.02 (") 535.92 99.33 P
+0.13 (program is actually a shell script that runs the) 72 87.33 P
+0.13 (Pa) 257.89 87.33 P
+0.13 (d) 267.89 87.33 P
+0.13 (++) 272.89 87.33 P
+0.13 ( executable \050which is named ") 284.17 87.33 P
+1 F
+0.13 (padwish) 405.27 87.33 P
+0 F
+0.13 ("\051, and then loads the Tcl) 438.61 87.33 P
+1.95 (files to run PadDraw.  To access the Tcl interpreter, you must set a few environment variables, and then run) 72 75.33 P
+52 420 54 430 R
+V
+52 388 54 398 R
+V
+52 152 54 162 R
+V
+52 84 54 106 R
+V
+0 0 0 1 0 0 0 K
+FMENDPAGE
+%%EndPage: "1" 14
+%%Trailer
+%%BoundingBox: 0 0 612 792
+%%PageOrder: Descend
+%%Pages: 14
+%%DocumentFonts: Times-Roman
+%%+ Times-Italic
+%%+ Helvetica-Bold
+%%+ Helvetica
+%%+ Courier-Bold
+%%+ Courier
+%%EOF

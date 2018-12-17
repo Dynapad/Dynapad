@@ -1,0 +1,158 @@
+Pad++ Version 0.9p2 for 
+
+By the Pad++ Consortium
+  University of New Mexico
+  New York University
+
+Bugs:         pad-bug@cs.unm.edu
+Info Request: pad-info@cs.unm.edu
+Comments:     pad-comment@cs.unm.edu
+Registration: pad-register@cs.unm.edu
+User Group:   pad-users@cs.unm.edu
+
+1. Introduction
+---------------
+This directory contains the root of the tree containing a distribution
+of Pad++, a zooming interface widget for Tcl/Tk. It also contains PadDraw,
+a zoomable drawing application built using the Pad++ widget.
+
+Pad++ is Free Access Software.  It is not public domain, but may be licensed
+for free for education, research and internal use.  See the files
+"License", "LicenseTerms", and "Register" for more information.  
+
+2. Running pre-built version of Pad++
+-------------------------------------
+To try Pad++ out, you can change into the directory containing this README
+file and type:
+
+   % ./paddraw
+
+this will start the PadDraw application. PadDraw is a reasonably complete
+zoomable drawing application, with several zooming demos. 
+
+On a three button mouse, the right button zooms out and the middle button 
+zooms in. The left button is used to pan, or select things, or activate 
+links, depending on the tool you are using and what the mouse is over.
+See doc/paddraw.html for more details on PadDraw.
+
+This directory also contains a padwish executable. padwish is a version of 
+wish with the Pad++ widget built into it. You can use padwish to write Tcl 
+applications that use the Pad++ widget.
+
+This distribution also includes the shared library, libpad.so, so pad
+may be loaded dynamically into an existing wish executable (only on
+SGI and Linux platforms).  To do this, run tcl/tk version 8.0, by
+typing 'wish'.  Then, when you get the Tcl prompt, type 'load
+libpad.so'.  At that point, the pad widget is available.  A sequence
+that starts tcl/tk, loads pad, and makes a line within pad follows:
+
+   unix> wish
+   % load libpad.so
+   % pad .pad
+   % pack .pad
+   % .pad create line 0 0 50 50 -pen red
+
+3. Programming with Pad++
+-------------------------
+If you want to start programming with Pad++, first familiarize
+yourself with Tcl/Tk (in particular the Canvas widget). "Tcl and the
+Tk Toolkit" by John K. Ousterhout, from Addison Wesley (ISBN 0-201-63337-X)
+is a good starting point.
+
+Then read the programmers guide (in doc/guide.ps) followed by the 
+reference manual (in doc/reference.ps).  These are also available
+online at http://www.cs.unm.edu/pad++.
+
+The Tcl source code in the $(PADHOME)/draw/ directory is a good source of
+example material showing how to use the Pad++ widget.
+
+If you want to develop C++ applications which use Pad++, you must first
+obtain the complete source tree and build Pad++ yourself (see section 4).
+Then look in the doc/api.txt file.
+
+Also look at our web site, http://www.cs.unm.edu/pad++ for late breaking
+news.
+
+4. Installing Pad++ on Unix
+---------------------------
+To install paddraw so that it may be used from outside the Pad++ directory, 
+simply edit the paddraw script and change the line:
+
+    PADHOME=`pwd`
+
+so that PADHOME is set to the directory containing this README file. Then
+copy the paddraw script into a directory that is on your path (e.g.
+/usr/local/bin).
+
+If you want to use padwish regularly, we suggest that you copy the
+padwish binary into a directory on your path (e.g. /usr/local/bin),
+and then set the environment variables:
+
+    PADHOME     <directory containing this README file>
+    TCL_LIBRARY $PADHOME/tcl8.0
+    TK_LIBRARY  $PADHOME/tk8.0
+
+in your .profile or .cshrc file.
+
+If you have obtained a copy of the source distribution, read 
+Compiling.Notes for information on compiling and installing Pad++.
+
+5. In This Distribution
+-----------------------
+
+Copyright     - Our copyright info
+License       - Short version of our license
+LicenseTerms  - Longer version of our license terms
+README        - This file
+libpad.so     - Shared library for Pad++
+pad.1         - Manual page for pad
+paddraw       - Script for running paddraw
+padwish       - Version of wish with Pad++ built into it
+bitmaps/      - X Bitmaps for cursors
+doc/          - Pad++ documentation
+draw/         - Tcl code for the PadDraw application
+html/         - Sample HTML files used in the PadDraw Web page demo
+images/       - Sample image files for use in PadDraw demos
+kpl/          - Directory for KPL library files 
+tcl8.0/       - Library files for Tcl
+tk8.0/        - Library files for Tk
+
+6. Summary of changes in recent releases
+----------------------------------------
+
+  See ChangeLog file for complete description of all changes
+
+7. Support and bug fixes
+------------------------
+
+We are very interested in receiving bug reports and suggestions for
+improvements.  Bugs usually get fixed quickly (particularly if they
+are serious), but enhancements may take a while and may not happen at
+all unless there is widespread support for them.
+
+Send bug reports to pad-bug@cs.unm.edu
+
+8. Credits
+----------
+The scripting language interface to the Pad++ widget was greatly
+inspired by John K. Ousterhout's canvas widget in Tk. The zooming
+concept was originally described by Ken Perlin and David Fox at New
+York University in SIGGRAPH'93.
+
+Pad++ is being developed by an ARPA funded consortium led by Jim Hollan
+at the University of New Mexico in collaboration with New York University.
+
+The development group is being led by Ben Bederson (UNM), and consists
+of people at UNM: Jim Hollan, Allison Druin, Ron Hightower, Mohamad Ijadi,
+Jason Stewart, David Thompson, Ying Zhao and people at NYU: 
+Ken Perlin, Jon Meyer, and Duane Whitehurst.
+
+In addition, other people that have been involved with the Pad++
+project include: David Bacon, Duco Das, Eric De Mund, David Fox,
+David Proft, David Rogers, Mark Rosenstein, Larry Stead, David Vick,
+Kent Wittenburg.  
+
+We also especially appreciate Paul Haeberli (of SGI) who gave us
+code to read and render Adobe Type 1 fonts.
+
+Pad++ is supported in part by ARPA contract #N66001-94-C-6039.
