@@ -1,11 +1,8 @@
-dnl--------------------------------------------------------------------
-dnl	This file is an input file used by the GNU "autoconf" program to
-dnl	generate the file "configure", which is run during Pad++ installation
-dnl	to configure the system for the local environment.
-dnl--------------------------------------------------------------------
+AC_PREREQ([2.69])
+AC_INIT([Pad++], [0.9p5])
+AC_CONFIG_SRCDIR([../pad.in])
+AM_INIT_AUTOMAKE
 
-AC_PREREQ(2.3)
-AC_INIT(../pad.in)
 #--------------------------------------------------------------------
 #    Manually turn off cache
 #--------------------------------------------------------------------
@@ -35,14 +32,14 @@ AC_SUBST(PADHOME)
 #--------------------------------------------------------------------
 AC_CHECK_PROG(UNAME, uname, uname, none)
 if test $UNAME = "none"; then
-	AC_ERROR([uname not found])
+	AC_MSG_ERROR(uname not found)
 fi
 
 #--------------------------------------------------------------------
 #       Calculate the system architecture.  Special test to
 #       distinguish RS6000-based AIX systems from other AIX systems.
 #--------------------------------------------------------------------
-AC_CHECKING([machine architecture])
+AS_MESSAGE([checking machine architecture...])
 CPU=`uname -m | tr ' /' '_-'`
 OS=`uname -s | tr ' /' '_-'`
 if test "$OS" = "SunOS"; then
@@ -69,17 +66,17 @@ AC_SUBST(ARCH)
 #--------------------------------------------------------------------
 #       Look for GNU Make
 #--------------------------------------------------------------------
-AC_CHECKING([for GNU Make])
+AS_MESSAGE([checking for GNU Make...])
 AC_CHECK_PROG(GMAKE1, gmake, gmake, none)
 GMAKE=$GMAKE1
 if test $GMAKE = "none"; then
     AC_CHECK_PROG(GMAKE2, make, make, none)
     GMAKE=$GMAKE2
     if test $GMAKE = "none"; then
-        AC_ERROR([GNU Make not found])
+        AC_MSG_ERROR(GNU Make not found)
     else
         if test "`make -v | grep GNU`" = ""; then
-            AC_ERROR([GNU Make not found])
+            AC_MSG_ERROR(GNU Make not found)
         fi
     fi
 fi
@@ -89,7 +86,7 @@ AC_SUBST(GMAKE)
 #       Clean up previous configuration without removing installation
 #       of other architecture builds.
 #--------------------------------------------------------------------
-AC_CHECKING([to remove previous configurations])
+AS_MESSAGE([checking to remove previous configurations...])
 rm -f $SRC/Makefile $SRC/config.h $SRC/config.status $SRC/config.cache
 rm -f $SRC/config.status $SRC/config.cache
 
@@ -108,7 +105,7 @@ if test "$OS" = "CYGWIN"; then
 	LIBCXX_FILE="g++"
     fi
     if test "$CXXLINK" = "none"; then
-        AC_ERROR([no C++ compiler found])
+        AC_MSG_ERROR(no C++ compiler found)
     fi
     CC=gcc
     CXX=gcc
@@ -124,7 +121,7 @@ else
 	LIBCXX_FILE="g++"
     fi
     if test "$CXXLINK" = "none"; then
-        AC_ERROR([no C++ compiler found])
+        AC_MSG_ERROR(no C++ compiler found)
     fi
     CC=gcc
     CXX=gcc
@@ -144,55 +141,44 @@ AC_SUBST(CXXFLAGS)
 #--------------------------------------------------------------------
 #       Need to do these two early
 #--------------------------------------------------------------------
-AC_AIX
-AC_ISC_POSIX
+AC_USE_SYSTEM_EXTENSIONS
+AC_SEARCH_LIBS([strerror],[cposix])
 
 #--------------------------------------------------------------------
 #       Check if random() exists, or should we use rand()
 #--------------------------------------------------------------------
-AC_CHECKING([for random function])
-AC_TRY_LINK(
-[#include <stdlib.h>],
-[random();],
-[AC_DEFINE(HAVE_RANDOM, 1)],)
+AS_MESSAGE([checking for random function...])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>]], [[random();]])],[AC_DEFINE(HAVE_RANDOM, 1)],[])
 AC_SUBST(RANDOM)
 
 #--------------------------------------------------------------------
 #       Check for prototype for socket
 #--------------------------------------------------------------------
-AC_CHECKING([for socket prototype])
+AS_MESSAGE([checking for socket prototype...])
 AC_EGREP_HEADER([int(.)*socket], sys/socket.h, 
 	AC_DEFINE(HAVE_SOCKET_PROTO, 1))
 
 #--------------------------------------------------------------------
 #       Check for prototype for connect
 #--------------------------------------------------------------------
-AC_CHECKING([for connect prototype])
+AS_MESSAGE([checking for connect prototype...])
 AC_EGREP_HEADER([int(.)*connect], sys/socket.h, 
 	AC_DEFINE(HAVE_CONNECT_PROTO, 1))
 
 #--------------------------------------------------------------------
 #       Check to see if we need to link with socket libraries
 #--------------------------------------------------------------------
-AC_CHECKING([for socket library])
-AC_TRY_LINK(
-[#include <sys/types.h>
-#include <sys/socket.h>],
-[int sock;
+AS_MESSAGE([checking for socket library...])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
+#include <sys/socket.h>]], [[int sock;
 struct sockaddr sa;
-connect(sock, &sa, sizeof(sa));],
-[SOCKETLIBS=""],
-[SOCKETLIBS="-lsocket"])
+connect(sock, &sa, sizeof(sa));]])],[SOCKETLIBS=""],[SOCKETLIBS="-lsocket"])
 
-AC_CHECKING([for nsl library])
-AC_TRY_LINK(
-[#include <sys/types.h>
+AS_MESSAGE([checking for nsl library...])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <netdb.h>],
-[gethostbyname("");],
-[NSLLIBS=""],
-[NSLLIBS="-lnsl"])
+#include <netdb.h>]], [[gethostbyname("");]])],[NSLLIBS=""],[NSLLIBS="-lnsl"])
 
 #--------------------------------------------------------------------
 #	The statements below define a collection of symbols related to
@@ -530,7 +516,7 @@ AC_SUBST(SWINCLUDE)
 
 if test "x$DL_OBJS" = "xtclLoadAout.o" ; then
     AC_MSG_CHECKING(sys/exec.h)
-    AC_TRY_COMPILE([#include <sys/exec.h>],[
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/exec.h>]], [[
 	struct exec foo;
 	unsigned long seek;
 	int flag;
@@ -541,13 +527,13 @@ if test "x$DL_OBJS" = "xtclLoadAout.o" ; then
 #endif
 	flag = (foo.a_magic == OMAGIC);
 	return foo.a_text + foo.a_data + foo.a_bss + foo.a_entry;
-], tcl_ok=usable, tcl_ok=unusable)
+]])],[tcl_ok=usable],[tcl_ok=unusable])
     AC_MSG_RESULT($tcl_ok)
     if test $tcl_ok = usable; then
 	AC_DEFINE(USE_SYS_EXEC_H)
     else
 	AC_MSG_CHECKING(a.out.h)
-	AC_TRY_COMPILE([#include <a.out.h>],[
+	AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <a.out.h>]], [[
 	    struct exec foo;
 	    unsigned long seek;
 	    int flag;
@@ -558,13 +544,13 @@ if test "x$DL_OBJS" = "xtclLoadAout.o" ; then
 #endif
 	    flag = (foo.a_magic == OMAGIC);
 	    return foo.a_text + foo.a_data + foo.a_bss + foo.a_entry;
-	], tcl_ok=usable, tcl_ok=unusable)
+	]])],[tcl_ok=usable],[tcl_ok=unusable])
 	AC_MSG_RESULT($tcl_ok)
 	if test $tcl_ok = usable; then
 	    AC_DEFINE(USE_A_OUT_H)
 	else
 	    AC_MSG_CHECKING(sys/exec_aout.h)
-	    AC_TRY_COMPILE([#include <sys/exec_aout.h>],[
+	    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <sys/exec_aout.h>]], [[
 		struct exec foo;
 		unsigned long seek;
 		int flag;
@@ -575,7 +561,7 @@ if test "x$DL_OBJS" = "xtclLoadAout.o" ; then
 #endif
 		flag = (foo.a_midmag == OMAGIC);
 		return foo.a_text + foo.a_data + foo.a_bss + foo.a_entry;
-	    ], tcl_ok=usable, tcl_ok=unusable)
+	    ]])],[tcl_ok=usable],[tcl_ok=unusable])
 	    AC_MSG_RESULT($tcl_ok)
 	    if test $tcl_ok = usable; then
 		AC_DEFINE(USE_SYS_EXEC_AOUT_H)
@@ -618,7 +604,7 @@ fi
 #--------------------------------------------------------------------
 #       Try to find the Perl5 Library
 #--------------------------------------------------------------------
-AC_CHECKING([for Perl5 library])
+AS_MESSAGE([checking for Perl5 library...])
 INCLUDE_PERL=FALSE
 
 if test `which perl` != "0"; then
@@ -640,7 +626,7 @@ fi
 #--------------------------------------------------------------------
 #	Try to find the freetype2 includes directory.  
 #--------------------------------------------------------------------
-AC_CHECKING([for freetype2 include])
+AS_MESSAGE([checking for freetype2 include...])
   if test -d /usr/include/freetype2; then
     FT2INCLUDE=-I/usr/include/freetype2
   elif test -d /usr/X11R6/include/freetype2; then
@@ -657,7 +643,7 @@ AC_SUBST(FT2INCLUDE)
 #--------------------------------------------------------------------
 AC_CHECK_HEADER([db.h], DB=found, DB=missing)
 if test "$DB" = "missing"; then
-  AC_ERROR(db.h not found)
+  AC_MSG_ERROR(db.h not found)
 fi
 
 #--------------------------------------------------------------------
@@ -666,48 +652,14 @@ fi
 #         Then, check some normal places.
 #--------------------------------------------------------------------
 
-AC_ARG_WITH(Magick, [  --with-Magick=DIR       $DIR/include/magick/magick.h $DIR/lib/libMagick.a], MAGICK=$withval)
-
-if test -n "$MAGICK"; then
-  if test ! -f $MAGICK/include/magick/magick.h; then
-    AC_ERROR($MAGICK/include/magick/magick.h not found)
-  fi
-  if test ! -f $MAGICK/lib/libMagick.a; then
-    AC_ERROR($MAGICK/lib/libMagick.a not found)
-  fi
-  MAGICKH=-I$MAGICK/include
-  MAGICKLIB=-L$MAGICK/lib
-fi
-
-if test -z "$MAGICK"; then
-    dirs="/usr/local \
-          /sw \
-          /usr"
-    
-    AC_CHECKING([for magick.h and libMagick.a])
-    DIR=
-    for i in $dirs ; do
-        if test -r $i/include/magick/magick.h; then
-            if test ! -r $i/lib/libMagick.a; then
-                 AC_ERROR( found $i/include/magick/magick.h but not $i/lib/libMagick.a );
-            fi
-	    DIR=$i
-	    break
-        fi
-    done
-
-    if test -z "$DIR"; then
-      AC_ERROR( /usr/include/magick/magick.h not found);
-    fi
-fi
-
-AC_SUBST(MAGICKH)
-AC_SUBST(MAGICKLIB)
+PKG_CHECK_MODULES(MAGICKCORE, [MagickCore])
+AC_SUBST(MAGICKCORE_CFLAGS)
+AC_SUBST(MAGICKCORE_LIBS)
 
 #--------------------------------------------------------------------
 #       For some reason, AC.PROG.AWK is giving the wrong answer on AIX
 #--------------------------------------------------------------------
-AC_CHECKING([for best version of awk to use])
+AS_MESSAGE([checking for best version of awk to use...])
 if test -n "$AWK"; then
   :
 else
@@ -722,28 +674,28 @@ fi
 #--------------------------------------------------------------------
 #       Check for prototype for gettimeofday
 #--------------------------------------------------------------------
-AC_CHECKING([for gettimeofday prototype])
+AS_MESSAGE([checking for gettimeofday prototype...])
 AC_EGREP_HEADER([int(.)*gettimeofday], sys/time.h, 
 	AC_DEFINE(HAVE_GETTIMEOFDAY_PROTO, 1))
 
 #--------------------------------------------------------------------
 #       Check for prototype for strcasecmp
 #--------------------------------------------------------------------
-AC_CHECKING([for strcasecmp prototype])
+AS_MESSAGE([checking for strcasecmp prototype...])
 AC_EGREP_HEADER([extern(.)*int(.)*strcasecmp], string.h, 
 	AC_DEFINE(HAVE_STRCASECMP_PROTO, 1))
 
 #--------------------------------------------------------------------
 #       Check for prototype for strncasecmp
 #--------------------------------------------------------------------
-AC_CHECKING([for strncasecmp prototype])
+AS_MESSAGE([checking for strncasecmp prototype...])
 AC_EGREP_HEADER([extern(.)*int(.)*strncasecmp], string.h, 
 	AC_DEFINE(HAVE_STRNCASECMP_PROTO, 1))
 
 #--------------------------------------------------------------------
 #       Check for prototype for lstat
 #--------------------------------------------------------------------
-AC_CHECKING([for lstat prototype])
+AS_MESSAGE([checking for lstat prototype...])
 AC_EGREP_HEADER([int(.)*lstat], sys/stat.h, 
 	AC_DEFINE(HAVE_LSTAT_PROTO, 1))
 
@@ -754,16 +706,27 @@ AC_HEADER_STDC
 AC_HEADER_DIRENT
 AC_CHECK_HEADERS(string.h memory.h stdlib.h unistd.h sys/time.h ulocks.h gl/image.h device.h sys/select.h)
 AC_CHECK_FUNCS(lstat)
-AC_MODE_T
-AC_OFF_T
-AC_PID_T
-AC_RETSIGTYPE
-AC_SIZE_T
-AC_UID_T
-AC_ALLOCA
-AC_VPRINTF
-AC_WAIT3
-AC_TIME_WITH_SYS_TIME
+AC_TYPE_MODE_T
+AC_TYPE_OFF_T
+AC_TYPE_PID_T
+AC_DIAGNOSE([obsolete],[your code may safely assume C89 semantics that RETSIGTYPE is void.
+Remove this warning and the `AC_CACHE_CHECK' when you adjust the code.])dnl
+AC_CACHE_CHECK([return type of signal handlers],[ac_cv_type_signal],[AC_COMPILE_IFELSE(
+[AC_LANG_PROGRAM([#include <sys/types.h>
+#include <signal.h>
+],
+		 [return *(signal (0, 0)) (0) == 1;])],
+		   [ac_cv_type_signal=int],
+		   [ac_cv_type_signal=void])])
+AC_DEFINE_UNQUOTED([RETSIGTYPE],[$ac_cv_type_signal],[Define as the return type of signal handlers
+		    (`int' or `void').])
+
+AC_TYPE_SIZE_T
+AC_TYPE_UID_T
+AC_FUNC_ALLOCA
+AC_FUNC_VPRINTF
+AC_FUNC_WAIT3
+AC_HEADER_TIME
 AC_PROG_RANLIB
 AC_SUBST(RANLIB)
 
@@ -776,7 +739,7 @@ AC_SUBST(RANLIB)
 
 AC_CHECK_PROG(tk_ok, xmkmf, yes, no)
 if test $tk_ok = "yes"; then
-    AC_FIND_X
+    AC_PATH_X
 fi
 if test "$XINCLUDE_DIR" != ""; then
     x_includes="$XINCLUDE_DIR"
@@ -786,9 +749,9 @@ if test "$x_includes" = /usr/include; then
 elif test "$x_includes" != "" -a "$x_includes" != "NONE"; then
     XINCLUDES=" -I$x_includes"
 else
-    AC_CHECKING([for X11 header files])
+    AS_MESSAGE([checking for X11 header files...])
     XINCLUDES="# no special path needed"
-    AC_TEST_CPP([#include <X11/Intrinsic.h>], , XINCLUDES="nope")
+    AC_PREPROC_IFELSE([AC_LANG_SOURCE([[#include <X11/Intrinsic.h>]])],[],[XINCLUDES="nope"])
     if test "$XINCLUDES" = nope; then
         dirs="/usr/unsupported/include \
 		/usr/local/include \
@@ -830,7 +793,7 @@ if test "$x_libraries" = /usr/lib; then
 elif test "$x_libraries" != "" -a "$x_libraries" != "NONE"; then
     XLIBSW="-L$x_libraries -lXext"
 else
-    AC_CHECKING([for X11 library archive])
+    AS_MESSAGE([checking for X11 library archive...])
     AC_CHECK_LIB(X11, main, XLIBSW="-lXext", XLIBSW=nope)
     if test "$XLIBSW" = nope; then
 	dirs="/usr/unsupported/lib \
@@ -884,5 +847,7 @@ AC_SUBST(DYNAMIC_LOADING)
 #--------------------------------------------------------------------
 #    Create configured files
 #--------------------------------------------------------------------
-AC_OUTPUT(../pad ../paddraw ../paddraw.install $SRC/Makefile)
+AC_CONFIG_FILES([../pad ../paddraw ../paddraw.install Makefile])
+AC_OUTPUT
+mv Makefile $SRC/Makefile
 chmod a+x ../pad ../paddraw

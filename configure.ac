@@ -41,6 +41,6 @@ AC_SUBST(FREETYPE2_CFLAGS)
 AC_SUBST(FREETYPE2_LIBS)
 
 
-AC_CONFIG_FILES([makefile])
+AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
 [(cd pad/unix; ./configure)]

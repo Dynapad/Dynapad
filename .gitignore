@@ -1,6 +1,11 @@
 demos/
 **/CVS/
+Makefile
 
+pad/pad
+pad/paddraw
+pad/paddraw.install
+pad/unix/config.h
 
 # Created by https://www.gitignore.io/api/c,c++,scheme,autotools
 # Edit at https://www.gitignore.io/?templates=c,c++,scheme,autotools
@@ -17,22 +22,23 @@ Makefile.in
 
 # http://www.gnu.org/software/autoconf
 
-autom4te.cache
-/autoscan.log
-/autoscan-*.log
-/aclocal.m4
-/compile
-/config.guess
-/config.h.in
-/config.log
-/config.status
-/config.sub
-/configure
-/configure.scan
-/depcomp
-/install-sh
-/missing
-/stamp-h1
+**/autom4te.cache
+**/autoscan.log
+**/autoscan-*.log
+**/aclocal.m4
+**/compile
+**/config.guess
+# **/config.h.in
+**/config.log
+**/config.log
+**/config.status
+**/config.sub
+**/configure
+**/configure.scan
+**/depcomp
+**/install-sh
+**/missing
+**/stamp-h1
 
 # https://www.gnu.org/software/libtool/
 
