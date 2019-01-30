@@ -1,0 +1,15 @@
+These instructions are for macOS. 
+
+# Dependencies
+
+> brew install     \ 
+>   minimal-racket \
+>   imagemagick    \
+>   poppler        \
+
+# AutoTools
+
+> aclocal
+> autoconf
+> autoheader (maybe?)
+> automake --add-missing
