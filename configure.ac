@@ -1,5 +1,5 @@
-AC_PREREQ(2.69)
-AC_INIT([Dynapad], [1.0])
+AC_PREREQ([2.69])
+AC_INIT([Dynapad],[1.0])
 AC_CONFIG_SRCDIR([dynapad.cpp])
 AM_INIT_AUTOMAKE
 
@@ -24,7 +24,7 @@ AC_SUBST(MAGICKCORE_LIBS)
 
 AC_CHECK_PROG(PDFIMAGES, pdfimages, found, missing)
 if test $PDFIMAGES = "missing"; then
-  AC_ERROR([pdfimages not found])
+  AC_MSG_ERROR(pdfimages not found)
 fi
 
 #--------------------------------------------------------------------
@@ -33,7 +33,7 @@ fi
 #--------------------------------------------------------------------
 AC_CHECK_HEADER([db.h], DB=found, DB=missing)
 if test "$DB" = "missing"; then
-  AC_ERROR(db.h not found)
+  AC_MSG_ERROR(db.h not found)
 fi
 
 PKG_CHECK_MODULES(freetype2, [freetype2])
@@ -41,5 +41,6 @@ AC_SUBST(FREETYPE2_CFLAGS)
 AC_SUBST(FREETYPE2_LIBS)
 
 
-AC_OUTPUT(makefile)
+AC_CONFIG_FILES([makefile])
+AC_OUTPUT
 [(cd pad/unix; ./configure)]
