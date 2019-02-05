@@ -1,7 +1,9 @@
 AC_PREREQ([2.69])
-AC_INIT([Dynapad],[1.0])
-AC_CONFIG_SRCDIR([dynapad.cpp])
+AC_INIT([dynapad],[1.0])
 AM_INIT_AUTOMAKE
+AC_PROG_CXX
+AC_CONFIG_SRCDIR([dynapad.cpp])
+AC_CANONICAL_HOST
 
 AC_MSG_CHECKING([minimal-racket])
 PLT=/usr/local/opt/minimal-racket
@@ -15,12 +17,12 @@ fi
 AC_SUBST(PLT)
 AC_MSG_RESULT([$PLT])
 
+PLT_CFLAGS=[-I$PLT/include/racket/]
+AC_SUBST(PLT_CFLAGS)
+
 PKG_CHECK_MODULES(MAGICKCORE, [MagickCore])
 AC_SUBST(MAGICKCORE_CFLAGS)
 AC_SUBST(MAGICKCORE_LIBS)
-
-# AC_SUBST(MAGICKH)
-# AC_SUBST(MAGICKLIB)
 
 AC_CHECK_PROG(PDFIMAGES, pdfimages, found, missing)
 if test $PDFIMAGES = "missing"; then
@@ -36,10 +38,20 @@ if test "$DB" = "missing"; then
   AC_MSG_ERROR(db.h not found)
 fi
 
-PKG_CHECK_MODULES(freetype2, [freetype2])
+# On Darwin, X11 (XQuartz) is in a non-standard location.
+case "${host_os}" in
+    darwin*)
+      export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/opt/X11/lib/pkgconfig/:/opt/X11/share/pkgconfig/"
+      ;;
+esac
+
+PKG_CHECK_MODULES(X11, [x11])
+AC_SUBST(X11_CFLAGS)
+AC_SUBST(X11_LIBS)
+
+PKG_CHECK_MODULES(FREETYPE2, [freetype2])
 AC_SUBST(FREETYPE2_CFLAGS)
 AC_SUBST(FREETYPE2_LIBS)
-
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
