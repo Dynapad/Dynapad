@@ -27,8 +27,8 @@ software in general.
 #define TYPES_H 1
 
 #define PAD_TYPE(N) \
-  virtual int Type(void) { return(_type); } \
-  virtual char *Type_name(void) { return(N); }
+  virtual int Type(void) { return (_type); } \
+  virtual char *Type_name(void) { return (char *)(N); }
 
 //////////////////////////////////////////////
 // Pad Classes

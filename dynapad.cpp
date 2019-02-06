@@ -361,21 +361,21 @@ sch_modifier(int argc, Scheme_Object **argv)
 
   if (!strcmp(op, "delete")) {
     if (!Pad_DeleteBindingModifier(modifier))
-      scheme_warning("sch_modifier: delete failed %s", modifier);
+      scheme_warning((char *)"sch_modifier: delete failed %s", modifier);
     return result;
   }
 
   if (!strcmp(op, "set")) {
     if (!pad->Set_modifier(modifier))
-      scheme_warning("sch_modifier: set failed %s", modifier);
+      scheme_warning((char *)"sch_modifier: set failed %s", modifier);
     return result;
   }
 
-  scheme_warning("modifier: invalid operator, given %s", op);
+  scheme_warning((char *)"modifier: invalid operator, given %s", op);
   return scheme_false;
 }
 
-static char*
+static const char*
 find_ops[] = {
   "enclosed",
   "overlapping",
@@ -387,7 +387,8 @@ sch_find(int argc, Scheme_Object **argv)
 {
   Pad *pad;
   Pad_Win *win;
-  char buf[1024], *op, *p, **pp;
+  char buf[1024], *op, *p;
+  const char **pp;
   int findargc = 5;
   char *findargv[5];
   int matchtype = -1;
@@ -419,7 +420,7 @@ sch_find(int argc, Scheme_Object **argv)
       break;
   }
   if (!*pp) {
-    scheme_warning("sch_find: invalid find operator %s", op);
+    scheme_warning((char *)"sch_find: invalid find operator %s", op);
     return scheme_false;
   }
   argv++; argc--;
@@ -427,7 +428,7 @@ sch_find(int argc, Scheme_Object **argv)
   if (!SCHEME_LISTP(argv[0]))
     scheme_wrong_type("sch_find", "list", 0, argc, argv);
   if (scheme_list_length(argv[0]) != 4)
-    scheme_warning("sch_find: expected (llx lly urx ury), given %V",
+    scheme_warning((char *)"sch_find: expected (llx lly urx ury), given %V",
       argv[0]);
 
   l = argv[0];
@@ -438,7 +439,7 @@ sch_find(int argc, Scheme_Object **argv)
   for (i = 1, p = buf; i < 5; i++) {
     car = SCHEME_CAR(l);
     if (!SCHEME_REALP(car))
-      scheme_warning("sch_find: expect real, given %V", car);
+      scheme_warning((char *)"sch_find: expect real, given %V", car);
     p += strlen(p)+1;
     sprintf(p, "%f", scheme_real_to_double(car));
     findargv[i] = p;
@@ -446,7 +447,7 @@ sch_find(int argc, Scheme_Object **argv)
   }
 
   if (!pad->Find_eval(objs, (ClientData)win, groupmembers_flag, matchtype, findargc, findargv))
-    scheme_warning("sch_find: Find_eval failed %s %s %s %s %s",
+    scheme_warning((char *)"sch_find: Find_eval failed %s %s %s %s %s",
       findargv[0], findargv[1], findargv[2], findargv[3], findargv[4]);
 
   result = scheme_null;
@@ -585,11 +586,11 @@ sch_coords(int argc, Scheme_Object **argv)
   listlen = scheme_list_length(list);
 
   if (listlen%2 != 0)
-    scheme_warning("sch_coords: requires even number of points, given %V",
+    scheme_warning((char *)"sch_coords: requires even number of points, given %V",
       list);
 
   if ((rect_typetag == ctype || oval_typetag == ctype) && listlen != 4)
-    scheme_warning("sch_coords: rect and oval require four values, given %V",
+    scheme_warning((char *)"sch_coords: rect and oval require four values, given %V",
       list);
 
   coords.Make_empty();
@@ -748,7 +749,7 @@ sch_slide(int argc, Scheme_Object **argv)
   dy = scheme_real_to_double(argv[2]);
 
   if (!padobject->Slide(dx, dy, TRUE)) {
-    scheme_warning("sch_slide: failed");
+    scheme_warning((char *)"sch_slide: failed");
   }
 
   return result;
@@ -778,7 +779,7 @@ sch_scale(int argc, Scheme_Object **argv)
   y = scheme_real_to_double(argv[3]);
 
   if (!padobject->Scale(x, y, fac, TRUE)) {
-    scheme_warning("sch_scale: failed");
+    scheme_warning((char *)"sch_scale: failed");
   }
 
   return result;
@@ -810,14 +811,14 @@ sch_position(int argc, Scheme_Object **argv)
     if (!SCHEME_LISTP(argv[1]))
       scheme_wrong_type("sch_position", "list", 2, argc, argv);
     if (scheme_list_length(argv[1]) != 3)
-      scheme_warning("sch_position: expected (x y zoom), given %V",
+      scheme_warning((char *)"sch_position: expected (x y zoom), given %V",
         argv[1]);
 
     l = argv[1];
     for (i = 0; i < 3; i++) {
       car = SCHEME_CAR(l);
       if (!SCHEME_REALP(car))
-        scheme_warning("sch_position: expect real, given %V", car);
+        scheme_warning((char *)"sch_position: expect real, given %V", car);
       switch (i) {
         case 0: x = scheme_real_to_double(car); break;
         case 1: y = scheme_real_to_double(car); break;
@@ -827,7 +828,7 @@ sch_position(int argc, Scheme_Object **argv)
     }
     
     if (!padobject->Set_abs_position(x, y, zoom, TRUE)) {
-      scheme_warning("sch_position: failed");
+      scheme_warning((char *)"sch_position: failed");
     }
   }
 
@@ -884,7 +885,7 @@ sch_width(int argc, Scheme_Object **argv)
   width = scheme_real_to_double(argv[1]);
 
   if (!padobject->Set_width(width)) {
-    scheme_warning("sch_width: failed");
+    scheme_warning((char *)"sch_width: failed");
   }
 
   return result;
@@ -913,7 +914,7 @@ sch_height(int argc, Scheme_Object **argv)
   height = scheme_real_to_double(argv[1]);
 
   if (!padobject->Set_height(height)) {
-    scheme_warning("sch_height: failed");
+    scheme_warning((char *)"sch_height: failed");
   }
 
   return result;
@@ -966,14 +967,14 @@ sch_makeimagedata(int argc, Scheme_Object **argv)
 
   expandpath = scheme_expand_filename(imagepath, -1, NULL, NULL, 0);
   if (expandpath == NULL)
-    scheme_warning("sch_makeimagedata: expand imagepath failed %s",
+    scheme_warning((char *)"sch_makeimagedata: expand imagepath failed %s",
       imagepath);
 
   win = pad->Get_win();
 
   imagedata = win->renderer->Alloc_image(expandpath,&newimage);
   if (!imagedata) {
-    scheme_warning("sch_makeimagedata: Alloc failed %s %s",
+    scheme_warning((char *)"sch_makeimagedata: Alloc failed %s %s",
     imagepath, expandpath);
     return scheme_false;
   }
@@ -1003,7 +1004,7 @@ sch_freeimagedata(int argc, Scheme_Object **argv)
   win = pad->Get_win();
 
   if (!win->renderer->Free_image(imagedata))
-    scheme_warning("sch_freeimagedata: Free failed %s", imagedata->name);
+    scheme_warning((char *)"sch_freeimagedata: Free failed %s", imagedata->name);
 
   return result;
 }
@@ -1217,7 +1218,7 @@ sch_settext(int argc, Scheme_Object **argv)
   text = SCH_UNIXSTR(argv[1]);
 
   if (!padtext->Set_text(text))
-      scheme_warning("sch_settext: settext failed %s", text);
+      scheme_warning((char *)"sch_settext: settext failed %s", text);
 
   return result;
 }
@@ -1235,7 +1236,7 @@ sch_gettext(int argc, Scheme_Object **argv)
   padtext = (Pad_Text *)SCHEME_CPTR_VAL(argv[0]);
 
   if (!padtext->Get_text(padstring))
-      scheme_warning("sch_gettext: gettext failed");
+      scheme_warning((char *)"sch_gettext: gettext failed");
 
   return UNIX_SCHSTR(padstring.Get());
 }
@@ -1261,12 +1262,12 @@ sch_inserttext(int argc, Scheme_Object **argv)
   str = SCH_UNIXSTR(argv[2]);
 
   iargc = 3;
-  iargv[0] = "";
+  iargv[0] = (char *)"";
   iargv[1] = index;
   iargv[2] = str;
 
   if (padtext->Insert(iargc, iargv) == PAD_ERROR)
-    scheme_warning("sch_inserttext: failed ~V ~s", index, str);
+    scheme_warning((char *)"sch_inserttext: failed ~V ~s", index, str);
 
   return result;
 }
@@ -1283,7 +1284,7 @@ sch_marktext(int argc, Scheme_Object **argv)
   if (!SCHEME_CPTRP(argv[0]) || text_typetag != SCHEME_CPTR_TYPE(argv[0]))
     scheme_wrong_type("sch_marktext", "text%", 0, argc, argv);
   if (argc != 2 && argc != 4)
-    scheme_warning("sch_marktext: expects 2 or 4 arguments, given %d", argc);
+    scheme_warning((char *)"sch_marktext: expects 2 or 4 arguments, given %d", argc);
 
   for (i = 1; i < argc; i++)
     if (!SCHEME_CHAR_STRINGP(argv[i]))
@@ -1296,12 +1297,12 @@ sch_marktext(int argc, Scheme_Object **argv)
     mark = SCH_UNIXSTR(argv[2]);
     index = SCH_UNIXSTR(argv[3]);
     iargc = 4;
-    iargv[0] = "";
-    iargv[1] = "set";
+    iargv[0] = (char *)"";
+    iargv[1] = (char *)"set";
     iargv[2] = mark;
     iargv[3] = index;
     if (padtext->Mark(iargc, iargv) == PAD_ERROR)
-      scheme_warning("sch_marktext: failed %s %s %s", op, mark, index);
+      scheme_warning((char *)"sch_marktext: failed %s %s %s", op, mark, index);
 
     return result;
   }
@@ -1331,10 +1332,10 @@ sch_deletetext(int argc, Scheme_Object **argv)
   index = SCH_UNIXSTR(argv[1]);
 
   iargc = 2;
-  iargv[0] = "";
+  iargv[0] = (char *)"";
   iargv[1] = index;
   if (padtext->Del(iargc, iargv) == PAD_ERROR)
-      scheme_warning("sch_deletetext: failed");
+      scheme_warning((char *)"sch_deletetext: failed");
 
   return result;
 }
@@ -1477,7 +1478,7 @@ EvalEvent(Pad_Object *padobject, ClientData data, Pad_Event *padevent)
   while(!SCHEME_NULLP(proclist)) {
     proc = SCHEME_CAR(proclist);
     if (scheme_setjmp(scheme_error_buf)) {
-      scheme_warning("sch_bind EvalEvent: failed");
+      scheme_warning((char *)"sch_bind EvalEvent: failed");
       result = scheme_true;
     } else {
       result = scheme_eval(
@@ -1534,7 +1535,7 @@ sch_bind(int argc, Scheme_Object **argv)
                event);
       }
       if (rc != PAD_OK)
-        scheme_warning("sch_bind: Pad_DeleteBinding failed");
+        scheme_warning((char *)"sch_bind: Pad_DeleteBinding failed");
       return result;
     }
 
@@ -1568,7 +1569,7 @@ sch_bind(int argc, Scheme_Object **argv)
              callback);
     }
     if (!rc)
-      scheme_warning("sch_bind: Pad_CreateBinding failed");
+      scheme_warning((char *)"sch_bind: Pad_CreateBinding failed");
     return result;
   }
 
@@ -1652,7 +1653,7 @@ sch_bind_to_tag(int argc, Scheme_Object **argv)
              Pad_GetUid(tagname),
              event);
       if (rc != PAD_OK)
-        scheme_warning("sch_bind: Pad_DeleteBinding failed");
+        scheme_warning((char *)"sch_bind: Pad_DeleteBinding failed");
       return result;
     }
 
@@ -1680,7 +1681,7 @@ sch_bind_to_tag(int argc, Scheme_Object **argv)
            event,
            callback);
     if (!rc)
-      scheme_warning("sch_bind: Pad_CreateBinding failed");
+      scheme_warning((char *)"sch_bind: Pad_CreateBinding failed");
     return result;
   }
 
@@ -1787,7 +1788,7 @@ sch_bindtags(int argc, Scheme_Object **argv)
     order = SCH_UNIXSTR(argv[1]);
 
     if (strcmp(order, "general") && strcmp(order, "specific"))
-      scheme_warning("sch_bindtags: expects general or specific, given %V", argv[1]);
+      scheme_warning((char *)"sch_bindtags: expects general or specific, given %V", argv[1]);
 
     if (dynapad_typetag == SCHEME_CPTR_TYPE(argv[0])) {
       pad = (Pad *)SCHEME_CPTR_VAL(argv[0]);
@@ -1799,7 +1800,7 @@ sch_bindtags(int argc, Scheme_Object **argv)
       padobject = (Pad_Object *)SCHEME_CPTR_VAL(argv[0]);
       rc = padobject->Set_event_order(order);
       if (!rc)
-        scheme_warning("sch_bindtags: Set_event_order failed");
+        scheme_warning((char *)"sch_bindtags: Set_event_order failed");
     }
 
     return scheme_true;
@@ -1808,9 +1809,9 @@ sch_bindtags(int argc, Scheme_Object **argv)
   if (dynapad_typetag == SCHEME_CPTR_TYPE(argv[0])) {
     pad = (Pad *)SCHEME_CPTR_VAL(argv[0]);
     if (pad->idEventFirst)
-      order = "specific";
+      order = (char *)"specific";
     else
-      order = "general";
+      order = (char *)"general";
   } else {
     padobject = (Pad_Object *)SCHEME_CPTR_VAL(argv[0]);
     order = padobject->Get_event_order();
@@ -1983,7 +1984,7 @@ sch_renderimage(int argc, Scheme_Object **argv)
   x1 = x0 + imagedata->width;
   y1 = y0 + imagedata->height;
   if (!Pad_renderer->Draw_image(imagedata, x0, y0, x1, y1, FALSE))
-    scheme_warning("sch_renderimage: Pad_renderer->Draw_image failed");
+    scheme_warning((char *)"sch_renderimage: Pad_renderer->Draw_image failed");
 
   return result;
 }
@@ -2010,9 +2011,9 @@ sch_renderline(int argc, Scheme_Object **argv)
 
   len = scheme_list_length(list);
   if (len < 4)
-    scheme_warning("sch_renderline: expects xy list length >= 4, given %V", list);
+    scheme_warning((char *)"sch_renderline: expects xy list length >= 4, given %V", list);
   if (len%2 != 0)
-    scheme_warning("sch_renderline: expects even number of xy, given %V", list);
+    scheme_warning((char *)"sch_renderline: expects even number of xy, given %V", list);
 
   Pad_renderer->Begin_line();
   while(!SCHEME_NULLP(list)) {
@@ -2060,9 +2061,9 @@ sch_renderpolygon(int argc, Scheme_Object **argv)
 
   len = scheme_list_length(list);
   if (len < 4)
-    scheme_warning("sch_renderpolygon: expects xy list length >= 4, given %V", list);
+    scheme_warning((char *)"sch_renderpolygon: expects xy list length >= 4, given %V", list);
   if (len%2 != 0)
-    scheme_warning("sch_renderpolygon: expects even number of xy, given %V", list);
+    scheme_warning((char *)"sch_renderpolygon: expects even number of xy, given %V", list);
 
   Pad_renderer->Begin_polygon();
   while(!SCHEME_NULLP(list)) {
@@ -2139,7 +2140,7 @@ sch_rendercolor(int argc, Scheme_Object **argv)
 
   padcolor = Pad_AllocColorByName(color);
   if (!color)
-    scheme_warning("sch_rendercolor: Pad_AllocColorByName failed for %s", color);
+    scheme_warning((char *)"sch_rendercolor: Pad_AllocColorByName failed for %s", color);
 
   Pad_renderer->Set_color(padcolor);
 
@@ -2172,7 +2173,7 @@ sch_fill(int argc, Scheme_Object **argv)
 
   padcolor = Pad_AllocColorByName(color);
   if (!color)
-    scheme_warning("sch_fill: Pad_AllocColorByName failed for %s", color);
+    scheme_warning((char *)"sch_fill: Pad_AllocColorByName failed for %s", color);
 
   padobject->Set_fill(color);
 
@@ -2205,7 +2206,7 @@ sch_pen(int argc, Scheme_Object **argv)
 
   padcolor = Pad_AllocColorByName(color);
   if (!color)
-    scheme_warning("sch_pen: Pad_AllocColorByName failed for %s", color);
+    scheme_warning((char *)"sch_pen: Pad_AllocColorByName failed for %s", color);
 
   padobject->Set_pen(color);
 
@@ -2242,7 +2243,7 @@ sch_penwidth(int argc, Scheme_Object **argv)
   width = scheme_real_to_double(argv[1]);
 
   if (!padobject->Set_penwidth(width, absLineStyle))
-    scheme_warning("sch_penwidth: Set_penwidth failed for %V", argv[1]);
+    scheme_warning((char *)"sch_penwidth: Set_penwidth failed for %V", argv[1]);
 
   return result;
 }
@@ -2407,7 +2408,7 @@ sch_background(int argc, Scheme_Object **argv)
 
   padcolor = Pad_AllocColorByName(color);
   if (!color)
-    scheme_warning("sch_background: Pad_AllocColorByName failed for %s", color);
+    scheme_warning((char *)"sch_background: Pad_AllocColorByName failed for %s", color);
 
   win->background.Set(color);
   win->view->Damage();
@@ -2497,7 +2498,7 @@ sch_objectlist(int argc, Scheme_Object **argv)
   findargv[0] = Pad_GetUid("all");
 
   if (!pad->Find_eval(objs, (ClientData)win, groupmembersp, matchtype, findargc, findargv))
-    scheme_warning("sch_objectlist: Find_eval failed %s", findargv[0]);
+    scheme_warning((char *)"sch_objectlist: Find_eval failed %s", findargv[0]);
 
   result = scheme_null;
   DOLIST(oi, objs, Pad_Object, obj) {
@@ -2538,7 +2539,7 @@ sch_unfindable(int argc, Scheme_Object **argv)
   findargv[0] = Pad_GetUid("all");
 
   if (!pad->Find_eval(objs, (ClientData)win, groupmembersp, matchtype, findargc, findargv))
-    scheme_warning("sch_unfindable: Find_eval failed %s", findargv[0]);
+    scheme_warning((char *)"sch_unfindable: Find_eval failed %s", findargv[0]);
 
   result = scheme_null;
   DOLIST(oi, objs, Pad_Object, obj) {
@@ -2624,10 +2625,10 @@ sch_anchor(int argc, Scheme_Object **argv)
 
   anchor = SCH_UNIXSTR(argv[1]);
   if (Pad_GetAnchor(anchor, &padanchor) == PAD_ERROR)
-    scheme_warning("sch_anchor: bad anchor value %s", anchor);
+    scheme_warning((char *)"sch_anchor: bad anchor value %s", anchor);
 
   if (!padobject->Set_anchor(padanchor))
-    scheme_warning("sch_anchor: failed %s", anchor);
+    scheme_warning((char *)"sch_anchor: failed %s", anchor);
 
   return result;
 }
@@ -2665,13 +2666,13 @@ sch_minsize(int argc, Scheme_Object **argv)
   list = argv[1];
   car = SCHEME_CAR(list);
   if (!SCHEME_REALP(car))
-    scheme_warning("sch_minsize: expects number, given ~V", car);
+    scheme_warning((char *)"sch_minsize: expects number, given ~V", car);
   minsize = scheme_real_to_double(car);
 
   list = SCHEME_CDR(list);
   car = SCHEME_CAR(list);
   if (!SCHEME_BOOLP(car))
-    scheme_warning("sch_minsize: expects boolean, given ~V", car);
+    scheme_warning((char *)"sch_minsize: expects boolean, given ~V", car);
   fractionp = (car == scheme_true);
 
   if (fractionp)
@@ -2679,7 +2680,7 @@ sch_minsize(int argc, Scheme_Object **argv)
   else
     rc = padobject->Set_minsize_abs(minsize);
   if (!rc)
-    scheme_warning("sch_minsize: Set_minsize failed, given %V", argv[1]);
+    scheme_warning((char *)"sch_minsize: Set_minsize failed, given %V", argv[1]);
 
   return result;
 }
@@ -2717,13 +2718,13 @@ sch_maxsize(int argc, Scheme_Object **argv)
   list = argv[1];
   car = SCHEME_CAR(list);
   if (!SCHEME_REALP(car))
-    scheme_warning("sch_maxsize: expects number, given ~V", car);
+    scheme_warning((char *)"sch_maxsize: expects number, given ~V", car);
   maxsize = scheme_real_to_double(car);
 
   list = SCHEME_CDR(list);
   car = SCHEME_CAR(list);
   if (!SCHEME_BOOLP(car))
-    scheme_warning("sch_maxsize: expects boolean, given ~V", car);
+    scheme_warning((char *)"sch_maxsize: expects boolean, given ~V", car);
   fractionp = (car == scheme_true);
 
   if (fractionp)
@@ -2731,7 +2732,7 @@ sch_maxsize(int argc, Scheme_Object **argv)
   else
     rc = padobject->Set_maxsize_abs(maxsize);
   if (!rc)
-    scheme_warning("sch_maxsize: Set_maxsize failed, given %V", argv[1]);
+    scheme_warning((char *)"sch_maxsize: Set_maxsize failed, given %V", argv[1]);
 
   return result;
 }
@@ -2759,7 +2760,7 @@ sch_faderange(int argc, Scheme_Object **argv)
 
   if (!padobject->Set_faderange(faderange))
     result = scheme_false;
-    //scheme_warning("sch_faderange: Set_faderange failed, given %V", argv[1]);
+    //scheme_warning((char *)"sch_faderange: Set_faderange failed, given %V", argv[1]);
 
   return result;
 }
@@ -2777,7 +2778,7 @@ sch_raise(int argc, Scheme_Object **argv)
 
   if (argc == 1) {
     if (!padobject->Raise())
-      scheme_warning("sch_raise: failed, given %V", argv[0]);
+      scheme_warning((char *)"sch_raise: failed, given %V", argv[0]);
     return result;
   }
 
@@ -2794,7 +2795,7 @@ sch_raise(int argc, Scheme_Object **argv)
 
   if (!padobject->Raise(abovethis))
     result = scheme_false;
-    //scheme_warning("sch_raise: failed, given %V %V", argv[0], argv[1]);
+    //scheme_warning((char *)"sch_raise: failed, given %V %V", argv[0], argv[1]);
 
   return result;
 }
@@ -2812,7 +2813,7 @@ sch_lower(int argc, Scheme_Object **argv)
 
   if (argc == 1) {
     if (!padobject->Lower())
-      scheme_warning("sch_lower: failed, given %V", argv[0]);
+      scheme_warning((char *)"sch_lower: failed, given %V", argv[0]);
     return result;
   }
 
@@ -2828,7 +2829,7 @@ sch_lower(int argc, Scheme_Object **argv)
 
   if (!padobject->Lower(belowthis))
     result = scheme_false;
-    //scheme_warning("sch_lower: failed, given %V %V", argv[0], argv[1]);
+    //scheme_warning((char *)"sch_lower: failed, given %V %V", argv[0], argv[1]);
 
   return result;
 }
@@ -2904,7 +2905,7 @@ sch_transparency(int argc, Scheme_Object **argv)
 
   if (!padobject->Set_transparency(transparency))
     result = scheme_false;
-    //scheme_warning("sch_transparency: failed, given %V", argv[1]);
+    //scheme_warning((char *)"sch_transparency: failed, given %V", argv[1]);
 
   return result;
 }
@@ -2951,7 +2952,7 @@ sch_sticky(int argc, Scheme_Object **argv)
       case PAD_STICKY_VIEW:
         return UNIX_SCHSTR("view");
       default:
-        scheme_warning("sch_sticky: Get_sticky returned unknown value %d", sticky);
+        scheme_warning((char *)"sch_sticky: Get_sticky returned unknown value %d", sticky);
     }
   }
 
@@ -2975,7 +2976,7 @@ sch_sticky(int argc, Scheme_Object **argv)
     scheme_wrong_type("sch_sticky", "boolean or x y z view", 1, argc, argv);
 
   if (!padobject->Set_sticky(sticky))
-    scheme_warning("sch_sticky: failed, given %V", argv[1]);
+    scheme_warning((char *)"sch_sticky: failed, given %V", argv[1]);
 
   return result;
 }
@@ -3136,7 +3137,7 @@ sch_layer(int argc, Scheme_Object **argv)
   win = pad->Get_win();
 
   if (argc == 1) {
-    if (layerId = padobject->layerId) {
+    if ((layerId = padobject->layerId)) {
       layer = pad->Get_layer_from_id(layerId);
       if (layer->userdata)
         result = (Scheme_Object *)layer->userdata;
@@ -3249,7 +3250,7 @@ sch_panelsetfill(int argc, Scheme_Object **argv)
 
   padcolor = Pad_AllocColorByName(color);
   if (!color)
-    scheme_warning("sch_fill: Pad_AllocColorByName failed for %s", color);
+    scheme_warning((char *)"sch_fill: Pad_AllocColorByName failed for %s", color);
 
   padobject->Set_fill(color);
 
@@ -3343,7 +3344,7 @@ sch_addmember(int argc, Scheme_Object **argv)
 
   if( !padgroup->Add(padobject, TRUE) )
     result = scheme_false;
-    // if false: scheme_warning("sch_addmember: failed, given %V", argv[1]);
+    // if false: scheme_warning((char *)"sch_addmember: failed, given %V", argv[1]);
 
   return result;
 }
@@ -3366,7 +3367,7 @@ sch_removemember(int argc, Scheme_Object **argv)
   padobject = (Pad_Object *)SCHEME_CPTR_VAL(argv[1]);
 
   padgroup->Remove(padobject, TRUE);
-  // if false:  scheme_warning("sch_removemember: failed, given %V", argv[1]);
+  // if false:  scheme_warning((char *)"sch_removemember: failed, given %V", argv[1]);
 
   return result;
 }
@@ -3380,9 +3381,9 @@ sch_divisible(int argc, Scheme_Object **argv)
   Scheme_Object *result = scheme_false;
 
   if (!SCHEME_CPTRP(argv[0]) ||
-       group_typetag != SCHEME_CPTR_TYPE(argv[0])
-       &&
-       panel_typetag != SCHEME_CPTR_TYPE(argv[0]))
+       (group_typetag != SCHEME_CPTR_TYPE(argv[0])
+        &&
+        panel_typetag != SCHEME_CPTR_TYPE(argv[0])))
     scheme_wrong_type("sch_divisible", "group%", 0, argc, argv);
 
   padgroup = (Pad_Group *)SCHEME_CPTR_VAL(argv[0]);
@@ -3684,7 +3685,7 @@ sch_grab(int argc, Scheme_Object **argv)
     list = argv[3];
     len = scheme_list_length(list);
     if (len != 4)
-      scheme_warning("sch_grab", "expected list x y w h, given ", list);
+      scheme_warning((char *)"sch_grab", "expected list x y w h, given ", list);
     i = 0;
     while(!SCHEME_NULLP(list)) {
       car = SCHEME_CAR(list);
@@ -3700,7 +3701,7 @@ sch_grab(int argc, Scheme_Object **argv)
   imagedata = win->dpy->Grab(winId, xywh[0], xywh[1], xywh[2], xywh[3]);
 
   if (!imagedata)
-    scheme_warning("sch_grab", "Grab failed");
+    scheme_warning((char *)"sch_grab", "Grab failed");
 
   imagedata->userdata = sobj;
   obj = scheme_make_cptr(imagedata, imagedata_typetag);

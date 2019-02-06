@@ -1,6 +1,6 @@
 AC_PREREQ([2.69])
 AC_INIT([dynapad],[1.0])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([subdir-objects])
 AC_PROG_CXX
 AC_CONFIG_SRCDIR([dynapad.cpp])
 AC_CANONICAL_HOST
@@ -17,8 +17,16 @@ fi
 AC_SUBST(PLT)
 AC_MSG_RESULT([$PLT])
 
+
 PLT_CFLAGS=[-I$PLT/include/racket/]
 AC_SUBST(PLT_CFLAGS)
+
+case "${host_os}" in
+    darwin*)
+      PLT_LDFLAGS="-F $PLT/lib/racket/ -framework Racket" # link as framework
+      AC_SUBST(PLT_LDFLAGS)
+      ;;
+esac
 
 PKG_CHECK_MODULES(MAGICKCORE, [MagickCore])
 AC_SUBST(MAGICKCORE_CFLAGS)
@@ -54,5 +62,5 @@ AC_SUBST(FREETYPE2_CFLAGS)
 AC_SUBST(FREETYPE2_LIBS)
 
 AC_CONFIG_FILES([Makefile])
+AC_CONFIG_SUBDIRS([pad/unix])
 AC_OUTPUT
-[(cd pad/unix; ./configure)]
