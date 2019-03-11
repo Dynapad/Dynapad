@@ -91,7 +91,7 @@ Pad_Restorer::~Pad_Restorer()
     Reset_clip_stack();
 }
 
-Pad_Restorer::Pad_Restorer(Pad_Win *w = NULL, Pad_Bool is_full = FALSE)
+Pad_Restorer::Pad_Restorer(Pad_Win *w, Pad_Bool is_full)
 {
     win = w;
     refinementLevel = -1;

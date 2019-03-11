@@ -96,7 +96,7 @@ class Pad_Restorer
     Region xregion;            // Region that the restorer is working on
     Pad_List clip_stack;       // Stack of clip planes
 
-    Pad_Restorer(Pad_Win *win, Pad_Bool is_full);
+    Pad_Restorer(Pad_Win *win = NULL, Pad_Bool is_full = FALSE);
     Pad_Restorer(Pad_Restorer *restorer);
     ~Pad_Restorer();
 

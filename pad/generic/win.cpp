@@ -35,8 +35,7 @@ software in general.
 #include "renderer.h"
 #include "init.h"
 
-
-#  include "../unix/shm.h"
+#include "../unix/shm.h"
 
 #include <string.h>
 #include <stdlib.h>
@@ -45,21 +44,21 @@ software in general.
 
 #include <sys/types.h>
 
-#  include <unistd.h>
+#include <unistd.h>
 #ifdef CYGWIN
-#  include <cygwin/ipc.h>
-#  include <cygwin/shm.h>
+    #include <cygwin/ipc.h>
+    #include <cygwin/shm.h>
 #else
-#  include <sys/ipc.h>
-#  include <sys/shm.h>
+    #include <sys/ipc.h>
+    #include <sys/shm.h>
 #endif
-#  include <X11/Xlib.h>
-#  include <X11/cursorfont.h>
-#  include <X11/extensions/XShm.h>
+    #include <X11/Xlib.h>
+    #include <X11/cursorfont.h>
+    #include <X11/extensions/XShm.h>
 
-				// Forward reference static procedures
-static void Signal_handler_interrupt(SIGNAL_ARGS);
-static void Signal_handler_error(SIGNAL_ARGS);
+// Forward reference static procedures
+static void Signal_handler_interrupt(int);
+static void Signal_handler_error(int);
 
 ////////////////////////////////////////////////////////////////////////////
 //
@@ -73,7 +72,6 @@ Pad_RenderContext::Pad_RenderContext(Pad_Win *newWin)
     dpy = newWin->dpy;
     result = 0;
     slow = FALSE;
-
 }
 
 Pad_RenderContext::~Pad_RenderContext()
@@ -653,7 +651,7 @@ Pad_Win::Free_shared_ximage(void)
 // Make sure we clean up shared memory.
 //
 static void
-Signal_handler_interrupt(SIGNAL_ARGS)
+Signal_handler_interrupt(int)
 {
     Pad *pad;
     Pad_Name padName;
@@ -671,7 +669,7 @@ Signal_handler_interrupt(SIGNAL_ARGS)
 }
 
 static void
-Signal_handler_error(SIGNAL_ARGS)
+Signal_handler_error(int)
 {
     Pad *pad;
     Pad_Name padName;
