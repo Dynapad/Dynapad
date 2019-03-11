@@ -42,8 +42,8 @@ software in general.
 #include "renderer.h"
 #include "container.h"
 
-#include <stdlib.h>
-#include <iostream.h>
+#include <cstdlib>
+#include <iostream>
 
 static Pad_Win * Init(void);
 static void      Init_pad_events(Tcl_Interp *interp, Pad_Win *win);

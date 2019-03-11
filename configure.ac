@@ -53,7 +53,7 @@ fi
 case "${host_os}" in
     darwin*)
       export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/opt/X11/lib/pkgconfig/:/opt/X11/share/pkgconfig/"
-      ;;
+    ;;
 esac
 
 PKG_CHECK_MODULES(X11, [x11])

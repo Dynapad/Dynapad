@@ -30,6 +30,14 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #endif
+
+// Machine-dependent types, e.g. CARD{8,16,...}
+#include <X11/Xmd.h>
+
+// X_ShmAttach, X_ShmPutImage, X_ShmGetImage, ...
+#include <X11/extensions/shmproto.h>
+
+// MIT-SHM proper.
 #include <X11/extensions/XShm.h>
 #include "shm.h"
 
