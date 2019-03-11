@@ -45,19 +45,18 @@ software in general.
 #include <cstdlib>
 #include <iostream>
 
-static Pad_Win * Init(void);
-static void      Init_pad_events(Tcl_Interp *interp, Pad_Win *win);
-static void      Main_loop(Pad_Win *win);
+static Pad_Win *Init(void);
+static void Init_pad_events(Pad_Win *win);
+static void Main_loop(Pad_Win *win);
 
-int
-main(int, char **)
+int main(int, char **)
 {
     Pad_Win *win;
 
     win = Init();
     Main_loop(win);
 
-    return(0);
+    return (0);
 }
 
 static Pad_Win *
@@ -69,13 +68,13 @@ Init(void)
     Colormap colormap;
     int depth;
     int id;
-    Tcl_Interp *interp;
     Pad_Win *win;
 
-				// Open X connection, and create an X window
-    if ((display = XOpenDisplay(NULL)) == NULL) {
-	cerr << "Error connecting to X server" << endl;
-	exit(1);
+    // Open X connection, and create an X window
+    if ((display = XOpenDisplay(NULL)) == NULL)
+    {
+        cerr << "Error connecting to X server" << endl;
+        exit(1);
     }
 
     screen = DefaultScreenOfDisplay(display);
@@ -84,33 +83,29 @@ Init(void)
     depth = DefaultDepthOfScreen(screen);
 
     id = XCreateWindow(display, RootWindowOfScreen(screen),
-		       WIN_DEFAULT_X, WIN_DEFAULT_Y, WIN_DEFAULT_WIDTH, WIN_DEFAULT_HEIGHT,
-		       0, depth, InputOutput, visual, 0, NULL);
+                       WIN_DEFAULT_X, WIN_DEFAULT_Y, WIN_DEFAULT_WIDTH, WIN_DEFAULT_HEIGHT,
+                       0, depth, InputOutput, visual, 0, NULL);
     XMapWindow(display, id);
 
-				// Initialize X events
-    XSelectInput(display, id, 
-		 StructureNotifyMask |
-		 ExposureMask | 
-		 EnterWindowMask | 
-		 LeaveWindowMask | 
-		 PointerMotionMask | 
-		 ButtonPressMask | 
-		 ButtonReleaseMask | 
-		 KeyPressMask | 
-		 KeyReleaseMask
-		 );
+    // Initialize X events
+    XSelectInput(display, id,
+                 StructureNotifyMask |
+                     ExposureMask |
+                     EnterWindowMask |
+                     LeaveWindowMask |
+                     PointerMotionMask |
+                     ButtonPressMask |
+                     ButtonReleaseMask |
+                     KeyPressMask |
+                     KeyReleaseMask);
 
-				// Create Tcl interpreter
-    interp = Tcl_CreateInterp();
+    // Create Pad++ window out of X window
+    win = new Pad_Win(display, screen, visual, colormap, depth, (char *)"xMain", id);
 
-				// Create Pad++ window out of X window
-    win = new Pad_Win(interp, display, screen, visual, colormap, depth, id);
+    // Create some Pad++ event handlers
+    Init_pad_events(win);
 
-				// Create some Pad++ event handlers
-    Init_pad_events(interp, win);
-
-    return(win);
+    return (win);
 }
 
 //
@@ -123,45 +118,47 @@ Main_loop(Pad_Win *win)
     Pad_Bool done = FALSE;
     XEvent event;
 
-    while (!done) {
-	XNextEvent(win->dpy->display, &event);
-	switch (event.type) {
-	  case Expose:
-	    win->Expose_win();
-	    break;
-	  case ConfigureNotify:
-	    win->Configure(event.xconfigure.width, event.xconfigure.height);
-	    break;
-	  case DestroyNotify:
-	    delete win;
-	    done = TRUE;
-	    break;
-	  case MapNotify:
-	    win->Map();
-	    break;
-	  case UnmapNotify:
-	    win->Unmap();
-	    break;
-	  case EnterNotify:
-	  case LeaveNotify:
-	  case ButtonPress:
-	  case ButtonRelease:
-	  case MotionNotify:
-	  case KeyPress:
-	  case KeyRelease:
-	    {  
-		int prevFastPan;
+    while (!done)
+    {
+        XNextEvent(win->dpy->display, &event);
+        switch (event.type)
+        {
+        case Expose:
+            win->Expose_win();
+            break;
+        case ConfigureNotify:
+            win->Configure(event.xconfigure.width, event.xconfigure.height);
+            break;
+        case DestroyNotify:
+            delete win;
+            done = TRUE;
+            break;
+        case MapNotify:
+            win->Map();
+            break;
+        case UnmapNotify:
+            win->Unmap();
+            break;
+        case EnterNotify:
+        case LeaveNotify:
+        case ButtonPress:
+        case ButtonRelease:
+        case MotionNotify:
+        case KeyPress:
+        case KeyRelease:
+        {
+            int prevFastPan;
 
-		Pad_Bind_proc(win, &event);
-				// Hack to make window get rendered immediately since timers are 
-				// not working yet.
-		prevFastPan = win->fastPan;
-		win->fastPan = 0;
-		win->view->Set_view(win->view->xview, win->view->yview, win->view->zoom, TRUE);
-		win->fastPan = prevFastPan;
-		break;
-	    }
-	}
+            Pad_Bind_proc(win, &event);
+            // Hack to make window get rendered immediately since timers are
+            // not working yet.
+            prevFastPan = win->fastPan;
+            win->fastPan = 0;
+            win->view->Set_view(win->view->xview, win->view->yview, win->view->zoom, TRUE);
+            win->fastPan = prevFastPan;
+            break;
+        }
+        }
     }
 
     XCloseDisplay(win->dpy->display);
@@ -170,17 +167,17 @@ Main_loop(Pad_Win *win)
 //
 // Create some Pad++ event handlers
 //
-static Pad_Bool
+static int /* Pad_Bool */
 Button_command(Pad_Object *, ClientData clientData, Pad_Event *padEvent)
 {
     Pad_Rectangle *rect = (Pad_Rectangle *)clientData;
 
     rect->Slide(10.0 / padEvent->win->view->zoom, 0, TRUE);
 
-    return(TRUE);
+    return (TRUE);
 }
 
-static Pad_Bool
+static int /* Pad_Bool */
 Create_component_func(Pad_Object *, ClientData clientData, Pad_Event *padEvent)
 {
     Pad_Win *win = (Pad_Win *)clientData;
@@ -197,82 +194,90 @@ Create_component_func(Pad_Object *, ClientData clientData, Pad_Event *padEvent)
     Pad_Callback *command;
     float zoom = win->view->zoom;
 
-    if (thing == 0) {
-	static int containerType = 0;
-	if (containerType == 0) {
-	    frame = (Pad_Frame *)win->view->pad->Create_object(PAD_FRAME);
-	    frame->Reshape(0, 0, 200, 200);
-	    frame->Scale(0, 0, 1 / zoom);
-	    frame->Slide(padEvent->pt.x, padEvent->pt.y);
-	    container = frame;
-	} else {
-	    panel = (Pad_Panel *)win->view->pad->Create_object(PAD_PANEL);
-	    panel->Reshape(75, 75, 100, 100);
-	    //	    panel->Reshape(0, 0, 100, 100);
-	    panel->Scale(0, 0, 1 / zoom);
-	    //	    panel->Slide(75, 75);
-	    panel->Set_fill("#8080ff");
-	    frame->Add(panel);
-	    container = panel;
-	}
+    if (thing == 0)
+    {
+        static int containerType = 0;
+        if (containerType == 0)
+        {
+            frame = (Pad_Frame *)win->view->pad->Create_object(PAD_FRAME);
+            frame->Reshape(0, 0, 200, 200);
+            frame->Scale(0, 0, 1 / zoom);
+            frame->Slide(padEvent->pt.x, padEvent->pt.y);
+            container = frame;
+        }
+        else
+        {
+            panel = (Pad_Panel *)win->view->pad->Create_object(PAD_PANEL);
+            panel->Reshape(75, 75, 100, 100);
+            //	    panel->Reshape(0, 0, 100, 100);
+            panel->Scale(0, 0, 1 / zoom);
+            //	    panel->Slide(75, 75);
+            panel->Set_fill((char *)"#8080ff");
+            frame->Add(panel);
+            container = panel;
+        }
 
-	label = (Pad_Label *)win->view->pad->Create_object(PAD_LABEL);
-	l.Printf("Label %d", counter++);
-	label->Set_label(l.Get());
-	label->Preferred_size(dimension);
-	label->Reshape(0, 0, dimension.width, dimension.height);
-	label->Slide(-20, 10);
-	container->Add(label);
+        label = (Pad_Label *)win->view->pad->Create_object(PAD_LABEL);
+        l.Printf("Label %d", counter++);
+        label->Set_label(l.Get());
+        label->Preferred_size(dimension);
+        label->Reshape(0, 0, dimension.width, dimension.height);
+        label->Slide(-20, 10);
+        container->Add(label);
 
-	button = (Pad_Button *)win->view->pad->Create_object(PAD_BUTTON);
-	l.Printf("Button %d", counter++);
-	button->Set_label(l.Get());
-	button->Preferred_size(dimension);
-	button->Reshape(0, 0, dimension.width, dimension.height);
-	button->Slide(50, 50);
-	command = new Pad_Callback(Button_command, label);
-	button->Set_callback(command);
-	container->Add(button);
+        button = (Pad_Button *)win->view->pad->Create_object(PAD_BUTTON);
+        l.Printf("Button %d", counter++);
+        button->Set_label(l.Get());
+        button->Preferred_size(dimension);
+        button->Reshape(0, 0, dimension.width, dimension.height);
+        button->Slide(50, 50);
+        command = new Pad_Callback(static_cast<Pad_EventCallbackProc *>(Button_command),
+                                   label);
+        button->Set_callback(command);
+        container->Add(button);
 
-	containerType = (containerType + 1) % 2;
-    } else {
-	button = (Pad_Button *)win->view->pad->Create_object(PAD_BUTTON);
-	l.Printf("Button %d", counter++);
-	button->Set_label(l.Get());
-	button->Preferred_size(dimension);
-	button->Reshape(padEvent->pt.x, padEvent->pt.y, dimension.width, dimension.height);
-	button->Scale(padEvent->pt.x, padEvent->pt.y, 1 / zoom);
-	command = new Pad_Callback(Button_command, container);
-	button->Set_callback(command);
+        containerType = (containerType + 1) % 2;
     }
-    
+    else
+    {
+        button = (Pad_Button *)win->view->pad->Create_object(PAD_BUTTON);
+        l.Printf("Button %d", counter++);
+        button->Set_label(l.Get());
+        button->Preferred_size(dimension);
+        button->Reshape(padEvent->pt.x, padEvent->pt.y, dimension.width, dimension.height);
+        button->Scale(padEvent->pt.x, padEvent->pt.y, 1 / zoom);
+        command = new Pad_Callback(static_cast<Pad_EventCallbackProc *>(Button_command),
+                                   container);
+        button->Set_callback(command);
+    }
+
     thing = (thing + 1) % 2;
 
-    return(TRUE);
+    return (TRUE);
 }
 
 //
 // Event handler to quit on any keypress
 //
-static Pad_Bool
+static int /* Pad_Bool */
 Key_func(ClientData)
 {
     cout << "Exiting" << endl;
     exit(0);
 
-    return(TRUE);
+    return (TRUE);
 }
 
 static void
-Init_pad_events(Tcl_Interp *interp, Pad_Win *win)
+Init_pad_events(Pad_Win *win)
 {
     Pad_Callback *callback;
 
-    win->interruptible = 0;	// Make animations not get interrupted
+    win->interruptible = 0; // Make animations not get interrupted
 
-    callback = new Pad_Callback(Create_component_func, win);
-    Pad_CreateBinding(interp, win->bindingTable, win->view->pad, "<ButtonPress-1>", callback);
+    callback = new Pad_Callback(static_cast<Pad_EventCallbackProc *>(Create_component_func), win);
+    Pad_CreateBinding(win->bindingTable, win->view->pad, (char *)"<ButtonPress-1>", callback);
 
-    callback = new Pad_Callback(Key_func, win);
-    Pad_CreateBinding(interp, win->bindingTable, Pad_GetUid("all"), "<KeyPress>", callback);
+    callback = new Pad_Callback(static_cast<Pad_CallbackProc *>(Key_func), win);
+    Pad_CreateBinding(win->bindingTable, Pad_GetUid("all"), (char *)"<KeyPress>", callback);
 }

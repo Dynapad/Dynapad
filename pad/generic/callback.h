@@ -36,20 +36,14 @@ class Pad_Event;
 class Pad_Object;
 class Pad_Callback;
 
-typedef void (Pad_InitProc)      (Pad_Language *language, int argc, char **argv);
-typedef int  (Pad_CommandProc)   (ClientData clientData, int argc, char **argv);
-typedef int  (Pad_CompleteProc)  (char *cmd);
-typedef void (Pad_CreateProc)    (Pad_Language *language, char *pathname, Pad_Win *win);
-typedef void (Pad_PromptProc)    (Pad_Language *language, int partial, Pad_String &prompt);
-typedef int  (Pad_EvalProc)      (Pad_Language *language, char *cmd);
-typedef int  (Pad_CallbackProc)  (ClientData clientData);
-
-//typedef int (Pad_EventCallbackProc) (Pad_Object*, ClientData, Pad_Event*);
-
-// Sun's C++ compiler for Solaris can't handle typedef'ed class methods.
-// So we use a macro instead:(
-
-#define Pad_EventCallbackProc(Event) int Event (Pad_Object *, ClientData, Pad_Event *)
+typedef void (Pad_InitProc)          (Pad_Language *language, int argc, char **argv);
+typedef int  (Pad_CommandProc)       (ClientData clientData, int argc, char **argv);
+typedef int  (Pad_CompleteProc)      (char *cmd);
+typedef void (Pad_CreateProc)        (Pad_Language *language, char *pathname, Pad_Win *win);
+typedef void (Pad_PromptProc)        (Pad_Language *language, int partial, Pad_String &prompt);
+typedef int  (Pad_EvalProc)          (Pad_Language *language, char *cmd);
+typedef int  (Pad_CallbackProc)      (ClientData clientData);
+typedef int  (Pad_EventCallbackProc) (Pad_Object *, ClientData, Pad_Event *);
 
 //
 // A Pad_Callback contains a function in any of the available scripting languages.
@@ -59,11 +53,11 @@ typedef int  (Pad_CallbackProc)  (ClientData clientData);
 class Pad_Callback
 {
   private:
-    Pad_Language * language;	         // Language of callback
-    Pad_CallbackProc * func;	         // C++ function pointer
-    Pad_EventCallbackProc((*eventFunc)); // C++ function pointer
-    ClientData     clientData;           // Data for function callback
-    int            refCount;	         // Number of time this callback used within an event binding
+    Pad_Language          *language;	 // Language of callback
+    Pad_CallbackProc      *func;	     // C++ function pointer
+    Pad_EventCallbackProc *eventFunc;  // C++ function pointer
+    ClientData             clientData; // Data for function callback
+    int                    refCount;	 // Number of time this callback used within an event binding
 
   public:
     int      Eval(void);	        // Evaluates script
@@ -75,7 +69,7 @@ class Pad_Callback
     int      Get_refcount(void);
 
     Pad_Callback(Pad_CallbackProc *newFunc, ClientData clientData=NULL);
-    Pad_Callback(Pad_EventCallbackProc((*newEventFunc)), ClientData clientData=NULL);
+    Pad_Callback(Pad_EventCallbackProc *newEventFunc, ClientData clientData=NULL);
     Pad_Callback(Pad_Callback &callback);
     ~Pad_Callback();
 };
