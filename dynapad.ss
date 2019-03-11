@@ -1,3 +1,5 @@
+#lang scheme/gui
+
 (require (lib "compat.ss")); needed for sort
 (current-eventspace (make-eventspace))
 
@@ -28,7 +30,7 @@
 ;(dynaload "arrangeimages.ss")       ; module for load all images from a directory
 (dynaload "formation.ss")           ; base mechanism for defining "rich objects"
 (dynaload "lambdas.ss")
-  (require new-lambda)
+;(require new-lambda)
 (dynaload "command-shortcuts.ss")   ; shortcut functions (mostly for programmers)
 (dynaload "user-preferences.ss")    ; a mechanism for saving characteristics of the dynapad environment.
 

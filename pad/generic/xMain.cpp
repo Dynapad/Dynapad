@@ -56,7 +56,7 @@ int main(int, char **)
     win = Init();
     Main_loop(win);
 
-    return (0);
+    return 0;
 }
 
 static Pad_Win *
@@ -174,7 +174,8 @@ Button_command(Pad_Object *, ClientData clientData, Pad_Event *padEvent)
 
     rect->Slide(10.0 / padEvent->win->view->zoom, 0, TRUE);
 
-    return (TRUE);
+    // return (TRUE);
+    return PAD_OK;
 }
 
 static int /* Pad_Bool */
@@ -253,7 +254,8 @@ Create_component_func(Pad_Object *, ClientData clientData, Pad_Event *padEvent)
 
     thing = (thing + 1) % 2;
 
-    return (TRUE);
+    // return (TRUE);
+    return PAD_OK;
 }
 
 //
@@ -265,7 +267,8 @@ Key_func(ClientData)
     cout << "Exiting" << endl;
     exit(0);
 
-    return (TRUE);
+    // return (TRUE);
+    return PAD_OK;
 }
 
 static void
