@@ -26,15 +26,17 @@ software in general.
 #ifndef TKWIN_H
 #define TKWIN_H 1
 
+#include <tk.h>
+
 #include "defs.h"
 #include "win.h"
 
 //
 // Function prototypes
 //
-extern "C" int  Pad_Init();
-int      Pad_Configure_widget(ClientData clientData, int argc, char *argv[]);
-Pad_Bool Pad_Create_win(char *padName);
+extern "C" int Pad_Init(Tcl_Interp *interp);
+int            Pad_Configure_widget(ClientData clientData, int argc, char *argv[]);
+Pad_Bool       Pad_Create_win(char *padName);
 
 #define Pad_TkWin Pad_Win
 

@@ -25,6 +25,10 @@
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  */
 
+#include <tk.h>
+#include <tcl.h>
+#include <locale.h>
+
 #include "../generic/defs.h"
 #include "../generic/tkwin.h"
 #include "../generic/pad.h"
@@ -73,7 +77,7 @@ Tcl_AppInit(Tcl_Interp *interp)
     }
     Tcl_StaticPackage(interp, "Tk", Tk_Init, (Tcl_PackageInitProc *) NULL);
 
-				// Initialize Pad package
+	// Initialize Pad package
     if (Pad_Init(interp) == PAD_ERROR) {
 	return PAD_ERROR;
     }
