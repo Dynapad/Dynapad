@@ -14,4 +14,4 @@ dynapad_LDFLAGS = $(PLT_LDFLAGS) \
                   $(MAGICKCORE_LIBS) \
                   $(X11_LIBS) \
                   $(FREETYPE2_LIBS)
-dynapad_LDADD = pad/libpad.a
+dynapad_LDADD = pad/unix/libpad.a
