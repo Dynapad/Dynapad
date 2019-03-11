@@ -4,7 +4,7 @@ SUBDIRS = pad/unix
 PAD_CPPFLAGS = -I/pad/generic
 
 bin_PROGRAMS = dynapad
-dynapad_SOURCES = dynapad.cpp
+dynapad_SOURCES = builtin.cpp dynapad.cpp
 dynapad_CPPFLAGS = -Ipad/generic/ \
                    $(PLT_CFLAGS) \
                    $(MAGICKCORE_CFLAGS) \

@@ -112,9 +112,9 @@ static int handler(Display *disp, XErrorEvent *event)
 //
 // Setup procedure to initialize a trap for specific Xlib major/minor code
 //
-void ErrorTrapSetup(Display *disp, int major_code, int )
+void ErrorTrapSetup(Display *disp, int major_code, int _minor_code)
 {
-				// Minor code is ignored for the moment
+	// Minor code is ignored for the moment
     called = 0;
     display = disp;
     code = major_code;

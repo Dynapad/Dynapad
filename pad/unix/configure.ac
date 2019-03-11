@@ -16,16 +16,12 @@ AC_CANONICAL_HOST
 case "${host_os}" in
     darwin*)
       export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/opt/X11/lib/pkgconfig/:/opt/X11/share/pkgconfig/"
-      ;;
+    ;;
 esac
 
 PKG_CHECK_MODULES(X11, [x11])
 AC_SUBST(X11_CFLAGS)
 AC_SUBST(X11_LIBS)
-
-PKG_CHECK_MODULES(TCLTK, [Tcl])
-AC_SUBST(TCLTK_CFLAGS)
-AC_SUBST(TCLTK_LIBS)
 
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT
