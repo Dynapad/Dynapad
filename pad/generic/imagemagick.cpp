@@ -1,10 +1,12 @@
 #include "defs.h"
 #include "imagemagick.h"
 
-#include <stdio.h>
 #include <sys/types.h>
 #include <magick/api.h>
+
+#include <cstdio>
 #include <iostream>
+
 using namespace std;
 
 void

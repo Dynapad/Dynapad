@@ -27,7 +27,15 @@ PKG_CHECK_MODULES(FREETYPE2, [freetype2])
 AC_SUBST(FREETYPE2_CFLAGS)
 AC_SUBST(FREETYPE2_LIBS)
 
-PKG_CHECK_MODULES(MAGICKCORE, [MagickCore])
+# On Darwin, the ImageMagick@6 homebrew recipe is generally 'keg-only'.
+case "${host_os}" in
+    darwin*)
+      export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/imagemagick@6/lib/pkgconfig"
+    ;;
+esac
+
+# REMARK: We need ImageMagick 6, not 7, which deprecates the old api.h.
+PKG_CHECK_MODULES(MAGICKCORE, [MagickCore < 7]) 
 AC_SUBST(MAGICKCORE_CFLAGS)
 AC_SUBST(MAGICKCORE_LIBS)
 

@@ -4568,21 +4568,29 @@ fi
 
 
 
+# On Darwin, the ImageMagick@6 homebrew recipe is generally 'keg-only'.
+case "${host_os}" in
+    darwin*)
+      export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/imagemagick@6/lib/pkgconfig"
+    ;;
+esac
+
+# REMARK: We need ImageMagick 6, not 7, which deprecates the old api.h.
 
 pkg_failed=no
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for MagickCore" >&5
-$as_echo_n "checking for MagickCore... " >&6; }
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for MagickCore < 7" >&5
+$as_echo_n "checking for MagickCore < 7... " >&6; }
 
 if test -n "$MAGICKCORE_CFLAGS"; then
     pkg_cv_MAGICKCORE_CFLAGS="$MAGICKCORE_CFLAGS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"MagickCore\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "MagickCore") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"MagickCore < 7\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "MagickCore < 7") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_MAGICKCORE_CFLAGS=`$PKG_CONFIG --cflags "MagickCore" 2>/dev/null`
+  pkg_cv_MAGICKCORE_CFLAGS=`$PKG_CONFIG --cflags "MagickCore < 7" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
@@ -4594,12 +4602,12 @@ if test -n "$MAGICKCORE_LIBS"; then
     pkg_cv_MAGICKCORE_LIBS="$MAGICKCORE_LIBS"
  elif test -n "$PKG_CONFIG"; then
     if test -n "$PKG_CONFIG" && \
-    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"MagickCore\""; } >&5
-  ($PKG_CONFIG --exists --print-errors "MagickCore") 2>&5
+    { { $as_echo "$as_me:${as_lineno-$LINENO}: \$PKG_CONFIG --exists --print-errors \"MagickCore < 7\""; } >&5
+  ($PKG_CONFIG --exists --print-errors "MagickCore < 7") 2>&5
   ac_status=$?
   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
   test $ac_status = 0; }; then
-  pkg_cv_MAGICKCORE_LIBS=`$PKG_CONFIG --libs "MagickCore" 2>/dev/null`
+  pkg_cv_MAGICKCORE_LIBS=`$PKG_CONFIG --libs "MagickCore < 7" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes
 else
   pkg_failed=yes
@@ -4620,14 +4628,14 @@ else
         _pkg_short_errors_supported=no
 fi
         if test $_pkg_short_errors_supported = yes; then
-	        MAGICKCORE_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "MagickCore" 2>&1`
+	        MAGICKCORE_PKG_ERRORS=`$PKG_CONFIG --short-errors --print-errors --cflags --libs "MagickCore < 7" 2>&1`
         else
-	        MAGICKCORE_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "MagickCore" 2>&1`
+	        MAGICKCORE_PKG_ERRORS=`$PKG_CONFIG --print-errors --cflags --libs "MagickCore < 7" 2>&1`
         fi
 	# Put the nasty error message in config.log where it belongs
 	echo "$MAGICKCORE_PKG_ERRORS" >&5
 
-	as_fn_error $? "Package requirements (MagickCore) were not met:
+	as_fn_error $? "Package requirements (MagickCore < 7) were not met:
 
 $MAGICKCORE_PKG_ERRORS
 

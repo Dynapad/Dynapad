@@ -68,8 +68,8 @@ class Pad_HashTable {
     int Length() const;
 
     // Used by Pad_HashTableIterator (maybe these should be protected friends?)
-    void *Init(Pad_HashSearch &ptr, voidPtr &key);
-    void *Next(Pad_HashSearch ptr, voidPtr &key);
+    void *Init(Pad_HashSearch &ptr, void *key);
+    void *Next(Pad_HashSearch ptr, void *key);
 
   private:
     void Init();

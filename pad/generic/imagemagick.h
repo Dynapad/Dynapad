@@ -1,7 +1,7 @@
 #ifndef IMAGEMAGICK_H
 #define IMAGEMAGICK_H 1
 
-#include <stdio.h>
+#include <cstdio>
 
 void Pad_InitIM();
 unsigned long *Pad_ReadIM(FILE *fp, int* ret_width, int* ret_height);

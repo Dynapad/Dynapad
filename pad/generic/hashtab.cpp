@@ -46,11 +46,7 @@ Pad_HashTable::Init()
         fprintf(stderr, "db_create: %s\n", db_strerror(ret));
         exit(1);
     }
-#if DB_VERSION_MAJOR >= 4 && DB_VERSION_MINOR >= 1
-    if ((ret = dbp->open(dbp, NULL, NULL, NULL, DB_HASH, 0, 0)) != 0) {
-#else
-    if ((ret = dbp->open(dbp, NULL, NULL, DB_HASH, 0, 0)) != 0) {
-#endif
+    if ((ret = dbp->open(dbp, NULL, NULL, NULL, DB_HASH, DB_CREATE, 0)) != 0) {
         dbp->err(dbp, ret, "dbp->open");
         exit(1);
     }
@@ -136,17 +132,13 @@ Pad_HashTable::Length() const
     DB_HASH_STAT *dbstatp;
     int ndata;
 
-#if DB_VERSION_MAJOR >= 4 && DB_VERSION_MINOR >= 3
     if ((ret = dbp->stat(dbp, NULL, &dbstatp, 0)) == 0) {
-#else
-    if ((ret = dbp->stat(dbp, &dbstatp, 0)) == 0) {
-#endif
-	ndata = dbstatp->hash_ndata;
-	free(dbstatp);
-	return ndata;
+        ndata = dbstatp->hash_ndata;
+        free(dbstatp);
+        return ndata;
     } else {
-	dbp->err(dbp, ret, "DB->stat");
-	exit(1);
+        dbp->err(dbp, ret, "DB->stat");
+        exit(1);
     }
 }
 
@@ -177,7 +169,7 @@ Pad_HashTable::Get(void *rawkey)
 
 // Used by Pad_HashTableIterator
 void *
-Pad_HashTable::Init(Pad_HashSearch &dbcp, voidPtr &rawkey)
+Pad_HashTable::Init(Pad_HashSearch &dbcp, void *rawkey)
 {
     int ret;
     DBT key, data;
@@ -191,7 +183,7 @@ Pad_HashTable::Init(Pad_HashSearch &dbcp, voidPtr &rawkey)
 }
 
 void *
-Pad_HashTable::Next(Pad_HashSearch dbcp, voidPtr &rawkey)
+Pad_HashTable::Next(Pad_HashSearch dbcp, void *rawkey)
 {
     int ret;
     DBT key, data;

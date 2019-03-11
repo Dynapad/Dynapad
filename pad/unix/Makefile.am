@@ -78,6 +78,4 @@ libpad_a_SOURCES = x-win-shape.cpp \
 libpad_a_CPPFLAGS = $(X11_CFLAGS) \
                     $(FREETYPE2_CFLAGS) \
                     $(MAGICKCORE_CFLAGS)
-libpad_a_LIBADD = $(X11_LIBS) \
-                  $(FREETYPE2_LIBS) \
-                  $(MAGICKCORE_LIBS)
+libpad_a_LIBADD = 
