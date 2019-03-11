@@ -1,9 +1,12 @@
 AC_PREREQ([2.69])
 AC_INIT([dynapad],[1.0])
 AM_INIT_AUTOMAKE([subdir-objects])
-AC_PROG_CXX
+
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([dynapad.cpp])
+
 AC_CANONICAL_HOST
+AC_PROG_CXX
 
 AC_MSG_CHECKING([minimal-racket])
 PLT=/usr/local/opt/minimal-racket
