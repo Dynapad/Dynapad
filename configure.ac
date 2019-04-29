@@ -2,6 +2,7 @@ AC_PREREQ([2.69])
 AC_INIT([dynapad],[1.0])
 AM_INIT_AUTOMAKE([subdir-objects])
 
+
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([dynapad.cpp])
 
@@ -36,9 +37,11 @@ case "${host_os}" in
     darwin*)
       export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/imagemagick@6/lib/pkgconfig"
     ;;
+    linux*)
+      export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/lib/imagemagick6/pkgconfig"
+    ;;
 esac
 
-# REMARK: We need ImageMagick 6, not 7, which deprecates the old api.h.
 PKG_CHECK_MODULES(MAGICKCORE, [MagickCore < 7]) 
 AC_SUBST(MAGICKCORE_CFLAGS)
 AC_SUBST(MAGICKCORE_LIBS)
@@ -62,9 +65,12 @@ case "${host_os}" in
     darwin*)
       export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/opt/X11/lib/pkgconfig/:/opt/X11/share/pkgconfig/"
     ;;
+    linux*)
+      export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/lib/pkgconfig"
+    ;;
 esac
 
-PKG_CHECK_MODULES(X11, [x11 xft xi Xext])
+PKG_CHECK_MODULES(X11, [x11 xft xi xext])
 AC_SUBST(X11_CFLAGS)
 AC_SUBST(X11_LIBS)
 
