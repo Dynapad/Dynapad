@@ -17,4 +17,4 @@ dynapad_LDFLAGS = $(PLT_LDFLAGS) \
                   $(FREETYPE2_LIBS) \
                   $(FONTCONFIG_LIBS) \
                   -L/usr/local/opt/berkeley-db/lib -ldb
-dynapad_LDADD = pad/unix/libpad.a
+dynapad_LDADD = pad/unix/libpad.a $(PLT_LDADD)

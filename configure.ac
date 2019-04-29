@@ -30,6 +30,10 @@ case "${host_os}" in
       PLT_LDFLAGS="-F $PLT/lib/racket/ -framework Racket" # link as framework
       AC_SUBST(PLT_LDFLAGS)
       ;;
+    linux*)
+      PLT_LDADD="/usr/lib/libracket3m.so"
+      AC_SUBST(PLT_LDADD)
+      ;;
 esac
 
 # On Darwin, the ImageMagick@6 homebrew recipe is generally 'keg-only'.
