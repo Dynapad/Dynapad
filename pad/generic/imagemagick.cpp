@@ -5,6 +5,7 @@
 #include <magick/api.h>
 
 #include <cstdio>
+#include <cstring>
 #include <iostream>
 
 using namespace std;

@@ -37,6 +37,7 @@ software in general.
 #include <stdlib.h>
 #include <math.h>
 #include <errno.h>
+#include <string.h>
 #include <sys/time.h>
 
 #if defined(sun)
