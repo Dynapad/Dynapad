@@ -2792,7 +2792,7 @@ Pad::Find_overlapping(float x1, float y1, float x2, float y2, Pad_List &items, P
 // Return TRUE if successful, or FALSE otherwise.
 //
 Pad_Bool 
-Pad::Set_modifier(char *modifier)
+Pad::Set_modifier(const char *modifier)
 {
     if (modifier[0] == '\0') {
 	mode = 0;
@@ -2810,7 +2810,7 @@ Pad::Set_modifier(char *modifier)
 //
 // Return the current modifier
 //
-char *
+const char *
 Pad::Get_modifier(void)
 {
     return(Pad_GetBindingModifier(mode));

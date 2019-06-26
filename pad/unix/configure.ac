@@ -1,16 +1,14 @@
 AC_PREREQ([2.69])
 AC_INIT([pad],[0.9p5])
-
+AC_CONFIG_SRCDIR([tkAppInit.cpp])
 AC_CONFIG_HEADERS(config.h)
-
-AM_INIT_AUTOMAKE([subdir-objects])
+AC_CONFIG_MACRO_DIRS([m4])
 
 AC_PROG_CXX
-AM_PROG_AR
 AC_PROG_RANLIB
-
-AC_CONFIG_SRCDIR([tkAppInit.cpp])
 AC_CANONICAL_HOST
+
+AM_INIT_AUTOMAKE([foreign subdir-objects])
 
 # On Darwin, X11 (XQuartz) is in a non-standard location.
 case "${host_os}" in

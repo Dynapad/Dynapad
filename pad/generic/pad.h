@@ -280,7 +280,7 @@ Pad_TreeNode  *treeroot;             // root of all Pad_TreeNodes on the pad
             void         Get_ids_from_tag(char *tag, Pad_IList &ids);
             Pad_Layer *  Get_layer_from_name(char *name);
             Pad_Layer *  Get_layer_from_id(int layerId);
-            char *       Get_modifier(void);
+            const char * Get_modifier(void);
             Pad_Object * Get_object_from_id(int id);
             void         Get_objects_from_tag(char *tag, Pad_List &objs);
             Pad_Win *    Get_win(void);
@@ -304,7 +304,7 @@ Pad_TreeNode  *treeroot;             // root of all Pad_TreeNodes on the pad
             void         Set_active(Pad_Bool active);
             void         Set_event_control(Pad_Bool state);
             void         Set_create_event_control(Pad_Bool state);
-            Pad_Bool     Set_modifier(char *modifier);
+            Pad_Bool     Set_modifier(const char *modifier);
             Pad_Bool     Slide(Pad_List &objs, float dx, float dy, Pad_Bool transform=FALSE, int animationTime=0);
             Pad_Bool     Slide(Pad_List &objs, Pad_PList &delta, Pad_Bool transform=FALSE, int animationTime=0);
             Pad_Bool     Snap(float grid, Pad_List &objs);

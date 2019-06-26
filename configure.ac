@@ -1,13 +1,15 @@
 AC_PREREQ([2.69])
 AC_INIT([dynapad],[1.0])
-AM_INIT_AUTOMAKE([subdir-objects])
-
-
-AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([dynapad.cpp])
+AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_MACRO_DIRS([m4])
 
 AC_CANONICAL_HOST
 AC_PROG_CXX
+
+AM_INIT_AUTOMAKE([foreign subdir-objects])
+
+LT_INIT([shared disable-static])
 
 AC_MSG_CHECKING([minimal-racket])
 PLT=/usr/local/opt/minimal-racket
@@ -27,12 +29,12 @@ AC_SUBST(PLT_CFLAGS)
 
 case "${host_os}" in
     darwin*)
-      PLT_LDFLAGS="-F $PLT/lib/racket/ -framework Racket" # link as framework
-      AC_SUBST(PLT_LDFLAGS)
+      PLT_LIBS="-F $PLT/lib/racket/ -framework Racket" # link as framework
+      AC_SUBST(PLT_LIBS)
       ;;
     linux*)
-      PLT_LDADD="/usr/lib/libracket3m.so"
-      AC_SUBST(PLT_LDADD)
+      PLT_LIBS="/usr/lib/libracket3m.so"
+      AC_SUBST(PLT_LIBS)
       ;;
 esac
 

@@ -2078,7 +2078,7 @@ Start_end(Pad_Text *text, char *string, Pad_TextIndex *index)
 }
 
 int 
-Pad_Text::Get_index_from_string(char *given_string, Pad_TextIndex *index)
+Pad_Text::Get_index_from_string(const char *given_string, Pad_TextIndex *index)
 {
     int num;
     char *p;

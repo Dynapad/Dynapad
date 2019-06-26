@@ -146,7 +146,7 @@ class Pad_Text : public Pad_Component
             int Mark(int argc, char **argv);
 
 				// Index commands
-            int  Get_index_from_string(char *string, Pad_TextIndex *index);
+            int  Get_index_from_string(const char *string, Pad_TextIndex *index);
             void Get_index_from_xy(float padx, float pady, Pad_TextIndex *index);
             void Print_index(Pad_TextIndex &index, char *buf, int type);
             void Forward_chars(Pad_TextIndex *index, int count);

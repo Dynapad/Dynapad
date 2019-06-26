@@ -43,7 +43,7 @@ software in general.
 
 // Type name macro that trait types can use
 #define PAD_TRAIT_TYPE(N) \
-  virtual char* Type_name(void) {return N;}
+  virtual const char *Type_name(void) {return N;}
 
 
 class Pad_Trait {

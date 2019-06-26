@@ -178,11 +178,9 @@ static int initialized = 0;
  */
 
 typedef struct {
-    char *name;			/* Name of modifier. */
-    int mask;			/* Button/modifier mask value,
-                                 * such as Button1Mask. */
-    int flags;			/* Various flags;  see below for
-				 * definitions. */
+    char *name;         /* Name of modifier. */
+    int mask;			/* Button/modifier mask value, such as Button1Mask. */
+    int flags;			/* Various flags;  see below for definitions. */
 } ModInfo;
 
 /*
@@ -268,11 +266,9 @@ static Pad_HashTable *modTable;
  */
 
 typedef struct {
-    char *name;			/* Name of event. */
-    int type;			/* Event type for X, such as
-				 * ButtonPress. */
-    int eventMask;		/* Mask bits (for XSelectInput)
-				 * for this event type. */
+    const char *name;   /* Name of event. */
+    int type;			/* Event type for X, such as ButtonPress. */
+    int eventMask;		/* Mask bits (for XSelectInput) for this event type. */
 } EventInfo;
 
 /*
@@ -481,10 +477,10 @@ Pad_Get_y(XEvent *event, Pad_Event *)
  *--------------------------------------------------------------
  */
 
-char *
+const char *
 Pad_GetEventName(int type)
 {
-    char *name = NULL;
+    const char *name = NULL;
     EventInfo *eiPtr;
 
     for (eiPtr = eventArray; eiPtr->name != NULL; eiPtr++) {
@@ -511,7 +507,7 @@ Pad_GetEventName(int type)
  */
 
 void
-Pad_AddBindingModifier(char *modifier)
+Pad_AddBindingModifier(const char *modifier)
 {
     int rc;
     int new_modifier;
@@ -588,10 +584,10 @@ Pad_GetBindingModifier(char *modifier)
     return(mode);
 }
 
-char *
+const char *
 Pad_GetBindingModifier(int mode)
 {
-    char *modifier;
+    const char *modifier;
     ModInfo *modPtr;
     Pad_HashSearch search;
     void *key;
@@ -629,7 +625,7 @@ Pad_GetBindingModifier(int mode)
 BindingTable *
 Pad_CreateBindingTable()
 {
-    register BindingTable *bindPtr;
+    BindingTable *bindPtr;
     int i;
 
     /*
@@ -638,8 +634,8 @@ Pad_CreateBindingTable()
      */
 
     if (!initialized) {
-	register ModInfo *modPtr;
-	register EventInfo *eiPtr;
+	ModInfo *modPtr;
+	EventInfo *eiPtr;
 	int dummy;
 
 	initialized = 1;
@@ -753,7 +749,7 @@ unsigned long
 Pad_CreateBinding(BindingTable *bindPtr, ClientData object, 
 		  char *eventString, Pad_Callback *callback)
 {
-    register PatSeq *psPtr;
+    PatSeq *psPtr;
     unsigned long eventMask;
 
     psPtr = FindSequence(bindPtr, object, eventString, 1, &eventMask);
@@ -793,7 +789,7 @@ Pad_CreateBinding(BindingTable *bindPtr, ClientData object,
 int
 Pad_DeleteBinding(BindingTable *bindPtr, ClientData object, char *eventString)
 {
-    register PatSeq *psPtr, *prevPtr;
+    PatSeq *psPtr, *prevPtr;
     unsigned long eventMask;
 
     psPtr = FindSequence(bindPtr, object, eventString, 0, &eventMask);
@@ -878,7 +874,7 @@ Pad_DeleteBinding(BindingTable *bindPtr, ClientData object, char *eventString)
 Pad_Callback *
 Pad_GetCallback(BindingTable *bindPtr, ClientData object, char *eventString)
 {
-    register PatSeq *psPtr;
+    PatSeq *psPtr;
     unsigned long eventMask;
 
     psPtr = FindSequence(bindPtr, object, eventString, 0, &eventMask);
@@ -911,7 +907,7 @@ Pad_GetCallback(BindingTable *bindPtr, ClientData object, char *eventString)
 void
 Pad_GetAllBindings(BindingTable *bindPtr, ClientData object, Pad_List &list)
 {
-    register PatSeq *psPtr;
+    PatSeq *psPtr;
     Pad_String *string;
 
     if (!(psPtr = (PatSeq *)bindPtr->objectTable->Get((void *)object))) {
@@ -950,11 +946,11 @@ Pad_GetAllBindings(BindingTable *bindPtr, ClientData object, Pad_List &list)
 static void
 PrintPatSeq(Pad_String *ds, PatSeq *psPtr)
 {
-    register Pattern *patPtr;
+    Pattern *patPtr;
     char c, buffer[10];
     int patsLeft, needMods;
-    register ModInfo *modPtr;
-    register EventInfo *eiPtr;
+    ModInfo *modPtr;
+    EventInfo *eiPtr;
     Pad_HashSearch searchPtr;
     void *key;
 
@@ -1064,7 +1060,7 @@ PrintPatSeq(Pad_String *ds, PatSeq *psPtr)
 void
 Pad_DeleteAllBindings(BindingTable *bindPtr, ClientData object)
 {
-    register PatSeq *psPtr, *prevPtr;
+    PatSeq *psPtr, *prevPtr;
     PatSeq *nextPtr;
 
     if (!(psPtr = (PatSeq *)bindPtr->objectTable->Get((void *)object))) {
@@ -1462,9 +1458,9 @@ FindSequence(BindingTable *bindPtr, ClientData object, char *eventString,
 {
     Pattern pats[EVENT_BUFFER_SIZE];
     int numPats;
-    register char *p;
-    register Pattern *patPtr;
-    register PatSeq *psPtr, *found;
+    char *p;
+    Pattern *patPtr;
+    PatSeq *psPtr, *found;
 #define FIELD_SIZE 48
     char field[FIELD_SIZE];
     int flags, count, newc;
@@ -1472,7 +1468,7 @@ FindSequence(BindingTable *bindPtr, ClientData object, char *eventString,
     unsigned long eventMask;
     PatternTableKey key;
     int user_modifier = 0;
-    register EventInfo *eiPtr;
+    EventInfo *eiPtr;
 
     /*
      *-------------------------------------------------------------
@@ -1540,7 +1536,7 @@ FindSequence(BindingTable *bindPtr, ClientData object, char *eventString,
 	count = 1;
 	p++;
 	while (1) {
-	    register ModInfo *modPtr;
+	    ModInfo *modPtr;
 	    p = GetField(p, field, FIELD_SIZE);
 	    modPtr = (ModInfo *)modTable->Get((void *)field);
 	    if (modPtr == NULL) {
@@ -1721,7 +1717,7 @@ FindSequence(BindingTable *bindPtr, ClientData object, char *eventString,
  */
 
 static char *
-GetField(register char *p, register char *copy, int size)
+GetField(char *p, char *copy, int size)
 {
     while ((*p != '\0') && !isspace(UCHAR(*p)) && (*p != '>')
 	    && (*p != '-') && (size > 1)) {
@@ -1755,7 +1751,7 @@ GetField(register char *p, register char *copy, int size)
  */
 
 static KeySym
-GetKeySym(Pad_Display *dispPtr, register XEvent *eventPtr)
+GetKeySym(Pad_Display *dispPtr, XEvent *eventPtr)
 {
     KeySym sym;
     int index;
@@ -1837,17 +1833,17 @@ GetKeySym(Pad_Display *dispPtr, register XEvent *eventPtr)
  */
 
 static PatSeq *
-MatchPatterns(Pad_Display *dispPtr, BindingTable *bindPtr, register PatSeq *psPtr, int mode)
+MatchPatterns(Pad_Display *dispPtr, BindingTable *bindPtr, PatSeq *psPtr, int mode)
 {
-    register PatSeq *bestPtr = NULL;
+    PatSeq *bestPtr = NULL;
 
     /*
      * Iterate over all the pattern sequences.
      */
 
     for ( ; psPtr != NULL; psPtr = psPtr->nextSeqPtr) {
-	register XEvent *eventPtr;
-	register Pattern *patPtr;
+	XEvent *eventPtr;
+	Pattern *patPtr;
 	Window window;
 	int *detailPtr;
 	int patCount, ringCount, flags, state;
@@ -1976,7 +1972,7 @@ MatchPatterns(Pad_Display *dispPtr, BindingTable *bindPtr, register PatSeq *psPt
 		}
 	    }
 	    if (psPtr->flags & PAT_NEARBY) {
-		register XEvent *firstPtr;
+		XEvent *firstPtr;
 		unsigned long timeDiff;
 
 		firstPtr = &bindPtr->eventRing[bindPtr->curEvent];
@@ -2013,7 +2009,7 @@ MatchPatterns(Pad_Display *dispPtr, BindingTable *bindPtr, register PatSeq *psPt
 	 */
 
 	if (bestPtr != NULL) {
-	    register Pattern *patPtr2;
+	    Pattern *patPtr2;
 	    int i;
 
 	    if (psPtr->numPats != bestPtr->numPats) {
@@ -2075,7 +2071,7 @@ static void
 InitKeymapInfo(Pad_Display *dispPtr)
 {
     XModifierKeymap *modMapPtr;
-    register KeyCode *codePtr;
+    KeyCode *codePtr;
     KeySym keysym;
     int count, i, j, max, arraySize;
 #define KEYCODE_ARRAY_SIZE 20

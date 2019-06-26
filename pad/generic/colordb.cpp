@@ -42,7 +42,7 @@ software in general.
 
 typedef struct {
     unsigned char r, g, b;
-    char *name;
+    const char *name;
 } ColorName;
 
 static ColorName colorNames[] = {

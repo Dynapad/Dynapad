@@ -25,7 +25,7 @@
 #define ACCENTBASE	400
 
 typedef struct pschar {
-    char *name;
+    const char *name;
     int code;
 } pschar;
 

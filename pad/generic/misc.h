@@ -172,5 +172,6 @@ void Pad_RegExpFree(Pad_RegExp regexp);
 
 
 #ifndef HAVE_STRCASECMP_PROTO
-extern "C" int strcasecmp(const char *str1, const char *str2) throw ();
+// note: was previous throw ()/ noexcept(true)
+extern "C" int strcasecmp(const char *str1, const char *str2);
 #endif

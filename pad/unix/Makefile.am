@@ -1,4 +1,5 @@
 AUTOMAKE_OPTIONS = foreign
+ACLOCAL_AMFLAGS = -I m4
 
 CFLAGS = --pedantic -Wall -std=c99 -O2
 # LDFLAGS = 

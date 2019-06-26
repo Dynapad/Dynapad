@@ -81,23 +81,23 @@ class Pad_Callback;
 //
 // Declare function prototypes
 //
-void     Pad_AddBindingModifier(char *modifier);
+void     Pad_AddBindingModifier(const char *modifier);
 void     Pad_BindEvent(BindingTable *bindingTable, XEvent *eventPtr, Pad_Event *padEvent,
 		       int numObjects, ClientData *objectPtr, Pad_Object *itemPtr);
 BindingTable *Pad_CreateBindingTable();
 unsigned long Pad_CreateBinding(BindingTable *bindingTable, ClientData object, 
-				char *eventString, Pad_Callback *callback);
+				const char *eventString, Pad_Callback *callback);
 void     Pad_DeleteAllBindings(BindingTable *bindingTable, ClientData object);
 int      Pad_DeleteBinding(BindingTable *bindingTable, ClientData object, 
-			   char *eventString);
-Pad_Bool Pad_DeleteBindingModifier(char *modifier);
+			   const char *eventString);
+Pad_Bool Pad_DeleteBindingModifier(const char *modifier);
 void     Pad_DeleteBindingTable(BindingTable *bindingTable);
 Pad_Callback *   Pad_GetCallback(BindingTable *bindingTable, ClientData object, char *eventString);
 void     Pad_GetAllBindings(BindingTable *bindingTable, ClientData object,
 		Pad_List &list);
-int      Pad_GetBindingModifier(char *modifier);
-char *   Pad_GetBindingModifier(int mode);
-char *   Pad_GetEventName(int type);
-void     Pad_Expand_event_macros(char input,Pad_Event *padEvent,KeySym keySym);
+int      Pad_GetBindingModifier(const char *modifier);
+const char *   Pad_GetBindingModifier(int mode);
+const char *   Pad_GetEventName(int type);
+void     Pad_Expand_event_macros(char input, Pad_Event *padEvent, KeySym keySym);
 
 #endif
