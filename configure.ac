@@ -24,15 +24,16 @@ AC_SUBST(PLT)
 AC_MSG_RESULT([$PLT])
 
 
-PLT_CFLAGS=[-I$PLT/include/racket/]
+PLT_CFLAGS="-I$PLT/include/racket/"
 AC_SUBST(PLT_CFLAGS)
 
 case "${host_os}" in
     darwin*)
-      PLT_LIBS="-F $PLT/lib/racket/ -framework Racket" # link as framework
+      PLT_LIBS="-F$PLT/lib/racket/ -framework Racket" # link as framework
       AC_SUBST(PLT_LIBS)
       ;;
     linux*)
+      # note: this doesn't seem portable...
       PLT_LIBS="/usr/lib/libracket3m.so"
       AC_SUBST(PLT_LIBS)
       ;;
