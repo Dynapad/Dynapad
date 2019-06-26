@@ -9,7 +9,7 @@
 (load-relative "src/history/ids.ss") ;move this elsewhere?
 (load-relative "src/utils/hilights.ss")
 
-(load-relative-extension "dynapad.so")
+(load-relative-extension ".libs/dynapad")
 (define padthread
   (let
       ((new-es (make-eventspace)))

@@ -9,7 +9,14 @@ These instructions are for macOS.
 
 # AutoTools
 
-> aclocal
-> autoconf
-> autoheader (maybe?)
-> automake --add-missing
+> ./autogen.sh
+> ./configure [--with-plt=...]
+> make
+
+# Running
+
+> mred -z -S collects
+
+Then:
+
+> (load "dynapad.ss")

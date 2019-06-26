@@ -1,4 +1,4 @@
-#lang scheme/gui
+#lang racket/gui
 
 (require (lib "compat.ss")); needed for sort
 (current-eventspace (make-eventspace))
@@ -10,12 +10,11 @@
 
 (load-relative "dynapad-c-api.ss")
 
-(define *home-directory* #f)
-(define *dynapad-directory* (current-load-relative-directory))
-(current-library-collection-paths
-  (cons
-    (build-path *dynapad-directory* "collects")
-    (current-library-collection-paths)))
+; This doesn't work. Instead use `mred -z -S collects`.
+; (current-library-collection-paths
+;   (cons
+;     (build-path (current-directory) "collects")
+;     (current-library-collection-paths)))
 
 ;-----------------------------------------------------------------
 (require (lib "pathhack.ss" "misc"))
