@@ -61,17 +61,17 @@
         ((new_list)
             (set! callback_list new_list)
             (when (not (list? new_list))
-              (set! callback_list ())
+              (set! callback_list '())
               (error "callback must be a list or null -->" new_list)))
         ; 2
         ((cmd new_fnc)
-          (if (equal? cmd 'add)
-            (if (not (member (list new_fnc) callback_list))
+          (when (equal? cmd 'add)
+            (when (not (member (list new_fnc) callback_list))
               (push! (list new_fnc) callback_list)))
-	  (if (equal? cmd 'add-last)
-	    (if (not (member (list new_fnc) callback_list))
+	  (when (equal? cmd 'add-last)
+	    (when (not (member (list new_fnc) callback_list))
 	      (endpush! callback_list (list new_fnc))))
-          (if (equal? cmd 'remove)
+          (when (equal? cmd 'remove)
             (set! callback_list (remove (list new_fnc) callback_list))) )
         ; 3
         ((cmd new_fnc name)
@@ -88,7 +88,7 @@
 	        (map
 		 (lambda (p)
 		   (if (and (not (null? (cdr p))) (equal? (cadr p) name))
-		       () ;
+		       '() ;
 		       (list p)))
 		 callback_list))))
 	  ((remq)
@@ -96,7 +96,7 @@
               (map
                 (lambda (p)
                   (if (and (not (null? (cdr p))) (eq? (cadr p) name))
-                    () ;
+                    '() ;
                     (list p)))
                 callback_list))))
 	  )
@@ -105,7 +105,7 @@
 (define-syntax exec-any-callbacks
   (syntax-rules ()
     ((_ callback_list obj ...)
-     (if (not (null? callback_list))
+     (when (not (null? callback_list))
        (for-each
          (lambda (callback-fn-pair) ((car callback-fn-pair) obj ...))
          callback_list)) )))

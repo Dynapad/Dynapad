@@ -64,21 +64,21 @@
       (_writable #t)
       (_deletable #t)
       (_takegroupevents #f)
-      (_layer-stack ())
+      (_layer-stack '())
       (_select_highlight_func #f)
       (_post-build-ops null)
       (_onetime-writeoptions null)
       (_alternate-build-fn #f)
       (_dependents-fn #f)
 
-      (_delete-callbacks   ()) (_afterdelete-callbacks   ())
-      (_slide-callbacks    ()) (_afterslide-callbacks    ())
-      (_position-callbacks ()) (_afterposition-callbacks ())
-      (_scale-callbacks    ()) (_afterscale-callbacks    ())
-      (_width-callbacks    ()) (_afterwidth-callbacks    ())
-      (_height-callbacks   ()) (_afterheight-callbacks   ())
-      (_select-callbacks   ())
-      (_reposition-callbacks ())   (_resize-callbacks ())
+      (_delete-callbacks   '()) (_afterdelete-callbacks   '())
+      (_slide-callbacks    '()) (_afterslide-callbacks    '())
+      (_position-callbacks '()) (_afterposition-callbacks '())
+      (_scale-callbacks    '()) (_afterscale-callbacks    '())
+      (_width-callbacks    '()) (_afterwidth-callbacks    '())
+      (_height-callbacks   '()) (_afterheight-callbacks   '())
+      (_select-callbacks   '())
+      (_reposition-callbacks '())   (_resize-callbacks '())
       (_physics? #f)
       (_mass 1)
       (_force (list 0 0))
@@ -257,7 +257,7 @@
         (exec-any-callbacks _delete-callbacks this)
         (sch_delete cptr)
         (set! cptr #f))
-      (if (eq? this (send _dynapad lastcentered)) (send _dynapad lastcentered #f))
+      (when (eq? this (send _dynapad lastcentered)) (send _dynapad lastcentered #f))
       (for-each (lambda (actor) (send actor delete)) actor_list)
       (for-each (lambda (tuple) (send (car tuple) delete)) (send this hilights)) ;includes select, if any
       (exec-any-callbacks _afterdelete-callbacks this))
@@ -359,7 +359,7 @@
 	(send this delete)))
 
     (define (update-any-hilights)
-      (if (not (null? _hilights))
+      (when (not (null? _hilights))
 	  (let ((n 0))
 	    (foreach _hilights (lambda (hl) (send (car hl) update (_++ n)))))))
 
@@ -678,7 +678,7 @@
 	((newlink) (link newlink))))
 
     (define (fix alist)
-      (if (number? initlink) (link (cadr (assq initlink alist)))))
+      (when (number? initlink) (link (cadr (assq initlink alist)))))
 
     (define (center . args)
       (send/apply (dynapad) center this args)
@@ -772,7 +772,7 @@
       (case-lambda
         (() (sch_sticky cptr))
 	((newsticky) (sch_sticky cptr newsticky)
-	             (if selected
+	             (when selected
 			 (send selected sticky newsticky)))))
 
     (define findable
@@ -817,8 +817,8 @@
 
     (super-instantiate ())
     ;(findable #t); CHANGED default to #t; see line 346 in pad/generic/object.cpp
-    (if initposition (position initposition))
-    (if initanchor (anchor initanchor))
+    (when initposition (position initposition))
+    (when initanchor (anchor initanchor))
 
 )) ;end dynaobject%
 
@@ -898,7 +898,7 @@
 ;               which returns the element, or a modified version,
 ;                             or () in order prevent writing.
 
-(define *filter-alist-functions* ())
+(define *filter-alist-functions* '())
 (define alist-filters (callback-accessor-functions *filter-alist-functions*))
 
 (define (filter-alist object alist)
@@ -1029,7 +1029,7 @@
       (super delete))      
 
     (define (ungroup)
-      (send this members ())
+      (send this members '())
       (delete)
       #t)
 
@@ -1047,7 +1047,7 @@
     (super-instantiate (_dynapad)); (sch_makegroup (send _dynapad get-cptr) this)))
     (dynaclass 'group%)
     (send this dependents-fn (lambda (me) (send me members)))
-    (if initmembers (members initmembers))))
+    (when initmembers (members initmembers))))
 
 (define panel%
   (class dynaobject%
@@ -1118,30 +1118,29 @@
 
     (define/override (select . args)
       (if (null? args) (super select)
-	(when (not selected)
-	  (set! selected (make-object select% _dynapad this (car args))))
-	  ))
+	      (when (not selected)
+	        (set! selected (make-object select% _dynapad this (car args))))))
 
     (super-instantiate (_dynapad (sch_makepanel (send _dynapad get-cptr) this)))
     (dynaclass 'panel%)
     (coords initcoords)
-    (if initmembers (members initmembers))))
+    (when initmembers (members initmembers))))
 
 (define dynapad%
   (class frame% ;object%
     (init (name ".dynapad"))
-    (field (cptr #f) (_selectlist ()) (_event-state-object #f) (path #f)
+    (field (cptr #f) (_selectlist '()) (_event-state-object #f) (path #f)
       (_ztimer #f) (_stimer #f) (_zinterval 10)
       (_dynaclass #f) (_defaultpen "white") (_defaultpenwidth 1) (_defaultfill "none")
       (_defaultfont "Times") (_fill? #f)
       (_select_render_script #f) (_lastcentered #f)
       (_main-layer #f) (_status #f) (_hidden #f) (_writable #t)
-      (_afterzoom-callbacks ())
-      (_afterdrag-callbacks ()) (_beforedrag-callbacks ())
+      (_afterzoom-callbacks '())
+      (_afterdrag-callbacks '()) (_beforedrag-callbacks '())
       (_varlist `((this ,this)) )
       (_eventModeStack null) ;(list "Run"))
       (_drag_and_drop_object #f)
-      (_reject-save-filters ())
+      (_reject-save-filters '())
       )
     (override
      center focus)
@@ -1215,19 +1214,19 @@
     (define afterzoom-callbacks (callback-accessor-functions _afterzoom-callbacks))
 
     (define (do-afterdrag-callbacks evnt obj-list)
-      (if _drag_and_drop_object
+      (when _drag_and_drop_object
         (set! obj-list
           (send _drag_and_drop_object respond-to-drop evnt obj-list)))
-      (if _afterdrag-callbacks
+      (when _afterdrag-callbacks
         (exec-any-callbacks _afterdrag-callbacks this evnt obj-list)))
 
     (define afterdrag-callbacks (callback-accessor-functions _afterdrag-callbacks))
 
     (define (do-beforedrag-callbacks evnt obj-list)
-      ;(if _drag_and_drop_object
+      ;(when _drag_and_drop_object
       ;  (set! obj-list
       ;    (send _drag_and_drop_object respond-to-drop evnt obj-list)))
-      (if _beforedrag-callbacks
+      (when _beforedrag-callbacks
         (exec-any-callbacks _beforedrag-callbacks this evnt obj-list)))
 
     (define beforedrag-callbacks (callback-accessor-functions _beforedrag-callbacks))
@@ -1235,17 +1234,17 @@
     (define/public drag_and_drop_object (get/set _drag_and_drop_object))
 
     (define (init-drag evnt objlist)
-      (if _drag_and_drop_object
+      (when _drag_and_drop_object
         (send _drag_and_drop_object init-drag evnt objlist)))
 
     (define (do-duringdrag evnt)
-      (if _drag_and_drop_object
+      (when _drag_and_drop_object
         (send _drag_and_drop_object respond-to-drag evnt)))
 
     (define eventModeStack
       (case-lambda
         (() _eventModeStack)
-	((newstack) (set! _eventModeStack newstack))))
+	      ((newstack) (set! _eventModeStack newstack))))
 
     (define (xinputdevices)
       (sch_xinputdevices cptr))
@@ -1431,7 +1430,7 @@
 	((l anim twostep?) (center l anim twostep? 0.5 0.5))
 	((l anim twostep? x y) (center l anim twostep? x y 0.85))
 	((l anim twostep? x y zoom)
-          (if (eq? l 'all) (set! l (send this objects)))
+          (when (eq? l 'all) (set! l (send this objects)))
 	  (set! _lastcentered (if (list? l) #f l))
 	  (let*
 	    ((l (if (list? l) l (list l)))
@@ -1456,17 +1455,17 @@
       (sch_layers cptr))
 
     (define (main-layer)
-      (if (not _main-layer) (set! _main-layer (make-object layer% this "main")))
+      (when (not _main-layer) (set! _main-layer (make-object layer% this "main")))
       _main-layer)
 
     (define (status)
-      (if (not _status) (set! _status (make-object layer% this "status")))
+      (when (not _status) (set! _status (make-object layer% this "status")))
       _status)
 
     (define (hidden)
       (when (not _hidden)
         (set! _hidden (make-object layer% this "hidden"))
-	(send _hidden visible #f))
+	      (send _hidden visible #f))
       _hidden)
         
     (define (winid)
@@ -1534,7 +1533,7 @@
     (main-layer)
     (status)
     (setvar 'select-layer (make-object layer% this "select"))
-    (set! _selectlist ())
+    (set! _selectlist '())
     ))
 
 (define baseline%
@@ -1543,7 +1542,7 @@
     (inherit-field cptr selected)
     (inherit dynaclass position)
     (override writeoptions)
-    (field (_coords-callbacks ())  (_aftercoords-callbacks ()))
+    (field (_coords-callbacks '())  (_aftercoords-callbacks '()))
     (public coords coords-callbacks aftercoords-callbacks
 	    pen penwidth abslinestyle? savepenwidth)
 
