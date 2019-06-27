@@ -134,7 +134,7 @@ class Pad_Renderer
     virtual void        Set_border(Pad_Border *border) = 0;
     void                Set_border(Pad_BorderRef &borderref) { Set_border(borderref.border); }
     virtual void        Set_cap_style(unsigned char capStyle) = 0;
-    virtual void        Set_cap_style(char *capStyle) = 0;
+    virtual void        Set_cap_style(const char *capStyle) = 0;
     virtual void        Set_color(Pad_Color *color) = 0;
     void                Set_color(Pad_ColorRef &colorref) { Set_color(colorref.color); }
     virtual void        Set_concave(Pad_Bool concave) = 0;
@@ -235,7 +235,7 @@ class Pad_XRenderer : public Pad_Renderer
     virtual void        Set_abs_line_style(float w, unsigned char capStyle, unsigned char joinStyle);
     virtual void        Set_border(Pad_Border *border);
     virtual void        Set_cap_style(unsigned char capStyle);
-    virtual void        Set_cap_style(char *capStyle);
+    virtual void        Set_cap_style(const char *capStyle);
     virtual void        Set_color(Pad_Color *color);
     virtual void        Set_concave(Pad_Bool concave);
     virtual void        Set_device(Pad_RenderContext *context);

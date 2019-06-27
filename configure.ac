@@ -11,25 +11,26 @@ AM_INIT_AUTOMAKE([foreign subdir-objects])
 
 LT_INIT([shared disable-static])
 
-AC_MSG_CHECKING([minimal-racket])
-PLT=/usr/local/opt/minimal-racket
+AC_MSG_CHECKING([racket])
+PLT=/usr/local/opt/racket
 AC_ARG_WITH(plt, 
   [AS_HELP_STRING([--with-plt], 
-                  [location of minimal-racket])], 
+                  [location of racket distribution])], 
   [PLT="$withval"])
-if test ! -f $PLT/include/racket/scheme.h; then
+if test ! -f $PLT/include/scheme.h; then
   AC_MSG_ERROR([Racket not found at $PLT])
 fi
 AC_SUBST(PLT)
 AC_MSG_RESULT([$PLT])
 
 
-PLT_CFLAGS="-I$PLT/include/racket/"
+PLT_CFLAGS="-I$PLT/include/"
 AC_SUBST(PLT_CFLAGS)
 
 case "${host_os}" in
     darwin*)
-      PLT_LIBS="-F$PLT/lib/racket/ -framework Racket" # link as framework
+      # removed: -F$PLT/lib/ -framework Racket 
+      PLT_LIBS="$PLT/lib/mzdyn3m.o" # link as framework
       AC_SUBST(PLT_LIBS)
       ;;
     linux*)

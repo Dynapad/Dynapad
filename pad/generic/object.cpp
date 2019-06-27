@@ -1525,7 +1525,7 @@ Pad_Object::Get_layer(void)
 // Maintain the # of objects on this layer.
 //
 void
-Pad_Object::Add_to_layer(char *name)
+Pad_Object::Add_to_layer(const char *name)
 {
     int i, index;
     Pad_Object *l;
@@ -2545,7 +2545,7 @@ Pad_Object::Delete_id(void)
 // An object may only have one copy of a tag.
 //
 void 
-Pad_Object::Add_tag(char *tag)
+Pad_Object::Add_tag(const char *tag)
 {
     int newentry;
     Pad_Uid uid;

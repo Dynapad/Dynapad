@@ -178,7 +178,7 @@ static int initialized = 0;
  */
 
 typedef struct {
-    char *name;         /* Name of modifier. */
+    const char *name;   /* Name of modifier. */
     int mask;			/* Button/modifier mask value, such as Button1Mask. */
     int flags;			/* Various flags;  see below for definitions. */
 } ModInfo;
@@ -393,9 +393,9 @@ static int flagArray[myTK_LASTEVENT] = {
 static void		ChangeScreen(char *dispName, int screenIndex);
 static PatSeq *		FindSequence(BindingTable *bindPtr,
 			    ClientData object,
-			    char *eventString, int create,
+			    const char *eventString, int create,
 			    unsigned long *maskPtr);
-static char *		GetField(char *p, char *copy, int size);
+static const char *	GetField(const char *p, char *copy, int size);
 static KeySym		GetKeySym(Pad_Display *dispPtr,
 			    XEvent *eventPtr);
 static void		InitKeymapInfo(Pad_Display *dispPtr);
@@ -513,16 +513,19 @@ Pad_AddBindingModifier(const char *modifier)
     int new_modifier;
     ModInfo *modPtr;
 
-				// First check to see if it's already there
+	// First check to see if it's already there
     rc = Pad_GetBindingModifier(modifier);
     if (rc == 0) {
-	modPtr = new ModInfo;
-	modPtr->name = new char[strlen(modifier) + 1];
-	strcpy(modPtr->name, modifier);
-	modPtr->mask = USER_MASK;
-	modPtr->flags = max_mode;
-	max_mode += USER;
-	modTable->Set((void *)modPtr->name, (void *)modPtr);
+		modPtr = new ModInfo;
+
+		char *name = new char[strlen(modifier) + 1];
+		strcpy(name, modifier);
+
+		modPtr->name = name;
+		modPtr->mask = USER_MASK;
+		modPtr->flags = max_mode;
+		max_mode += USER;
+		modTable->Set((void *)modPtr->name, (void *)modPtr);
     }
 }
 
@@ -541,7 +544,7 @@ Pad_AddBindingModifier(const char *modifier)
  */
 
 Pad_Bool
-Pad_DeleteBindingModifier(char *modifier)
+Pad_DeleteBindingModifier(const char *modifier)
 {
     int rc;
 
@@ -570,7 +573,7 @@ Pad_DeleteBindingModifier(char *modifier)
  */
 
 int
-Pad_GetBindingModifier(char *modifier)
+Pad_GetBindingModifier(const char *modifier)
 {
     int mode;
     ModInfo *modPtr;
@@ -747,7 +750,7 @@ Pad_DeleteBindingTable(BindingTable *bindPtr)
 
 unsigned long
 Pad_CreateBinding(BindingTable *bindPtr, ClientData object, 
-		  char *eventString, Pad_Callback *callback)
+		  const char *eventString, Pad_Callback *callback)
 {
     PatSeq *psPtr;
     unsigned long eventMask;
@@ -787,7 +790,7 @@ Pad_CreateBinding(BindingTable *bindPtr, ClientData object,
  */
 
 int
-Pad_DeleteBinding(BindingTable *bindPtr, ClientData object, char *eventString)
+Pad_DeleteBinding(BindingTable *bindPtr, ClientData object, const char *eventString)
 {
     PatSeq *psPtr, *prevPtr;
     unsigned long eventMask;
@@ -872,7 +875,7 @@ Pad_DeleteBinding(BindingTable *bindPtr, ClientData object, char *eventString)
  */
 
 Pad_Callback *
-Pad_GetCallback(BindingTable *bindPtr, ClientData object, char *eventString)
+Pad_GetCallback(BindingTable *bindPtr, ClientData object, const char *eventString)
 {
     PatSeq *psPtr;
     unsigned long eventMask;
@@ -1453,12 +1456,12 @@ Pad_BindEvent(BindingTable *bindPtr, XEvent *eventPtr, Pad_Event *padEvent,
  */
 
 static PatSeq *
-FindSequence(BindingTable *bindPtr, ClientData object, char *eventString, 
+FindSequence(BindingTable *bindPtr, ClientData object, const char *eventString, 
 	     int create, unsigned long *maskPtr)
 {
     Pattern pats[EVENT_BUFFER_SIZE];
     int numPats;
-    char *p;
+    const char *p;
     Pattern *patPtr;
     PatSeq *psPtr, *found;
 #define FIELD_SIZE 48
@@ -1716,8 +1719,8 @@ FindSequence(BindingTable *bindPtr, ClientData object, char *eventString,
  *----------------------------------------------------------------------
  */
 
-static char *
-GetField(char *p, char *copy, int size)
+static const char *
+GetField(const char *p, char *copy, int size)
 {
     while ((*p != '\0') && !isspace(UCHAR(*p)) && (*p != '>')
 	    && (*p != '-') && (size > 1)) {

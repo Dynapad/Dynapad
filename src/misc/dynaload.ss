@@ -1,6 +1,12 @@
+(module dynaload mzscheme
+  (provide
+    dynaload)
+    
+(require (lib "pathhack.ss" "misc"))
 
 ;--- dynaload ----------------------------------------------------
 
+(define *dynapad-directory* (current-load-relative-directory))
 (define *dynaload-list* ())
 
 (define (dynaload file)
@@ -48,3 +54,5 @@
   (if (file-exists? filename)
     (begin (load filename) #t)
     (error "can't find app:" filename)))
+
+)

@@ -1,6 +1,7 @@
-#lang racket/gui
-
 (require (lib "compat.ss")); needed for sort
+(require mzscheme)
+(require scheme/gui)
+
 (current-eventspace (make-eventspace))
 
 (define (announce-module-loading name) #f)
@@ -10,15 +11,18 @@
 
 (load-relative "dynapad-c-api.ss")
 
-; This doesn't work. Instead use `mred -z -S collects`.
+(define *home-directory* #f)
+(define *dynapad-directory* (current-load-relative-directory))
+
+; This doesn't work. Instead use `mred -z -S collects` to add to path.
+; It seems like require forms are evaluated before this can be evaluated..?
 ; (current-library-collection-paths
 ;   (cons
-;     (build-path (current-directory) "collects")
+;     (build-path *dynapad-directory* "collects")
 ;     (current-library-collection-paths)))
 
 ;-----------------------------------------------------------------
 (require (lib "pathhack.ss" "misc"))
-
 (load-relative "src/misc/dynaload.ss")
 
 (dynaload "alias.ss")               ; allows aliasing of pathnames
@@ -33,7 +37,7 @@
 (dynaload "command-shortcuts.ss")   ; shortcut functions (mostly for programmers)
 (dynaload "user-preferences.ss")    ; a mechanism for saving characteristics of the dynapad environment.
 
-(define *list-of-all-dynapads* ())
+(define *list-of-all-dynapads* '())
 
 (define (make-new-dynapad stringname)
   (let ((newPAD (make-object dynapad% stringname)))

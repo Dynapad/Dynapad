@@ -394,9 +394,9 @@ class Pad_Object
 
 public:
             Pad_Bool Add_alias(Pad_Object *obj);
-            void     Add_tag(char *tag);
+            void     Add_tag(const char *tag);
             void     Add_to_drawing_order(Pad_Object *prev_obj);
-    virtual void     Add_to_layer(char *name);
+    virtual void     Add_to_layer(const char *name);
     virtual Pad_Bool Append_coords(Pad_PList &pts, Pad_Bool object_coords);
     virtual Pad_Bool Check_for_render(void);
     virtual Pad_Bool Check_render_clipped(void); // tests render_clipped

@@ -244,7 +244,7 @@ Pad_TreeNode  *treeroot;             // root of all Pad_TreeNodes on the pad
             Pad_Bool     Align(Pad_List &objs, int type, Pad_Bool anchor=FALSE);
             Pad_Bool     Align(Pad_List &objs, int type, Pad_PList &coords, Pad_Bool overlapOnly=FALSE, 
 			       Pad_Bool anchor=FALSE);
-            Pad_Layer  * Create_layer(char *name);
+            Pad_Layer  * Create_layer(const char *name);
     virtual Pad_Object * Create_object(int type);
             void         Create_treeroot(void);
     virtual void         Damage(void);                          // Mark the pad surface as changed
@@ -278,7 +278,7 @@ Pad_TreeNode  *treeroot;             // root of all Pad_TreeNodes on the pad
             Pad_Object * First();
             Pad_Bool     Get_active(void);
             void         Get_ids_from_tag(char *tag, Pad_IList &ids);
-            Pad_Layer *  Get_layer_from_name(char *name);
+            Pad_Layer *  Get_layer_from_name(const char *name);
             Pad_Layer *  Get_layer_from_id(int layerId);
             const char * Get_modifier(void);
             Pad_Object * Get_object_from_id(int id);

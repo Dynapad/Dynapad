@@ -162,7 +162,7 @@
 (define (send-nd-objs-aux lst msg . args)
   (for-each
     (lambda (x)
-      (if (not (send x deleted?))
+      (when (not (send x deleted?))
         (eval `(send/apply ,x ,msg ',args))))
     lst))
 

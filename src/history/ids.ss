@@ -51,7 +51,7 @@
   (++_ *id-counter*))      ;PREincrement
 (define (set-max-padid new) ;use carefully...
   (unless (importing?)
-	  (if (< new *id-counter*) ;decreasing;
+	  (when (< new *id-counter*) ;decreasing;
 	      ; if any entries remain in *id->obj-index,
 	      ; make sure new is increased past them
 	      (let* ((ids-still-in-use
@@ -251,12 +251,12 @@
      (public delete id wasid refer-when-ready defer-send)
 
      (define (delete)
-       (if _id (unregister-id _id)))
+       (when _id (unregister-id _id)))
 
      (define id
        (case-lambda
 	;auto-allocate ids on demand
-	(() (if (not _id)
+	(() (when (not _id)
 		(set! _id (register-obj-id this (new-padid))))
 	 _id)
 	((wasid) 

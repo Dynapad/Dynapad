@@ -181,7 +181,7 @@ Pad::Get_win(void)
 // or none if no such layer exists.
 //
 Pad_Layer *
-Pad::Get_layer_from_name(char *name)
+Pad::Get_layer_from_name(const char *name)
 {
     Pad_Layer *layer;
 
@@ -209,7 +209,7 @@ Pad::Get_layer_from_id(int layerId)
 // Notify views of its existance
 //
 Pad_Layer *
-Pad::Create_layer(char *name)
+Pad::Create_layer(const char *name)
 {
     int i;
     int len;

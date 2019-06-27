@@ -53,7 +53,7 @@ class Pad_Time
 ///////////////////////////////////////////////////////////////////////
 
 Pad_Bool Pad_Atob(char *string);
-void     Pad_Background_error(char *err);
+void     Pad_Background_error(const char *err);
 void     Pad_Debug_output(Pad_Win *win, char *msg);
 Pad_Bool Pad_Expand_pathname(char *name, Pad_String &fullName);
 Pad_Bool Pad_Get_relative_pathname(char *currentName, char *newName,    

@@ -4,8 +4,7 @@
     build-path->string
     find-system-path->string
     split-path->string
-    explode-path->string
-)
+    explode-path->string)
 
 (require (lib "file.ss"))
 

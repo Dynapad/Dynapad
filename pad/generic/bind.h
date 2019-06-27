@@ -92,7 +92,7 @@ int      Pad_DeleteBinding(BindingTable *bindingTable, ClientData object,
 			   const char *eventString);
 Pad_Bool Pad_DeleteBindingModifier(const char *modifier);
 void     Pad_DeleteBindingTable(BindingTable *bindingTable);
-Pad_Callback *   Pad_GetCallback(BindingTable *bindingTable, ClientData object, char *eventString);
+Pad_Callback *   Pad_GetCallback(BindingTable *bindingTable, ClientData object, const char *eventString);
 void     Pad_GetAllBindings(BindingTable *bindingTable, ClientData object,
 		Pad_List &list);
 int      Pad_GetBindingModifier(const char *modifier);

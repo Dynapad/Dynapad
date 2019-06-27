@@ -522,7 +522,7 @@ Pad_XRenderer::Set_abs_line_width(float width)
 }
 
 void
-Pad_XRenderer::Set_cap_style(char *capStyle)
+Pad_XRenderer::Set_cap_style(const char *capStyle)
 {
     unsigned char cap;
 
@@ -1430,12 +1430,12 @@ Pad_XRenderer::Draw_filled_box(float xmin, float ymin, float xmax, float ymax)
 static int num_fonts = 0;       // number of font sizes per family to cache
 
 typedef struct {
-    char *xlfd;                   // X Logical Font Description string
-    Font *fids;                   // X Font ids for loaded fonts
+    const char *xlfd;           // X Logical Font Description string
+    Font *fids;                 // X Font ids for loaded fonts
 } FontStyle;
 
 typedef struct {
-    char *name;                   // family name
+    const char *name;           // family name
     FontStyle styles[4];
 } FontFamily;
 

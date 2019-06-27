@@ -359,7 +359,7 @@ static Pad_String errorStr;
 //   (of zero seconds) expires.  Thus, the error occurs at the top
 //   level.
 //
-void Pad_Background_error(char *err)
+void Pad_Background_error(const char *err)
 {
     fprintf(stderr, "Pad_Background_error: %s\n", err);
 }
