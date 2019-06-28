@@ -32,10 +32,10 @@
 (define *twodot-path-rexp* (regexp "^[.][.]/(.*)"))
 (define (undot-rel-path base-path rel-path)
   (let ((m1 (regexp-match *onedot-path-rexp* rel-path))
-	(m2 (regexp-match *twodot-path-rexp* rel-path)))
+        (m2 (regexp-match *twodot-path-rexp* rel-path)))
     (cond (m1 (undot-rel-path base-path (cadr m1)))
-	  (m2 (undot-rel-path (updir base-path) (cadr m2)))
-	  (else (path->complete-path rel-path base-path)))))
+          (m2 (undot-rel-path (updir base-path) (cadr m2)))
+          (else (path->complete-path rel-path base-path)))))
 ; use macro so that (this-expr...source-dir) is eval'd in local context
 (define-macro (relpath path)
   `(undot-rel-path (this-expression-source-directory) ,path))
@@ -74,13 +74,13 @@
       (directory-list->string (current-directory))
       ;else
       (apply append
-	     (map (lambda (re)
-		    (let* ((dir (path-only re))
-			   (pattern (file-name-from-path re))
-			   (absdir (absolute-path dir))
-			   (found (directory-list->string absdir)))
-		      (filter (lambda (f) (regexp-match pattern f)) found)))
-		  res))))
+             (map (lambda (re)
+                    (let* ((dir (path-only re))
+                           (pattern (file-name-from-path re))
+                           (absdir (absolute-path dir))
+                           (found (directory-list->string absdir)))
+                      (filter (lambda (f) (regexp-match pattern f)) found)))
+                  res))))
 
 ;---
 
@@ -121,15 +121,15 @@
 
 (define (get-system-reply cmd . args)
   (let* ((cmd-path (find-executable-path cmd #f))
-	 (ports (and cmd-path (file-exists? cmd-path)
-		     (apply process* cmd-path args)))
-	 (input-port (and ports (car ports))))
+         (ports (and cmd-path (file-exists? cmd-path)
+                     (apply process* cmd-path args)))
+         (input-port (and ports (car ports))))
     (and input-port
-	 (let ((try (read-line input-port)))
-	   (close-input-port input-port)
-	   (close-output-port (second ports))
-	   (close-input-port (fourth ports))
-	   (and (not (eq? eof try)) try)))
+         (let ((try (read-line input-port)))
+           (close-input-port input-port)
+           (close-output-port (second ports))
+           (close-input-port (fourth ports))
+           (and (not (eq? eof try)) try)))
     ))
 
 (define (get-username)
@@ -139,26 +139,27 @@
   (get-system-reply "hostname"))
 
 ;  (let* ((hostname-cmd (find-executable-path "hostname" #f))
-;	 (ports (and hostname-cmd (file-exists? hostname-cmd)
-;		     (process* hostname-cmd)))
-;	 (input-port (and ports (car ports))))
+;         (ports (and hostname-cmd (file-exists? hostname-cmd)
+;                     (process* hostname-cmd)))
+;         (input-port (and ports (car ports))))
 ;    (and input-port
-;	 (let ((try (read-line input-port)))
-;	   (close-input-port input-port)
-;	   (close-output-port (second ports))
-;	   (close-input-port (fourth ports))
-;	   (and (not (eq? eof try)) try)))
+;         (let ((try (read-line input-port)))
+;           (close-input-port input-port)
+;           (close-output-port (second ports))
+;           (close-input-port (fourth ports))
+;           (and (not (eq? eof try)) try)))
 ;))
-	   
-(require-for-syntax (lib "plthome.ss" "setup"))
+           
+; TODO: this was "plthome.ss", is this a safe choice of replacement..?
+(require-for-syntax (lib "dirs.ss" "setup"))
  (define-syntax (this-expression-source-path stx)
    (syntax-case stx ()
      [(_)
       (let* ([source (syntax-source stx)]
-	     [local (lambda ()
-		      (or (current-load-relative-directory)
-			  (current-directory)))]
-	     [dir (plthome-ify
+             [local (lambda ()
+                      (or (current-load-relative-directory)
+                          (current-directory)))]
+             [dir (plthome-ify
                    (or (and source (string? source) (file-exists? source)
                             (let-values ([(base file dir?) (split-path->string source)])
                               (and (string? base)
@@ -175,7 +176,7 @@
 ;(define-syntax (this-expression-source-path stx)
 ;   (syntax-case stx ()
 ;     [(_) (let ((thispath (syntax-source stx)))
-;	    (datum->syntax-object (quote-syntax here) thispath stx))]))
+;            (datum->syntax-object (quote-syntax here) thispath stx))]))
 
 ;terser version:
 (define-syntax (this-expression-source-path stx)

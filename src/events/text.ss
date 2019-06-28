@@ -6,10 +6,10 @@
 
     (super-instantiate(argPAD))
     (dynaclass 'text%)
-    (if inittext (text inittext))
-    (if initposition (position initposition))
-    (if initfont (font initfont))
-    (if initanchor (anchor initanchor))
+    (when inittext (text inittext))
+    (when initposition (position initposition))
+    (when initfont (font initfont))
+    (when initanchor (anchor initanchor))
     (add-Text-Bindings this) ))
 
 #|

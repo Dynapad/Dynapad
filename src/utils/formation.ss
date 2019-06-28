@@ -5,14 +5,14 @@
     `(begin
        (field (,field-name #f))
        (define/public ,method-name
-	 (case-lambda
-	  (() ,field-name)
-	  ((new) (if ,field-name (send this remove-part ,field-name))
-	         (if new (send this add-part new))
-		 (set! ,field-name new))))
+         (case-lambda
+          (() ,field-name)
+          ((new) (when ,field-name (send this remove-part ,field-name))
+                 (when new (send this add-part new))
+                 (set! ,field-name new))))
        (send this part-names
-	     (append (send this part-names)
-		     (list ',method-name))) ))
+             (append (send this part-names)
+                     (list ',method-name))) ))
 
 (define (part? obj)
   (assq 'part (send obj alist)))
@@ -53,25 +53,25 @@
       (sch_addmember cptr (send obj get-cptr)))
     (define/public (remove-part obj)
       (unmark-part obj)
-      (if (not (send obj deleted?))
-	  (sch_removemember cptr (send obj get-cptr))))    
+      (when (not (send obj deleted?))
+          (sch_removemember cptr (send obj get-cptr))))    
     (define delete
       (case-lambda
        (()
-	;delete callbacks may remove members before they're deleted,
-	; so need to apply callbacks (normally triggered in (super-delete))
-	; BEFORE deleting members:
-	(for-each (lambda (cb-fn-pair) ((car cb-fn-pair) this))
-		  (send this delete-callbacks))
-	;already done, so clear them
-	(send this delete-callbacks null)
-	;finally, delete remaining members + this
-	(for-each (lambda (o) (send o delete)) (sch_members cptr))
-	(super delete))
+        ;delete callbacks may remove members before they're deleted,
+        ; so need to apply callbacks (normally triggered in (super-delete))
+        ; BEFORE deleting members:
+        (for-each (lambda (cb-fn-pair) ((car cb-fn-pair) this))
+                  (send this delete-callbacks))
+        ;already done, so clear them
+        (send this delete-callbacks null)
+        ;finally, delete remaining members + this
+        (for-each (lambda (o) (send o delete)) (sch_members cptr))
+        (super delete))
        ((partname)
-	  (let ((part (send this partname)))
-	    (send this partname #f)
-	    (send part delete)))))
+          (let ((part (send this partname)))
+            (send this partname #f)
+            (send part delete)))))
 
     (define/public (disband)
       (sch_members cptr null)
@@ -80,11 +80,11 @@
 
     (define (writeoptions)
       `(,@(super writeoptions)
-	,@(map (lambda (o) (send this write-part o)) (send this part-names))))
+        ,@(map (lambda (o) (send this write-part o)) (send this part-names))))
 
     (define/public (write-part name)
       (let ((obj (eval `(send ,this ,name))))
-	`(,name ,(and obj (send obj write)))))
+        `(,name ,(and obj (send obj write)))))
 
     (define/public (member? o)
       (eq? this (send o getgroup)))
@@ -92,26 +92,26 @@
     (define/public divisible
       (case-lambda
         (() (sch_divisible cptr))
-	((bool) (sch_divisible cptr bool))))
+        ((bool) (sch_divisible cptr bool))))
 
     (define/public separable
       (case-lambda
        ((memb) (and (send this member? memb)
-		    (send memb takegroupevents)))
-       ((memb bool) (if (send this member? memb)
-			(send memb takegroupevents bool)))))
+                    (send memb takegroupevents)))
+       ((memb bool) (when (send this member? memb)
+                        (send memb takegroupevents bool)))))
 
     (field (_rigid-parts null)) ;subset of parts which ignore reshape: bbox, width, height, etc
     (define/public rigid
       (case-lambda
        ((part) (memq part _rigid-parts))
        ((part bool)
-	  (let ((already (rigid part)))
-	    (if bool
-		(unless already
-			(push! part _rigid-parts))
-		(when already
-		      (set! _rigid-parts (remq part _rigid-parts))))))))
+          (let ((already (rigid part)))
+            (if bool
+                (unless already
+                        (push! part _rigid-parts))
+                (when already
+                      (set! _rigid-parts (remq part _rigid-parts))))))))
 
     ; THIS MAY BE TOO BOLD...
     ;redefs of reshaping methods:
@@ -119,23 +119,23 @@
       (case-lambda
        (() (super bbox))
        ((bb)
-	(let ((nonrigids (list-diff (named-parts) _rigid-parts memq)))
-	  (foreach nonrigids
-		   (lambda (part) (and part (send part bbox bb))))))))
+        (let ((nonrigids (list-diff (named-parts) _rigid-parts memq)))
+          (foreach nonrigids
+                   (lambda (part) (and part (send part bbox bb))))))))
     (define/override width
       (case-lambda
        (() (super width))
        ((w)
-	(let ((nonrigids (list-diff (named-parts) _rigid-parts memq)))
-	  (foreach nonrigids
-		   (lambda (part) (and part (send part width w))))))))
+        (let ((nonrigids (list-diff (named-parts) _rigid-parts memq)))
+          (foreach nonrigids
+                   (lambda (part) (and part (send part width w))))))))
     (define/override height
       (case-lambda
        (() (super height))
        ((h)
-	(let ((nonrigids (list-diff (named-parts) _rigid-parts memq)))
-	  (foreach nonrigids
-		   (lambda (part) (and part (send part height h))))))))
+        (let ((nonrigids (list-diff (named-parts) _rigid-parts memq)))
+          (foreach nonrigids
+                   (lambda (part) (and part (send part height h))))))))
 ))
 
 (define container-form%
@@ -157,16 +157,16 @@
       (case-lambda
        (() (send _container members))
        ((lst) 
-	(let ((new-cnts (list-diff lst (send _container members) memq)))
-	  (for-each (lambda (o) (send o takegroupevents #t)) new-cnts)
-	  (send _container members lst)
-	  (if (null? lst)
-	      (send _container boundable #f))
-	  ))))
+        (let ((new-cnts (list-diff lst (send _container members) memq)))
+          (for-each (lambda (o) (send o takegroupevents #t)) new-cnts)
+          (send _container members lst)
+          (when (null? lst)
+                (send _container boundable #f))
+          ))))
 
     (define/override (writeoptions)
       `(,@(super writeoptions)
-	(contents (list ,@(map (lambda (o) (send o write)) (send this contents))))))
+        (contents (list ,@(map (lambda (o) (send o write)) (send this contents))))))
 
     (define/public (add obj)
       (send _container add obj)
@@ -176,13 +176,13 @@
 
     (define/public (remove obj)
       (send _container remove obj)
-      (if (null? (send _container members))
-	  (send _container boundable #f))
+      (when (null? (send _container members))
+            (send _container boundable #f))
       )
 
     (define/override (export dir)
       (let ((subdir (export-container-generic-name dir "clump")))
-	(foreach (send this contents) (lambda (o) (send o export subdir)))))     
+        (foreach (send this contents) (lambda (o) (send o export subdir)))))     
 
     (send this rigid (container) #t) ;don't resize container to avoid distorting contents
  ))
@@ -191,8 +191,8 @@
 ;returns first container-form enclosing obj (excluding obj itself) or #f if none
   (let ((wrapper (send obj getgroup)))
     (cond ((not wrapper) #f)
-	  ((is-a? wrapper container-form%) wrapper)
-	  (else (get-container wrapper)))))
+          ((is-a? wrapper container-form%) wrapper)
+          (else (get-container wrapper)))))
 
 (define frame-container%
   (class container-form%
@@ -208,8 +208,8 @@
     (define/public frame (case-lambda
       (() _frame)
       ((new-frame)
-        (if _frame (send this remove-part _frame))
-        (if new-frame (send this add-part new-frame))
+        (when _frame (send this remove-part _frame))
+        (when new-frame (send this add-part new-frame))
         (send new-frame lower)  ; <-- lower frame
         (set! _frame new-frame))))
     (define/public (pane) _frame) ; for back-compatibility
@@ -230,65 +230,65 @@
     (name-part _titlebox titlebox)
 
     (define/public (refresh-titlebox)
-      (if _titlebox
-	  (send _titlebox xy (bbs (send (send this frame) bbox)))))
+      (when _titlebox
+            (send _titlebox xy (bbs (send (send this frame) bbox)))))
 
     (define (make-titlebox)
       (let* ((frm (send this frame))
-	     (tb (ic (make-object text% (send frm dynapad))
-		     (anchor "n"))))
-	(send tb delete-callbacks 'add (lambda (tb) (say "clearing title")
-					       (send this titlebox #f)))
-	(titlebox tb)
-	(send this rigid tb #t)
-	(slowgrow tb .3 2 .5)
-	(refresh-titlebox)
-	(send frm aftercoords-callbacks 'add
-	      (lambda (obj crds) (send this refresh-titlebox)))
-	(send frm afterwidth-callbacks 'add
-	      (lambda (obj w) (send this refresh-titlebox)))
-	(send frm afterheight-callbacks 'add
-	      (lambda (obj h) (send this refresh-titlebox)))
-	))
-	
+             (tb (ic (make-object text% (send frm dynapad))
+                     (anchor "n"))))
+        (send tb delete-callbacks 'add (lambda (tb) (say "clearing title")
+                                               (send this titlebox #f)))
+        (titlebox tb)
+        (send this rigid tb #t)
+        (slowgrow tb .3 2 .5)
+        (refresh-titlebox)
+        (send frm aftercoords-callbacks 'add
+              (lambda (obj crds) (send this refresh-titlebox)))
+        (send frm afterwidth-callbacks 'add
+              (lambda (obj w) (send this refresh-titlebox)))
+        (send frm afterheight-callbacks 'add
+              (lambda (obj h) (send this refresh-titlebox)))
+        ))
+        
 
     (define/public title
       (case-lambda
        (() (and (titlebox) (send (titlebox) text)))
        ((txt)
-	(unless (send this frame)
-		(error "Needs frame before title"))
-	(if txt
-	    (begin
-	      (when (not (titlebox)) (make-titlebox))
-	      (send (titlebox) text txt))
-	    (when (titlebox)
-		  (send (titlebox) delete)
-		  (titlebox #f)))
-	(send this update-any-hilights)
-	)))
+        (unless (send this frame)
+                (error "Needs frame before title"))
+        (if txt
+            (begin
+              (when (not (titlebox)) (make-titlebox))
+              (send (titlebox) text txt))
+            (when (titlebox)
+                  (send (titlebox) delete)
+                  (titlebox #f)))
+        (send this update-any-hilights)
+        )))
 
     (define/override (export dir)
       (let* ((name (send this title))
-	     (subdir 
-	      (if name
-		  (export-container-custom-name dir name)
-		  (export-container-generic-name dir "clump"))))
-	(foreach (send this contents) (lambda (o) (send o export subdir)))))
+             (subdir 
+              (if name
+                  (export-container-custom-name dir name)
+                  (export-container-generic-name dir "clump"))))
+        (foreach (send this contents) (lambda (o) (send o export subdir)))))
 
     ;add menu item for title
     (add-custom-popup-items
      (lambda (me menu)
        (unless (send me titlebox)
-	       (add-menu-item menu "Add title..."
-			      (lambda ()
-				(send me title "")
-				(let* ((my-tb (send me titlebox))
-				       (xy (bbcenter (send my-tb bbox))))
-				  (apply edit-text-at-xy (send me dynapad)
-					 my-tb
-					 xy)))
-			      #t)))
+               (add-menu-item menu "Add title..."
+                              (lambda ()
+                                (send me title "")
+                                (let* ((my-tb (send me titlebox))
+                                       (xy (bbcenter (send my-tb bbox))))
+                                  (apply edit-text-at-xy (send me dynapad)
+                                         my-tb
+                                         xy)))
+                              #t)))
      this)
 
 ))
@@ -302,12 +302,12 @@
     (dynaclass 'resizable-frame-container%)
 
     (name-part _border border)
-    (if (send this frame)
-	(make-resize-border this))
+    (when (send this frame)
+          (make-resize-border this))
 
     (define/override (writeoptions)
       `(,@(super writeoptions)
-	(make-resize-border this)))
+        (make-resize-border this)))
 ))
 
 ;
@@ -315,8 +315,8 @@
   (if (null? objs)
       #f
       (apply mean
-	     (map (lambda (o) (max (send o width) (send o height)))
-		  objs))))
+             (map (lambda (o) (max (send o width) (send o height)))
+                  objs))))
 
 (define fusing-frame-container%
   (class titled-frame-container%
@@ -329,8 +329,8 @@
 
     (name-part _cover cover)
     (cover (ic (clone-object (send this frame))
-	       (transparency .4) ;cover should be opaque enough to be seen
-	       (faderange .02)))
+               (transparency .4) ;cover should be opaque enough to be seen
+               (faderange .02)))
     (send (cover) raise (send this container))
 
     (define/public (fusing-size pixels)
@@ -342,45 +342,45 @@
     ;auto-adjustment of fusing-size:
     ; fusing-size adjusts to fuse when item-size is item-fuse-dim
     (field (_item-fuse-dim 25)) ;min pixel-dim (max w,h) of one item
-				; to start fusing
+                                ; to start fusing
     (define/public item-fuse-dim (get/set _item-fuse-dim))
 
     (field (_use-item-size ;may be number or lambda ()
-	    ; default lambda:
-	    (lambda () (mean-max-dim-of-objs (send this contents)))))
+            ; default lambda:
+            (lambda () (mean-max-dim-of-objs (send this contents)))))
     (define/public use-item-size (get/set _use-item-size))
 
     (define/public refresh-fusing-size
       (case-lambda
        (() (refresh-fusing-size (if (procedure? _use-item-size)
-				    (_use-item-size)
-				    _use-item-size)))
+                                    (_use-item-size)
+                                    _use-item-size)))
        ((itemsize)
-	  (let* ((cover (cover))
-		 (mysize (max (send cover width) (send cover height)))
-		 (fusesize (/ (* mysize (item-fuse-dim))
-			      (max (or itemsize 0) 1))))
-	    (fusing-size fusesize)))))
+          (let* ((cover (cover))
+                 (mysize (max (send cover width) (send cover height)))
+                 (fusesize (/ (* mysize (item-fuse-dim))
+                              (max (or itemsize 0) 1))))
+            (fusing-size fusesize)))))
 
     (let ((frame (send this frame))
-	  (cover (send this cover)))
+          (cover (send this cover)))
       (send frame aftercoords-callbacks 'add
-	    (lambda (o crds) 
-	      (send cover coords crds)
-	      (send this refresh-fusing-size)))
+            (lambda (o crds) 
+              (send cover coords crds)
+              (send this refresh-fusing-size)))
       (send frame afterwidth-callbacks 'add
-	    (lambda (o w)
-	      ;(send cover width w)
-	      (send this refresh-fusing-size)) 'refresh-fusing-size)
+            (lambda (o w)
+              ;(send cover width w)
+              (send this refresh-fusing-size)) 'refresh-fusing-size)
       (send frame afterheight-callbacks 'add
-	    (lambda (o h)
-	      ;(send cover height h)
-	      (send this refresh-fusing-size)) 'refresh-fusing-size)
+            (lambda (o h)
+              ;(send cover height h)
+              (send this refresh-fusing-size)) 'refresh-fusing-size)
       )
 
 ;    (define/override (export dir)
 ;      (let ((subdir (export-container-generic-name dir "pile")))
-;	(foreach (send this contents) (lambda (o) (send o export subdir)))))     
+;        (foreach (send this contents) (lambda (o) (send o export subdir)))))     
 ))
 
 ;Usage-example:
@@ -405,14 +405,14 @@
     (name-part _shadow shadow)
     (let ((frame (send this frame)))
       (shadow (ic (clone-object frame)
-		  (fill (sendf this dynapad background))
-		  (minsize .98 #t) ;trade off with frame, but start earlier
-		  (faderange 0) ;snap in instantly; hidden behind frame
-		  (bind "<Run-ButtonPress-1>" Start-Shift-Select-Event)))
+                  (fill (sendf this dynapad background))
+                  (minsize .98 #t) ;trade off with frame, but start earlier
+                  (faderange 0) ;snap in instantly; hidden behind frame
+                  (bind "<Run-ButtonPress-1>" Start-Shift-Select-Event)))
       (send (shadow) lower) ;must happen after added to formation above
       (ic frame
-	  (maxsize 1 #t) ;make frame dissolve when fills 100% view
-	  (faderange .02)) ;begins to fade just as shadow snaps in
+          (maxsize 1 #t) ;make frame dissolve when fills 100% view
+          (faderange .02)) ;begins to fade just as shadow snaps in
       )
 ))
 
@@ -431,59 +431,59 @@
     (define/public (resize-image bb)
       (send (send this image) bbox bb))
     (define/public (make-border)
-      (if (not (border))
-	  (border (ic (make-object rect% (send this dynapad))
-		      (penwidth 2)
-		      (fill "none"))))
+      (when (not (border))
+            (border (ic (make-object rect% (send this dynapad))
+                      (penwidth 2)
+                      (fill "none"))))
       (send (border) anchor (send (image) anchor))
       (send (border) coords (send (image) bbox))
 
       (resizer-bindings (send this dynapad)
-			    _border
-			    (lambda (brdr bbox) (send this resize-image bbox))
-			    ; release callback: no effect unless position-callbacks
-			    (lambda (brdr) (send this position
-						 (send this position)))
-			    
-			    ;#f ;no release callback
-			    (is-a? (image) image%))
+                            _border
+                            (lambda (brdr bbox) (send this resize-image bbox))
+                            ; release callback: no effect unless position-callbacks
+                            (lambda (brdr) (send this position
+                                                 (send this position)))
+                            
+                            ;#f ;no release callback
+                            (is-a? (image) image%))
       (send _border takegroupevents #t)
       )
 
-    (if (image)
-	(make-border))
+    (when (image)
+          (make-border))
     (define/public (hirespath)
       (send (image) hirespath))
 
     (define/override (writeoptions)
       `(,@(super writeoptions)
-	(make-border)))
+        (make-border)))
 ))
 
 (define (make-resize-border form)
   (let ((frame (send form frame))
-	(brdr  (send form border)))
+        (brdr  (send form border)))
     (when (not brdr)
-	  (set! brdr (ic (make-object rect% (send form dynapad) (send frame coords))
-			 (anchor (send frame anchor))
-			 (fill "none")
-			 (penwidth 10)))
-	  (send form border brdr) ; add to formation
-	  (send brdr raise) ;must follow addition to form
-	  (undoable-resizer-bindings (send form dynapad)
-				     brdr
-				     (lambda (junk bb)
-				       (send form bbox bb)
-				       (send form update-any-hilights))
-				     #f ;no release callback
-				     (is-a? frame image%)
-				     (lambda ()
-				       `(send ,(obj->IDexpr form) bbox
-					      (list ,@(send form bbox))))
-				     150 ;min. size
-				     )
-	  ;(send brdr takegroupevents #t)
-	  )
+          (set! brdr (ic (make-object rect% (send form dynapad) (send frame coords))
+                         (anchor (send frame anchor))
+                         (fill "none")
+                         (penwidth 10)))
+          (send form border brdr) ; add to formation
+          (send brdr raise) ;must follow addition to form
+          (undoable-resizer-bindings (send form dynapad)
+                                     brdr
+                                     (lambda (junk bb)
+                                       (send form bbox bb)
+                                       (send form update-any-hilights))
+                                     #f ;no release callback
+                                     (is-a? frame image%)
+                                     (lambda ()
+                                       `(send ,(obj->IDexpr form) bbox
+                                              (list ,@(send form bbox))))
+                                     150 ;min. size
+                                     )
+          ;(send brdr takegroupevents #t)
+          )
     ))
 
 (define resizable-dissolving-fusing-frame-container%
@@ -495,12 +495,12 @@
     (dynaclass 'resizable-dissolving-fusing-frame-container%)
 
     (name-part _border border)
-    (if (send this frame)
-	(make-resize-border this))
+    (when (send this frame)
+          (make-resize-border this))
 
     (define/override (writeoptions)
       `(,@(super writeoptions)
-	(make-resize-border this)))
+        (make-resize-border this)))
 ))
 
 ; not used currently:
@@ -517,8 +517,8 @@
 
     (define/override (resize-frame bbox)
       (super resize-frame bbox)
-      (if (titlebox)
-	  (send (titlebox) xy (bbs (send (send this frame) bbox)))))
+      (when (titlebox)
+            (send (titlebox) xy (bbs (send (send this frame) bbox)))))
 ))
 
 (define titled-resizable-frame-container%
@@ -533,33 +533,33 @@
     
     (define (make-titlebox)
       (let ((frm (send this frame)))
-	(ic (make-object text% (send frm dynapad))
-	    (anchor "n")
-	    (xy (bbs (send frm bbox))))))
+        (ic (make-object text% (send frm dynapad))
+            (anchor "n")
+            (xy (bbs (send frm bbox))))))
 
 ;     (define/override frame
 ;       (case-lambda
 ;        (() (super frame))
 ;        ((obj)
-; 	(super-frame obj)
-; 	(when obj
-; 	      (if (not (titlebox))
-; 		  (make-titlebox))
-; 	      (reanchor-titlebox)))))
+;         (super-frame obj)
+;         (when obj
+;               (if (not (titlebox))
+;                   (make-titlebox))
+;               (reanchor-titlebox)))))
 
 ;     (send this frame (send this frame))
 
     (define/public (title . args)
-      (if (not (send this frame))
-	  (error "Needs frame before title"))
+      (when (not (send this frame))
+            (error "Needs frame before title"))
       (when (not (titlebox))
-	    (titlebox (make-titlebox)))
+            (titlebox (make-titlebox)))
       (send/apply (titlebox) text args))
 
     (define/override (resize-frame bbox)
       (super resize-frame bbox)
-      (if (titlebox)
-	  (send (titlebox) xy (bbs (send (send this frame) bbox)))))
+      (when (titlebox)
+            (send (titlebox) xy (bbs (send (send this frame) bbox)))))
 ))
 |#
 
@@ -582,9 +582,9 @@
       (case-lambda
        (() (send _textpart text))
        ((newtext)
-	  (send _textpart text newtext)
-	  (send _block re-anchor (send _textpart anchor))
-	  (send _block coords (send _textpart bbox)))))
+          (send _textpart text newtext)
+          (send _block re-anchor (send _textpart anchor))
+          (send _block coords (send _textpart bbox)))))
 
     (send this text txt-arg)
 ))

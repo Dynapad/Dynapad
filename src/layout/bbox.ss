@@ -3,14 +3,14 @@
 ; coord splitting
 (define (list-evens lst)
   (cond ((null? lst) null)
-	((null? (cdr lst)) null)
-	(else
-	 (cons (cadr lst) (list-evens (cddr lst))))))
+        ((null? (cdr lst)) null)
+        (else
+         (cons (cadr lst) (list-evens (cddr lst))))))
 (define (list-odds lst)
   (cond ((null? lst) null)
-	((null? (cdr lst)) lst)
-	(else
-	 (cons (car lst) (list-odds (cddr lst))))))
+        ((null? (cdr lst)) lst)
+        (else
+         (cons (car lst) (list-odds (cddr lst))))))
 
 ; most/all of these bbox functions assume standard ordering of elements:
 ; bbox := (x-min y-min x-max y-max)
@@ -18,11 +18,11 @@
 (define (make-bb ctr-x ctr-y dx . dy)
   (set! dy (if (null? dy) dx (car dy)))
   (let ((rx (/ dx 2))
-	(ry (/ dy 2)))
+        (ry (/ dy 2)))
     (list (- ctr-x rx)
-	  (- ctr-y ry)
-	  (+ ctr-x rx)
-	  (+ ctr-y ry))))
+          (- ctr-y ry)
+          (+ ctr-x rx)
+          (+ ctr-y ry))))
 
 (define (normalize-bb bb)
 ;ensures that bb is in lo->hi form
@@ -70,17 +70,17 @@
 
 ; new #f-friendly versions:
 (define (b0 bbox) (if (and (car bbox) (caddr bbox))
-		      (min (car bbox) (caddr bbox))
-		      (car bbox)))
+                      (min (car bbox) (caddr bbox))
+                      (car bbox)))
 (define (b2 bbox) (if (and (car bbox) (caddr bbox))
-		      (max (car bbox) (caddr bbox))
-		      (caddr bbox)))
+                      (max (car bbox) (caddr bbox))
+                      (caddr bbox)))
 (define (b1 bbox) (if (and (cadr bbox) (cadddr bbox))
-		      (min (cadr bbox) (cadddr bbox))
-		      (cadr bbox)))
+                      (min (cadr bbox) (cadddr bbox))
+                      (cadr bbox)))
 (define (b3 bbox) (if (and (cadr bbox) (cadddr bbox))
-		      (max (cadr bbox) (cadddr bbox))
-		      (cadddr bbox)))
+                      (max (cadr bbox) (cadddr bbox))
+                      (cadddr bbox)))
 
 (define (bxc bbox) (* 0.5 (+ (list-ref bbox 0) (list-ref bbox 2))))
 (define (byc bbox) (* 0.5 (+ (list-ref bbox 1) (list-ref bbox 3))))
@@ -145,9 +145,9 @@
 (define (bbunion bboxes . args)
     (if (null? args)
       (list (apply min (map (lambda (box) (car box)) bboxes))
-	    (apply min (map (lambda (box) (cadr box)) bboxes))
-	    (apply max (map (lambda (box) (caddr box)) bboxes))
-	    (apply max (map (lambda (box) (cadddr box)) bboxes)))
+            (apply min (map (lambda (box) (cadr box)) bboxes))
+            (apply max (map (lambda (box) (caddr box)) bboxes))
+            (apply max (map (lambda (box) (cadddr box)) bboxes)))
       (list
        (apply min (car bboxes) (map (lambda (box) (car box)) args))
        (apply min (cadr bboxes) (map (lambda (box) (cadr box)) args))
@@ -188,33 +188,33 @@
 ;
 (define (bbintersection bboxes . args)
   (let* ((result
-	  (if (null? args)
-	      (list (apply max (map (lambda (box) (car box)) bboxes))
-		    (apply max (map (lambda (box) (cadr box)) bboxes))
-		    (apply min (map (lambda (box) (caddr box)) bboxes))
-		    (apply min (map (lambda (box) (cadddr box)) bboxes)))
-	      (list
-	       (apply max (car bboxes) (map (lambda (box) (car box)) args))
-	       (apply max (cadr bboxes) (map (lambda (box) (cadr box)) args))
-	       (apply min (caddr bboxes) (map (lambda (box) (caddr box)) args))
-	       (apply min (cadddr bboxes) (map (lambda (box) (cadddr box)) args))))))
+          (if (null? args)
+              (list (apply max (map (lambda (box) (car box)) bboxes))
+                    (apply max (map (lambda (box) (cadr box)) bboxes))
+                    (apply min (map (lambda (box) (caddr box)) bboxes))
+                    (apply min (map (lambda (box) (cadddr box)) bboxes)))
+              (list
+               (apply max (car bboxes) (map (lambda (box) (car box)) args))
+               (apply max (cadr bboxes) (map (lambda (box) (cadr box)) args))
+               (apply min (caddr bboxes) (map (lambda (box) (caddr box)) args))
+               (apply min (cadddr bboxes) (map (lambda (box) (cadddr box)) args))))))
     (if (and (<= (car result) (caddr result))
-	     (<= (cadr result) (cadddr result)))
-	result
-	#f))) ;no intersection
+             (<= (cadr result) (cadddr result)))
+        result
+        #f))) ;no intersection
 
 ;
 ; bboutermost: If any bbox completely encloses (inclusive) all others, returns that,
 ; else #f
 (define (bboutermost . bboxes)
   (let* ((union (bbunion bboxes))
-	(result (filter (lambda (outer) (if (bbsurrounds? outer union)
-					    outer
-					    #f))
-			bboxes)))
+        (result (filter (lambda (outer) (if (bbsurrounds? outer union)
+                                            outer
+                                            #f))
+                        bboxes)))
     (if (null? result)
-	#f
-	(car result))))
+        #f
+        (car result))))
 ;
 ; bbslide: returns new bbox = bb displaced by dx, dy
 ;
@@ -236,11 +236,11 @@
 ; differs from some objects' bbox because of pen width
 (define (cbox-from-coords c)
   (let ((evens (list-evens c))
-	(odds (list-odds c)))
+        (odds (list-odds c)))
     (list (apply safemin odds)
-	  (apply safemin evens)
-	  (apply safemax odds)
-	  (apply safemax evens))))
+          (apply safemin evens)
+          (apply safemax odds)
+          (apply safemax evens))))
 
 ; bbstretch: returns a new bbox that is slightly bigger (or smaller).
 ; ex: (bbstretch bb 0.2)  20% bigger in x and y directions
@@ -249,19 +249,19 @@
 ;     (bbstretch bb 0 0.1)  no change in x, 10% bigger in y
 (define (bbstretch bbox f . args)
   (let  ((x0 (car bbox)) (y0 (cadr bbox)) (x1 (caddr bbox)) (y1 (cadddr bbox))(fy f))
-    (if (not (null? args)) (set! fy (car args)))
+    (when (not (null? args)) (set! fy (car args)))
     (list (- (* x0 (+ 1 f )) (* x1 f ))
-	  (- (* y0 (+ 1 fy)) (* y1 fy))
-	  (- (* x1 (+ 1 f )) (* x0 f ))
-	  (- (* y1 (+ 1 fy)) (* y0 fy)))))
+          (- (* y0 (+ 1 fy)) (* y1 fy))
+          (- (* x1 (+ 1 f )) (* x0 f ))
+          (- (* y1 (+ 1 fy)) (* y0 fy)))))
 
 (define (bbwiden bb f . args)
   (let  ((fy f))
-    (if (not (null? args)) (set! fy (car args)))
+    (when (not (null? args)) (set! fy (car args)))
     (list (- (b0 bb) f)
-	  (- (b1 bb) fy)
+          (- (b1 bb) fy)
           (+ (b2 bb) f)
-	  (+ (b3 bb) fy))))
+          (+ (b3 bb) fy))))
 
 ;
 ;bb-visible: bounding box containing all visible objects
@@ -337,14 +337,14 @@
 ;  produces the corresponding bbox relative to new-bb
 ;  that to-bb is relative to from-bb
   (let* ((x0 (b0 from-bb))
-	 (y0 (b1 from-bb))
-	 (dx (- (b2 from-bb) x0))
-	 (dy (- (b3 from-bb) y0)))
+         (y0 (b1 from-bb))
+         (dx (- (b2 from-bb) x0))
+         (dy (- (b3 from-bb) y0)))
     (map (lambda (x x0 d)
-	   (and x (/ (- x x0) d))) ;edge of to-bb may be #f (unconstrained)
-	 to-bb
-	 (list x0 y0 x0 y0)
-	 (list dx dy dx dy))
+           (and x (/ (- x x0) d))) ;edge of to-bb may be #f (unconstrained)
+         to-bb
+         (list x0 y0 x0 y0)
+         (list dx dy dx dy))
     ))
 
 ; +--new---+
@@ -353,14 +353,14 @@
 ; +----+---+
 (define (apply-bb-transform T new-bb)
   (let* ((x0  (b0 new-bb))
-	 (y0  (b1 new-bb))
-	 (dx (- (b2 new-bb) x0))
-	 (dy (- (b3 new-bb) y0)))
+         (y0  (b1 new-bb))
+         (dx (- (b2 new-bb) x0))
+         (dy (- (b3 new-bb) y0)))
     (map (lambda (t x0 d)
-	   (and t (+ (* t d) x0))) ;edge of T may be #f (unconstrained)
-	 T
-	 (list x0 y0 x0 y0)
-	 (list dx dy dx dy))))
+           (and t (+ (* t d) x0))) ;edge of T may be #f (unconstrained)
+         T
+         (list x0 y0 x0 y0)
+         (list dx dy dx dy))))
 
 ; I.E: (set! T (make-bb-transform from to))
 ;      (apply-bb-transform T from) ==> to
@@ -386,19 +386,19 @@
    (      (scale ref-bb tgt)  (obj->geometry-list 'up scale ref-bb tgt))
    ((y-dir scale ref-bb tgt)
     (let* ((tgt-bb (if (list? tgt)
-		       tgt
-		       (send tgt bbox)))
-	   (xoffset (- (b0 tgt-bb) (b0 ref-bb)))
-	   (yoffset
-	    (case y-dir
-	      ((down)    (- (b3 ref-bb) (b3 tgt-bb)))
-	      ((up)      (- (b1 tgt-bb) (b1 ref-bb)))
-	      ((up-down) (- (b3 tgt-bb) (b1 ref-bb)))
-	      (else (error "y-dir must be 'up, 'down, or 'up-down"))
-	      )))
+                       tgt
+                       (send tgt bbox)))
+           (xoffset (- (b0 tgt-bb) (b0 ref-bb)))
+           (yoffset
+            (case y-dir
+              ((down)    (- (b3 ref-bb) (b3 tgt-bb)))
+              ((up)      (- (b1 tgt-bb) (b1 ref-bb)))
+              ((up-down) (- (b3 tgt-bb) (b1 ref-bb)))
+              (else (error "y-dir must be 'up, 'down, or 'up-down"))
+              )))
       (map (lambda (n) (* scale n))
-	   (list (bbwidth tgt-bb) (bbheight tgt-bb)
-		 xoffset yoffset))))
+           (list (bbwidth tgt-bb) (bbheight tgt-bb)
+                 xoffset yoffset))))
 ))
 
 
@@ -408,13 +408,13 @@
    ((w h)
       (format "~ax~a" (round-to-int w) (round-to-int h)))
    ((w h x y) (let ((xint (round-to-int x))
-		    (yint (round-to-int y)))
-		(string-append (format-geometry-str w h)
-			       (format "~a~a~a~a"
-				       (if (negative? xint) "" "+")
-				       xint
-				       (if (negative? yint) "" "+")
-				       yint))))
+                    (yint (round-to-int y)))
+                (string-append (format-geometry-str w h)
+                               (format "~a~a~a~a"
+                                       (if (negative? xint) "" "+")
+                                       xint
+                                       (if (negative? yint) "" "+")
+                                       yint))))
    ))
 
 (define bb-geometry->string
