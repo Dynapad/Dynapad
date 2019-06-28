@@ -6,10 +6,10 @@
   (case-lambda
     ((mode)
        (let ((cursor (assoc mode _gui-mode-cursor)))
-	 (if cursor (cadr cursor) #f)))
+         (if cursor (cadr cursor) #f)))
     ((mode cursor)
        (set! _gui-mode-cursor
-	     (append _gui-mode-cursor (list (list mode cursor)))))))
+             (append _gui-mode-cursor (list (list mode cursor)))))))
 
 (define (gui-add-mode-cursor mode cursor)
   (set! gui-mode-cursor (append gui-mode-cursor (list (list mode cursor)))))
@@ -49,7 +49,7 @@
 
 (define (createModes arg_PAD)
   (foreach (map car gui-mode-alist)
-	   (lambda (mode) (send arg_PAD modifier 'create mode)))
+           (lambda (mode) (send arg_PAD modifier 'create mode)))
 )
 
 
@@ -60,20 +60,20 @@
    ((argPAD) (gui-update-mode argPAD #f))
    ((argPAD cursor)
     (if cursor
-	(send argPAD cursor cursor)
-	(let* ((mode (send argPAD modifier 'get))
-	       ;(cursor (gui-mode-cursor mode))
-	       (tuple (assoc mode gui-mode-alist)))
-	  (cond 
-	   (tuple
-	    (foreach (cdr tuple)
-		     (lambda (val)
-		       (cond ((number? val) (send argPAD cursor val))
-			     ((procedure? val) (val argPAD))
-			     (else val)))))
-	   (cursor (send argPad cursor cursor))
-	   (else (send argPAD cursor 1)) ; unrecognized mode
-	   ))))))
+        (send argPAD cursor cursor)
+        (let* ((mode (send argPAD modifier 'get))
+               ;(cursor (gui-mode-cursor mode))
+               (tuple (assoc mode gui-mode-alist)))
+          (cond 
+           (tuple
+            (foreach (cdr tuple)
+                     (lambda (val)
+                       (cond ((number? val) (send argPAD cursor val))
+                             ((procedure? val) (val argPAD))
+                             (else val)))))
+           (cursor (send argPad cursor cursor))
+           (else (send argPAD cursor 1)) ; unrecognized mode
+           ))))))
 
 (define changemode
   (case-lambda
@@ -88,24 +88,24 @@
 
 ;    (cond
 ;      ((equal? curmode "DrawText")
-;;	  (equal? curmode "EditText")
-;	(let ((obj (send argPAD getfocus)))
-;	  (if obj (send obj unfocus)))))
+;;          (equal? curmode "EditText")
+;        (let ((obj (send argPAD getfocus)))
+;          (if obj (send obj unfocus)))))
 
-    (if (and (string=? curmode "Select")
-           (or (string=? mode "Run")
-	       (string=? mode "Pan")
-	       (string=? mode "Zoom")
-	       (string=? mode "BBox")
-	       (string=? mode "Draw")
-	       (string=? mode "DrawAdd")
-	       (string=? mode "DrawText")
-	       (string=? mode "EditText")
-	       (string=? mode "")))
-	(Set-Select--undoable argPAD null))
+    (when (and (string=? curmode "Select")
+               (or (string=? mode "Run")
+                   (string=? mode "Pan")
+                   (string=? mode "Zoom")
+                   (string=? mode "BBox")
+                   (string=? mode "Draw")
+                   (string=? mode "DrawAdd")
+                   (string=? mode "DrawText")
+                   (string=? mode "EditText")
+                   (string=? mode "")))
+          (Set-Select--undoable argPAD null))
 
 ;    (if (and (string=? mode "Draw") (pair? (send argPAD selected)))
-;	(Set-Select--undoable argPAD null))
+;        (Set-Select--undoable argPAD null))
 
     (send argPAD modifier 'set mode))
     )
@@ -115,18 +115,18 @@
 
 (define (push-event-mode argPAD mode)
   (unless (member mode (send argPAD eventModeStack)) ;dont push same mode twice
-	  (remote-push! mode argPAD eventModeStack))
+          (remote-push! mode argPAD eventModeStack))
   (changemode argPAD mode))
 
 (define (pop-event-mode argPAD . mode)
 ;if mode included, will remove mode even if not on top
   (let* ((oldstack (send argPAD eventModeStack))
-	 (newstack (if (null? mode)
-		       (cdr oldstack)
-		       (remove (car mode) oldstack)))
-	 (newmode (if (null? newstack)
-		      (default-mode argPAD)
-		      (car newstack))))
+         (newstack (if (null? mode)
+                       (cdr oldstack)
+                       (remove (car mode) oldstack)))
+         (newmode (if (null? newstack)
+                      (default-mode argPAD)
+                      (car newstack))))
     (send argPAD eventModeStack newstack)
     (changemode argPAD newmode)))
    
@@ -139,27 +139,27 @@
     ((_ the-delayed-pad do-sth ...)
      (with-handlers
       ([exn:fail?
-	(lambda (exn) 
-	  (foreach (current-error-ports)
-		   (lambda (port)
-		     (fprintf port "~a~%" (exn-message exn))))
-	  (pop-delay-cursor the-delayed-pad))])
+        (lambda (exn) 
+          (foreach (current-error-ports)
+                   (lambda (port)
+                     (fprintf port "~a~%" (exn-message exn))))
+          (pop-delay-cursor the-delayed-pad))])
       (begin
-	(push-delay-cursor the-delayed-pad)
-	(let ((result (begin do-sth ...)))
-	  (pop-delay-cursor the-delayed-pad)
-	  result))))))
+        (push-delay-cursor the-delayed-pad)
+        (let ((result (begin do-sth ...)))
+          (pop-delay-cursor the-delayed-pad)
+          result))))))
 
 (define (push-delay-cursor argPAD)
   (let ((delay? (send argPAD getvar 'delay-cursor?)))
-    (if (not delay?) (set! delay? 0))
+    (when (not delay?) (set! delay? 0))
     (send argPAD setvar 'delay-cursor? (+ delay? 1))
     (send argPAD cursor 3)))
 (define (pop-delay-cursor argPAD)
   (let ((delay? (send argPAD getvar 'delay-cursor?)))
     (set! delay? (if (and delay? (> delay? 1))
-		     (- delay? 1)
-		     #f))
+                     (- delay? 1)
+                     #f))
     (send argPAD setvar 'delay-cursor? delay?)
     (gui-update-mode argPAD)))
 (define (clear-delay-cursor argPAD)

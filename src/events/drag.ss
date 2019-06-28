@@ -6,13 +6,13 @@
   (send argPAD init-drag evnt obj-list)
   (send argPAD do-beforedrag-callbacks evnt obj-list)
   (let ((drag-lyr (send argPAD getvar 'drag-layer))
-	(main-lyr (send argPAD main-layer)))
-    (if drag-lyr
-	(foreach obj-list
-		 (lambda (o) (when (and (not (send o getgroup))
-					(eq? (send o layer) main-lyr))
-				   (send o raise)
-				   (send o layer drag-lyr))))))
+        (main-lyr (send argPAD main-layer)))
+    (when drag-lyr
+        (foreach obj-list
+                 (lambda (o) (when (and (not (send o getgroup))
+                                        (eq? (send o layer) main-lyr))
+                                   (send o raise)
+                                   (send o layer drag-lyr))))))
 
   )
 
@@ -34,13 +34,13 @@
   (send argPAD do-afterdrag-callbacks evnt obj-list)
   ; maybe drop objs from drag layer:
   (let ((drag-lyr (send argPAD getvar 'drag-layer))
-	(main-lyr (send argPAD main-layer)))
-    (if drag-lyr
-	(foreach obj-list
-		 (lambda (o) (when (and (not (send o getgroup))
-					(eq? (send o layer) drag-lyr))
-				   (send o layer main-lyr)
-				   (send o raise))))))
+        (main-lyr (send argPAD main-layer)))
+    (when drag-lyr
+          (foreach obj-list
+                  (lambda (o) (when (and (not (send o getgroup))
+                                          (eq? (send o layer) drag-lyr))
+                                    (send o layer main-lyr)
+                                    (send o raise))))))
   )
 
 
@@ -51,8 +51,8 @@
   ; NOTE: pick-up and drop events both currently use same evnt
   ; ideally should include both events as separate args
 ;  (for-each (lambda (o psn) 
-;	     (send o position psn))
-;	    obj-list dest-list)
+;             (send o position psn))
+;            obj-list dest-list)
 ;  (Finish-Drag eventPAD evnt obj-list))
   (animate-batch-then-do obj-list dest-list 600
      (lambda () (Finish-Drag eventPAD evnt obj-list)))
@@ -84,11 +84,11 @@
   )))
   
 ;  (send argPAD bind "<Drag-ButtonRelease-1>"
-;	End-Drag-Event)
+;        End-Drag-Event)
   (send argPAD bind "<Drag-ButtonRelease-1>"
-	(lambda (eventPAD e)
-	  (if (member "Drag" (send eventPAD eventModeStack))
-	      (End-Drag-Event eventPAD e))))
+        (lambda (eventPAD e)
+          (when (member "Drag" (send eventPAD eventModeStack))
+                (End-Drag-Event eventPAD e))))
 
 )
 

@@ -4,9 +4,9 @@
 (define (tcl-color-from-mred-color mred-color)
   (cond ((eq? mred-color #f) #f)
         (else
-	  (let ((red (send mred-color red))
-	        (green (send mred-color green))
-		(blue (send mred-color blue)))
+          (let ((red (send mred-color red))
+                (green (send mred-color green))
+                (blue (send mred-color blue)))
         (tcl-color-from-RGB red green blue)))))
 
 (define (tcl-color-from-RGB red green blue)
@@ -26,21 +26,21 @@
         ((equal? tcl-color "purple")(make-object color% 160  32 240))
         ((equal? tcl-color "orange")(make-object color% 248 164   0))
         ((equal? (substring tcl-color 0 1) "#")
-	  (make-object color%
-	    (string->number (substring tcl-color 1 3) 16)
-	    (string->number (substring tcl-color 3 5) 16)
-	    (string->number (substring tcl-color 5 7) 16)))
+          (make-object color%
+            (string->number (substring tcl-color 1 3) 16)
+            (string->number (substring tcl-color 3 5) 16)
+            (string->number (substring tcl-color 5 7) 16)))
         (else (make-object color% 0 0 0)))) ; black as default on error
 
 (define dynacolor%
   (class color%
     (init (r-arg 0)
-	  (g-arg 0)
-	  (b-arg 0))
+          (g-arg 0)
+          (b-arg 0))
     (if (string? r-arg)
-	(let ((temp (mred-color-from-tcl-color r-arg)))
-	  (super-instantiate ((send temp red) (send temp green) (send temp blue))))
-	(super-instantiate (r-arg g-arg b-arg)))
+        (let ((temp (mred-color-from-tcl-color r-arg)))
+          (super-instantiate ((send temp red) (send temp green) (send temp blue))))
+        (super-instantiate (r-arg g-arg b-arg)))
 
     (define/public (tcl-color)
       (tcl-color-from-mred-color this))
@@ -62,8 +62,8 @@
     (define/override set
       (case-lambda
        ((str) (cond ((string? str) (send this copy-from (mred-color-from-tcl-color str)))
-		    ((list? str) (send/apply this set str))
-		    (else (super set str str str))))
+                    ((list? str) (send/apply this set str))
+                    (else (super set str str str))))
        ((r g b) (super set r g b))))
 
     (define/public rgb
@@ -80,18 +80,18 @@
       ; toward color 
       (case-lambda
        ((t color)
-	  (if (string? color) (set! color (make-object dynacolor% color)))
-	  (send/apply this blend t (send color rgb)))
+          (when (string? color) (set! color (make-object dynacolor% color)))
+          (send/apply this blend t (send color rgb)))
        ((t r g b)
-	 (if (> t 1) (set! t 1))   ;limit between -1 and 1
-	 (if (< t -1) (set! t -1))
-	 (apply make-object dynacolor% 
-	       (map round-to-int
-		    (map lerp (list t t t) (send this rgb) (list r g b)))))))
+         (when (> t 1) (set! t 1))   ;limit between -1 and 1
+         (when (< t -1) (set! t -1))
+         (apply make-object dynacolor% 
+               (map round-to-int
+                    (map lerp (list t t t) (send this rgb) (list r g b)))))))
 
     (define/public (invert)
       (apply make-object dynacolor%
-	(map (lambda (val) (- 255 val)) (send this rgb))))
+        (map (lambda (val) (- 255 val)) (send this rgb))))
 
     (define/public (lighten t)
       (blend t 255 255 255))

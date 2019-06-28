@@ -42,10 +42,10 @@
       (foreach *thumbnail-variants* (lambda (dir_sz)
         ; try thumbnail with same suffix as hires image
         (let ((thumbfile (string-append path (car dir_sz) base (cadr dir_sz) suffix)))
-          (if (file-exists? thumbfile) (return thumbfile)))
+          (when (file-exists? thumbfile) (return thumbfile)))
         ; try thumbnail with .jpg suffix
         (let ((thumbfile (string-append path (car dir_sz) base (cadr dir_sz) ".jpg")))
-          (if (file-exists? thumbfile) (return thumbfile))) ))
+          (when (file-exists? thumbfile) (return thumbfile))) ))
       (return #f)))))
 
 (define (ensure-thumb hirespath)
@@ -63,7 +63,7 @@
 )
 
 
-(define *list_of_hirez_images* ())
+(define *list_of_hirez_images* '())
 ;(define *last_view_before_image_centering* '(0 0 1))
 
 (define image-hires-and-center
@@ -73,8 +73,8 @@
     (unless (null? imagelist)
 	    (let ((eventPAD (send (car imagelist) dynapad)))
 	      (show-possible-delay eventPAD
-	        (if (send (car imagelist) selected?)
-		    (set! imagelist (send eventPAD selected)))
+	        (when (send (car imagelist) selected?)
+		            (set! imagelist (send eventPAD selected)))
 		
 		(if (andmap (lambda (img) (member img *list_of_hirez_images*)) imagelist)
 		    (remove-images-from-hires-list *list_of_hirez_images*)
@@ -93,8 +93,8 @@
     (unless (null? imagelist)
 	    (let ((eventPAD (send (car imagelist) dynapad)))
 	      (show-possible-delay eventPAD
-	        (if (send (car imagelist) selected?)
-		    (set! imagelist (send eventPAD selected)))
+	        (when (send (car imagelist) selected?)
+		            (set! imagelist (send eventPAD selected)))
 	      
 		(if (andmap (lambda (img) (member img *list_of_hirez_images*)) imagelist)
 		    (remove-images-from-hires-list imagelist)
@@ -114,25 +114,24 @@
     ;(send dynapad moveto *last_view_before_image_centering* 1000 #t)
     (let ((returnview (sendf dynapad evs vwide)))
       (when returnview
-	    (send dynapad moveto returnview 1000 #t)))
-))
+	    (send dynapad moveto returnview 1000 #t)))))
 
 (define (remove-images-from-hires-list imagelist)
   (foreach imagelist (lambda (img)
-    (if (member img *list_of_hirez_images*)
-      (set! *list_of_hirez_images* (remq img *list_of_hirez_images*)))
+    (when (member img *list_of_hirez_images*)
+          (set! *list_of_hirez_images* (remq img *list_of_hirez_images*)))
     (when (send img hires?)
-      (send img thumb) ))))
+          (send img thumb)))))
 
 (define (add-images-to-hires-list imagelist)
-  (if (not (pair? *list_of_hirez_images*))
-;    (set! *last_view_before_image_centering* (send dynapad view)))
-      (sendf dynapad evs vwide (send dynapad view)))
+  (when (not (pair? *list_of_hirez_images*))
+;       (set! *last_view_before_image_centering* (send dynapad view)))
+        (sendf dynapad evs vwide (send dynapad view)))
   (foreach imagelist (lambda (img)
-    (if (not (member img *list_of_hirez_images*))
-      (push! img *list_of_hirez_images*))
-    (if (not (send img hires?))
-      (send img hires) ))))
+    (when (not (member img *list_of_hirez_images*))
+          (push! img *list_of_hirez_images*))
+    (when (not (send img hires?))
+          (send img hires)))))
 
 (define (set-image-hires-list imagelist)
   (remove-images-from-hires-list *list_of_hirez_images*)

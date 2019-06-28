@@ -24,7 +24,7 @@
  ;(changemode argPAD "Select")
   (send obj select)
   (let ((hlist
-	 (add-resize-handles-to-object argPAD obj)))
+         (add-resize-handles-to-object argPAD obj)))
 
   ; cleanup: when obj is unselected, delete handles, callbacks, etc
   (send obj select-callbacks 
@@ -41,7 +41,7 @@
 
 (define (add-resize-handles-to-object argPAD obj)
 ; permanent (or until cleaned above) resize affordance
-  (def hlist ())
+  (def hlist '())
   (def reposition-handles)
   (def cx0)
   (def cy0)
@@ -75,10 +75,10 @@
 
   ; create a function to add bindings
   (set! addbindings (lambda (h corner sclx scly)
-    (send h bind "<Select-ButtonPress-1>"   ())
-    (send h bind "<Run-ButtonPress-1>"      ())
-    (send h bind "<Select-ButtonRelease-1>" ())
-    (send h bind "<Run-ButtonRelease-1>"    ())
+    (send h bind "<Select-ButtonPress-1>"   '())
+    (send h bind "<Run-ButtonPress-1>"      '())
+    (send h bind "<Select-ButtonRelease-1>" '())
+    (send h bind "<Run-ButtonRelease-1>"    '())
 
     (send h bind "<ButtonPress-1>" (lambda (d e) 
       (send obj re-anchor corner)
@@ -99,8 +99,8 @@
         (let ((newwidth (+ w0 (* sclx (- x cx0))))
               (newheight (+ h0 (* scly (- y cy0))))
               (z (send argPAD getzoom)) )
-          (if (> (* newwidth  z) 4) (send obj width  newwidth))
-          (if (> (* newheight z) 4) (send obj height newheight)) )
+          (when (> (* newwidth  z) 4) (send obj width  newwidth))
+          (when (> (* newheight z) 4) (send obj height newheight)) )
         (reposition-handles obj) ))
   ))
 
@@ -180,23 +180,23 @@
               (ymode 1)
               (lastmode _resize_mode)
               )
-          (if (> x (- (b2 bb) xmarg)) (set! xmode 2))
-          (if (< x (+ (b0 bb) xmarg)) (set! xmode 0))
-          (if (> y (- (b3 bb) ymarg)) (set! ymode 2))
-          (if (< y (+ (b1 bb) ymarg)) (set! ymode 0))
+          (when (> x (- (b2 bb) xmarg)) (set! xmode 2))
+          (when (< x (+ (b0 bb) xmarg)) (set! xmode 0))
+          (when (> y (- (b3 bb) ymarg)) (set! ymode 2))
+          (when (< y (+ (b1 bb) ymarg)) (set! ymode 0))
       
           (set! _resize_mode (+ (* 3 ymode) xmode))
       
-          (if (!= _resize_mode lastmode)
-            (case _resize_mode
-              ((0) (send _dynapad cursor 4))   ;   modes       cursors
-              ((1) (send _dynapad cursor 9))   ;  6  7  8      6  8  7 
-              ((2) (send _dynapad cursor 5))   ;  3     5 ==> 10     11
-              ((3) (send _dynapad cursor 10))  ;  0  1  2      4  9  5
-              ((5) (send _dynapad cursor 11))
-              ((6) (send _dynapad cursor 6))
-              ((7) (send _dynapad cursor 8))
-              ((8) (send _dynapad cursor 7))) )
+          (when (!= _resize_mode lastmode)
+                (case _resize_mode
+                  ((0) (send _dynapad cursor 4))   ;   modes       cursors
+                  ((1) (send _dynapad cursor 9))   ;  6  7  8      6  8  7 
+                  ((2) (send _dynapad cursor 5))   ;  3     5 ==> 10     11
+                  ((3) (send _dynapad cursor 10))  ;  0  1  2      4  9  5
+                  ((5) (send _dynapad cursor 11))
+                  ((6) (send _dynapad cursor 6))
+                  ((7) (send _dynapad cursor 8))
+                  ((8) (send _dynapad cursor 7))))
       )))
     
     (define (Resize_Leave e)
@@ -239,26 +239,25 @@
 ;         |           /b0|b2\
 
       (define new-bb
-	(case _resize_mode
-	  ((0) (if (> dy mx0) (list (min x (- x2 _minsize)) #f x2 y3)
-		              (list #f (min y (- y3 _minsize)) x2 y3)))
-	  ((1)                (list #f (min y (- y3 _minsize)) #f y3))
-	  ((2) (if (> dy mx2) (list x0 #f (max x (+ x0 _minsize)) y3)
-		              (list x0 (min y (- y3 _minsize)) #f y3)))
-	  ((3)                (list (min x (- x2 _minsize)) #f x2 #f))
-	  ((4) bb) ;no change
-	  ((5)                (list x0 #f (max x (+ x0 _minsize)) #f))
-	  ((6) (if (> dy mx2) (list #f y1 x2 (max y (+ y1 _minsize)))
-		              (list (min x (- x2 _minsize)) y1 x2 #f)))
-	  ((7)                (list #f y1 #f (max y (+ y1 _minsize))))
-	  ((8) (if (> dy mx0) (list x0 y1 #f (max y (+ y1 _minsize)))
-		              (list x0 y1 (max x (+ x0 _minsize)) #f)))
-	  ))
+        (case _resize_mode
+          ((0) (if (> dy mx0) (list (min x (- x2 _minsize)) #f x2 y3)
+                              (list #f (min y (- y3 _minsize)) x2 y3)))
+          ((1)                (list #f (min y (- y3 _minsize)) #f y3))
+          ((2) (if (> dy mx2) (list x0 #f (max x (+ x0 _minsize)) y3)
+                              (list x0 (min y (- y3 _minsize)) #f y3)))
+          ((3)                (list (min x (- x2 _minsize)) #f x2 #f))
+          ((4) bb) ;no change
+          ((5)                (list x0 #f (max x (+ x0 _minsize)) #f))
+          ((6) (if (> dy mx2) (list #f y1 x2 (max y (+ y1 _minsize)))
+                              (list (min x (- x2 _minsize)) y1 x2 #f)))
+          ((7)                (list #f y1 #f (max y (+ y1 _minsize))))
+          ((8) (if (> dy mx0) (list x0 y1 #f (max y (+ y1 _minsize)))
+                              (list x0 y1 (max x (+ x0 _minsize)) #f)))
+          ))
     
       (send obj bbox new-bb)
 
-      (if _motion_callback
-        (_motion_callback obj new-bb))
+      (when _motion_callback (_motion_callback obj new-bb))
     
       (set! _last_x (event-x evnt))
       (set! _last_y (event-y evnt))
@@ -277,14 +276,14 @@
       (define newbb null)
     
       (case _resize_mode
-	((0) (set! x0 (min x (- x2 _minsize)))  (set! y1 (min y (- y3 _minsize))))
-	((1)                                    (set! y1 (min y (- y3 _minsize))))
-	((2) (set! x2 (max x (+ x0 _minsize)))  (set! y1 (min y (- y3 _minsize))))
-	((3) (set! x0 (min x (- x2 _minsize))))
-	((5) (set! x2 (max x (+ x0 _minsize))))
-	((6) (set! x0 (min x (- x2 _minsize)))  (set! y3 (max y (+ y1 _minsize))))
-	((7)                                    (set! y3 (max y (+ y1 _minsize))))
-	((8) (set! x2 (max x (+ x0 _minsize)))  (set! y3 (max y (+ y1 _minsize)))))
+        ((0) (set! x0 (min x (- x2 _minsize)))  (set! y1 (min y (- y3 _minsize))))
+        ((1)                                    (set! y1 (min y (- y3 _minsize))))
+        ((2) (set! x2 (max x (+ x0 _minsize)))  (set! y1 (min y (- y3 _minsize))))
+        ((3) (set! x0 (min x (- x2 _minsize))))
+        ((5) (set! x2 (max x (+ x0 _minsize))))
+        ((6) (set! x0 (min x (- x2 _minsize)))  (set! y3 (max y (+ y1 _minsize))))
+        ((7)                                    (set! y3 (max y (+ y1 _minsize))))
+        ((8) (set! x2 (max x (+ x0 _minsize)))  (set! y3 (max y (+ y1 _minsize)))))
 
 ;      (case _resize_mode
 ;        ((0) (set! x0 (event-x evnt)) (set! y1 (event-y evnt)) )
@@ -299,8 +298,7 @@
     
       (set! newbb  (list x0 y1 x2 y3))
       (send obj bbox newbb)
-      (if _motion_callback
-        (_motion_callback obj newbb))
+      (when _motion_callback (_motion_callback obj newbb))
     
       (set! _last_x x)
       (set! _last_y y)
@@ -308,18 +306,18 @@
     
     (define (Default_ButtonMotion evnt)
       (if _default-rescale-lock?
-	  (Rescale_ButtonMotion evnt)
-	  (Resize_ButtonMotion evnt)))
+          (Rescale_ButtonMotion evnt)
+          (Resize_ButtonMotion evnt)))
     (define (Override_ButtonMotion evnt)
       (if _default-rescale-lock?
-	  (Resize_ButtonMotion evnt)
-	  (Rescale_ButtonMotion evnt)))
+          (Resize_ButtonMotion evnt)
+          (Rescale_ButtonMotion evnt)))
 
     (define/public (Resize_ButtonRelease evnt)
       (let ((obj (event-obj evnt)))
-	(set! _button_down #f)
-	(if _release_callback
-	    (_release_callback obj)))
+        (set! _button_down #f)
+        (when _release_callback
+            (_release_callback obj)))
     )
     
     (send _object bind "<Enter>" (lambda (d e) (Resize_Enter e)))

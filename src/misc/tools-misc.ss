@@ -15,18 +15,18 @@
 
 (define-macro (increment-mean mean n x)
   `(cset! ,mean 
-	  (if (zero? ,n)
-	      (begin
-		(++_ ,n)
-		,x)
-	      (/ (+ (* ,mean ,n) ,x) (++_ ,n)))))
+          (if (zero? ,n)
+              (begin
+                (++_ ,n)
+                ,x)
+              (/ (+ (* ,mean ,n) ,x) (++_ ,n)))))
 
 (define-macro (decrement-mean mean n x)
   `(cset! ,mean (if (= 1 ,n)
-		    (begin
-		      (--_ ,n)
-		      ,mean)
-		    (/ (- (* ,mean ,n) ,x) (--_ ,n)))))
+                    (begin
+                      (--_ ,n)
+                      ,mean)
+                    (/ (- (* ,mean ,n) ,x) (--_ ,n)))))
 
 ;---------------------
 
@@ -58,41 +58,41 @@
   (if (stop-fn chn)
       null
       (cons (item-fn chn)
-	    (chain-map next-fn next-stop-fn next-stop-fn item-fn (next-fn chn)))))
+            (chain-map next-fn next-stop-fn next-stop-fn item-fn (next-fn chn)))))
 
 (define (chain-foreach next-fn stop-fn next-stop-fn item-fn chn)
-  (if (not (stop-fn chn))
-      (begin
-	(item-fn chn)
-	(chain-foreach next-fn next-stop-fn next-stop-fn item-fn (next-fn chn)))))
+  (when (not (stop-fn chn))
+        (begin
+          (item-fn chn)
+          (chain-foreach next-fn next-stop-fn next-stop-fn item-fn (next-fn chn)))))
 
 (define (chain-filter next-fn stop-fn next-stop-fn item-fn chn)
   (if (stop-fn chn)
       null
       (let* ((result (item-fn chn))
-	     (ahead (chain-filter next-fn next-stop-fn next-stop-fn item-fn (next-fn chn))))
-	(if result
-	    (cons chn ahead)
-	    ahead))))
+             (ahead (chain-filter next-fn next-stop-fn next-stop-fn item-fn (next-fn chn))))
+        (if result
+            (cons chn ahead)
+            ahead))))
 
 ;returns first element to satisfy done-fn
 (define (chain-first next-fn stop-fn next-stop-fn done-fn chn)
   (cond ((stop-fn chn) #f)
-	((done-fn chn) chn)
-	(else (chain-first next-fn next-stop-fn next-stop-fn done-fn (next-fn chn)))))
+        ((done-fn chn) chn)
+        (else (chain-first next-fn next-stop-fn next-stop-fn done-fn (next-fn chn)))))
 
 (define (chain-ref next-fn stop-fn ref chn)
   (cond ((stop-fn chn) (error "chain-ref: index too large for chain"))
-	((zero? ref) chn)
-	(else (chain-ref next-fn stop-fn (- ref 1) (next-fn chn)))))
+        ((zero? ref) chn)
+        (else (chain-ref next-fn stop-fn (- ref 1) (next-fn chn)))))
 
 ;--- RINGS
 ; A RING is a circular-linked chain of objects with a "next" method
 (define-macro (ring-template chain-fn item-fn rng)
   `(,chain-fn (lambda (it) (send it next))  ;next-fn
-	      (lambda (it) #f)              ;first stop-fn
-	      (lambda (it) (eq? it ,rng))   ;next-stop-fn
-	      ,item-fn ,rng))
+              (lambda (it) #f)              ;first stop-fn
+              (lambda (it) (eq? it ,rng))   ;next-stop-fn
+              ,item-fn ,rng))
 
 (define-macro (ring-map fn rng)     `(ring-template chain-map ,fn ,rng))
 (define-macro (ring-foreach fn rng) `(ring-template chain-foreach ,fn ,rng))
@@ -109,9 +109,9 @@
 ;  whose last next-link is #f
 (define-macro (path-template chain-fn item-fn rng)
   `(,chain-fn (lambda (it) (send it next)) ;next-fn
-	      not                          ;first-stop-fn
-	      not                          ;next-stop-fn
-	      ,item-fn ,rng))
+              not                          ;first-stop-fn
+              not                          ;next-stop-fn
+              ,item-fn ,rng))
 
 (define-macro (path-map fn rng)     `(path-template chain-map ,fn ,rng))
 (define-macro (path-foreach fn rng) `(path-template chain-foreach ,fn ,rng))
@@ -128,8 +128,8 @@
 (define (pct-string->number strng) ; interprets strings like "xx.x%"
   (let* ((matches (regexp-match percent-regexp strng)))
     (if matches
-	(/ (string->number (cadr matches)) 100)
-	(string->number strng))))
+        (/ (string->number (cadr matches)) 100)
+        (string->number strng))))
 
 ;---- MATH tools ----
 (define (round-to-int i)
@@ -142,15 +142,15 @@
 ;returns #t iff scalar b lies between a,c, inclusive
 (define (between? a b c)
   (let* ((mx (max a c))
-	 (mn (min a c)))
+         (mn (min a c)))
     (and (<= b mx)
-	 (>= b mn))))
+         (>= b mn))))
 ;returns #t iff scalar b lies between a,c, exclusive
 (define (strictly-between? a b c)
   (let* ((mx (max a c))
-	 (mn (min a c)))
+         (mn (min a c)))
     (and (< b mx)
-	 (> b mn))))
+         (> b mn))))
 
 
 ;a,b,p are coord pairs '(xa ya)...
@@ -173,30 +173,30 @@
 (define (minfinity . lst)
   (let ((this (car lst)))
     (cond ((null? lst) #f)
-	  ((-infinity? this) this)
-	  (else (let ((min-ahead (apply minfinity (cdr lst))))
-		  (cond ((or (-infinity? min-ahead)
-			     (infinity? this))
-			 min-ahead)
-			((or (not min-ahead)
-			     (infinity? min-ahead)
-			     (< this min-ahead))
-			 this)
-			(else min-ahead)))))))
+          ((-infinity? this) this)
+          (else (let ((min-ahead (apply minfinity (cdr lst))))
+                  (cond ((or (-infinity? min-ahead)
+                             (infinity? this))
+                         min-ahead)
+                        ((or (not min-ahead)
+                             (infinity? min-ahead)
+                             (< this min-ahead))
+                         this)
+                        (else min-ahead)))))))
 
 (define (maxfinity . lst)
   (let ((this (car lst)))
     (cond ((null? lst) #f)
-	  ((infinity? this) this)
-	  (else (let ((max-ahead (apply maxfinity (cdr lst))))
-		  (cond ((or (infinity? max-ahead)
-			     (-infinity? this))
-			 max-ahead)
-			((or (not max-ahead)
-			     (-infinity? max-ahead)
-			     (> this max-ahead))
-			 this)
-			(else max-ahead)))))))
+          ((infinity? this) this)
+          (else (let ((max-ahead (apply maxfinity (cdr lst))))
+                  (cond ((or (infinity? max-ahead)
+                             (-infinity? this))
+                         max-ahead)
+                        ((or (not max-ahead)
+                             (-infinity? max-ahead)
+                             (> this max-ahead))
+                         this)
+                        (else max-ahead)))))))
                            
 (define (limit-between! x a b)
   (let ((lo (minfinity a b))
@@ -207,8 +207,8 @@
 
 (define (sign n)
   (cond ((positive? n) 1)
-	((negative? n) -1)
-	(else 0)))
+        ((negative? n) -1)
+        (else 0)))
 
 (define (2val-sign n) ;unlike (sign x), returns 1 if x=0
   (if (negative? n) -1 1))
@@ -218,5 +218,5 @@
 
 (define (distance p q)  ;p, q both lists of '(x y)
   (let ((dx2 (sqr (- (car p) (car q))))
-	(dy2 (sqr (- (cadr p) (cadr q)))))
+        (dy2 (sqr (- (cadr p) (cadr q)))))
     (sqrt (+ dx2 dy2))))

@@ -6,11 +6,10 @@
 
 ; For one-step selection changes:
 (define (Set-Select--undoable argPAD set)
-  (if (not (list? set)) (set! set (list set)))
+  (when (not (list? set)) (set! set (list set)))
     (Start-Changing-Select--undoable argPAD)
     (send argPAD selected set)
-    (Done-Changing-Select--undoable argPAD set)
-)
+    (Done-Changing-Select--undoable argPAD set))
 
 ; For two-step (i.e. button down-->up) changes:
 (define (Start-Changing-Select--undoable argPAD . oldset)

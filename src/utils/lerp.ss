@@ -6,7 +6,7 @@
 
 (define (lerp-project x l1 h1 l2 h2)
 ; converts x, relative to range l1-h1, to corresponding range l2-h2
-  (if (= l1 h1) (error "lerp source range is 0"))
+  (when (= l1 h1) (error "lerp source range is 0"))
   (let ((fract (/ (- x l1) (- h1 l1))))
     (lerp fract l2 h2)))
 

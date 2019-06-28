@@ -10,7 +10,7 @@
 (define-syntax send-selected-that-accept-method
   (syntax-rules ()
     ((_ msg args ...)
-       (for-each (lambda (obj) (if (has-method? obj 'msg) (send obj msg args ...)))
+       (for-each (lambda (obj) (when (has-method? obj 'msg) (send obj msg args ...)))
                  (send currentPAD selected)))))
 
 
@@ -24,11 +24,11 @@
    ((objs)
     (let ((newdir (Select-File-Dialog 'save)))
       (if (file-exists? newdir)
-	  (error "File or directory already exists:" newdir)
-	  (begin
-	    (make-directory newdir)
-	    (foreach objs (lambda (o) (send o export newdir)))
-	    newdir))))))
+          (error "File or directory already exists:" newdir)
+          (begin
+            (make-directory newdir)
+            (foreach objs (lambda (o) (send o export newdir)))
+            newdir))))))
 
 (define (Load-Image)
   (let* ((path (send currentPAD get-path))
@@ -36,7 +36,7 @@
          (filename #f)
          (dir? #f))
 
-    (if path
+    (when path
       (set!-values (dir filename dir?) (split-path->string path)))
 
     (set! path (get-file "Load" *menubar* dir #f #f null))
@@ -76,7 +76,7 @@
             (when font
               (apply-new-font-callback font)))
           ((eq? (send e get-event-type) 'list-box-dclick)
-	    (send (send lbo get-parent) show #f)))))
+            (send (send lbo get-parent) show #f)))))
 
     (set! dialog (make-object dialog% "Font" *menubar* 220 700 #f #f null))
     (set! listbox (make-object list-box% #f fontnames dialog cb '(single)))
@@ -98,11 +98,11 @@
 ;       ((focus (send argPAD getfocus))
 ;        (objs (if focus (list focus)
 ;          (filter
-; 	   (lambda (x)
-; 	     (cond
-; 	       ((method-in-interface? 'font (object-interface x)) x)
-; 	       (else #f)))
-; 	   (send argPAD selected)))))
+;            (lambda (x)
+;              (cond
+;                ((method-in-interface? 'font (object-interface x)) x)
+;                (else #f)))
+;            (send argPAD selected)))))
 
 
 (define (Raise-Selected argPAD)
@@ -149,7 +149,7 @@
     (lambda (g)
       (when (is-a? g group%)
         (let ((mems (send g members)))
-          (if (send g ungroup)
+          (when (send g ungroup)
             (foreach mems (lambda (m) (send m select))))
         ))))
 ;;UNDO HERE
@@ -158,7 +158,7 @@
 
 (define (Group-Selected)
   (let ((l (send currentPAD selected)))
-    (if (not (and (= (length l) 1) (is-a? (car l) group%)))
+    (when (not (and (= (length l) 1) (is-a? (car l) group%)))
       (makegroup currentPAD l))))
 
 (define (UnGroup-Selected)
@@ -171,11 +171,11 @@
       null
       (append
        (let ((obj (car objs)))
-	 (and obj
-	      (send obj write-all)))
+         (and obj
+              (send obj write-all)))
        (write-set (cdr objs)))))
 
-(define *copy_buffer* ())
+(define *copy_buffer* '())
 (define (Copy-Selected)
   (set! *copy_buffer* (write-set (send currentPAD selected)))
 )
@@ -189,9 +189,9 @@
    ((obj) (Offset-Object obj .1))
    ((obj offset)
       (let* ((mybb  (send obj bbox))
-	     (newbb (bbstretch mybb offset))
-	     (dxy   (map - (cddr newbb) (cddr mybb))))
-	(send/apply obj slide dxy)))))
+             (newbb (bbstretch mybb offset))
+             (dxy   (map - (cddr newbb) (cddr mybb))))
+        (send/apply obj slide dxy)))))
   
 
 (define (Copy-Buffer-empty?) (null?  *copy_buffer*))
@@ -217,7 +217,7 @@
 (define (clone-object obj)
   (and obj
        (let ((build-exprs (send obj write-all)))
-	 (car (eval `(import-set ,@build-exprs))))))
+         (car (eval `(import-set ,@build-exprs))))))
 
 (define (clone-objects set)
   (let ((build-exprs (write-set set)))
@@ -226,7 +226,7 @@
 
 (define (using-another-pad--Paste-From-Copy-Buffer argPAD)
   (let ((tmp currentPAD)
-        (newobjects ()))
+        (newobjects '()))
     (set! currentPAD argPAD)
     (set! newobjects (Paste-From-Copy-Buffer))
 ;UNDO HERE?
@@ -268,8 +268,8 @@
     (let ((dir *current_directory*)
           (filename #f)
           (dir? #f))
-      (if path
-          (set!-values (dir filename dir?) (split-path->string path)))
+      (when path
+            (set!-values (dir filename dir?) (split-path->string path)))
       (when dir?
             (set! dir (build-path dir filename))
             (set! filename #f))
@@ -283,16 +283,16 @@
 
 ;(define (Select-File-Dialog mode) ;mode is 'load or 'save
 ;  (let ((path (send currentPAD get-path))
-;	(dir *current_directory*)
-;	(filename #f)
-;	(dir? #f))
+;        (dir *current_directory*)
+;        (filename #f)
+;        (dir? #f))
 ;    (if path
-;	(set!-values (dir filename dir?) (split-path->string path)))
+;        (set!-values (dir filename dir?) (split-path->string path)))
 ;    (set! path
-;	  (cond ((eq? mode 'save)
-;		 (put-file "Save" *menubar* dir filename #f null))
-;		(else
-;		 (get-file "Load" *menubar* dir #f #f null))))
+;          (cond ((eq? mode 'save)
+;                 (put-file "Save" *menubar* dir filename #f null))
+;                (else
+;                 (get-file "Load" *menubar* dir #f #f null))))
 ;    path))
 
 (define (Save-Current)
@@ -303,25 +303,24 @@
 
 (define (Select-and-Save-All)
   (let ((path (Select-File-Dialog 'save)))
-    (if path
-	(Save-All-As path))
+    (when path (Save-All-As path))
     path))
 
 ; Old:
 (define (Write-All-Objects-To-Port port)
   (let ((ok-to-write?
-	 (lambda (o)
-	   (andmap (lambda (fn) (not (fn o)))
-		   (send currentPAD reject-save-filters) ))))
+         (lambda (o)
+           (andmap (lambda (fn) (not (fn o)))
+                   (send currentPAD reject-save-filters) ))))
     (for-each
      (lambda (o)
        (let ((write-str
-	      (and (ok-to-write? o)
-      		;(not (child-of-formation? o))
-		   (send o writable?)
-		   (send o write))))
-	 (if write-str
-	     (fprintf port "~s~%" write-str))))
+              (and (ok-to-write? o)
+                      ;(not (child-of-formation? o))
+                   (send o writable?)
+                   (send o write))))
+         (when write-str
+               (fprintf port "~s~%" write-str))))
      (send currentPAD objects))))
 
 ; New:
@@ -333,8 +332,8 @@
   (case-lambda
    ((argPAD)
     (apply append (send argPAD objects)
-	   (map (lambda (cb) ((car cb)))
-		*abstract-objects-callbacks*)))
+           (map (lambda (cb) ((car cb)))
+                *abstract-objects-callbacks*)))
    (() (saveable-objects currentPAD))))
 
 ;(define (Write-All-Objects-To-Port port)
@@ -369,13 +368,13 @@
   ; as far as necessary
   (let ((obj-expr-list (Write-All-Objects-To-Expr)))
     (cons 'load-set
-	  (cons `(max-padid ,*id-counter*)
-		obj-expr-list))))
+          (cons `(max-padid ,*id-counter*)
+                obj-expr-list))))
 
 (define (Format-SaveAll-Expr-Into-String expr)
   (string-append "("
-		 (apply string-append (map (lambda (e) (format "~s~%" e)) expr))
-		 ")\n"))
+                 (apply string-append (map (lambda (e) (format "~s~%" e)) expr))
+                 ")\n"))
 
 (define (Save-All-To-String)
   (Format-SaveAll-Expr-Into-String (Save-All-To-Expr)))
@@ -409,7 +408,7 @@
          (message-box  "Save" (exn-message exn) *menubar* '(ok)))))
      (let ((port #f))
        (unless fullfilename
-	       (error "no filename specified"))
+               (error "no filename specified"))
        (send currentPAD set!-path fullfilename)
        (set! port (open-output-file fullfilename 'truncate))
        (save-fn port)
@@ -421,7 +420,7 @@
    ((load-context-fn)
     (let ((path (Select-File-Dialog 'load)))      
       (when path
-	    (load-context-fn path))
+            (load-context-fn path))
       path))))
 
 (define (Select-and-Import-File)
@@ -429,8 +428,8 @@
 
 (define (Select-and-Restore-File)
   (let ((path (Select-and-Load-File restore-path)))
-    (if path
-	(send currentPAD set!-path path))))
+    (when path
+                (send currentPAD set!-path path))))
 
 (define (Restore-Current)
   (let ((path (send currentPAD get-path)))
@@ -454,16 +453,16 @@
 (define (Confirm-and-Delete-All)
   (let
     ((l (filter (lambda (x) (send x deletable?)) 
-		(saveable-objects currentPAD)))) ;include abstract objs
-		;(send currentPAD objects))))
+                (saveable-objects currentPAD)))) ;include abstract objs
+                ;(send currentPAD objects))))
     (cond
       ((null? l)
         (message-box "Delete All" "Nothing to delete" *menubar* '(ok)))
       (else
         (when (eq? 'ok (message-box "Delete" "Delete Everything?" *menubar* '(ok-cancel)))
-	      ;(undoable-delete-objs l)
+              ;(undoable-delete-objs l)
               ;(destroy-and-keep-destroying-until-everything-is-gone currentPAD)
-	      (Clear-Workspace l)
+              (Clear-Workspace l)
               )))))
  
 (define delete-all
@@ -490,11 +489,11 @@
 
 (define (Fillcolor-Dialog)
   (let* ((tclcolor (fillgetcolor)))
-    (if tclcolor (send-selected-that-accept-method fill tclcolor))))
+    (when tclcolor (send-selected-that-accept-method fill tclcolor))))
 
 (define (Pencolor-Dialog)
   (let* ((tclcolor (pengetcolor)))
-    (if tclcolor (send-selected-that-accept-method pen tclcolor))))
+    (when tclcolor (send-selected-that-accept-method pen tclcolor))))
 
 (define (Penwidth-Dialog) (not-implemented "Penwidth"))
 

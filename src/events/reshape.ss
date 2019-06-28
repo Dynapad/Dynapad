@@ -39,7 +39,7 @@
       (lambda (eventPAD e) (set! currentPAD eventPAD)
         (let ((x (event-x e)) (y (event-y e)))
           (send this xy x y)
-          (if _drag_callback (_drag_callback x y))
+          (when _drag_callback (_drag_callback x y))
         )
         #f
       )
@@ -54,7 +54,7 @@
     (cons plst (make-lazy-pairs (cddr plst)))))
 
 (define (reshape-polygon argPAD poly)
-  (def hlist ())
+  (def hlist '())
   (def reshape-savvy-actors #f) ;DSB added
   (def addbindings)
  ;(changemode argPAD "Select")
@@ -69,8 +69,8 @@
 
   ; identify any reshape-sensitive actors on object (DSB added)
   (let ((named-actors-list (assq 'reshape-sensitive (send poly alist))))
-    (if (and named-actors-list (not (null? (cdr named-actors-list))))
-        (set! reshape-savvy-actors (cdr named-actors-list))))
+    (when (and named-actors-list (not (null? (cdr named-actors-list))))
+          (set! reshape-savvy-actors (cdr named-actors-list))))
 
   ; create a function to add bindings
   (set! addbindings (lambda (h i)  ; h is handle, i is coord index
@@ -130,16 +130,15 @@
     (lambda (w e)
       (let ((i (find-nearest-line-segment hlist (event-x e)(event-y e)))
             (newh (make-object general-handle% argPAD (event-x e)(event-y e)))
-            (head ()))
-	(if reshape-savvy-actors
-	    (for-each (lambda (actr)
-			(send actr add-vertex-n i (send newh xy)))
-		      reshape-savvy-actors))
-        (addbindings newh (+ i 1))
-        (set! head (list-tail hlist i))
-        (set-cdr! head (cons newh (cdr head)))
-        (send poly coords (apply append (map (lambda (h) (send h xy)) hlist))))))
-)
+            (head '()))
+	(when reshape-savvy-actors
+        (for-each (lambda (actr)
+        (send actr add-vertex-n i (send newh xy)))
+            reshape-savvy-actors))
+          (addbindings newh (+ i 1))
+          (set! head (list-tail hlist i))
+          (set-cdr! head (cons newh (cdr head)))
+          (send poly coords (apply append (map (lambda (h) (send h xy)) hlist)))))))
 
 (define (find-nearest-line-segment hlist ex ey)
   (if (<= (length hlist) 1)
@@ -148,16 +147,16 @@
            (ibest 0)
            (done? #f))
       (dotimes (i len)
-        (if (not done?)
-          (let ((xy0 (send (list-ref hlist i) xy))
-                (xy1 (send (list-ref hlist (modulo (add1 i) len)) xy)))
-            (when  ;a curious calculation to "nearest segment", from ben
-              (and
-                (or (and (>= ex (car xy0)) (<= ex (car xy1)))
-                    (and (<= ex (car xy0)) (>= ex (car xy1))))
-                (or (and (>= ey (cadr xy0)) (<= ey (cadr xy1)))
-                    (and (<= ey (cadr xy0)) (>= ey (cadr xy1)))))
-              (set! ibest i)
-              (set! done? #t)))))
+        (when (not done?)
+              (let ((xy0 (send (list-ref hlist i) xy))
+                    (xy1 (send (list-ref hlist (modulo (add1 i) len)) xy)))
+                (when  ;a curious calculation to "nearest segment", from ben
+                  (and
+                    (or (and (>= ex (car xy0)) (<= ex (car xy1)))
+                        (and (<= ex (car xy0)) (>= ex (car xy1))))
+                    (or (and (>= ey (cadr xy0)) (<= ey (cadr xy1)))
+                        (and (<= ey (cadr xy0)) (>= ey (cadr xy1)))))
+                  (set! ibest i)
+                  (set! done? #t)))))
       ibest)))
 
