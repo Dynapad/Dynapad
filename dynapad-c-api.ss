@@ -3,6 +3,10 @@
 (require (lib "defmacro.ss"))
 (require (lib "file.ss"))
 
+; set-car! and set-cdr! are unbound in Racket,
+; their equivalents live here:
+(require rnrs/mutable-pairs-6)
+
 ; macros and utilities for code development
 (load-relative "src/misc/misc.ss")
 (load-relative "src/misc/alist.ss")

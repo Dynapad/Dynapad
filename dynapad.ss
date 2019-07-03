@@ -1,5 +1,5 @@
 (require (lib "compat.ss")); needed for sort
-(require mzscheme)
+(require lang/plt-pretty-big)
 (require scheme/gui)
 
 (current-eventspace (make-eventspace))
@@ -14,12 +14,10 @@
 (define *home-directory* #f)
 (define *dynapad-directory* (current-load-relative-directory))
 
-; This doesn't work. Instead use `mred -z -S collects` to add to path.
-; It seems like require forms are evaluated before this can be evaluated..?
-; (current-library-collection-paths
-;   (cons
-;     (build-path *dynapad-directory* "collects")
-;     (current-library-collection-paths)))
+ (current-library-collection-paths
+   (cons
+     (build-path *dynapad-directory* "collects")
+     (current-library-collection-paths)))
 
 ;-----------------------------------------------------------------
 (require (lib "pathhack.ss" "misc"))
