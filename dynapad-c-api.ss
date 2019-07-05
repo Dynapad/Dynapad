@@ -3,10 +3,6 @@
 (require (lib "defmacro.ss"))
 (require (lib "file.ss"))
 
-; set-car! and set-cdr! are unbound in Racket,
-; their equivalents live here:
-(require rnrs/mutable-pairs-6)
-
 ; macros and utilities for code development
 (load-relative "src/misc/misc.ss")
 (load-relative "src/misc/alist.ss")
@@ -945,8 +941,8 @@
   ;this level relays reposition/resize callbacks to group members
   (class dynaobject%
     (inherit-field _dynapad cptr)
-    (init dynaptr) (set! _dynapad dynaptr)
-    (super-instantiate (_dynapad (sch_makegroup (send _dynapad get-cptr) this)))
+    (init dynaptr)
+    (super-instantiate (dynaptr (sch_makegroup (send dynaptr get-cptr) this)))
 
     (define/override (update-position dx dy)
       (super update-position dx dy)
@@ -969,9 +965,8 @@
 
 (define group%
   (class base-group%
-    (inherit-field _dynapad)
-    (init dynaptr (initmembers #f)) (set! _dynapad dynaptr)
-    (inherit-field cptr selected)
+    (inherit-field _dynapad cptr selected)
+    (init dynaptr (initmembers #f))
     (inherit dynaclass)
     (override writeoptions fix delete)
     (public members member? add remove save divisible ungroup)
@@ -1048,7 +1043,7 @@
           (set! selected (make-object select% _dynapad this (car args))))
           ))
 
-    (super-instantiate (_dynapad)); (sch_makegroup (send _dynapad get-cptr) this)))
+    (super-instantiate (dynaptr)); (sch_makegroup (send _dynapad get-cptr) this)))
     (dynaclass 'group%)
     (send this dependents-fn (lambda (me) (send me members)))
     (when initmembers (members initmembers))))
