@@ -73,7 +73,7 @@
 	       (unless (null? later) ; unless only child
 		       (send this nudge-family-after later)))
 	     (begin ;right of sib
-	       (set-cdr! sib-and-later (cons new later))
+	       (set-mcdr! sib-and-later (cons new later))
 	       (send new column (+ 2 (send
 				      (send sib rightmost-descendant)
 				      column)))

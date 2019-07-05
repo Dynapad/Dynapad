@@ -125,10 +125,10 @@
 				     (let ((c-tail (list-tail c (- 2i 1)))
 					   (v-tail (list-tail *vtx-handles* (- i 1)))
 					   (e-tail (list-tail *edge-handles* (- i 1))))
-				       (set-cdr! c-tail (cdddr c-tail))
+				       (set-mcdr! c-tail (cdddr c-tail))
 				       (send Draw-object coords c)
-				       (set-cdr! v-tail (cddr v-tail))
-				       (set-cdr! e-tail (cddr e-tail))))
+				       (set-mcdr! v-tail (cddr v-tail))
+				       (set-mcdr! e-tail (cddr e-tail))))
 				 ;renumber remaining edges/vtxs
 				 (for-each (lambda (edg) (send edg decrement))
 					   (list-tail *edge-handles* i))
@@ -162,12 +162,12 @@
 			(vtxs-tail (list-tail *vtx-handles* i))
 			(c (send Draw-object coords))
 			(c-tail (list-tail c (+ 1 (* 2 i)))))
-		   (set-cdr! edges-tail
+		   (set-mcdr! edges-tail
 			     (cons (make-object edge-handle% (+ i 1) (list x y) (list-tail my-c 2))
 				   (cdr edges-tail)))
 		   (for-each (lambda (edg) (send edg increment))
 			     (cddr edges-tail))
-		   (set-cdr! vtxs-tail
+		   (set-mcdr! vtxs-tail
 			     (cons (make-object vertex-handle% (+ i 1) (list x y))
 				   (cdr vtxs-tail)))
 		   (for-each (lambda (vtx) (send vtx increment))
@@ -176,7 +176,7 @@
 		   (for-each (lambda (vtx) (send vtx raise))
 			     *vtx-handles*)
 		   (send this move-tail-to x y)
-		   (set-cdr! c-tail (append (list x y) (cdr c-tail)))
+		   (set-mcdr! c-tail (append (list x y) (cdr c-tail)))
 		   (send Draw-object coords c)))
 
 	 (super-instantiate (dynapad))

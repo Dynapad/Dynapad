@@ -90,26 +90,26 @@
 	;upon entry of obj, call sequence is:
 	;  include-obj -> _enter-action -> undo-on-exit -> do-fn
     (define/public (undo-on-exit obj do-fn undo-fn)
-      (pushq-onto-alist-val-always! obj undo-fn _restore-always-alist)
+      (pushq-onto-malist-val-always! obj undo-fn _restore-always-alist)
       (do-fn obj))
     (define/public (undo-on-abandon obj do-fn undo-fn)
-      (pushq-onto-alist-val-always! obj undo-fn _restore-abandoned-alist)
+      (pushq-onto-malist-val-always! obj undo-fn _restore-abandoned-alist)
       (do-fn obj))
     
     (define (restore-any-obj obj)
-      (let ((undo-fns (get-and-rem-from-alist! assq remv obj _restore-always-alist)))
+      (let ((undo-fns (get-and-rem-from-malist! assq remv obj _restore-always-alist)))
 	(if undo-fns
 	    (for-each (lambda (fn) (fn obj)) (cdr undo-fns)))))
     (define (restore-abandoned-obj obj)
-      (let ((undo-fns (get-and-rem-from-alist! assq remv obj _restore-abandoned-alist)))
+      (let ((undo-fns (get-and-rem-from-malist! assq remv obj _restore-abandoned-alist)))
 	(if undo-fns
 	    (for-each (lambda (fn) (fn obj)) (cdr undo-fns)))))
 
     ; Adding/removing: ----------------------------
     (define/public (claim obj)
       ; obj is not already in rgn; add it and mark it
-      (pushq-onto-alist-val-always! 'in-region this obj alist)
-      (pushq-onto-alist-val-always! this obj *claims-this-round*))
+      (pushq-onto-malist-val-always! 'in-region this obj alist)
+      (pushq-onto-malist-val-always! this obj *claims-this-round*))
 
     (define (include objs absorb?)
       (if (not (list? objs))
@@ -160,18 +160,18 @@
 
     (define/public (remove-obj obj)
 ;(say "depart region " (length _contents))
-      (remq-clean-from-alist-val! 'in-region this obj alist)
+      (remq-clean-from-malist-val! 'in-region this obj alist)
       (unless (send obj deleted?)
 	      (for-each (lambda (fn) ((car fn) obj)) _remove-actions)
 	      (for-each (lambda (fn) ((car fn) obj)) _leave-actions)
-	      (get-and-rem-from-alist! assq remv obj _restore-abandoned-alist) ; clean up unused abandonment undos
+	      (get-and-rem-from-malist! assq remv obj _restore-abandoned-alist) ; clean up unused abandonment undos
 	      (restore-any-obj obj)       ; do removal undos
 	      ))
     
     (define/public (abandon-obj obj)
 ;(say "depart region " (length _contents))
       (unless (or (send obj deleted?) _loyal)
-	      (remq-clean-from-alist-val! 'in-region this obj alist)
+	      (remq-clean-from-malist-val! 'in-region this obj alist)
 	      (for-each (lambda (fn) ((car fn) obj)) _abandon-actions)
 	      (for-each (lambda (fn) ((car fn) obj)) _leave-actions)
 	      (restore-any-obj obj)
@@ -392,14 +392,14 @@
       (let ((form (send this formation)))
 	(send form add obj)
 	(send form separable obj #t)
-	(let ((old-owner (get-and-rem-from-alist! assq remq 'last-region-owner obj alist)))
+	(let ((old-owner (get-and-rem-from-malist! assq remq 'last-region-owner obj alist)))
 	  (if (and old-owner
 		   (not (eq? this (cadr old-owner))))
 	      ;steal obj from old-owner
 	      (send (cadr old-owner) remove obj)))
-	(get-else-push-onto-alist! assq (list 'region-owner this) obj alist)
+	(get-else-push-onto-malist! assq (list 'region-owner this) obj alist)
 ;	(remote-push! (list 'region-owner this) obj alist)
-;	(push-onto-alist-val-always! assq
+;	(push-onto-malist-val-always! assq
 ;				     'region-owner
 ;				     this obj alist)	
 	))
@@ -410,13 +410,13 @@
 
     (define (prepare-release-obj obj)
       (detach-obj obj)
-      (get-and-rem-from-alist! assq remq 'region-owner obj alist)
+      (get-and-rem-from-malist! assq remq 'region-owner obj alist)
       (remote-push! (list 'last-region-owner this) obj alist))
 
     (define (commit-release-obj obj)
       (detach-obj obj)  
-      (get-and-rem-from-alist! assq remq 'region-owner obj alist)
-      (get-and-rem-from-alist! assq remq 'last-region-owner obj alist)
+      (get-and-rem-from-malist! assq remq 'region-owner obj alist)
+      (get-and-rem-from-malist! assq remq 'last-region-owner obj alist)
       ;un-propogate geon callbacks
       ;(let ((geon (get-actor-named obj geo-actor-name)))
 ;	(if geon
@@ -533,7 +533,7 @@
     (define/override (receive-obj obj) (include-obj obj #f))
 
     (define (exclude-obj obj abandon?)
-      (remq-clean-from-alist-val! 'in-region this obj alist)
+      (remq-clean-from-malist-val! 'in-region this obj alist)
       (let ((shadow (get-shadow obj)))
 	(for-each (lambda (fn) ((car fn) shadow))
 		  (if abandon? (send this abandon-actions) (send this remove-actions)))
@@ -860,7 +860,7 @@
 	 (let ((regs (get-pickup-relevant-regions o)))
 	   (if regs
 	       (foreach regs (lambda (r)
-			       (pushq-onto-alist-val-always! r o alist)))))))
+			       (pushq-onto-malist-val-always! r o alist)))))))
     alist))
 
 (send dynapad beforedrag-callbacks 'add respond-to-pickup)

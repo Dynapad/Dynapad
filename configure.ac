@@ -30,12 +30,12 @@ AC_SUBST(PLT_CFLAGS)
 case "${host_os}" in
     darwin*)
       # removed: -F$PLT/lib/ -framework Racket 
-      PLT_LIBS="$PLT/lib/mzdyn3m.o" # link as framework
+      PLT_LIBS="$PLT/lib/mzdyn.o" # link as framework
       AC_SUBST(PLT_LIBS)
       ;;
     linux*)
       # note: this doesn't seem portable...
-      PLT_LIBS="/usr/lib/libracket3m.so"
+      PLT_LIBS="/usr/lib/libracket.so"
       AC_SUBST(PLT_LIBS)
       ;;
 esac

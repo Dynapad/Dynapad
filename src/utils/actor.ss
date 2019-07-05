@@ -70,18 +70,18 @@
 		   (send padobject delete-callbacks 'add  ;auto-attach delete callback
 			 (lambda (obj) (send this delete))
 			 name)))
-	     (pushq-onto-alist-val-always! name this padobject alist)))
-;	     (if (not (pushq-onto-alist-val!
+	     (pushq-onto-malist-val-always! name this padobject alist)))
+;	     (if (not (pushq-onto-malist-val!
 ;		       name this padobject alist))
 ;		 (remote-push! (list name this) padobject alist))))
 
 	 (define/public (link-to padobject name)
 	   ;linking is "light attachment": obj refers to actor, but
 	   ;  actor does not refer to obj (and therefore does not get callbacks)
-	   (pushq-onto-alist-val-always! name this padobject alist))
+	   (pushq-onto-malist-val-always! name this padobject alist))
 
 	 (define/override (remove-from padobject name)
-	   (remq-from-alist-val! name this padobject alist))
+	   (remq-from-malist-val! name this padobject alist))
 
 	 (define/override (delete) 
 	   ;removes references to actor for GCing

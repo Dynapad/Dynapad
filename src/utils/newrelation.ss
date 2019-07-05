@@ -269,7 +269,7 @@
       (push! obj _members)
       (ensure-relset-delete-callbacks-for-objs obj)
       ;add this to obj's alist 'relsets entry
-      (pushq-onto-alist-val-always! 'relsets this obj alist)
+      (pushq-onto-malist-val-always! 'relsets this obj alist)
       ;if this has an active brush, activate it for obj
       (let ((mybrush (brush)))
 	(if (and mybrush (send mybrush active?))
@@ -278,7 +278,7 @@
     (define/public (remove-member obj)
       (set! _members (remq obj _members))
       ;remove this from obj's alist 'relsets entry
-      (remq-from-alist-val! 'relsets this obj alist)
+      (remq-from-malist-val! 'relsets this obj alist)
       ;if this has an active brush, dactivate it for obj
       (let ((mybrush (brush)))
 	(if (and mybrush (send mybrush active?))

@@ -71,7 +71,7 @@
     (field (_instances null))
     (super-instantiate ())
 
-    (push-onto-alist-val-always! assoc (url) this *url-handle-alist*)
+    (push-onto-malist-val-always! assoc (url) this *url-handle-alist*)
 
     (define/public (url) (send _url url))
 
@@ -94,7 +94,7 @@
 
     (define/public (delete)
       (foreach (lambda (i) (rem-object-keyval i 'handle)) (instances))
-      (delete-clean-from-alist-val! assoc delete (url) this *url-handle-alist*))
+      (delete-clean-from-malist-val! assoc delete (url) this *url-handle-alist*))
 ))
 
 (define (get-hndl obj)  ;needed for back-compatibility (e.g. brush.ss)
@@ -154,7 +154,7 @@
     ;   ((y) (set! _year y)
 ;	    (foreach (send this instances)
 ;	       (lambda (inst)
-;		 (replace-else-push-onto-alist! assq 'timestamp (list y) inst alist))))))
+;		 (replace-else-push-onto-malist! assq 'timestamp (list y) inst alist))))))
 ;			(list y "" "" "" "" "" "") inst alist))))))
 
     (define/public (start-viewer)

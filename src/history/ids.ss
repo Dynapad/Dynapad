@@ -25,7 +25,7 @@
 ;  (load-context-objs (car *load-context-stack*)))
 (define (push-deferred-expr phase expr)
   (let ((oldlst (load-context-deferred-exprs (car *load-context-stack*))))
-    (pushq-onto-alist-val-always! phase expr oldlst)
+    (pushq-onto-malist-val-always! phase expr oldlst)
     (set-load-context-deferred-exprs! (car *load-context-stack*) oldlst)))
 ;				     (cons expr oldlst))))
 (define (deferred-exprs)

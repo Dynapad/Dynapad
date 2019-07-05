@@ -137,7 +137,7 @@
             reshape-savvy-actors))
           (addbindings newh (+ i 1))
           (set! head (list-tail hlist i))
-          (set-cdr! head (cons newh (cdr head)))
+          (set-mcdr! head (cons newh (cdr head)))
           (send poly coords (apply append (map (lambda (h) (send h xy)) hlist)))))))
 
 (define (find-nearest-line-segment hlist ex ey)

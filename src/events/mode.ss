@@ -1,3 +1,5 @@
+(require compatibility/mlist)
+
 ;======= Change Modifier ========
 #| ;obsolete?
 (define _gui-mode-cursor ())
@@ -5,7 +7,7 @@
 (define gui-mode-cursor
   (case-lambda
     ((mode)
-       (let ((cursor (assoc mode _gui-mode-cursor)))
+       (let ((cursor (massoc mode _gui-mode-cursor)))
          (if cursor (cadr cursor) #f)))
     ((mode cursor)
        (set! _gui-mode-cursor
@@ -27,29 +29,29 @@
 ;   12 = hand
 ;  14+ = mystery spiral
 
-(define gui-mode-alist
-; alist of modes and cursors for each
-;  other modules (e.g. menubar.ss) may also push callbacks into each entry
-;  (anywhere after mode)
-  '(("Run" 0)
-    ("Select" 0) ; mostly obsolete
-    ("Zoom" 8)
-    ("Pan" 14)
-    ("BBox" 1)   ; includes lasso
-    ("GetBBox" 1)  ; redundant?
-    ("GetLasso" 1) ; redundant?
-    ("CreateLink") ; don't care, keep current cursor
-    ("Draw" 1)
-    ("DrawAdd" 1)
-    ("DrawText" 2)
-    ("EditText" 0)
-    ("Drag" 12)
-    ("DragOne" 12))
+(define gui-mode-malist
+; malist of modes and cursors for each
+; other modules (e.g. menubar.ss) may also push callbacks into each entry
+; (anywhere after mode)
+  (mlist (mcons "Run" 0)
+         (mcons "Select" 0) ; mostly obsolete
+         (mcons "Zoom" 8)
+         (mcons "Pan" 14)
+         (mcons "BBox" 1)   ; includes lasso
+         (mcons "GetBBox" 1)  ; redundant?
+         (mcons "GetLasso" 1) ; redundant?
+         (mcons "CreateLink" '()) ; don't care, keep current cursor
+         (mcons "Draw" 1)
+         (mcons "DrawAdd" 1)
+         (mcons "DrawText" 2)
+         (mcons "EditText" 0)
+         (mcons "Drag" 12)
+         (mcons "DragOne" 12))
 )
 
 (define (createModes arg_PAD)
-  (foreach (map car gui-mode-alist)
-           (lambda (mode) (send arg_PAD modifier 'create mode)))
+  (mfor-each (lambda (mode) (send arg_PAD modifier 'create mode))
+             (mmap mcar gui-mode-malist))
 )
 
 
@@ -63,7 +65,7 @@
         (send argPAD cursor cursor)
         (let* ((mode (send argPAD modifier 'get))
                ;(cursor (gui-mode-cursor mode))
-               (tuple (assoc mode gui-mode-alist)))
+               (tuple (massoc mode gui-mode-malist)))
           (cond 
            (tuple
             (foreach (cdr tuple)

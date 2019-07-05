@@ -48,10 +48,10 @@
   (set-car! (cdr xtree) (rem-alist-key (attr-list xtree) attr)))
 
 (define (add-xtree-element xtree element)
-  (set-cdr! (cdr xtree) (reverse (cons element (reverse (cddr xtree))))))
+  (set-mcdr! (cdr xtree) (reverse (cons element (reverse (cddr xtree))))))
 
 (define (rem-xtree-element xtree element)
-  (set-cdr! (cdr xtree) (remove element (cddr xtree))))
+  (set-mcdr! (cdr xtree) (remove element (cddr xtree))))
 
 (define (get-xtree-elements-by-fnc xtree match-fnc)
   (if (not xtree)
@@ -174,7 +174,7 @@
           (foreach remlist
             (lambda (e)
               (set! elts (remove e elts))))
-          (set-cdr! (cdr xtree) elts)
+          (set-mcdr! (cdr xtree) elts)
           (not (null? remlist))
 	)
       )

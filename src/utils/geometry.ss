@@ -91,7 +91,7 @@
 	((list? obj) (map name-of-obj obj))
 	(else
 	 (let* ((newpair (list obj next-obj-ID))
-		(result (get-else-push-onto-alist! assq newpair obj-ID-alist))
+		(result (get-else-push-onto-malist! assq newpair obj-ID-alist))
 		(ID (cadr result)))
 	   (if (eq? result newpair) ;not found, use new
 	       (begin
@@ -2115,11 +2115,11 @@
 		(let* ((parents (send pt parents))
 		       (p1 (car parents))
 		       (p2 (cadr parents)))
-		  (pushq-onto-alist-val-always! p1 pt alist)
-		  (pushq-onto-alist-val-always! p2 pt alist)))
+		  (pushq-onto-malist-val-always! p1 pt alist)
+		  (pushq-onto-malist-val-always! p2 pt alist)))
 	      pts)
     (for-each (lambda (edge-pts)
-		(set-cdr! edge-pts
+		(set-mcdr! edge-pts
 			  (sort-points-along-direction
 			   (cdr edge-pts)
 			   (send (car edge-pts) angle))))
@@ -2176,8 +2176,8 @@
 	(for-each (lambda (pt)
 		    (if (is-a? pt geo-intersect-point%)
 			(let ((edge-keys (send pt parents)))
-			  (remq-clean-from-alist-val! (car edge-keys) pt int-alist)
-			  (remq-clean-from-alist-val! (cadr edge-keys) pt int-alist))))
+			  (remq-clean-from-malist-val! (car edge-keys) pt int-alist)
+			  (remq-clean-from-malist-val! (cadr edge-keys) pt int-alist))))
 		  this-circuit)
 	(cons this-circuit (new-circuit int-alist op)))))
 

@@ -317,7 +317,7 @@
       (let* ((filename (send obj hirespath))
 	     (matches  (regexp-match gifjpg_rexp filename))
 	     (base     (caddr matches)))
-	(replace-else-push-onto-alist! assq 'filename (list base) obj alist)
+	(replace-else-push-onto-malist! assq 'filename (list base) obj alist)
 	base)))
 
 (define (get-image-filename obj)

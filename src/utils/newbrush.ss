@@ -64,9 +64,9 @@
 	   ;make sure obj has brushing-trigger bound to <Enter>,<Leave>
 		   (ensure-brush-trigger-bindings-for-obj obj)
  	   ;add to alist
-		   (pushq-onto-alist-val-always! 'brushed-relsets relset obj alist))
+		   (pushq-onto-malist-val-always! 'brushed-relsets relset obj alist))
 	   ;else remove
-		 (remq-from-alist-val! 'brushed-relsets relset obj alist)
+		 (remq-from-malist-val! 'brushed-relsets relset obj alist)
 		 )
 	     ;)
        )
@@ -113,7 +113,7 @@
 
 (define (remove-private-hilight owner target)
 ;use owner as alist key
-  (let ((found (get-and-rem-from-alist!
+  (let ((found (get-and-rem-from-malist!
 		assq remq owner target alist)))
     (if found
 	(foreach (cdr found) (lambda (hl) (send hl delete))))))
@@ -441,7 +441,7 @@
 ;    new-hl))
 
 ;(define (remove-private-hilight owner target)
-;  (let ((existing-hl (get-and-rem-from-alist! assq remq owner target alist)))
+;  (let ((existing-hl (get-and-rem-from-malist! assq remq owner target alist)))
 ;    (if existing-hl (foreach (cdr existing-hl)
 ;			     (lambda (hl) (send hl delete))))))
 
@@ -478,7 +478,7 @@
 		    (assq key (cdr multihilights))))
 	(new   (and (not found)
 		    (make-fn obj))))
-    (push-onto-alist-val! assq multihighlights
+    (push-onto-malist-val! assq multihighlights
 			  (list key new) obj alist)
     new))
 

@@ -1,6 +1,8 @@
-(require (lib "compat.ss")); needed for sort
 (require lang/plt-pretty-big)
 (require scheme/gui)
+(require compatibility/mlist)
+
+(require (lib "compat.ss")); needed for sort
 
 (current-eventspace (make-eventspace))
 
@@ -66,13 +68,13 @@
 (define *popup-menus-enabled?* #f)
 (define *menubar* #f)
 (define enable-marquee-and-lasso #f)
-(if *use-menubar*
+(when *use-menubar*
   (dynaload "menubar.ss"))
 
 (define (main-menu-title obj) ;probably overridden by application module
   (if obj "Object Menu" "Dynapad Menu"))
 
-(if *window-geometry* (send dynapad winfo *window-geometry*))
+(when *window-geometry* (send dynapad winfo *window-geometry*))
 
 
 ; load applications after dynapad has started

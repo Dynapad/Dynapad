@@ -61,7 +61,7 @@
           (foreach imagelist (lambda (obj)
             (let ((tuple (lookup-date-in-alist obj dates_alist)))
               (if tuple
-                ;(replace-else-push-onto-alist! assq 'date.v0 tuple obj alist)
+                ;(replace-else-push-onto-malist! assq 'date.v0 tuple obj alist)
                 (set-object-keyval obj 'date.v0 tuple) ))))))
     imagelist))
 

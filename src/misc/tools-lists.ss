@@ -42,7 +42,7 @@
 ; 	 (let ((brk (list-tail ,lst (- ,n 1)))
 ; 	       (head ,lst))
 ; 	   (set! ,lst (cdr brk))
-; 	   (set-cdr! brk null)
+; 	   (set-mcdr! brk null)
 ; 	   head)))))
 
 (define-macro chop!
@@ -134,7 +134,7 @@
 	   (else  ;insert mid-list
 	    (let ((pr (prior found lst-val))
 		  (return (cons ,newval found)))
-	      (set-cdr! pr return)
+	      (set-mcdr! pr return)
 	      return)))))
 
 (define (list-delete-nth lst n)

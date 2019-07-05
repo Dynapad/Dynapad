@@ -1,18 +1,20 @@
 ;======= Simple Menubar ========
 
+(require compatibility/mlist)
+
 (define (for-all-pads body) (for-each body *list-of-all-dynapads*))
 
 (dynaload "mode.ss")
-(push-onto-alist-val! assoc "Run"
-		      (lambda (argPAD)
-			(clear-all-menu-buttons)
-			(send btn_run set-label on_run))
-		      gui-mode-alist)
-(push-onto-alist-val! assoc "Select"
-		      (lambda (argPAD)
-			(clear-all-menu-buttons)
-			(send btn_select set-label on_select))
-		      gui-mode-alist)
+(push-onto-malist-val! massoc "Run"
+                      (lambda (argPAD)
+                        (clear-all-menu-buttons)
+                        (send btn_run set-label on_run))
+                      gui-mode-malist)
+(push-onto-malist-val! massoc "Select"
+                      (lambda (argPAD)
+                        (clear-all-menu-buttons)
+                        (send btn_select set-label on_select))
+                      gui-mode-malist)
 
 
 #| ;obsolete:
@@ -110,9 +112,9 @@
   (if btn_marquee (send btn_marquee set-label off_marquee  ))
   (if btn_lasso (send btn_lasso set-label off_lasso  ))
   (foreach *draw-button-off-labels*
-	   (lambda (pair) (mlet (((btn lbl) pair)) (send btn set-label lbl))))
+           (lambda (pair) (mlet (((btn lbl) pair)) (send btn set-label lbl))))
   (foreach *guest-button-off-labels*
-	   (lambda (pair) (mlet (((btn lbl) pair)) (send btn set-label lbl))))
+           (lambda (pair) (mlet (((btn lbl) pair)) (send btn set-label lbl))))
 )
 
 (define btn_run
@@ -345,9 +347,9 @@
           ((first (car l)) (l l))
           (cond
             ((null? (cdr l)) (if loop? (send (car l) link first)))
-	    (else
-	      (send (car l) link (cadr l))
-	      (loop first (cdr l)))))
+            (else
+              (send (car l) link (cadr l))
+              (loop first (cdr l)))))
         (send dialog show #f)))
     (send dialog show #t)))
 
@@ -376,10 +378,10 @@
     (make-object button% "Ok" cancelokpane
       (lambda (button event)
         (let loop
-	  ((o o))
-	  (let ((next (send o link)))
-	    (send o link #f)
-	    (if (and follow? next) (loop next))))
+          ((o o))
+          (let ((next (send o link)))
+            (send o link #f)
+            (if (and follow? next) (loop next))))
         (send dialog show #f)))
     (send dialog show #t)))
 
