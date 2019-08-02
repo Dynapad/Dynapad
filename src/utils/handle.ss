@@ -47,7 +47,7 @@
       (case-lambda
        (() (ensure-string _url))  ;#path issues
        ((path) ;maybe replace path head
-	(if (and path (relative-path? path))
+	(when (and path (relative-path? path))
 	    (error "URL is relative path"))
 	(cset! _url
 	       (and path
@@ -140,7 +140,7 @@
 		     (readport (and (file-exists? filename)
 				    (open-input-file filename 'text)))
 		     (line (and readport (read-line readport))))
-		(if readport (close-input-port readport))
+		(when readport (close-input-port readport))
 		(set! _title (or line ""))))
       _title)
 

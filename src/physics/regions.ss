@@ -13,7 +13,7 @@
 				  (make-object layer% dynapad "lens")
 				  (raise)))
 (let ((select-layer (send dynapad getvar 'select-layer)))
-  (if select-layer
+  (when select-layer
       (send select-layer raise)))
 (define *brush-layer* (send dynapad getvar 'lens-layer)) ;temp
 
@@ -34,16 +34,16 @@
     (field (_contents null))
     (field (_dynaclass 'effect-set%))
 
-    (field (_leave-actions ())   ;action when obj leaves for any reason
-	   (_abandon-actions ()) ;action when obj left behind (regn moves away)
-	   (_remove-actions ())  ;action when obj removed (obj moves away)
-	   (_enter-actions ())   ;action when obj enters for any reason
-	   (_absorb-actions ())  ;action when rgn moves to obj
-	   (_receive-actions ()) ;action when obj moves to rgn
-	   (_update-actions ())  ;action when obj moved (relatively) within regn
-	   (_pickup-actions ())  ;action when obj picked up at start of drag
-	   (_finish-actions ()))
-    (field (_filter-fns ()))
+    (field (_leave-actions '())   ;action when obj leaves for any reason
+	   (_abandon-actions '()) ;action when obj left behind (regn moves away)
+	   (_remove-actions '())  ;action when obj removed (obj moves away)
+	   (_enter-actions '())   ;action when obj enters for any reason
+	   (_absorb-actions '())  ;action when rgn moves to obj
+	   (_receive-actions '()) ;action when obj moves to rgn
+	   (_update-actions '())  ;action when obj moved (relatively) within regn
+	   (_pickup-actions '())  ;action when obj picked up at start of drag
+	   (_finish-actions '()))
+    (field (_filter-fns '()))
 
     (field (_loyal #f)) ;if #t does not abandon contents
     (define/public loyal (get/set _loyal))
@@ -98,11 +98,11 @@
     
     (define (restore-any-obj obj)
       (let ((undo-fns (get-and-rem-from-malist! assq remv obj _restore-always-alist)))
-	(if undo-fns
+	(when undo-fns
 	    (for-each (lambda (fn) (fn obj)) (cdr undo-fns)))))
     (define (restore-abandoned-obj obj)
       (let ((undo-fns (get-and-rem-from-malist! assq remv obj _restore-abandoned-alist)))
-	(if undo-fns
+	(when undo-fns
 	    (for-each (lambda (fn) (fn obj)) (cdr undo-fns)))))
 
     ; Adding/removing: ----------------------------
@@ -112,7 +112,7 @@
       (pushq-onto-malist-val-always! this obj *claims-this-round*))
 
     (define (include objs absorb?)
-      (if (not (list? objs))
+      (when (not (list? objs))
 	  (set! objs (list objs)))
       (set! objs (filter (lambda (o) (apply-filters o)) objs))
       (let* ((int+diff (list-intersect+diff objs _contents memq))
@@ -142,7 +142,7 @@
       )
 
     (define (exclude objs abandon?)
-      (if (not (list? objs))
+      (when (not (list? objs))
 	  (set! objs (list objs)))
       (let* ((int+diff (list-intersect+diff _contents objs memq))
 	     (int      (car int+diff))
@@ -179,7 +179,7 @@
     
     ; Updating: --------------------------
     (define/public (update objs)
-      (if (not (list? objs))
+      (when (not (list? objs))
 	  (set! objs (list objs)))
       (for-each (lambda (o) (update-obj o)) objs))
 
@@ -248,7 +248,7 @@
 	(super delete))
 
       (define/public (refresh-contents) ;assumes region was moved
-	(if _absorptive
+	(when _absorptive
 	    (send this contents (contained-objects (send this pane) _containment-fn))))
 
       (define/public (refresh-obj-presence obj) ;assumes obj was moved
@@ -272,7 +272,7 @@
 	 (() _absorptive)
 	 ((val)
 	    (if val
-		(if (not _absorptive)
+		(when (not _absorptive)
 		    (let ((obj (send this object)))
 		      (when obj
 			    (send obj afterposition-callbacks 'add
@@ -393,7 +393,7 @@
 	(send form add obj)
 	(send form separable obj #t)
 	(let ((old-owner (get-and-rem-from-malist! assq remq 'last-region-owner obj alist)))
-	  (if (and old-owner
+	  (when (and old-owner
 		   (not (eq? this (cadr old-owner))))
 	      ;steal obj from old-owner
 	      (send (cadr old-owner) remove obj)))
@@ -493,7 +493,7 @@
 ;  away from source obj.
    (class region%
     (init _obj)
-    (field (_shadows ())) ;alist mapping source->shadow
+    (field (_shadows '())) ;alist mapping source->shadow
 ;    (field (_layer (make-object layer% dynapad "lens")))
 ;    (send _layer raise *lens-layer*)
     (super-instantiate (_obj))
@@ -597,7 +597,7 @@
 
     (define/public (fade transp)
       (let ((transp-now (send (send this object) transparency)))
-	(if (> transp transp-now)
+	(when (> transp transp-now)
 	    (send (send this object) transparency transp))))
 
     (define/public (nudge)
@@ -858,7 +858,7 @@
     (foreach objs
        (lambda (o)
 	 (let ((regs (get-pickup-relevant-regions o)))
-	   (if regs
+	   (when regs
 	       (foreach regs (lambda (r)
 			       (pushq-onto-malist-val-always! r o alist)))))))
     alist))
@@ -985,9 +985,9 @@
 	       (is-a? obj polygon%))
 	      (error (format "Can't regionize this class: ~a" obj)))
       ;ensure list args
-      (if (not (list? rgn-type))
+      (when (not (list? rgn-type))
 	  (set! rgn-type (list rgn-type)))
-      (if (not (list? form-type))
+      (when (not (list? form-type))
 	  (set! form-type (list form-type)))
 
       (let* ((form (apply make-object (car form-type) dynapad obj (cdr form-type)))

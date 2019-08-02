@@ -27,9 +27,9 @@
     (send this y-margin _y-pad-arg)
     
     (define (refresh)
-      (if _x-margin-fract
+      (when _x-margin-fract
 	  (set! _x-margin (* _x-margin-fract (bbwidth _outer-bb))))
-      (if _y-margin-fract
+      (when _y-margin-fract
 	  (set! _y-margin (* _y-margin-fract (bbheight _outer-bb))))
       (set! _inner-bb
 	    (list (min (+ (b0 _outer-bb) _x-margin) (bxc _outer-bb))
@@ -38,7 +38,7 @@
 		  (max (- (b3 _outer-bb) _y-margin) (byc _outer-bb)) )))
 
     (define/public (inner-bb)
-      (if (not _inner-bb) (refresh))
+      (when (not _inner-bb) (refresh))
       _inner-bb)
     (define/public outer-bb
       (case-lambda
@@ -48,7 +48,7 @@
 
     (define/public x-margin
       (case-lambda
-        (() (if _x-margin-fract (number->string _x-margin-fract)))
+        (() (when _x-margin-fract (number->string _x-margin-fract)))
         ((newval)
            (if (string? newval)
              (set! _x-margin-fract (min .5 (pct-string->number newval)))
@@ -59,7 +59,7 @@
   
     (define/public y-margin
       (case-lambda
-        (() (if _y-margin-fract (number->string _y-margin-fract)))
+        (() (when _y-margin-fract (number->string _y-margin-fract)))
         ((newval)
            (if (string? newval)
              (set! _y-margin-fract (min .5 (pct-string->number newval)))
@@ -181,7 +181,7 @@
     (define/public index (get/set _idx))
 
     (define/public (assimilate cell)  ;obj could be content or layout-cell
-      (if (not (is-a? cell layout-cell%))
+      (when (not (is-a? cell layout-cell%))
 	;no cell provided, assume cell is obj, mesh is 1-D; generate single coord
 	  (let ((obj cell))
 	    (set! cell (make-object layout-cell% obj))
@@ -213,7 +213,7 @@
       ; on this axis
       (let* ((count 0)
 	     (renumber-fn (lambda (cell) 
-			    (if (not (null? crds))
+			    (when (not (null? crds))
 				(send cell i-coords (car crds))) ;set all coords using template
 			    (send cell i-coord-n _axis (_++ count)))))
 	(for-each renumber-fn _cells)
@@ -233,8 +233,8 @@
 	 (new-proj (apply make-object proj-class rgn params))
 	 (new-cells (send new-proj cells))
 	 (new-filter (send new-proj filter-fn)))
-    (if proj (send proj delete))
-    (if reuse-targets
+    (when proj (send proj delete))
+    (when reuse-targets
 	(foreach reuse-targets (lambda (o) (send new-cells assimilate o))))
 	    ;now reject any region contents which don't pass new filter,
 	    ;  which should also prevent their reentry
@@ -256,7 +256,7 @@
     (field (_dynaclass 'projector%))
     (super-instantiate ())
     
-    (if _rgn
+    (when _rgn
 	(let ((obj (send _rgn object)))
 	  (when (and obj
 		   (is-a? obj dynaobject%))
@@ -358,7 +358,7 @@
     (let ((stick (send obj sticky)))
 	;workaround for sticky-bug:
 	; must unstick during move to prevent reversion to old stuck posn
-      (if stick
+      (when stick
 	  (begin
 	    (send obj sticky #f)
 	    (send obj xy x y)
@@ -405,7 +405,7 @@
 (define (SetParamForSelectedProjectors param)
   (let ((projs (map (lambda (o) (get-actor-named o projector-actor-name))
 		      (send dynapad selected))))
-    (foreach projs (lambda (p) (if p (send p param param))))))
+    (foreach projs (lambda (p) (when p (send p param param))))))
 
 
 (define 1D-projector%
@@ -416,10 +416,10 @@
     (super-instantiate (_rgn (make-object cell-row% _param)))
     (send this dynaclass '1D-projector%)
 
-    (if _rgn
+    (when _rgn
 	(send _rgn filter-fn 'add-last (send _param access-fn) this))
     (let ((obj (send this object)))
-      (if obj (add-object-menu make-popup-menu-for-1D-projector obj)))
+      (when obj (add-object-menu make-popup-menu-for-1D-projector obj)))
 
     (define/public (filter-fn)
       (send _param access-fn))
@@ -482,7 +482,7 @@
 
     (super-instantiate (_rgn _param))
     (send this dynaclass 'linear-projector%)
-    (if (is-a? _rgn region%)
+    (when (is-a? _rgn region%)
 	(send this attach-to (send _rgn object) 'linear-projector))
 	;additional handle for regionized projs
     (send this margins "10%")
@@ -493,10 +493,10 @@
 	 ;  and then interpolated 
     (define (compute-cell-x cell)
       (let ((x (send cell x-coord-n 0)))
-	(if (not x)
+	(when (not x)
 	    (let ((i (send cell i-coord-n 0))
 		  (q (send cell q-coord-n 0)))
-	      (if (not q)
+	      (when (not q)
 		  (let* ((qnt-fn (send (send this param) quantify-fn))
 			 (v    (send cell v-coord-n 0)))
 		    (set! q (qnt-fn v))
@@ -514,7 +514,7 @@
       (let ((len   (send _cells renumber))
 	    (obj   (send this object)))
 	(send this refresh-bb (send obj frame))  ;refresh bbox if regionized
-	(if (positive? len)
+	(when (positive? len)
 	    (let* ((bb  (send this bbox))
 		   (dx  (bbwidth bb))
 		   (x0  (b0 bb))
@@ -558,7 +558,7 @@
       (compute-cell-x cell)  ;recompute x coord
       (let ((j (send _y-stacks accomodate cell)))
 	(send cell i-coord-n 1 j)
-	(if (< _max-j j)
+	(when (< _max-j j)
 	    (set! _max-j j))))
 
     (define (render-cell cell)
@@ -669,7 +669,7 @@
     (field (_row-len 0) (_col-len 0) (_x-spacing 0) (_y-spacing 0))
     (field (_x-base 0) (_y-base 0))
 
-    (if (is-a? _rgn region%)
+    (when (is-a? _rgn region%)
 	(send this attach-to (send _rgn object) 'raster-projector))
     (define (prepare)
       (let* ((obj (send this object))
@@ -678,7 +678,7 @@
 			     #f
 			     (car cells))))
 	(send this refresh-bb (send obj frame))  ;refresh bbox if regionized
-	(if first-cell
+	(when first-cell
 	    (send this set-cell-dimensions first-cell))
 	(set! _x-spacing (* 1.25 (send this cell-width)))
 	(set! _y-spacing (* 1.25 (send this cell-height)))
@@ -702,7 +702,7 @@
 		   (set! _row-len len)
 		   (set! _x-spacing (/ bbw (- _row-len 1))))
 		(else
-		 (if (<= len ideal-len)
+		 (when (<= len ideal-len)
     	          ;underfull, go ahead
 		     (begin
 		       (set! _row-len (+ 1 ideal-row-len))
@@ -714,8 +714,8 @@
 		     (begin
 		       (set! _row-len (ceiling (sqrt (* len (/ bbw bbh)))))
 		       (set! _col-len (ceiling (/ len (max _row-len 1))))
-		       (if (> _row-len 1) (set! _x-spacing (/ bbw (- _row-len 1))))
-		       (if (> _col-len 1) (set! _y-spacing (/ bbh (- _col-len 1)))) ))))))
+		       (when (> _row-len 1) (set! _x-spacing (/ bbw (- _row-len 1))))
+		       (when (> _col-len 1) (set! _y-spacing (/ bbh (- _col-len 1)))) ))))))
 	     
 	  (set! _x-base (b0 bb))
 	  (set! _y-base (b3 bb)) )))

@@ -237,7 +237,7 @@
       (case-lambda
        (() (cache-maxid (get-cache-filename)))
        ((filename)
-	  (let ((outport (open-output-file filename 'replace)))
+	  (let ((outport (open-output-file filename #:exists 'replace)))
 	    (fprintf outport "(set-max-padid ~a)" *id-counter*)
 	    (close-output-port outport)
 	    (set! _trust-cache? #t)
@@ -444,7 +444,7 @@
     (define/public (prepare-for-write)
       (when _read-port (close)) ;(error "Log already open for reading:" (path))) ;for debug
       (unless _write-port
-	  (set! _write-port (open-output-file (path) 'text 'append))))
+	  (set! _write-port (open-output-file (path) #:mode 'text #:exists 'append))))
     (define/public (prepare-for-read)
       (when _write-port (close));(error "Log already open for writing:" (path))) ;for debug
       (unless _read-port

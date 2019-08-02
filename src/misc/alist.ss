@@ -122,7 +122,7 @@
      (if key-vals
 	 (begin
 	   (set-mcdr! key-vals (,del-fn ,val (mcdr key-vals)))
-	   (if (null? (mcdr key-vals))
+	   (when (null? (mcdr key-vals))
 	       (remote-set! ,@malist (remv key-vals (remote-get ,@malist))))
 	   key-vals)
 	 #f)))

@@ -1,8 +1,9 @@
 (announce-module-loading "PDF features...")
 (require (lib "process.ss"))
-(require (lib "imagemagick.ss" "imagemagick"))
-(require (lib "thumbify.ss" "thumbify"))
-(require (lib "misc.ss" "pdfrip"))
+(require "../../collects/imagemagick/imagemagick.ss"
+         "../../collects/pdfrip/pdfrip.ss"
+         "../../collects/pdfrip/misc.ss"
+         "../../collects/thumbify/thumbify.ss")
 (dynaload "handle.ss")
 (dynaload "metadata.ss")
 
@@ -80,10 +81,10 @@
 		   (s (b1 cage))
 		   (e (b2 cage))
 		   (w (b0 cage)))
-	      (if (< n (n-fn bb)) (send obj bbox (list #f n #f #f))) ;snap to n
-	      (if (< e (e-fn bb)) (send obj bbox (list e #f #f #f))) ;snap to e
-	      (if (> s (s-fn bb)) (send obj bbox (list #f #f #f s))) ;snap to s
-	      (if (> w (w-fn bb)) (send obj bbox (list #f #f w #f))) ;snap to w
+	      (when (< n (n-fn bb)) (send obj bbox (list #f n #f #f))) ;snap to n
+	      (when (< e (e-fn bb)) (send obj bbox (list e #f #f #f))) ;snap to e
+	      (when (> s (s-fn bb)) (send obj bbox (list #f #f #f s))) ;snap to s
+	      (when (> w (w-fn bb)) (send obj bbox (list #f #f w #f))) ;snap to w
 	      ))
 	  )))
 
@@ -244,7 +245,7 @@
 					     name))
 		   (destfile (build-path->string dir name)))
 	  ; copy end result to specified filename
-	       (if (not (equal? lastfile destfile))
+	       (when (not (equal? lastfile destfile))
 		   (copy-file-replace  lastfile destfile))
 	     ;thumbify
 	       (thumbify/force #t)
@@ -336,7 +337,7 @@
   (let ((dir (send pdf dir)))
     (and (directory-exists? dir)
 	 (let* ((path (build-path->string dir "config.ss"))
-		(file (open-output-file path 'text 'truncate))
+		(file (open-output-file path #:mode 'text #:exists 'truncate))
 		(cmd `(ic (make-object pdf-portrait% dynapad
 				       (relpath ,(build-path->string "../"
 							     (file-name-from-path (send pdf url)))))
@@ -481,7 +482,7 @@
 	     (init-pos (if old-graphic
 			   (list (send old-graphic position))
 			   xyz-list)))
-	(if old-graphic
+	(when old-graphic
 	    (send old-graphic delete))
 	(graphic ;set new graphic
 	 (cond ((file-exists? comppath)
@@ -642,7 +643,7 @@
     (refresh-graphic _xyz)     ; set initial graphic
     (send this divisible #f)
 
-    (if *pdf-aftermake-callbacks*
+    (when *pdf-aftermake-callbacks*
 	(exec-any-callbacks *pdf-aftermake-callbacks* this))
 ))
 
