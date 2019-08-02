@@ -504,10 +504,10 @@
 (define *last-timestamp-ID* 0)
 (define (make-timestamp-ID)
   (let ((newID (- (current-seconds) *timestamp-offset*)))
-    (if (<= newID *last-timestamp-ID*)
+    (when (<= newID *last-timestamp-ID*)
 	(begin
 	  (+= newID (* (modulo (current-milliseconds) 1000) .001))
-	  (if (<= newID *last-timestamp-ID*)
+	  (when (<= newID *last-timestamp-ID*)
 	      (set! newID (/ (truncate (+ (* 1000 *last-timestamp-ID*) 1)) 1000)))))
     (set! *last-timestamp-ID* newID)
     newID))

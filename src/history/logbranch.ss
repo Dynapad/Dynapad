@@ -26,7 +26,7 @@
 
 (define (logpath->logdir+logfile logpath)
   (let-values (((dir file dir?) (split-path->string logpath)))
-   (if dir? (error "Logpath" logpath "is a directory"))
+   (when dir? (error "Logpath" logpath "is a directory"))
    (list dir file)))
 
 (define logrange->logfile
@@ -61,7 +61,7 @@
 (define (logfile->logendnum logfile)
   (let* ((match (regexp-match logfile-rexp logfile))
 	 (logendnum (and match (seventh match))))
-    (if (equal? logendnum "")
+    (when (equal? logendnum "")
 	(set! logendnum #f))
     logendnum))
 (define (logfile->suffix logfile)
@@ -164,7 +164,7 @@
     (define/public current-branch (get/set _current-logbranch))
 
     (define/public (activate-branch branch)
-      (if _current-logbranch
+      (when _current-logbranch
 	  (send _current-logbranch deactivate))
       (current-branch branch)
       (let* ((startid  (send branch startnum))
@@ -191,7 +191,7 @@
 
     (define (get-log-maxid logfilename)
       ; scans logfile for pattern "(id N)"; returns highest N found or #f
-      (if (relative-path? logfilename)
+      (when (relative-path? logfilename)
 	  (set! logfilename (build-path->string (send this directory) logfilename)))
       (and (file-exists? logfilename)
 	   (let* ((port (open-input-file logfilename 'text))
@@ -228,9 +228,9 @@
       (case-lambda
        (() _trust-cache?)
        ((arg) (if arg
-		  (if (not _trust-cache?)
+		  (when (not _trust-cache?)
 		      (cache-maxid))
-		  (if _trust-cache?
+		  (when _trust-cache?
 		      (uncache-maxid))))))
       
     (define/public cache-maxid ;create file
@@ -289,7 +289,7 @@
    ((dir name)
     (or (and *current-logtree* (send *current-logtree* verify-name dir name))
 	(begin ;wrong tree or no tree
-	  (if *current-logtree* (send *current-logtree* delete))
+	  (when *current-logtree* (send *current-logtree* delete))
 	  (cset! *current-logtree* (make-logtree dir name)))))
    ((name) (ensure-current-logtree
 	    (default-log-directory)
@@ -317,7 +317,7 @@
     (super-instantiate ())
     (send (logtree) add-branch this)
 
-    (if _logid
+    (when _logid
 	; match logid to existing file to fill in endnum
 	(set! _file (get-filename-matching
 		     (format "^~a#~a-.*$" (treename) _logid))))
@@ -405,7 +405,7 @@
 		(clear-dependents)
 		(cset! _endnum num)
 		; auto-rename file if exists
-		(if (and (file-exists? old-path)
+		(when (and (file-exists? old-path)
 			 (not (equal? old-path (path))))
 		    (rename-file-or-directory old-path (path)))
 		num))))
@@ -442,19 +442,19 @@
     ; ======== Reading/Writing ===========
 
     (define/public (prepare-for-write)
-      (if _read-port (close)) ;(error "Log already open for reading:" (path))) ;for debug
+      (when _read-port (close)) ;(error "Log already open for reading:" (path))) ;for debug
       (unless _write-port
 	  (set! _write-port (open-output-file (path) 'text 'append))))
     (define/public (prepare-for-read)
-      (if _write-port (close));(error "Log already open for writing:" (path))) ;for debug
+      (when _write-port (close));(error "Log already open for writing:" (path))) ;for debug
       (unless _read-port
 	  (set! _read-port (open-input-file (path) 'text))))
 
     (define/public (close)
-      (if _write-port (begin
+      (when _write-port (begin
 			(close-output-port _write-port)
 			(set! _write-port #f)))
-      (if _read-port (begin
+      (when _read-port (begin
 			(close-input-port _read-port)
 			(set! _read-port #f))))
 

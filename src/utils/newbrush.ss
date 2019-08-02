@@ -94,13 +94,13 @@
      (define/public (deactivate) (activate #f))
 
      (define/public (delete)
-       (if (active?) (activate #f)))
+       (when (active?) (activate #f)))
 
      (define/public (writeargs) (list _active?))
 	;return list of customization args this should receive
 
 
-     (if initially-active? (send this activate))
+     (when initially-active? (send this activate))
 ))
 
 ; ----- Helper Functions ----------
@@ -115,7 +115,7 @@
 ;use owner as alist key
   (let ((found (get-and-rem-from-malist!
 		assq remq owner target alist)))
-    (if found
+    (when found
 	(foreach (cdr found) (lambda (hl) (send hl delete))))))
 ;  (let ((hl (send target hilights 'find #f owner)))
 ;    (if hl (send hl delete))))
@@ -296,12 +296,12 @@
 		 (send relation brush-style     (eval (car bs+name))))
 		   activate #t)) ;active?))
 	   (cset! found-style-yet? (equal? (car bs+name) curr-bstyle)))
-	 (if (and found-style-yet? (has-method? brush 'color))
+	 (when (and found-style-yet? (has-method? brush 'color))
 	     (add-menu-item sb (format "    ~a color..." (cadr bs+name))
 			    (lambda ()
 			      (let* ((curr-color (send brush color))
 				     (new-color  (ask-user-for-color curr-color)))
-				(if new-color
+				(when new-color
 				    (send brush color new-color))))))))
     ))
 
@@ -342,7 +342,7 @@
 	     (lambda (r) (make-submenu-BrushStyles sb obj (car r) (cadr r))))))
 
 
-(if *popup-menus-enabled?*
+(when *popup-menus-enabled?*
     (append-mainmenu-constructor
      (lambda (mb obj)
        (make-submenu-Relations mb obj)
@@ -373,7 +373,7 @@
   (let* ((obj (event-obj e))
 	 (found (assq 'brushed-relsets (send obj alist)))
 	 (relsets (and found (cdr found))))
-    (if relsets
+    (when relsets
 	(foreach relsets
 		 (lambda (relset)
 		   (send relset brush-targets on? obj))))

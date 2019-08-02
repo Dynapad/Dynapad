@@ -337,7 +337,7 @@
 ;      null))
 
 (define (wrapped-counting-list from to step len)
-  (if (>= to len)
+  (when (>= to len)
       (set! to (modulo to len)))
   (if (= from to)
       '()

@@ -37,7 +37,7 @@
 	     (toxy (cddr crds))
 	     (x (lerp fract (car crds) (caddr crds)))
 	     (y (lerp fract (cadr crds) (cadddr crds))))
-      (if (not *current-state-marker*)
+      (when (not *current-state-marker*)
 	  (set! *current-state-marker*
 		(ic (make-object rect% dynapad)
 		    (coords (append toxy

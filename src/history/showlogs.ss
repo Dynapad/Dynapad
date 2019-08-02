@@ -10,7 +10,7 @@
 ; ---------GUI controls------------
 (define *logtree-layer* (make-object layer% dynapad "logtree"))
 (define (show-history-tree arg)
-  (if arg
+  (when arg
       (send (current-logtree) refresh-layout))
   (send *logtree-layer* visible arg)
   (and showhistorybox (send showhistorybox set-value arg)))
@@ -44,7 +44,7 @@
     (define (my-update-fn me dx dy)
       (let ((xy (map + (send _tree origin) (list (pixels->space dx)
 						 (pixels->space dy)))))
-	(if _prev-branch
+	(when _prev-branch
 	    (send _prev-branch toxy xy))
 	(foreach _next-branches (lambda (b) (send b fromxy xy)))))
 
@@ -95,7 +95,7 @@
     (define/override (remove . args) #f) ;disable remove
 
     (define/override (delete)
-      (if (eq? *current-logtree* this)
+      (when (eq? *current-logtree* this)
 	  (set! *current-logtree* #f))
       (super delete))
 
@@ -109,17 +109,17 @@
 	))
     (define/public dim-color 
       (case-lambda
-       (() (if (not _dim-color) (refresh-color-scheme))
+       (() (when (not _dim-color) (refresh-color-scheme))
 	   _dim-color)
        ((val) (set! _dim-color val))))
     (define/public mid-color 
       (case-lambda
-       (() (if (not _mid-color) (refresh-color-scheme))
+       (() (when (not _mid-color) (refresh-color-scheme))
 	   _mid-color)
        ((val) (set! _mid-color val))))
     (define/public bright-color 
       (case-lambda
-       (() (if (not _bright-color) (refresh-color-scheme))
+       (() (when (not _bright-color) (refresh-color-scheme))
 	   _bright-color)
        ((val) (set! _bright-color val))))
 
@@ -246,7 +246,7 @@
       ; set appearance of current branch
       (send this pen (send _tree bright-color))
       (let ((obj (send this object)))
-	(if obj (send obj raise))))
+	(when obj (send obj raise))))
     (define/public (unhilight)
       (if _on-active-path? (lolight) (unlolight)))
 
@@ -287,7 +287,7 @@
     (define/public (include-in-active-path)
       (set! _on-active-path? #t)
       (let ((obj (send this object)))
-	(if obj (send obj raise)))
+	(when obj (send obj raise)))
       (lolight))
 
     (define/public (exclude-from-active-path)
