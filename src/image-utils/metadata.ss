@@ -81,7 +81,7 @@
 	 (val (if keyval
 		  (cadr keyval) ;reuse cached val
 		  (generate-fn obj)))) ;unknown, generate anew
-    (if (not keyval) ;cache for next time
+    (when (not keyval) ;cache for next time
 	(remote-push! (list tag val) obj alist))
     val))
       
@@ -322,7 +322,7 @@
 
 (define (get-image-filename obj)
       (let* ((filename (assq 'filename (send obj alist))))
-	(if (and (not filename)
+	(when (and (not filename)
 		 (extract-image-filename obj))
 	    (set! filename (assq 'filename (send obj alist))))
 	(cadr filename)))

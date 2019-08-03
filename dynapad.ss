@@ -84,7 +84,7 @@
     ;else
     (when (getenv "DYNAHOME")
       (set! load-on-startup (build-path->string (getenv "DYNAHOME") "apps.ss"))
-      (if (file-exists? load-on-startup)
+      (when (file-exists? load-on-startup)
         (load load-on-startup))
     )
   )

@@ -31,7 +31,7 @@
 
     (define/public (update-wide-view)
       (let ((currview (sendf this pad view)))
-	(if (wider-view? currview _recent-wide-view)
+	(when (wider-view? currview _recent-wide-view)
 	    (set! _vwide currview))
 	(set! _recent-wide-view currview)
 	))
@@ -99,7 +99,7 @@
 (define (adjust-push/pull-range farview nearview)
   (let* ((zfac (/ (third nearview) (third farview)))
 	 (newrange (* *default-push-pull-range* (log zfac))))
-    (if (< newrange 25) (set! newrange 0))
+    (when (< newrange 25) (set! newrange 0))
     newrange))
 
 (define (init-push-pull-motion argPAD e)
@@ -236,7 +236,7 @@
                                    view_of_everything))
     )
 
-  (if do-zoomlimit-cbs
+  (when do-zoomlimit-cbs
       (exec-any-callbacks do-zoomlimit-cbs argPAD evnt))
   )
 

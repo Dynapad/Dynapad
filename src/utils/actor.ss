@@ -28,7 +28,7 @@
   (let ((result null))
     (for-each
       (lambda (actor) 
-	(if (method-in-interface? msg (object-interface actor))
+	(when (method-in-interface? msg (object-interface actor))
 	  (if (null? args)
 	    (set! result (cons (eval `(send ,actor ,msg)) result))
 	    (set! result
@@ -64,7 +64,7 @@
 	 (define/override (attach-to padobject name)
 	   (let ((curr-obj (send this object)))
 	     (push! name _names)
-	     (if (not curr-obj)
+	     (when (not curr-obj)
 		 (begin
 		   (send this object padobject)
 		   (send padobject delete-callbacks 'add  ;auto-attach delete callback
@@ -165,9 +165,9 @@
 	 ;One of until, rel-time is #f; use the other
 	   ;When actor is kicked, will run until *at least* _expiration
 	   ; (after which it might choose to expire, depending on subclass) 
-	   (if (not until)
+	   (when (not until)
 	       (set! until (+ (current-milliseconds) rel-time)))
-	   (if (or (not _expiration) (> until _expiration))
+	   (when (or (not _expiration) (> until _expiration))
 	       (set! _expiration until)))
 
 	 (define/public maybe-expire

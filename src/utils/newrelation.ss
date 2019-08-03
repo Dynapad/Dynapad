@@ -7,7 +7,7 @@
        ;if changing brushes, make sure last is deleted
        ; so that it unbrushes targets first
      (unless (eq? type (and ,brush-field (send ,brush-field class)))
-	     (if ,brush-field (send ,brush-field delete))
+	     (when ,brush-field (send ,brush-field delete))
 	     (set! ,brush-field
 		   (and type (apply make-object type this ,direction args))))
      ,brush-field) ;returns brush; caller must activate it
@@ -272,7 +272,7 @@
       (pushq-onto-malist-val-always! 'relsets this obj alist)
       ;if this has an active brush, activate it for obj
       (let ((mybrush (brush)))
-	(if (and mybrush (send mybrush active?))
+	(when (and mybrush (send mybrush active?))
 	    (send mybrush activate-relset-brushing-for-obj #t obj this))))
 
     (define/public (remove-member obj)
@@ -281,7 +281,7 @@
       (remq-from-malist-val! 'relsets this obj alist)
       ;if this has an active brush, dactivate it for obj
       (let ((mybrush (brush)))
-	(if (and mybrush (send mybrush active?))
+	(when (and mybrush (send mybrush active?))
 	    (send mybrush activate-relset-brushing-for-obj #f obj this))))
 
     ; WARNING: setting, adding, or removing members may have
@@ -343,9 +343,9 @@
     ;source is sometimes needed by the brush
       (let ((br (brush))
 	    (abr (antibrush)))
-	(if br ;notify potential brushes
+	(when br ;notify potential brushes
 	    (send/apply br brush-targets on? source-obj (range-sets)))
-	(if abr ;notify potential antibrushes
+	(when abr ;notify potential antibrushes
 	    (send/apply abr brush-targets on? source-obj (antirange-sets)))
 	))
 
@@ -429,7 +429,7 @@
   (send obj delete-callbacks 'add
 	(lambda (o)
 	  (let ((found (assq 'relsets (send o alist))))
-	    (if found
+	    (when found
 		(foreach (cdr found) (lambda (r) (send r remove-member o))))))))
 
 ; tell alist-filters how to deal:

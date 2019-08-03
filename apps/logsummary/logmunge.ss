@@ -10,7 +10,7 @@
      (super-instantiate ())
      ;normalize time
      (field (_total (+ (abs _sec) (* 60 (abs _min)))))
-     (if  (or (negative? _min)
+     (when  (or (negative? _min)
 	      (negative? _sec)) (set! _total (- _total)))
 
      (define/public total (get/set _total))

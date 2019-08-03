@@ -77,7 +77,7 @@
 
 (define *menubar* (make-object frame% "Draw Tools" #f #f #f *draw-menu-x* *draw-menu-y*))
 
-(define *menubar_offlist* ())
+(define *menubar_offlist* '())
 
 (define runpane      (make-object horizontal-pane% *menubar*))
 (define drawpane     (make-object vertical-pane%   *menubar*))
@@ -109,8 +109,8 @@
   (send btn_select      set-label off_select     )
   (send btn_portal      set-label off_portal     )
   (send btn_hyperlink   set-label off_hyperlink  )
-  (if btn_marquee (send btn_marquee set-label off_marquee  ))
-  (if btn_lasso (send btn_lasso set-label off_lasso  ))
+  (when btn_marquee (send btn_marquee set-label off_marquee  ))
+  (when btn_lasso (send btn_lasso set-label off_lasso  ))
   (foreach *draw-button-off-labels*
            (lambda (pair) (mlet (((btn lbl) pair)) (send btn set-label lbl))))
   (foreach *guest-button-off-labels*
@@ -213,16 +213,16 @@
   (for-all-pads (lambda (PAD)
     (send PAD defaultfont newfont)
     (foreach (send PAD selected) (lambda (obj)
-      (if (has-method? obj 'font)
+      (when (has-method? obj 'font)
         (send obj font newfont)))))))
 
 (define (make-restore-font-callback-all-pads)
-  (let ((op-list ()))
+  (let ((op-list '()))
     (for-all-pads (lambda (PAD)
       (let ((oldfont (send PAD defaultfont)))
-        (push! (lambda() (send PAD defaultfont oldfont)) op-list))
+        (push! (lambda () (send PAD defaultfont oldfont)) op-list))
       (foreach (send PAD selected) (lambda (obj)
-        (if (has-method? obj 'font)
+        (when (has-method? obj 'font)
           (let ((oldfont (send obj font)))
             (push!  (lambda () (send obj font oldfont)) op-list)))))))
     (lambda () (foreach op-list (lambda (op) (op))))))
@@ -241,7 +241,7 @@
       (for-all-pads (lambda (argPAD)
         (foreach (send argPAD selected)
           (lambda (o)
-            (if (has-method? o 'pen) (send o pen tclcolor)))))) )))
+            (when (has-method? o 'pen) (send o pen tclcolor)))))) )))
 
 (define (fill-command . args)
   (lambda (button event)
@@ -255,7 +255,7 @@
       (for-all-pads (lambda (argPAD)
         (foreach (send argPAD selected)
           (lambda (o)
-            (if (has-method? o 'fill) (send o fill tclcolor)))))) )))
+            (when (has-method? o 'fill) (send o fill tclcolor)))))) )))
 
 
 (make-object canvas% *menubar*)
@@ -273,7 +273,10 @@
 (make-object button% "<none>" penpane (pen-command #f))
 
 
-(require (prefix wx: (lib "kernel.ss" "mred" "private")))
+(require (prefix-in wx: (only-in mred/private/kernel
+                                 fill-private-color
+                                 get-panel-background
+                                 the-pen-list)))
 (define no-color (make-object color% 208 212 208))
 
 (define bg-color (wx:get-panel-background))
@@ -290,9 +293,9 @@
                 (mred-color-from-tcl-color (send dynapad defaultfill))))
      )
   (set! menu-fill-pen
-    (send (wx:get-the-pen-list) find-or-create-pen fillclr 15 'solid))
+    (send wx:the-pen-list find-or-create-pen fillclr 15 'solid))
   (set! menu-pen-pen
-    (send (wx:get-the-pen-list) find-or-create-pen penclr 8 'solid))
+    (send wx:the-pen-list find-or-create-pen penclr 8 'solid))
 )
 
 (define (update-panel-colors)
@@ -308,11 +311,11 @@
 
   (wx:fill-private-color dc no-color)
 
-  (set! menu-fill-pen (send (wx:get-the-pen-list) find-or-create-pen fillclr 15 'solid))
+  (set! menu-fill-pen (send wx:the-pen-list find-or-create-pen fillclr 15 'solid))
   (send dc set-pen menu-fill-pen)
   (send dc draw-line 10 15 28 15)
 
-  (set! menu-pen-pen (send (wx:get-the-pen-list) find-or-create-pen penclr 8 'solid))
+  (set! menu-pen-pen (send wx:the-pen-list find-or-create-pen penclr 8 'solid))
   (send dc set-pen menu-pen-pen)
   (send dc draw-ellipse 5 5 30 19)
 ))
@@ -346,9 +349,9 @@
         (let loop
           ((first (car l)) (l l))
           (cond
-            ((null? (cdr l)) (if loop? (send (car l) link first)))
+            ((null? (cdr l)) (when loop? (send (car l) link first)))
             (else
-              (send (car l) link (cadr l))
+              (send (mcar l) link (cadr l))
               (loop first (cdr l)))))
         (send dialog show #f)))
     (send dialog show #t)))
@@ -381,7 +384,7 @@
           ((o o))
           (let ((next (send o link)))
             (send o link #f)
-            (if (and follow? next) (loop next))))
+            (when (and follow? next) (loop next))))
         (send dialog show #f)))
     (send dialog show #t)))
 

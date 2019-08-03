@@ -11,7 +11,7 @@
 (load-relative "src/history/ids.ss") ;move this elsewhere?
 (load-relative "src/utils/hilights.ss")
 
-(load-relative-extension ".libs/libdynapad.dylib")
+(load-relative-extension (path-replace-suffix ".libs/libdynapad" (system-type 'so-suffix)))
 (define padthread
   (let
       ((new-es (make-eventspace)))
@@ -1172,8 +1172,8 @@
 
     (define getvar
       (case-lambda
-        ((varname) (cond ((massq varname _varlist) => mcadr) (else #f)))
-        ((varname fail) (cond ((massq varname _varlist) => mcadr) (else fail)))))
+        ((varname) (cond ((massq varname _varlist) => (λ (pair) (mcar (mcdr pair)))) (else #f)))
+        ((varname fail) (cond ((massq varname _varlist) => (λ (pair) (mcar (mcdr pair)))) (else fail)))))
 
     (define (setvar varname val)
       (let ((elmt (massq varname _varlist)))

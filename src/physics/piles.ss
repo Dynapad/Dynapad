@@ -85,7 +85,7 @@
       (case-lambda
        (() _min-margin)
        ((m) (set! _min-margin m)
-	    (if (null? (send this contents))
+	    (when (null? (send this contents))
 		(send this finish)))))
     (define/public margin
       (case-lambda
@@ -136,7 +136,7 @@
 	    ;  (decrement-mean _mean-item-dim _num-items dim)
 	    ;  (sendf this object use-item-size _mean-item-dim)
 	    ;  )
-	    (if (memq o _fenceposts)
+	    (when (memq o _fenceposts)
 	     ;removed fencepost; need to recompute w. all pts
 		(set! _checkall #t))))
 
@@ -172,7 +172,7 @@
 				      (send (send (geon) anchor) xy)
 				      (send (car circuit) xy))))
 ;				      (send (caar _fenceposts) xy)
-			  (if (zero? len)
+			  (when (zero? len)
 			      (set! margin _min-margin))
 			  (coords-from-bbox
 			   (make-bb (car xy) (cadr xy) (* 2 margin))))
@@ -482,7 +482,7 @@
   (make-pile regn-type form-type objs))
 
 
-(if *popup-menus-enabled?*
+(when *popup-menus-enabled?*
     (append-mainmenu-constructor
      (lambda (mb obj)
        (add-menu-separator mb)

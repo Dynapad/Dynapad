@@ -13,7 +13,7 @@
 		      (foreach already-selected (lambda (o) (send o unselect)))
 		      (send obj select)))
 	    (set! pmenu (make-popup-menu obj)))))
-  (if pmenu (show-popup-function pmenu (event-sx e)(event-sy e)))
+  (when pmenu (show-popup-function pmenu (event-sx e) (event-sy e)))
 )
 
 (define show-popup-function (show-popup-lambda dynapad (make-popup-server)))
@@ -73,7 +73,7 @@
       (unless (send object findable)  ;kludgy, but this allows unfindable objs
 	                              ; to have menus w/o being selected
 	      (send object unselect))
-      (if popmenu (set! popmenu (car popmenu))) ;in case multiple actors respond
+      (when popmenu (set! popmenu (car popmenu))) ;in case multiple actors respond
       popmenu
     )
     ;generic/background menu

@@ -33,20 +33,20 @@
 ; malist of modes and cursors for each
 ; other modules (e.g. menubar.ss) may also push callbacks into each entry
 ; (anywhere after mode)
-  (mlist (mcons "Run" 0)
-         (mcons "Select" 0) ; mostly obsolete
-         (mcons "Zoom" 8)
-         (mcons "Pan" 14)
-         (mcons "BBox" 1)   ; includes lasso
-         (mcons "GetBBox" 1)  ; redundant?
-         (mcons "GetLasso" 1) ; redundant?
-         (mcons "CreateLink" '()) ; don't care, keep current cursor
-         (mcons "Draw" 1)
-         (mcons "DrawAdd" 1)
-         (mcons "DrawText" 2)
-         (mcons "EditText" 0)
-         (mcons "Drag" 12)
-         (mcons "DragOne" 12))
+  (mlist (mlist "Run" 0)
+         (mlist "Select" 0) ; mostly obsolete
+         (mlist "Zoom" 8)
+         (mlist "Pan" 14)
+         (mlist "BBox" 1)   ; includes lasso
+         (mlist "GetBBox" 1)  ; redundant?
+         (mlist "GetLasso" 1) ; redundant?
+         (mlist "CreateLink" '()) ; don't care, keep current cursor
+         (mlist "Draw" 1)
+         (mlist "DrawAdd" 1)
+         (mlist "DrawText" 2)
+         (mlist "EditText" 0)
+         (mlist "Drag" 12)
+         (mlist "DragOne" 12))
 )
 
 (define (createModes arg_PAD)
@@ -68,7 +68,7 @@
                (tuple (massoc mode gui-mode-malist)))
           (cond 
            (tuple
-            (foreach (cdr tuple)
+            (mforeach (mcdr tuple)
                      (lambda (val)
                        (cond ((number? val) (send argPAD cursor val))
                              ((procedure? val) (val argPAD))

@@ -140,13 +140,13 @@
 ;   (add-menu-item sb "Smooth" (nyi "Smooth") #f)
 ;   (add-menu-item sb "Unsmooth" (nyi "Unsmooth") #f)
 
-    (if (or (eq? object #t) (any-accept-method? 'fill))
+    (when (or (eq? object #t) (any-accept-method? 'fill))
       (let ((mi (add-menu-item sb "Fill Color..." Fillcolor-Dialog)))
-        (if (eq? object #t) (set! *wintop_obj_fill_mi* mi))))
+        (when (eq? object #t) (set! *wintop_obj_fill_mi* mi))))
 
-    (if (or (eq? object #t) (any-accept-method? 'pen))
+    (when (or (eq? object #t) (any-accept-method? 'pen))
       (let ((mi (add-menu-item sb "Pen Color..." Pencolor-Dialog)))
-        (if (eq? object #t) (set! *wintop_obj_pen_mi* mi))))
+        (when (eq? object #t) (set! *wintop_obj_pen_mi* mi))))
 
       ;
       ; Fade submenu

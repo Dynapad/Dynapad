@@ -410,7 +410,7 @@
        (unless fullfilename
                (error "no filename specified"))
        (send currentPAD set!-path fullfilename)
-       (set! port (open-output-file fullfilename 'truncate))
+       (set! port (open-output-file fullfilename #:exists 'truncate))
        (save-fn port)
        (close-output-port port))))))
 

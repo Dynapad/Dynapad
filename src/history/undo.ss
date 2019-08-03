@@ -3,15 +3,15 @@
 ;--- basic do/undo mechanism -------------------------------------
 ;  many of these funcs are overridden in logs.ss
 
-(define *undo-stack* ())
-(define *redo-stack* ())
+(define *undo-stack* '())
+(define *redo-stack* '())
 
 (define (clear-undo/redo)
-  (set! *undo-stack* ())
-  (set! *redo-stack* ()))
+  (set! *undo-stack* '())
+  (set! *redo-stack* '()))
 
-(define *undo-ops* ())
-(define *redo-ops* ())
+(define *undo-ops* '())
+(define *redo-ops* '())
 ;used to accumulate undo/redo exprs
 ; automatically wrapped in (begin... ) if needed
 ; reset when pushed (below)
@@ -29,8 +29,8 @@
   (push! expr *redo-ops*))
 
 (define (abort-undo/redo)
-  (set! *undo-ops* ())
-  (set! *redo-ops* ()))
+  (set! *undo-ops* '())
+  (set! *redo-ops* '()))
 
 (define (maybe-wrap ops)
   (cond ((null? ops) null)

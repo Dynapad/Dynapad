@@ -20,7 +20,7 @@
 
 (define (set-current-state-id new) ;overrides version in logs.ss
   (set! *current-state-id* new)
-  (if *tape-block*
+  (when *tape-block*
       (send *tape-block* update-counter new)))
 
 ;even newer override includes state-counter:
@@ -33,7 +33,7 @@
   (let* ((bb (send dynapad bbox))
 	 (scale (send dynapad getzoom))
 	 (xy (pad-xy-from-corner -20 20 "se")))
-    (if (not *state-id-counter*)
+    (when (not *state-id-counter*)
 ;	     (x (- (b2 bb) (* scale 50)))
 ;	     (y (+ (b1 bb) (* scale 50))))
 	(set! *state-id-counter*
