@@ -37,5 +37,8 @@ PKG_CHECK_MODULES(MAGICKCORE, [MagickCore < 7])
 AC_SUBST(MAGICKCORE_CFLAGS)
 AC_SUBST(MAGICKCORE_LIBS)
 
+# Set XSHM to avoid ximage NPEs.
+AC_DEFINE([XSHM], [], [Enable X shared memory.])
+
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

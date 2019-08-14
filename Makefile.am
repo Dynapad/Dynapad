@@ -2,7 +2,7 @@ AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = pad/unix
-PAD_CPPFLAGS = -I/pad/generic
+PAD_CPPFLAGS = -Wall -Werror -I/pad/generic
 
 lib_LTLIBRARIES = libdynapad.la
 libdynapad_la_SOURCES = dynapad.cpp builtin.cpp tclSchemeNotify.c

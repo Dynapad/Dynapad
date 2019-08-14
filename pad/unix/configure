@@ -3721,6 +3721,11 @@ fi
 
 
 
+# Set XSHM to avoid ximage NPEs.
+
+$as_echo "#define XSHM /**/" >>confdefs.h
+
+
 ac_config_files="$ac_config_files Makefile"
 
 cat >confcache <<\_ACEOF
