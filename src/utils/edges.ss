@@ -180,7 +180,7 @@
 	    (else (xycenter _from))))
 
      (define/public (update)
-       (if (and _from _to)
+       (when (and _from _to)
 	   (send this coords (append (from-tip _trunc) (to-tip _trunc)))))
 
      (define (do-update . args)
@@ -204,7 +204,7 @@
 			      ((not _to)  _from)
 			      (else (car (sendf this dynapad order
 					  (list _from _to)))))))
-	 (if lower-obj
+	 (when lower-obj
 	     (send this lower lower-obj))))
 	     
      (define/public from
@@ -241,8 +241,8 @@
 	 (defer-send '(fromto ,(export-objs _from) ,(export-objs _to)))
 	 ))
 
-     (if _from (from _from))
-     (if _to (to _to))
+     (when _from (from _from))
+     (when _to (to _to))
 ))
 
 ;        c  
@@ -333,7 +333,7 @@
 
     (define/public (update . args)
       (let ((rad (* (send this z) (radius))))
-	(if _tip
+	(when _tip
 	    (send this coords
 		  (list
 		   (car  _tip)          (+ (cadr _tip) rad)
@@ -365,7 +365,7 @@
 
     (define/public (update . args)
       (let ((rad (* (send this z) (radius))))
-	(if _tip
+	(when _tip
 	    (send this coords
 		  (list (- (car _tip)  rad)
 			(- (cadr _tip) rad)
@@ -395,7 +395,7 @@
 
     (define/override (update . args)
       (super update)
-      (if (and _from _to)
+      (when (and _from _to)
 	  (begin
 	    (send _arrowhead tip (send this to-tip #t))
 	    (send _arrowhead tail (xycenter _from))

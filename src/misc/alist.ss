@@ -1,4 +1,5 @@
 (require (lib "defmacro.ss"))
+(require compatibility/mlist)
 
 ;remote-get, -set, and -push work on either lvals (settable variables)
 ;  or object fields accessed via message:
@@ -18,16 +19,16 @@
 (define-macro (remote-push! atom . lst)
   `(remote-set! ,@lst (cons ,atom (remote-get ,@lst))))
 
-;---- Macros for operating on alists  ----
+;---- Macros for operating on m(utable)alists  ----
 
 ;(...) --> ((new-key-val)..)
 ; new-key-val is list (key v0 v1..)
 ; If key already in alist, returns corresp val
 ;  if not, adds and returns new-key-val
 ; (to see if added, check (eq? result new-key-val))
-(define-macro (get-else-push-onto-alist! assoc-fn new-key-val . alist)
-`(let* ((key (car ,new-key-val))
-	(key-vals (,assoc-fn key (remote-get ,@alist))))
+(define-macro (get-else-push-onto-malist! massoc-fn new-key-val . alist)
+`(let* ((key (mcar ,new-key-val))
+	(key-vals (,massoc-fn key (remote-get ,@alist))))
    (if key-vals
        key-vals
        (begin
@@ -35,8 +36,8 @@
 	 ,new-key-val))))
 
 ;(..(key v0 v1..)..)  --> (...)
-(define-macro (get-and-rem-from-alist! assoc-fn rem-fn key . alist)
-  `(let ((key-vals (,assoc-fn ,key (remote-get ,@alist))))
+(define-macro (get-and-rem-from-malist! massoc-fn rem-fn key . alist)
+  `(let ((key-vals (,massoc-fn ,key (remote-get ,@alist))))
      (if key-vals
 	 (begin
 	   (remote-set! ,@alist (,rem-fn key-vals (remote-get ,@alist))) ;use set-cdr?
@@ -45,90 +46,90 @@
 
 ;(..(key v0 v1..)..)  -->  (..(key vals)..)  or
 ;        (...)        -->  ((key vals)..)
-(define-macro (replace-else-push-onto-alist! assoc-fn key vals . alist)
-  `(let ((key-vals (,assoc-fn ,key (remote-get ,@alist))))
+(define-macro (replace-else-push-onto-malist! massoc-fn key vals . alist)
+  `(let ((key-vals (,massoc-fn ,key (remote-get ,@alist))))
      (if key-vals ;already there; set new val and return old
-	 (let ((old-vals (cdr key-vals)))
-	   (set-cdr! key-vals ,vals)
-	   (cons ,key old-vals))
+	 (let ((old-vals (mcdr key-vals)))
+	   (set-mcdr! key-vals ,vals)
+	   (mcons ,key old-vals))
 	 (begin ;push new
-	   (remote-push! (cons ,key ,vals) ,@alist)
+	   (remote-push! (mcons ,key ,vals) ,@alist)
 	   #f))))
 
 ;(..(key v0 v1..)..)  --> (..(key vals)..)
-(define-macro (replace-alist-val! assoc-fn key vals . alist)
-  `(let* ((key-vals (,assoc-fn ,key (remote-get ,@alist))))
+(define-macro (replace-malist-val! massoc-fn key vals . alist)
+  `(let* ((key-vals (,massoc-fn ,key (remote-get ,@alist))))
      (if key-vals
 	 (begin
-	   (set-cdr! key-vals ,vals)
+	   (set-mcdr! key-vals ,vals)
 	   key-vals)
 	 #f)))
 
 ;(..(key v0 v1..)..)  --> (..(key fn[v0 v1..])..)
-(define-macro (modify-alist-val! assoc-fn change-fn key . alist)
-  `(let* ((key-vals (,assoc-fn ,key (remote-get ,@alist))))
+(define-macro (modify-malist-val! massoc-fn change-fn key . alist)
+  `(let* ((key-vals (,massoc-fn ,key (remote-get ,@alist))))
      (if key-vals
 	 (begin
-	   (set-cdr! key-vals (,change-fn (cdr key-vals)))
+	   (set-mcdr! key-vals (,change-fn (mcdr key-vals)))
 	   key-vals)
 	 #f)))
 
 ;(..(key v0 v1..)..) --> (..(key val v0 v1..)..)
-(define-macro (push-onto-alist-val! assoc-fn key val . alist)
-  `(let* ((key-vals (,assoc-fn ,key (remote-get ,@alist))))
+(define-macro (push-onto-malist-val! massoc-fn key val . alist)
+  `(let* ((key-vals (,massoc-fn ,key (remote-get ,@alist))))
      (if key-vals
 	 (begin
-	   (set-cdr! key-vals (cons ,val (cdr key-vals)))
+	   (set-mcdr! key-vals (mcons ,val (mcdr key-vals)))
 	   key-vals)
 	 #f)))
-(define-macro (pushv-onto-alist-val! key val . alist)
-  `(push-onto-alist-val! assv ,key ,val ,@alist))
-(define-macro (pushq-onto-alist-val! key val . alist)
-  `(push-onto-alist-val! assq ,key ,val ,@alist))
+(define-macro (pushv-onto-malist-val! key val . alist)
+  `(push-onto-malist-val! massv ,key ,val ,@alist))
+(define-macro (pushq-onto-malist-val! key val . alist)
+  `(push-onto-malist-val! massq ,key ,val ,@alist))
 
 ;(..(key v0..)..) --> (..(key val v0..)..)  or
 ;      (..)       --> ((key val)..)
-(define-macro (push-onto-alist-val-always! assoc-fn key val . alist)
-  `(let* ((key-vals (,assoc-fn ,key (remote-get ,@alist))))
+(define-macro (push-onto-malist-val-always! massoc-fn key val . alist)
+  `(let* ((key-vals (,massoc-fn ,key (remote-get ,@alist))))
      (if key-vals
-	 (set-cdr! key-vals (cons ,val (cdr key-vals)))
+	 (set-mcdr! key-vals (mcons ,val (mcdr key-vals)))
 	 (begin
-	   (set! key-vals (list ,key ,val))
+	   (set! key-vals (mlist ,key ,val))
 	   (remote-push! key-vals ,@alist))) ;no such key, so make one
      key-vals)) ;return entry in either case
-(define-macro (pushv-onto-alist-val-always! key val . alist)
-  `(push-onto-alist-val-always! assv ,key ,val ,@alist))
-(define-macro (pushq-onto-alist-val-always! key val . alist)
-  `(push-onto-alist-val-always! assq ,key ,val ,@alist))
+(define-macro (pushv-onto-malist-val-always! key val . alist)
+  `(push-onto-malist-val-always! massv ,key ,val ,@alist))
+(define-macro (pushq-onto-malist-val-always! key val . alist)
+  `(push-onto-malist-val-always! massq ,key ,val ,@alist))
 
 ;(..(key ..val..)..) --> (..(key...)..) 
-(define-macro (delete-from-alist-val! assoc-fn del-fn key val . alist)
-  `(let* ((key-vals (,assoc-fn ,key (remote-get ,@alist))))
+(define-macro (delete-from-malist-val! massoc-fn del-fn key val . alist)
+  `(let* ((key-vals (,massoc-fn ,key (remote-get ,@alist))))
      (if key-vals
 	 (begin
-	   (set-cdr! key-vals (,del-fn ,val (cdr key-vals)))
+	   (set-mcdr! key-vals (,del-fn ,val (mcdr key-vals)))
 	   key-vals)
 	 #f)))
-(define-macro (remv-from-alist-val! key val . alist)
-  `(delete-from-alist-val! assv remv ,key ,val ,@alist))
-(define-macro (remq-from-alist-val! key val . alist)
-  `(delete-from-alist-val! assq remq ,key ,val ,@alist))
+(define-macro (remv-from-malist-val! key val . alist)
+  `(delete-from-malist-val! massv remv ,key ,val ,@alist))
+(define-macro (remq-from-malist-val! key val . alist)
+  `(delete-from-malist-val! massq remq ,key ,val ,@alist))
 
-;Like delete-from-alist-val!, but also removes key when del'ing last val
+;Like delete-from-malist-val!, but also removes key when del'ing last val
 ;(..(key ..val..)..) --> (..(key...)..) or (...) if last val of key
-(define-macro (delete-clean-from-alist-val! assoc-fn del-fn key val . alist)
-  `(let* ((key-vals (,assoc-fn ,key (remote-get ,@alist))))
+(define-macro (delete-clean-from-malist-val! massoc-fn del-fn key val . malist)
+  `(let* ((key-vals (,massoc-fn ,key (remote-get ,@malist))))
      (if key-vals
 	 (begin
-	   (set-cdr! key-vals (,del-fn ,val (cdr key-vals)))
-	   (if (null? (cdr key-vals))
-	       (remote-set! ,@alist (remv key-vals (remote-get ,@alist))))
+	   (set-mcdr! key-vals (,del-fn ,val (mcdr key-vals)))
+	   (when (null? (mcdr key-vals))
+	       (remote-set! ,@malist (remv key-vals (remote-get ,@malist))))
 	   key-vals)
 	 #f)))
-(define-macro (remv-clean-from-alist-val! key val . alist)
-  `(delete-clean-from-alist-val! assv remv ,key ,val ,@alist))
-(define-macro (remq-clean-from-alist-val! key val . alist)
-  `(delete-clean-from-alist-val! assq remq ,key ,val ,@alist))
+(define-macro (remv-clean-from-malist-val! key val . malist)
+  `(delete-clean-from-malist-val! massv remv ,key ,val ,@malist))
+(define-macro (remq-clean-from-malist-val! key val . malist)
+  `(delete-clean-from-malist-val! massq remq ,key ,val ,@malist))
 
 ;=================================================================
 ; alternative alist functions
@@ -137,7 +138,7 @@
 ; (Dan says on 10/05):
 ; I think these are redundant.  The above macros were designed to work
 ;  through messages, as in:
-;  (replace-alist-val! assq key val OBJ 'alist)
+;  (replace-malist-val! assq key val OBJ 'alist)
 ; which equals
 ;  (set-object-keyval OBJ key val)
 
@@ -168,7 +169,7 @@
     ;else
     (let ((elt (assq key alist)))
       (if elt
-	(set-cdr! elt (list val))
+	(set-mcdr! elt (list val))
 	;else
 	(set! alist (cons (list key val) alist))
       )

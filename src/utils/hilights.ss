@@ -26,7 +26,7 @@
 ;      (sch_lower _cptr (send target get-cptr)))
     
     (define (delete)
-      (get-and-rem-from-alist! assq remq this _object hilights)
+      (get-and-rem-from-malist! assq remq this _object hilights)
 ;      (send _object hilights 'remove this)
       (set! _deleted? #t)
       (sch_delete _cptr))

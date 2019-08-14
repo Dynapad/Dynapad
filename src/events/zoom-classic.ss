@@ -28,7 +28,7 @@
 
 	(set! prev_msec cur_msec)
 	(set! prev_iterations iterations)
-	(if (> iterations 5) (set! iterations 5))
+	(when (> iterations 5) (set! iterations 5))
 
 	(+ 1 (* iterations zoom_speed zoom_dir))))
 

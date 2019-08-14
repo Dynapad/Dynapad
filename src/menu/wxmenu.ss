@@ -1,5 +1,10 @@
-(require (prefix wx: (lib "kernel.ss" "mred" "private")))
-(require          (lib "class100.ss"))
+(require (prefix-in wx: (only-in mred/private/kernel
+                                 fill-private-color
+                                 get-panel-background
+                                 the-pen-list))
+         racket/class)
+#;
+(require (lib "class100.ss"))
 
 ; Someday we might decide to create an entire library of widgets for pad.
 ; Until then we need to leverage of effort by using existing widgets.
@@ -11,13 +16,15 @@
 ; see method: /home/hci/plt-200/collects/mred/mred.ss line 3554
 
 (define popup-server%
-  (class100 canvas%  (parent)
+  (class canvas%  (parent)
     
     (inherit popup-menu)
-    (override
-      (on-focus (lambda (on?) (say on?))))
-    (public
-      (makepup (lambda (pum x y) (popup-menu pum (inexact->exact x) (inexact->exact y)))))
+    (define/override
+      (on-focus on?) (say on?))
+    (define/public
+      (makepup pum x y) (popup-menu pum
+                                    (inexact->exact x)
+                                    (inexact->exact y)))
     (sequence (apply super-init (list parent '())))))
 
 (define topframe dynapad)
@@ -59,21 +66,21 @@
 
 (define (add-submenu _menu _label . args)
   (define sb (make-object menu% _label _menu))
-  (if (not (null? args)) (send sb enable (car args)))
+  (when (not (null? args)) (send sb enable (car args)))
   sb
   )
 
 
 (define (add-menu-item menu label func . args)
   (define mi (make-object menu-item% label menu (lambda (w e) (func))))
-  (if (not (null? args)) (send mi enable (car args)))
+  (when (not (null? args)) (send mi enable (car args)))
   mi
   )
 
 (define (add-checkable-menu-item menu label func checked? . enabled?)
   (let ((cmi (make-object checkable-menu-item% label menu
 			  (lambda (i e) (func i)) #f #f void checked?)))
-    (if (not (null? enabled?)) (send cmi enable (car enabled?)))
+    (when (not (null? enabled?)) (send cmi enable (car enabled?)))
     cmi))
 
 #|

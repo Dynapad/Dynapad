@@ -13,14 +13,14 @@
 	(set! Draw-preview #f)))
 
 (define (cancelDrawObject argPAD)
-  (if Draw-object
+  (when Draw-object
       (send Draw-object delete))
   (set! Draw-object #f)
   (resetDrawPreview)
   )
 
 (define (resetDrawObject argPAD)
-  (if Draw-object
+  (when Draw-object
       (undoify-fresh-obj Draw-object)) ;save draw object for undo
   (set! Draw-object #f)
   (resetDrawPreview)
@@ -74,11 +74,11 @@
      (else ; make new obj
       (set! Draw-object (make-object Draw-class eventPAD))
       
-      (if (has-method? Draw-object 'fill)
+      (when (has-method? Draw-object 'fill)
 	  (send Draw-object fill
 		(if (send eventPAD fill?) (send eventPAD defaultfill) "none")))
       
-      (if (has-method? Draw-object 'pen)
+      (when (has-method? Draw-object 'pen)
 	  (send Draw-object pen (send eventPAD defaultpen)))
       
       (cond
@@ -101,7 +101,7 @@
 
 (define (drag-shape-vertex-event eventPAD e)  ;move unfixed vertex
   (set! currentPAD eventPAD)
-  (if Draw-object ;should always be #t
+  (when Draw-object ;should always be #t
       (let*
           ((c (or (send Draw-object recall-coords) null))
            (x (event-x e))
@@ -111,7 +111,7 @@
 	(when Draw-preview
 	      (send Draw-preview coords newc)
 	      (send Draw-preview save-coords newc))
-	(if (is-a? Draw-object freehand%)
+	(when (is-a? Draw-object freehand%)
             (send Draw-object save-coords newc)))))
 
 (define (update-shape-preview-event eventPAD e) ;rubber-band to cursor

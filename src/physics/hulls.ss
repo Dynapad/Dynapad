@@ -23,12 +23,12 @@
 	 (rpts null))
     (for-each
      (lambda (p)
-       (if (not (or (eq? p a) (eq? p b)))
+       (when (not (or (eq? p a) (eq? p b)))
 	   (let* ((intersect (send line closest-pt-to p))
 		  (offset (send intersect vector-to p))
 		  (len (send offset length))
 		  (pair (list p len)))
-	     (if (positive? len) ;eliminate colinear (len=0) pts
+	     (when (positive? len) ;eliminate colinear (len=0) pts
 		 (if (positive? (send lnormal unit-dot offset))
 		     (push! pair lpts)  ;left-side point
 		     (push! pair rpts)  ;right-side point
@@ -43,7 +43,7 @@
 	 (rpts null))
     (for-each
      (lambda (c)
-       (if (not (or (eq? c a) (eq? c b)))
+       (when (not (or (eq? c a) (eq? c b)))
 	   (let* ((ac (send a vector-to c))
 		  (len (send ab cross ac)))
 	     (unless (zero? len) ;eliminate colinear (len=0) pts
@@ -60,7 +60,7 @@
 	 (left-prs (car partition))
 	 (right-prs (cadr partition))
 	 (circuit (half-circuit pt-a pt-b left-prs)))
-    (if outermost?
+    (when outermost?
 	(set! circuit
 	      (append (list pt-a)
 		      (half-circuit pt-b pt-a right-prs)
@@ -76,11 +76,11 @@
     (foreach pairs
 	     (lambda (pr)
 	       (let ((mydist (cadr pr)))
-		 (if (> mydist maxdist)
+		 (when (> mydist maxdist)
 		     (begin
 		       (set! pt-c (car pr))
 		       (set! maxdist mydist))))))
-    (if pt-c
+    (when pt-c
 	(begin
 ;	  (display (format "a:~a b:~a c:~a~%"
 ;			   (send pt-a xy)
@@ -100,11 +100,11 @@
     (foreach pts
 	     (lambda (pt)
 	       (let ((myx (send pt x)))
-		 (if (< myx minx)
+		 (when (< myx minx)
 		     (begin
 		       (set! left-pt pt)
 		       (set! minx myx)))
-		 (if (> myx maxx)
+		 (when (> myx maxx)
 		     (begin
 		       (set! right-pt pt)
 		       (set! maxx myx))))))
@@ -112,7 +112,7 @@
 
 (define (convex-hull pts)
 ; returns subset of pts, in CCW order, that form convex hull of pts
-  (if (and (not (null? pts)) (list? (car pts))) ;given raw coords?
+  (when (and (not (null? pts)) (list? (car pts))) ;given raw coords?
       (set! pts (map (lambda (xy) (make-object geo-point% xy)) pts))) ;convert to geo-points
   (let ((len (length pts)))
     (if (<= len 2)

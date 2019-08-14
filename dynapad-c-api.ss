@@ -1,3 +1,5 @@
+(require compatibility/mlist)
+
 (require (lib "class.ss"))
 (require (lib "list.ss")) ; because mred doesn't load it by default
 (require (lib "defmacro.ss"))
@@ -9,7 +11,7 @@
 (load-relative "src/history/ids.ss") ;move this elsewhere?
 (load-relative "src/utils/hilights.ss")
 
-(load-relative-extension ".libs/libdynapad.dylib")
+(load-relative-extension (path-replace-suffix ".libs/libdynapad" (system-type 'so-suffix)))
 (define padthread
   (let
       ((new-es (make-eventspace)))
@@ -1136,7 +1138,8 @@
       (_main-layer #f) (_status #f) (_hidden #f) (_writable #t)
       (_afterzoom-callbacks '())
       (_afterdrag-callbacks '()) (_beforedrag-callbacks '())
-      (_varlist `((this ,this)) )
+      ; [LIST->MLIST] was: (_varlist `((this ,this)) )
+      (_varlist (mlist (mcons 'this this)))
       (_eventModeStack null) ;(list "Run"))
       (_drag_and_drop_object #f)
       (_reject-save-filters '())
@@ -1169,14 +1172,14 @@
 
     (define getvar
       (case-lambda
-        ((varname) (cond ((assq varname _varlist) => cadr) (else #f)))
-        ((varname fail) (cond ((assq varname _varlist) => cadr) (else fail)))))
+        ((varname) (cond ((massq varname _varlist) => (λ (pair) (mcar (mcdr pair)))) (else #f)))
+        ((varname fail) (cond ((massq varname _varlist) => (λ (pair) (mcar (mcdr pair)))) (else fail)))))
 
     (define (setvar varname val)
-      (let ((elmt (assq varname _varlist)))
+      (let ((elmt (massq varname _varlist)))
         (if elmt
-          (set-cdr! elmt (list val))
-          (set-cdr! _varlist (cons (list varname val) (cdr _varlist))))))
+          (set-mcdr! elmt (mlist val))
+          (set-mcdr! _varlist (mcons (mlist varname val) (mcdr _varlist))))))
 
     (define moveto
       (case-lambda

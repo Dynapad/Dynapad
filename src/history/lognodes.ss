@@ -41,7 +41,7 @@
 
 ;    (for-each (lambda (pre next)
 ;		(let ((prefilename (and pre (format "~a#~a" treename pre))))
-;		  (push-onto-alist-val-always! assoc prefilename next childindex)
+;		  (push-onto-malist-val-always! assoc prefilename next childindex)
 ;		  (push! (list next prefilename) parentindex)))
 ;		pres
 ;		filenames)

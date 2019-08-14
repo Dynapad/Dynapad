@@ -9,7 +9,7 @@
 	 (newpath (build-path->string dir newfile)))
     (when (file-exists? logpath)
 	  (set! *summary-port*
-		(open-output-file newpath 'text 'replace))
+		(open-output-file newpath #:mode 'text #:exists 'replace))
 	  (load logpath))
     (when *summary-port*
 	  (close-output-port *summary-port*)

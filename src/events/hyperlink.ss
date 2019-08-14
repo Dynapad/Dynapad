@@ -72,7 +72,7 @@
     ;;; start the link
     (send argPAD bind "<CreateLink-ButtonRelease-1>"
       (lambda (eventPAD e) (set! currentPAD eventPAD)
-	(if (not CreateLink)
+	(when (not CreateLink)
         (let*
           ((x (event-x e))
            (y (event-y e))

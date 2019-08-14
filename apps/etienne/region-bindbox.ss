@@ -56,10 +56,10 @@
       ;; Replace the list of pile-object-bindings for this event
       ;;  to the list of bindings for this bindbox%
       (cond ((string=? type "region")
-	     (replace-else-push-onto-alist!
+	     (replace-else-push-onto-malist!
 	      assoc event bindings _region-bindings))
 	    ((string=? type "object")
-	     (replace-else-push-onto-alist!
+	     (replace-else-push-onto-malist!
 	      assoc event bindings _object-bindings))
 	    (else null)))
 

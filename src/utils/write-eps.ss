@@ -129,7 +129,7 @@
   (case-lambda
    ((bb obj) (writeps-obj bb obj #f))
    ((bb obj lighten)
-    (if lighten (set! lighten 
+    (when lighten (set! lighten 
 		      (max lighten
 			   (if (send obj findable) .5 .8))))
     (cond 
@@ -198,13 +198,13 @@
 		  ))
 	(writeps-batch (list objs))))
    ((objs path)
-    (if (and path (not (string? path)))
+    (when (and path (not (string? path)))
 	(set! path (Select-File-Dialog 'save *eps-default-path*)))
-    (if path
+    (when path
 	(set! *eps-default-path* path))
     (let ((str (writeps-batch objs))
 	  (port (and path
-		     (open-output-file path 'text 'truncate))))
+		     (open-output-file path #:mode 'text #:exists 'truncate))))
       (and port
 	   (fprintf port str)
 	   (close-output-port port)
@@ -251,7 +251,7 @@
 	   *include-eps-images?*)
 ))
 
-(if *popup-menus-enabled?*
+(when *popup-menus-enabled?*
     (append-mainmenu-constructor
      (lambda (mb obj)
        (add-menu-separator mb)

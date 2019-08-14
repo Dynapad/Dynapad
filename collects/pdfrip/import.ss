@@ -12,7 +12,7 @@
     (case-lambda
       ((dir) (flatten dir dir))
       ((dir dest)
-        (let ((port (open-output-file (build-path->string dest "map") 'append)))
+        (let ((port (open-output-file (build-path->string dest "map") #:exists 'append)))
 	  (flatten dir dest port)
 	  (close-output-port port)))
       ((dir dest port)

@@ -7,15 +7,15 @@
 
 (define (leave msgname)
   (let* ((exit-time (current-milliseconds))
-	 (enter-pair (get-and-rem-from-alist! assv remv msgname profile-enter-times))
+	 (enter-pair (get-and-rem-from-malist! assv remv msgname profile-enter-times))
 	 (enter-time (cadr enter-pair))
-	 (total-pair (get-and-rem-from-alist! assv remv msgname profile-total-times))
+	 (total-pair (get-and-rem-from-malist! assv remv msgname profile-total-times))
 ;	 (total (if total-pair
 ;		    (cadr total-pair)
 ;		    0))
 	 )
-    (get-else-push-onto-alist! assv (list msgname 0) profile-total-times)
-    (modify-alist-val! assv
+    (get-else-push-onto-malist! assv (list msgname 0) profile-total-times)
+    (modify-malist-val! assv
 		       (lambda (val) (list (+ (car val) (- exit-time enter-time))))
 		       msgname
 		       profile-total-times)))

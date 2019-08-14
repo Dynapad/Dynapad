@@ -72,7 +72,7 @@
 	  (else (error "homing-actor% requires list or lambda target")))
     (send this attach-to _obj 'homer)
 
-    (if _del-cbk
+    (when _del-cbk
 	(send this delete-callbacks 'add _del-cbk))
 
     (define (remaining-distance) ;returns greater of x or y dist to target
@@ -92,7 +92,7 @@
     (define/public (go)
       (send _timer subscribe this))
     (define/public (stop)
-      (if _timer
+      (when _timer
 	  (send _timer unsubscribe this)))
 
     (define (resubscribe)
@@ -144,7 +144,7 @@
    ((obj target howlong) (animate-to obj target howlong homing-actor%))
    ((obj target howlong homer-type . args)
     (let ((homer (get-actor-named obj 'homer)))
-      (if homer (send homer delete))
+      (when homer (send homer delete))
       (set! homer (apply make-object homer-type obj target howlong args))
       homer))))
 

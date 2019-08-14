@@ -81,7 +81,7 @@
 	 (val (if keyval
 		  (cadr keyval) ;reuse cached val
 		  (generate-fn obj)))) ;unknown, generate anew
-    (if (not keyval) ;cache for next time
+    (when (not keyval) ;cache for next time
 	(remote-push! (list tag val) obj alist))
     val))
       
@@ -317,12 +317,12 @@
       (let* ((filename (send obj hirespath))
 	     (matches  (regexp-match gifjpg_rexp filename))
 	     (base     (caddr matches)))
-	(replace-else-push-onto-alist! assq 'filename (list base) obj alist)
+	(replace-else-push-onto-malist! assq 'filename (list base) obj alist)
 	base)))
 
 (define (get-image-filename obj)
       (let* ((filename (assq 'filename (send obj alist))))
-	(if (and (not filename)
+	(when (and (not filename)
 		 (extract-image-filename obj))
 	    (set! filename (assq 'filename (send obj alist))))
 	(cadr filename)))

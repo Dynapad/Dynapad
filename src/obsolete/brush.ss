@@ -117,13 +117,13 @@
 	    (set! targ (car targ)))
       (if (null? fns)
 	  (set! fns (list default-highlight-fn default-unhighlight-fn)))
-      (replace-else-push-onto-alist! assq targ fns target-list))
+      (replace-else-push-onto-malist! assq targ fns target-list))
 ;      (when (not (assq obj target-list))
 ;	    (push! 
 ;	     (cons obj hilight-fn) target-list)))
 
     (define (remove-target obj)
-      (get-and-rem-from-alist! assq remq obj target-list))
+      (get-and-rem-from-malist! assq remq obj target-list))
 
     (define (brushes? some-brush-set)
 ; returns #f or list of (hilight-fn unhilight-fn) which specify how to (un)hilight obj
@@ -172,7 +172,7 @@
     (define (bind-notify-brushes obj brushes)
       (if (null? brushes)
 	  (begin
-	    (let* ((tuple (get-and-rem-from-alist! assq remq 'brush-lambdas obj alist))
+	    (let* ((tuple (get-and-rem-from-malist! assq remq 'brush-lambdas obj alist))
 		   (brush-lmb (cadr tuple))
 		   (unbrush-lmb (caddr tuple)))
 	      (bind obj "<Enter>" (remq brush-lmb (bind obj "<Enter>")))
@@ -184,7 +184,7 @@
 	  (begin
 	    (let ((brush-lambda (lambda (o e) (notify-brushes-of-obj-state brushes obj #t)))
 		  (unbrush-lambda (lambda (o e) (notify-brushes-of-obj-state brushes obj #f))))
-	      (get-else-push-onto-alist!
+	      (get-else-push-onto-malist!
 	         assq (list 'brush-lambdas brush-lambda unbrush-lambda) obj alist)
 	      (bind obj "<Enter>" (cons brush-lambda (bind obj "<Enter>")))
 	      (bind obj "<Leave>" (cons unbrush-lambda (bind obj "<Leave>")))
@@ -197,7 +197,7 @@
 ;      (send obj select-callbacks 'add brush-when-selected)
 	    (if (has-method? obj 'divisible)
 		(send obj divisible #f)) ;may be trouble...
-	    (let* ((entry (pushq-onto-alist-val-always! 'brush-set this obj alist))
+	    (let* ((entry (pushq-onto-malist-val-always! 'brush-set this obj alist))
 		   (brushes (cdr entry)))
 	      (bind-notify-brushes obj brushes))
 ;(say (send obj alist))
@@ -208,7 +208,7 @@
 
     (define (deactivate-member obj)
 ;      (send obj select-callbacks 'remove brush-when-selected)
-      (let ((remaining-entry (remq-clean-from-alist-val! 'brush-set this obj alist)))
+      (let ((remaining-entry (remq-clean-from-malist-val! 'brush-set this obj alist)))
 	(bind-notify-brushes obj (cdr remaining-entry))))
 
 

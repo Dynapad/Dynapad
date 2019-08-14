@@ -403,7 +403,7 @@
  	 (define/public (update abstime dtime)
  	  ;check for overlap of my bbox with others
  	   (let* ((me (send this object))
-		  (my-watches (get-else-push-onto-alist!
+		  (my-watches (get-else-push-onto-malist!
 			       assq (list 'repulsors) me alist))
  		  (bbox (send me bbox))
  		  (intruders (send dynapad find 'overlapping bbox)))
@@ -418,13 +418,13 @@
 			    ;make sure intruder is awake (may be already)
 			    (awaken intruder)
 			    ;put me on intruder's watch list
-			    (pushq-onto-alist-val-always!
+			    (pushq-onto-malist-val-always!
 			     'repulsors
 			     (list me repulsor)
 			     intruder alist)
 			    ;put intruder on my watch list
 			    (set! watch (list intruder repulsor))
-			    (set-cdr! my-watches
+			    (set-mcdr! my-watches
 				      (cons watch (cdr my-watches)))))
 		     ;In either case; kick the resulting repulsor
 		      (send (cadr watch) kick #f lookout-kick-duration))))
@@ -545,9 +545,9 @@
 
 	 (define/override (delete) ;shut down (should be GC'd)
 	   (send repulsion-timer unsubscribe this)
-	   (delete-from-alist-val! assq remove 'repulsors
+	   (delete-from-malist-val! assq remove 'repulsors
 				   (list obj1 this) obj2 alist)
-	   (delete-from-alist-val! assq remove 'repulsors
+	   (delete-from-malist-val! assq remove 'repulsors
 				   (list obj2 this) obj1 alist))
 
 

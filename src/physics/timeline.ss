@@ -181,7 +181,7 @@
 		     form-type rgn-type proj-type param more))))))
 ))
 
-(if *popup-menus-enabled?*
+(when *popup-menus-enabled?*
     (append-mainmenu-constructor
      (lambda (mb obj)
        (add-menu-separator mb)

@@ -42,7 +42,7 @@
 ; 	 (let ((brk (list-tail ,lst (- ,n 1)))
 ; 	       (head ,lst))
 ; 	   (set! ,lst (cdr brk))
-; 	   (set-cdr! brk null)
+; 	   (set-mcdr! brk null)
 ; 	   head)))))
 
 (define-macro chop!
@@ -81,7 +81,7 @@
 ;acts like normal list-tail if n<=(length lst)
 ; else appends copies of fill onto list to reach length n
   `(let ((tooshort (- ,n (length ,lst) -1)))
-     (if (positive? tooshort)
+     (when (positive? tooshort)
 	 (set! ,lst (append ,lst (make-list tooshort ,fill))))
      (list-tail ,lst ,n)))
 
@@ -134,7 +134,7 @@
 	   (else  ;insert mid-list
 	    (let ((pr (prior found lst-val))
 		  (return (cons ,newval found)))
-	      (set-cdr! pr return)
+	      (set-mcdr! pr return)
 	      return)))))
 
 (define (list-delete-nth lst n)
@@ -337,7 +337,7 @@
 ;      null))
 
 (define (wrapped-counting-list from to step len)
-  (if (>= to len)
+  (when (>= to len)
       (set! to (modulo to len)))
   (if (= from to)
       '()

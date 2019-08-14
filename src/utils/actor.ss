@@ -28,7 +28,7 @@
   (let ((result null))
     (for-each
       (lambda (actor) 
-	(if (method-in-interface? msg (object-interface actor))
+	(when (method-in-interface? msg (object-interface actor))
 	  (if (null? args)
 	    (set! result (cons (eval `(send ,actor ,msg)) result))
 	    (set! result
@@ -64,24 +64,24 @@
 	 (define/override (attach-to padobject name)
 	   (let ((curr-obj (send this object)))
 	     (push! name _names)
-	     (if (not curr-obj)
+	     (when (not curr-obj)
 		 (begin
 		   (send this object padobject)
 		   (send padobject delete-callbacks 'add  ;auto-attach delete callback
 			 (lambda (obj) (send this delete))
 			 name)))
-	     (pushq-onto-alist-val-always! name this padobject alist)))
-;	     (if (not (pushq-onto-alist-val!
+	     (pushq-onto-malist-val-always! name this padobject alist)))
+;	     (if (not (pushq-onto-malist-val!
 ;		       name this padobject alist))
 ;		 (remote-push! (list name this) padobject alist))))
 
 	 (define/public (link-to padobject name)
 	   ;linking is "light attachment": obj refers to actor, but
 	   ;  actor does not refer to obj (and therefore does not get callbacks)
-	   (pushq-onto-alist-val-always! name this padobject alist))
+	   (pushq-onto-malist-val-always! name this padobject alist))
 
 	 (define/override (remove-from padobject name)
-	   (remq-from-alist-val! name this padobject alist))
+	   (remq-from-malist-val! name this padobject alist))
 
 	 (define/override (delete) 
 	   ;removes references to actor for GCing
@@ -165,9 +165,9 @@
 	 ;One of until, rel-time is #f; use the other
 	   ;When actor is kicked, will run until *at least* _expiration
 	   ; (after which it might choose to expire, depending on subclass) 
-	   (if (not until)
+	   (when (not until)
 	       (set! until (+ (current-milliseconds) rel-time)))
-	   (if (or (not _expiration) (> until _expiration))
+	   (when (or (not _expiration) (> until _expiration))
 	       (set! _expiration until)))
 
 	 (define/public maybe-expire

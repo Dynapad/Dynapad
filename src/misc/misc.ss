@@ -16,6 +16,7 @@
 	      val)))))
 
 (define (foreach elements body) (for-each body elements))
+(define (mforeach elements body) (mfor-each body elements))
 
 (define (false-fn . args) #f)
 (define (true-fn . args) #t)

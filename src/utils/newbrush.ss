@@ -64,9 +64,9 @@
 	   ;make sure obj has brushing-trigger bound to <Enter>,<Leave>
 		   (ensure-brush-trigger-bindings-for-obj obj)
  	   ;add to alist
-		   (pushq-onto-alist-val-always! 'brushed-relsets relset obj alist))
+		   (pushq-onto-malist-val-always! 'brushed-relsets relset obj alist))
 	   ;else remove
-		 (remq-from-alist-val! 'brushed-relsets relset obj alist)
+		 (remq-from-malist-val! 'brushed-relsets relset obj alist)
 		 )
 	     ;)
        )
@@ -94,13 +94,13 @@
      (define/public (deactivate) (activate #f))
 
      (define/public (delete)
-       (if (active?) (activate #f)))
+       (when (active?) (activate #f)))
 
      (define/public (writeargs) (list _active?))
 	;return list of customization args this should receive
 
 
-     (if initially-active? (send this activate))
+     (when initially-active? (send this activate))
 ))
 
 ; ----- Helper Functions ----------
@@ -113,9 +113,9 @@
 
 (define (remove-private-hilight owner target)
 ;use owner as alist key
-  (let ((found (get-and-rem-from-alist!
+  (let ((found (get-and-rem-from-malist!
 		assq remq owner target alist)))
-    (if found
+    (when found
 	(foreach (cdr found) (lambda (hl) (send hl delete))))))
 ;  (let ((hl (send target hilights 'find #f owner)))
 ;    (if hl (send hl delete))))
@@ -296,12 +296,12 @@
 		 (send relation brush-style     (eval (car bs+name))))
 		   activate #t)) ;active?))
 	   (cset! found-style-yet? (equal? (car bs+name) curr-bstyle)))
-	 (if (and found-style-yet? (has-method? brush 'color))
+	 (when (and found-style-yet? (has-method? brush 'color))
 	     (add-menu-item sb (format "    ~a color..." (cadr bs+name))
 			    (lambda ()
 			      (let* ((curr-color (send brush color))
 				     (new-color  (ask-user-for-color curr-color)))
-				(if new-color
+				(when new-color
 				    (send brush color new-color))))))))
     ))
 
@@ -342,7 +342,7 @@
 	     (lambda (r) (make-submenu-BrushStyles sb obj (car r) (cadr r))))))
 
 
-(if *popup-menus-enabled?*
+(when *popup-menus-enabled?*
     (append-mainmenu-constructor
      (lambda (mb obj)
        (make-submenu-Relations mb obj)
@@ -373,7 +373,7 @@
   (let* ((obj (event-obj e))
 	 (found (assq 'brushed-relsets (send obj alist)))
 	 (relsets (and found (cdr found))))
-    (if relsets
+    (when relsets
 	(foreach relsets
 		 (lambda (relset)
 		   (send relset brush-targets on? obj))))
@@ -441,7 +441,7 @@
 ;    new-hl))
 
 ;(define (remove-private-hilight owner target)
-;  (let ((existing-hl (get-and-rem-from-alist! assq remq owner target alist)))
+;  (let ((existing-hl (get-and-rem-from-malist! assq remq owner target alist)))
 ;    (if existing-hl (foreach (cdr existing-hl)
 ;			     (lambda (hl) (send hl delete))))))
 
@@ -478,7 +478,7 @@
 		    (assq key (cdr multihilights))))
 	(new   (and (not found)
 		    (make-fn obj))))
-    (push-onto-alist-val! assq multihighlights
+    (push-onto-malist-val! assq multihighlights
 			  (list key new) obj alist)
     new))
 

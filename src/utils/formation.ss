@@ -44,9 +44,9 @@
       (map (lambda (meth) (eval `(send ,this ,meth))) _part-names))
 
     (define (mark-part obj)
-      (get-else-push-onto-alist! assq (list 'part) obj alist))
+      (get-else-push-onto-malist! assq (list 'part) obj alist))
     (define (unmark-part obj)
-      (get-and-rem-from-alist! assq remq 'part obj alist))
+      (get-and-rem-from-malist! assq remq 'part obj alist))
 
     (define/public (add-part obj)
       (mark-part obj)

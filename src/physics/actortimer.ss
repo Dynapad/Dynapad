@@ -3,7 +3,7 @@
 (define broadcast-timer%
   (class timer%
     (init-field dynapad (default_interval 100))
-    (field (prev_msec 0) (subscribed_actors ()))
+    (field (prev_msec 0) (subscribed_actors '()))
 
     (define/override (start . args)
       (let ((interval (if (null? args) default_interval (car args))))
@@ -28,7 +28,7 @@
 	(set! prev_msec cur_msec)))
 
     (define/public (subscribe actor)
-      (if (method-in-interface? 'update (object-interface actor))
+      (when (method-in-interface? 'update (object-interface actor))
 	  (set! subscribed_actors (append subscribed_actors (list actor)))))
 
     (define/public (unsubscribe actor)
@@ -41,7 +41,7 @@
   (class timer%
     (init-field dynapad (default_interval 100))
     (init (update-fn #f))
-    (field (prev_msec 0) (subscribed_dynaobjects ()) (subscribed_actors ()))
+    (field (prev_msec 0) (subscribed_dynaobjects '()) (subscribed_actors '()))
     (field (_num-subscribers 0))
 
     (define/override (start . args)
@@ -72,7 +72,7 @@
       (if (is-a? actor_or_padobject dynaobject%)
 	(set! subscribed_dynaobjects
 	  (append subscribed_dynaobjects (list actor_or_padobject)))
-	(if (method-in-interface? 'update (object-interface actor_or_padobject))
+	(when (method-in-interface? 'update (object-interface actor_or_padobject))
 	    (set! subscribed_actors
 		  (append subscribed_actors (list actor_or_padobject))))))
 
@@ -89,10 +89,10 @@
 	    (begin
 	      (set! found (memq actor_or_padobject subscribed_actors))
 	      (set! subscribed_actors (remq actor_or_padobject subscribed_actors))))
-	(if found
+	(when found
 	    (-= _num-subscribers 1))))
 
-    (if (not update-fn)
+    (when (not update-fn)
 	(set! update-fn update))
     (super-instantiate (update-fn #f #f))))
 
@@ -111,14 +111,14 @@
     
 		; broadcast update message to all dynapad objects
 	     (for-each 
-	      (lambda (x) (if (eqv? (send-actor x 'update cur_msec dtime)
+	      (lambda (x) (when (eqv? (send-actor x 'update cur_msec dtime)
 				    'unsubscribe)
 			      (set! cancel-list (cons x cancel-list))))
 	      subscribed_dynaobjects)
 	     
 		; send update message to all actors on the list
 	     (for-each 
-	      (lambda (x) (if (eqv? (send x update cur_msec dtime)
+	      (lambda (x) (when (eqv? (send x update cur_msec dtime)
 				    'unsubscribe)
 			      (set! cancel-list (cons x cancel-list))))
 	      subscribed_actors)
@@ -129,6 +129,6 @@
 
 ;	 (define (proc) (update))
 
-	 (if (not update-fn)
+	 (when (not update-fn)
 	     (set! update-fn update))
 	 (super-instantiate (dynapad interval update-fn))))

@@ -21,7 +21,7 @@
 
 (define-macro (ensure-fresh var refresh-fn . args)
   `(begin
-     (if (stale? ,var)
+     (when (stale? ,var)
 	 (set! ,var (,refresh-fn ,@args)))
      ,var))
 
@@ -52,11 +52,11 @@
 	 ((list? ,ang)   (set! ,ang (make-object geo-angle% ,ang)))))
 
 (define-macro (ensure-vector-object vect)
-  `(if (list? ,vect)
+  `(when (list? ,vect)
       (set! ,vect (make-object geo-vector% ,vect))))
 
 (define-macro (ensure-segment-object seg)
-  `(if (list? ,seg)
+  `(when (list? ,seg)
       (set! ,seg (make-object geo-segment% ,seg))))  
 
 ;============ debugging tools ================
@@ -67,7 +67,7 @@
 
 (define (describe obj)
 ; obj may be actual object or ID of previously desc'd obj
-  (if (number? obj)
+  (when (number? obj)
       (let ((id-pair (assoc obj ID-obj-alist)))
 	(set! obj (if id-pair
 		      (cadr id-pair)
@@ -91,9 +91,9 @@
 	((list? obj) (map name-of-obj obj))
 	(else
 	 (let* ((newpair (list obj next-obj-ID))
-		(result (get-else-push-onto-alist! assq newpair obj-ID-alist))
+		(result (get-else-push-onto-malist! assq newpair obj-ID-alist))
 		(ID (cadr result)))
-	   (if (eq? result newpair) ;not found, use new
+	   (when (eq? result newpair) ;not found, use new
 	       (begin
 		 (push! (list ID obj) ID-obj-alist)
 		 (+= next-obj-ID 1)))
@@ -266,7 +266,7 @@
 ;For points, using (send-point ...) instead of (send...)
 ; will work for (x y) pairs also
 (define-macro (send-point pt msg . args)
-  `(if (list? ,pt)
+  `(when (list? ,pt)
        (cond
 	 ((eq? ,msg 'xy) (list (car ,pt) (cadr ,pt)))
 	 ((eq? ,msg 'x)  (car ,pt))
@@ -716,7 +716,7 @@
 
     (define/public (scale! scl)
       (let ((len (length)))
-	(if (not (zero? len))
+	(when (not (zero? len))
 	    (begin
 	      (set! _dx (* _dx scl))
 	      (set! _dy (* _dy scl))
@@ -1038,7 +1038,7 @@
       (if (null? args)
 	  (send _angle dxy)
 	  (begin
-	    (if (stale? _angle) ;create _angle if needed
+	    (when (stale? _angle) ;create _angle if needed
 		(if (is-a? this geo-segment%)
 		    (set! _angle (make-object geo-vector%))
 		    (set! _angle (make-object geo-angle%))))
@@ -1111,11 +1111,11 @@
 
     (define/override (slide-by-dxy! dx dy)
       (send this invalidate-intercept)
-      (if (fresh? _bbox)
+      (when (fresh? _bbox)
 	  (set! _bbox (bbslide _bbox dx dy)))
-      (if (fresh? _origin)
+      (when (fresh? _origin)
 	  (send _origin slide-by-dxy! dx dy))
-      (if (fresh? _endpoint)
+      (when (fresh? _endpoint)
 	  (send _endpoint slide-by-dxy! dx dy)))
 
     (define/override (slide-by-dxy dx dy)
@@ -1323,12 +1323,12 @@
     (define/override origin
       (case-lambda
        (() (super origin))
-       ((pt) (if (not _already-moved)
+       ((pt) (when (not _already-moved)
 		 (begin
 		   (send _parent invalidate-vertices)
 		   (ensure-point-object pt)
 		   (super origin pt)   ;move this origin
-		   (if _prev
+		   (when _prev
 		       (begin
 			 (set! _already-moved #t)
 			 (send _prev endpoint pt)
@@ -1337,12 +1337,12 @@
       (case-lambda
        (() (super endpoint))
        ((pt) ;(display "running poly-seg endpoint...\n")
-	(if (not _already-moved)
+	(when (not _already-moved)
 		  (begin
 		    (send _parent invalidate-vertices)
 		    (ensure-point-object pt)  ;move endpoint to pt
 		    (super endpoint pt)
-		    (if _next
+		    (when _next
 			(begin
 			  (set! _already-moved #t)
 			  (send _next origin pt)
@@ -1358,13 +1358,13 @@
     (define/public (slide-alone-by-dxy! dx dy)
       ;Parent polygon/polyline will call this for each segment
       (send this invalidate-intercept)
-      (if (fresh? _bbox)
+      (when (fresh? _bbox)
 	  (set! _bbox (bbslide _bbox dx dy)))
-      (if (fresh? _origin)
+      (when (fresh? _origin)
 	  (send _origin slide-by-dxy! dx dy))
       ; _endpt is shared, and will be slid as _origin of next segment
       ;   slide _endpt only if this is last in path
-      (if (and (not _next) (fresh? _endpoint))
+      (when (and (not _next) (fresh? _endpoint))
 	  (send _endpoint slide-by-dxy! dx dy)))
 
     (define/override (slide-by-dxy! dx dy)
@@ -1386,9 +1386,9 @@
 	    (send _prev next _next)
 	    (send _prev endpoint (send this endpoint)))
 	  (send _parent first-seg _next))
-      (if _next
+      (when _next
 	  (send _next prev _prev))
-      (if (eq? this (send _parent first-seg))
+      (when (eq? this (send _parent first-seg))
 	  (send _parent first-seg _next))
       ;ideally should delete this segment, but settle for isolating it:
       (set! _prev #f)
@@ -1404,7 +1404,7 @@
       (if _next
 	  (send _next prev _prev)
 	  (send _next origin (send this origin)))
-      (if (eq? this (send _parent first-seg))
+      (when (eq? this (send _parent first-seg))
 	  (send _parent first-seg _next))
       (set! _prev #f)
       (set! _next #f)
@@ -1426,7 +1426,7 @@
     (define/public (insert-segment-end pt)
       ;     a----->b  >>     a-->pt==>b
       (let* ((new-seg (make-object (my-seg-type) _parent pt (send this endpoint))))
-	(if _next
+	(when _next
 	    (send _next prev new-seg))
 	(send new-seg next _next)
 	(send new-seg prev this)
@@ -1452,7 +1452,7 @@
     (define/public (insert-segment-after pt)
       ;     a----->b  >>     a----->b==>pt
       (let* ((new-seg (make-object (my-seg-type) _parent (send this endpoint) pt)))
-	(if _next
+	(when _next
 	    (begin
 	      (send _next prev new-seg)
 	      (send _next origin pt)))
@@ -1502,7 +1502,7 @@
 
     (define/override (slide-alone-by-dxy! dx dy)
       (super slide-alone-by-dxy! dx dy)
-      (if (fresh? _median)
+      (when (fresh? _median)
 	  (send _median slide-by-dxy! dx dy)))
 
     (define/public (set-anchor pt)
@@ -1528,7 +1528,7 @@
     
     (define/public (inward-normal)
 	;returns segment: rim rotated pi/2 ccw around vtx
-      (if (stale? _inward-normal)
+      (when (stale? _inward-normal)
 	  (set! _inward-normal (send this left-normal)))
       _inward-normal)
     
@@ -1563,11 +1563,11 @@
 	  (set! _sector-angle (make-object geo-angle% ang))
 	  (set! _area area))))
     (define/public (sector-angle)
-      (if (stale? _sector-angle)
+      (when (stale? _sector-angle)
 	  (refresh-angle-area))
       _sector-angle)
     (define/public (area)
-      (if (stale? _area)
+      (when (stale? _area)
 	  (refresh-angle-area))
       _area)
     
@@ -1724,11 +1724,11 @@
       (send _anchor slide dx dy)
       (ring-foreach (lambda (edge) (send edge slide-alone-by-dxy! dx dy))
 		    (ensure-fresh _edge-ring refresh-edge-ring))
-      (if (fresh? _bbox)
+      (when (fresh? _bbox)
 	  (set! _bbox (bbslide _bbox dx dy)))
-      (if (fresh? _pt-centroid)  ;danger if _pt-cent = _anchor
+      (when (fresh? _pt-centroid)  ;danger if _pt-cent = _anchor
 	  (send _pt-centroid slide dx dy))
-      (if (fresh? _area-centroid)
+      (when (fresh? _area-centroid)
 	  (send _area-centroid slide dx dy)))
 
     ;LOCAL
@@ -1774,7 +1774,7 @@
        (()
 	  (apply append (map (lambda (pt) (send pt xy)) (vertices))))
        ((lst)
-	(if (not (list? (car lst)))
+	(when (not (list? (car lst)))
 	    (set! lst (make-pairs lst)))
 	(set! lst (map (lambda (pt) (ensure-point-object pt)) lst))
 	(rebuild-from-coords lst))))
@@ -1792,7 +1792,7 @@
       (case-lambda
        (() (point-centroid _vertices))
        ((pts)
-	(if (stale? _pt-centroid)
+	(when (stale? _pt-centroid)
 	    (let ((xs (map (lambda (vtx) (send vtx x)) pts))
 		  (ys (map (lambda (vtx) (send vtx y)) pts)))
 	      (set! _pt-centroid
@@ -1800,7 +1800,7 @@
 	_pt-centroid)))
 
     (define/public (area-centroid)
-      (if (stale? _area-centroid)
+      (when (stale? _area-centroid)
 	  (let* ((pts    (ring-map (lambda (edge) (send edge median)) (ensure-fresh _edge-ring refresh-edge-ring)))
 		 (masses (ring-map (lambda (edge) (send edge area))   (ensure-fresh _edge-ring refresh-edge-ring)))
 		 (xs (map (lambda (pt) (send pt x)) pts))
@@ -1929,9 +1929,9 @@
       ;thins out vertices: if (A dot B) > threshold for adjacent A,B, kills A
       (ring-foreach
        (lambda (e)
-	 (if e
+	 (when e
 	     (let ((unitdot (send (send e spoke) unit-dot (send (send e next) spoke))))
-	       (if (> unitdot threshold)
+	       (when (> unitdot threshold)
 		   (send e cut-origin)))))
 ;       (send this edges)))
        (ensure-fresh _edge-ring refresh-edge-ring)))
@@ -2115,11 +2115,11 @@
 		(let* ((parents (send pt parents))
 		       (p1 (car parents))
 		       (p2 (cadr parents)))
-		  (pushq-onto-alist-val-always! p1 pt alist)
-		  (pushq-onto-alist-val-always! p2 pt alist)))
+		  (pushq-onto-malist-val-always! p1 pt alist)
+		  (pushq-onto-malist-val-always! p2 pt alist)))
 	      pts)
     (for-each (lambda (edge-pts)
-		(set-cdr! edge-pts
+		(set-mcdr! edge-pts
 			  (sort-points-along-direction
 			   (cdr edge-pts)
 			   (send (car edge-pts) angle))))
@@ -2134,7 +2134,7 @@
 ; stop-pt is the pt at end of this circuit
   (let ((edge-pairs (assq edge alist))
 	(next-pt-slot null))
-    (if edge-pairs  ;look for intersct-pt after this-pt
+    (when edge-pairs  ;look for intersct-pt after this-pt
 	(set! next-pt-slot (cdr
 			    (if (not is-int?)
 				edge-pairs ;don't bother looking for this-pt, use first int-pt
@@ -2174,10 +2174,10 @@
 					     poly-to-follow
 					     edge-to-follow start-pt)))
 	(for-each (lambda (pt)
-		    (if (is-a? pt geo-intersect-point%)
+		    (when (is-a? pt geo-intersect-point%)
 			(let ((edge-keys (send pt parents)))
-			  (remq-clean-from-alist-val! (car edge-keys) pt int-alist)
-			  (remq-clean-from-alist-val! (cadr edge-keys) pt int-alist))))
+			  (remq-clean-from-malist-val! (car edge-keys) pt int-alist)
+			  (remq-clean-from-malist-val! (cadr edge-keys) pt int-alist))))
 		  this-circuit)
 	(cons this-circuit (new-circuit int-alist op)))))
 
@@ -2216,7 +2216,7 @@
           (yc (cadr (bbcenter bbox)))
           (xr (- (b2 bbox) xc))
           (yr (- (b3 bbox) yc))
-          (coords ())
+          (coords '())
           (numpoints 12)
           (da (/ (* 8 (atan 1)) numpoints))
          )
@@ -2352,9 +2352,9 @@
 (define (intersects? obj container)
   (let ((cnt-geon (get-actor-named container geo-actor-name))
 	(obj-geon (get-actor-named obj geo-actor-name)))
-    (if (not cnt-geon)
+    (when (not cnt-geon)
 	(set! cnt-geon (geo-polygon-from-bbox (send container bbox))))
-    (if (not obj-geon)
+    (when (not obj-geon)
 	(set! obj-geon (geo-polygon-from-bbox (send obj bbox))))
     (intersection? cnt-geon obj-geon)))
 

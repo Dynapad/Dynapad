@@ -48,7 +48,7 @@
        (foreach _children (lambda (c) (send c drop-family))))
 
      (define/public (insert-parent new)
-       (if _parent
+       (when _parent
 	   (let ((my-cell-at-parent (memq this (send _parent children))))
 	     (set-car! my-cell-at-parent new)))
        (send new depth _depth)
@@ -73,7 +73,7 @@
 	       (unless (null? later) ; unless only child
 		       (send this nudge-family-after later)))
 	     (begin ;right of sib
-	       (set-cdr! sib-and-later (cons new later))
+	       (set-mcdr! sib-and-later (cons new later))
 	       (send new column (+ 2 (send
 				      (send sib rightmost-descendant)
 				      column)))
@@ -92,11 +92,11 @@
 			 (cdr (memq child _children)))))
 	 (foreach laters (lambda (sib) (send sib nudge-family-by-2)))
 	 (send this column (+ 1 _column))
-	 (if _parent (send _parent nudge-family-after this))
+	 (when _parent (send _parent nudge-family-after this))
 	 ))
 
      (super-instantiate ())
-     (if _obj (send this attach-to _obj 'treenode))
+     (when _obj (send this attach-to _obj 'treenode))
 ))		 
 
 
@@ -128,7 +128,7 @@
 	   (let ((crds (list
 		 (* _depth-gap  (super depth))
 		 (* _column-gap (super column)))))
-	     (if _vertical?
+	     (when _vertical?
 		 (set! crds (reverse crds)))
 	     (apply _update-fn this crds)))
 

@@ -47,7 +47,7 @@
       (case-lambda
        (() (ensure-string _url))  ;#path issues
        ((path) ;maybe replace path head
-	(if (and path (relative-path? path))
+	(when (and path (relative-path? path))
 	    (error "URL is relative path"))
 	(cset! _url
 	       (and path
@@ -71,7 +71,7 @@
     (field (_instances null))
     (super-instantiate ())
 
-    (push-onto-alist-val-always! assoc (url) this *url-handle-alist*)
+    (push-onto-malist-val-always! assoc (url) this *url-handle-alist*)
 
     (define/public (url) (send _url url))
 
@@ -94,7 +94,7 @@
 
     (define/public (delete)
       (foreach (lambda (i) (rem-object-keyval i 'handle)) (instances))
-      (delete-clean-from-alist-val! assoc delete (url) this *url-handle-alist*))
+      (delete-clean-from-malist-val! assoc delete (url) this *url-handle-alist*))
 ))
 
 (define (get-hndl obj)  ;needed for back-compatibility (e.g. brush.ss)
@@ -140,7 +140,7 @@
 		     (readport (and (file-exists? filename)
 				    (open-input-file filename 'text)))
 		     (line (and readport (read-line readport))))
-		(if readport (close-input-port readport))
+		(when readport (close-input-port readport))
 		(set! _title (or line ""))))
       _title)
 
@@ -154,7 +154,7 @@
     ;   ((y) (set! _year y)
 ;	    (foreach (send this instances)
 ;	       (lambda (inst)
-;		 (replace-else-push-onto-alist! assq 'timestamp (list y) inst alist))))))
+;		 (replace-else-push-onto-malist! assq 'timestamp (list y) inst alist))))))
 ;			(list y "" "" "" "" "" "") inst alist))))))
 
     (define/public (start-viewer)
