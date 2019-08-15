@@ -1393,7 +1393,7 @@ Pad_Object::Get_pen_name(Pad_String &penname)
 }
 
 Pad_Bool 
-Pad_Object::Set_pen(char *)
+Pad_Object::Set_pen(const char *)
 {
     Pad_errorString = "Pen color does not apply to Pad_Object base class";
     return FALSE;
@@ -1411,7 +1411,7 @@ Pad_Object::Set_fill(int, int, int)
 }
 
 Pad_Bool 
-Pad_Object::Set_fill(char *)
+Pad_Object::Set_fill(const char *)
 {
     Pad_errorString = "Fill color does not apply to Pad_Object base class";
     return FALSE;
@@ -2371,7 +2371,7 @@ Pad_Object::Generate_event(int type, Pad_String &result)
 // Generate an event of <type> with the specified <info>.
 //
 int
-Pad_Object::Generate_event(int type, Pad_List *portals, char *info)
+Pad_Object::Generate_event(int type, Pad_List *portals, const char *info)
 {
     int result;
     XEvent event;
@@ -2572,7 +2572,7 @@ Pad_Object::Add_tag(const char *tag)
 // Return TRUE if tag was a member of this object.
 //
 Pad_Bool
-Pad_Object::Delete_tag(char *tag)
+Pad_Object::Delete_tag(const char *tag)
 {
     Pad_Bool rc;
     Pad_Uid uid;
@@ -3561,7 +3561,7 @@ Pad_Object::Get_text(Pad_String &)
 }
 
 Pad_Bool
-Pad_Object::Set_text(char *)
+Pad_Object::Set_text(const char *)
 {
     Pad_errorString = "Text option doesn't apply to ";
     Pad_errorString += Type_name();
@@ -3577,7 +3577,7 @@ Pad_Object::Set_text_default(void)
 }
 
 Pad_Bool
-Pad_Object::Contains_text(char *) 
+Pad_Object::Contains_text(const char *) 
 {
     return(FALSE);
 }

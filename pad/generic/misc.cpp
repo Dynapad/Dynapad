@@ -474,7 +474,7 @@ Pad_GetUid(const char *string)
 // Case insensitive version of strstr
 //
 
-char *casestrstr(char *s1, char *s2) 
+const char *casestrstr(const char *s1, const char *s2) 
 {
     char *p1, *p2;
 
@@ -498,6 +498,10 @@ char *casestrstr(char *s1, char *s2)
     }
 
     return((char *)0);
+}
+
+char *casestrstr(char *s1, char *s2) {
+	return casestrstr(s1, s2);
 }
 
 #include <sys/types.h>

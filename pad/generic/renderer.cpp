@@ -552,10 +552,10 @@ Pad_XRenderer::Get_cap_style(void)
     return(_capStyle);
 }
 
-char *
+const char *
 Pad_XRenderer::Get_cap_style_name(void)
 {
-    char *name;
+    const char *name;
 
     switch(_capStyle) {
       case CapButt:
@@ -604,10 +604,10 @@ Pad_XRenderer::Get_join_style(void)
     return(_joinStyle);
 }
 
-char *
+const char *
 Pad_XRenderer::Get_join_style_name(void)
 {
-    char *name;
+    const char *name;
 
     switch(_joinStyle) {
       case JoinBevel:
@@ -1723,8 +1723,9 @@ Pad_XRenderer::Draw_string(char *string, int level,
 	3 < magnification && magnification < 800) {
 	int screen_num = DefaultScreen(_display);
         XftColor color_fg;
-	XColor dummyc, fg;
-        Status retval;
+	XColor dummyc; 
+    // [unused]: XColor fg;
+    // [unused]: Status retval;
 	XftPattern *pat;
 	XGCValues xgcvalues;
 	char *newstring, *p, *q;
@@ -1769,8 +1770,8 @@ Pad_XRenderer::Draw_string(char *string, int level,
 	        0,
 	        XFT_FILE, XftTypeString, _fontData->filename.Get(),
 	        XFT_PIXEL_SIZE, XftTypeDouble,
-		  (double)1.4*magnification*_fontData->xftfactor,
-	        0);
+		    (double)1.4*magnification*_fontData->xftfactor,
+	        0, nullptr);
             _fontData->xftfont = XftFontOpenPattern(_display, pat);
             if (!_fontData->xftfont) {
                 fprintf(stderr, "XftFontOpen failed\n");
@@ -1781,7 +1782,8 @@ Pad_XRenderer::Draw_string(char *string, int level,
 	    _fontData->xftfactorchanged = FALSE;
 	}
 	if (strcmp(newstring, "")) {
-	    float xfactor, yfactor;
+	    float xfactor;
+        // [unused]: float yfactor;
 	    float padfwidth, padfheight;
 	    XGlyphInfo xglyphinfo;
 	    float fwidth, fheight;
@@ -1800,7 +1802,7 @@ Pad_XRenderer::Draw_string(char *string, int level,
 	        _fontData->xftfactor += (0.99 - xfactor)*_fontData->xftfactor;
 	        _fontData->xftfactorchanged = TRUE;
 	    }
-        }
+    }
 
 	point.Set(xoffset, 0);
 	Pad_renderer->Local_to_screen(point);
@@ -2034,7 +2036,7 @@ Pad_XRenderer::Alloc_image(char *name, Pad_Bool *newflag)
     Pad_ImageData *image;
     Pad_String expandedName;
     Pad_Uid nameUid;
-    char buf[1024]; // yes, someday it will be too small
+    // [unused]: char buf[1024]; // yes, someday it will be too small
 
 #ifdef CYGWIN
     cygwin_conv_to_full_posix_path(name, buf);

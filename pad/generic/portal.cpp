@@ -262,15 +262,15 @@ Pad_Portal::Get_lookon(void)
 // Setters and getters for title
 //
 void
-Pad_Portal::Set_title(char *new_title)
+Pad_Portal::Set_title(const char *new_title)
 {
     if (title) {
-	delete title;
-	title = NULL;
+	    delete title;
+	    title = NULL;
     }
-    portalFlags |= PORTAL_TITLE_SET;
+        portalFlags |= PORTAL_TITLE_SET;
     if (new_title[0] != '\0') {
-	title = new Pad_String(new_title);
+        title = new Pad_String(new_title);
     }
     Damage();
 }
@@ -282,13 +282,13 @@ Pad_Portal::Set_title_default(void)
     portalFlags &= ~PORTAL_TITLE_SET;
 }
 
-char *
+const char *
 Pad_Portal::Get_title(void)
 {
     if (title) {
-	return(title->Get());
+	    return(title->Get());
     } else {
-	return("");
+	    return("");
     }
 }
 
@@ -296,7 +296,7 @@ Pad_Portal::Get_title(void)
 // Setters and getters for pen color
 //
 Pad_Bool
-Pad_Portal::Set_pen(char *colorname)
+Pad_Portal::Set_pen(const char *colorname)
 {
     portalFlags |= PORTAL_PEN_SET;
     titleColor.Set(colorname);
@@ -336,7 +336,7 @@ Pad_Portal::Get_penname(Pad_String &fillname)
 // Setters and getters for fill color
 //
 Pad_Bool
-Pad_Portal::Set_fill(char *colorname)
+Pad_Portal::Set_fill(const char *colorname)
 {
     portalFlags |= PORTAL_FILL_SET;
     fillColor.Set(colorname);
@@ -460,7 +460,7 @@ Pad_Portal::Get_borderwidth(void)
 }
 
 void
-Pad_Portal::Set_font(char *fontname)
+Pad_Portal::Set_font(const char *fontname)
 {
     portalFlags |= PORTAL_FONT_SET;
     font.Set(fontname);

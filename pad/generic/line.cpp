@@ -169,7 +169,7 @@ Pad_Line::Rotate(float dtheta, Pad_Point &center)
 // Setters and getters for pen color
 //
 Pad_Bool
-Pad_Line::Set_pen(char *colorname)
+Pad_Line::Set_pen(const char *colorname)
 {
     lineFlags |= LINE_PEN_SET;
     penColor.Set(colorname);
@@ -286,7 +286,7 @@ Pad_Line::Get_joinstyle(void)
 }
 
 Pad_Bool
-Pad_Line::Set_capstyle(char *capstyle)
+Pad_Line::Set_capstyle(const char *capstyle)
 {
     if (!strcmp(capstyle, "butt")) {
 	capStyle = CapButt;
@@ -1273,7 +1273,7 @@ Pad_Polygon::Pick(Pad_Event *event, float halo)
 // Setters and getters for fill color
 //
 Pad_Bool
-Pad_Polygon::Set_fill(char *colorname)
+Pad_Polygon::Set_fill(const char *colorname)
 {
     lineFlags |= LINE_FILL_SET;
     fillColor.Set(colorname);

@@ -430,7 +430,7 @@ Pad_Text::Set_font_default(void)
 // with lines separated by '\n's.
 //
 Pad_Bool
-Pad_Text::Set_text(char *buf)
+Pad_Text::Set_text(const char *buf)
 {
     int i;
     int new_line_ctr;
@@ -1741,7 +1741,7 @@ Pad_Text::Backward_chars(Pad_TextIndex *index, int count)
 // Insert <str> at <index>
 //
 void
-Pad_Text::Insert_chars(char *str, Pad_TextIndex &index, Pad_Bool reshape)
+Pad_Text::Insert_chars(const char *str, Pad_TextIndex &index, Pad_Bool reshape)
 {
     int i;
     int len, bufLen;
@@ -2253,9 +2253,9 @@ Pad_Text::Get_index_from_xy(float padx, float pady, Pad_TextIndex *index)
     lineHeight = Pad_renderer->Get_font_height();
 
     if (Get_angle() != 0) {
-	float sinTheta, cosTheta;//these variables are necessary only if text is rotated
+	float sinTheta, cosTheta; //these variables are necessary only if text is rotated
 	float textWidth, textHeight;
-	float topLeftX, topLeftY;
+	float topLeftX = 0.0, topLeftY = 0.0;
 	float newX, newY;
 	float mappedX, mappedY;
 	float scale;
@@ -2532,7 +2532,7 @@ Pad_Text::Compute_height(void)
 // all text objects are considered to contain the empty string.
 //
 Pad_Bool
-Pad_Text::Contains_text(char *string) 
+Pad_Text::Contains_text(const char *string) 
 {
     int i;
     Pad_Bool found;
@@ -2596,7 +2596,7 @@ Pad_TextFile::Init(void)
 // Setters and getters for text
 //
 Pad_Bool
-Pad_TextFile::Set_text(char *)
+Pad_TextFile::Set_text(const char *)
 {
     Pad_errorString = "Error: Can't set -text for textfile items";
     return(FALSE);
@@ -2606,7 +2606,7 @@ Pad_TextFile::Set_text(char *)
 // Setters and getters for file
 //
 Pad_Bool
-Pad_TextFile::Set_file(char *file_name) 
+Pad_TextFile::Set_file(const char *file_name) 
 {
     Pad_Bool rc;
 
@@ -2639,13 +2639,13 @@ Pad_TextFile::Set_file_default(void)
     textFlags &= ~TEXT_FILE_SET;
 }
 
-char *
+const char *
 Pad_TextFile::Get_file(void)
 {
     if (name) {
-	return(name->Get());
+		return(name->Get());
     } else {
-	return("");
+		return("");
     }
 }
 
@@ -3015,7 +3015,7 @@ Pad_TextField::Unset_focus(void)
 // Carriage returns are ignored.
 //
 Pad_Bool
-Pad_TextField::Set_text(char *str)
+Pad_TextField::Set_text(const char *str)
 {
     char *p;
     char *newStr;
@@ -3040,7 +3040,7 @@ Pad_TextField::Set_text(char *str)
 // Insert <str> at <index>, removing carriage returns
 //
 void
-Pad_TextField::Insert_chars(char *str, Pad_TextIndex &index, Pad_Bool reshape)
+Pad_TextField::Insert_chars(const char *str, Pad_TextIndex &index, Pad_Bool reshape)
 {
     char *p;
     char *newStr;
@@ -3339,7 +3339,7 @@ Pad_TextArea::Get_text(Pad_String &text)
 }
 
 Pad_Bool
-Pad_TextArea::Set_text(char *buf)
+Pad_TextArea::Set_text(const char *buf)
 {
     Pad_Bool rc;
 
@@ -3350,7 +3350,7 @@ Pad_TextArea::Set_text(char *buf)
 }
 
 void
-Pad_TextArea::Insert_chars(char *str, Pad_TextIndex &index, Pad_Bool)
+Pad_TextArea::Insert_chars(const char *str, Pad_TextIndex &index, Pad_Bool)
 {
     _textArea.Insert_chars(str, index, FALSE);  // Never reshape when inserting chars to a textarea
     _scrollbarsNeedUpdating = TRUE; // Update scrollbars to match text
@@ -3473,7 +3473,7 @@ _TextArea::Render(void)
 // Set the text.  Bypass TextField since that removes carriage returns
 //
 Pad_Bool
-_TextArea::Set_text(char *buf)
+_TextArea::Set_text(const char *buf)
 {
     return(Pad_Text::Set_text(buf));
 }
@@ -3482,7 +3482,7 @@ _TextArea::Set_text(char *buf)
 // Insert text.  Bypass TextField since that removes carriage returns
 //
 void
-_TextArea::Insert_chars(char *str, Pad_TextIndex &index, Pad_Bool)
+_TextArea::Insert_chars(const char *str, Pad_TextIndex &index, Pad_Bool)
 {
     Pad_Text::Insert_chars(str, index, FALSE);   // Never reshape when inserting chars to a textarea
 }

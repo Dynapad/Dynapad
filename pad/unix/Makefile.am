@@ -1,8 +1,9 @@
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
 
-CFLAGS = --pedantic -Wall -Werror -std=c99 -O2
-# LDFLAGS = 
+# Note: Dynapad links against X11, which uses GNU extensions.
+CFLAGS = -std=c11 -Wall -Werror
+CXXFLAGS = -std=c++17 -Wall -Werror 
 
 noinst_LIBRARIES = libpad.a
 libpad_a_SOURCES = x-win-shape.cpp \

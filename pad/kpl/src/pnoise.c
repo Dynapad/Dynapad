@@ -74,7 +74,7 @@ static float noise2(float vec[2])
 {
 	int bx0, bx1, by0, by1, b00, b10, b01, b11;
 	float rx0, rx1, ry0, ry1, *q, sx, sy, a, b, t, u, v;
-	register i, j;
+	int i, j;
 
 	if (start) {
 		start = 0;
@@ -112,7 +112,7 @@ static float noise3(float vec[3])
 {
 	int bx0, bx1, by0, by1, bz0, bz1, b00, b10, b01, b11;
 	float rx0, rx1, ry0, ry1, rz0, rz1, *q, sy, sz, a, b, c, d, t, u, v;
-	register i, j;
+	int i, j;
 
 	if (start) {
 		start = 0;

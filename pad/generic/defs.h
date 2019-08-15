@@ -46,7 +46,7 @@ extern "C" {	// for X11/Xlib.h in win95
 #define XMAX 2
 #define YMAX 3
 
-#define DOTIMES(j, cnt) for(j = 0; j<cnt; j++)
+#define DOTIMES(j, cnt) for(j = 0; j < cnt; j++)
 
 #define PAD_RELIEF_FLAT          0
 #define PAD_RELIEF_GROOVE        1

@@ -26,11 +26,11 @@ software in general.
 #include "defs.h"
 #include <fstream>
 using namespace std;
-				// Some Linux's want this to be at the top...
+                                // Some Linux's want this to be at the top...
 #include <sys/types.h>
-				// But LITTLE_ENDIAN gets redefined badly, so
-				// undefine it, and let <math.h> that gets included
-				// below by pad.h define it.
+                                // But LITTLE_ENDIAN gets redefined badly, so
+                                // undefine it, and let <math.h> that gets included
+                                // below by pad.h define it.
 #undef LITTLE_ENDIAN
 #include "pad.h"
 
@@ -83,29 +83,29 @@ using namespace std;
 Pad::~Pad()
 {
     if (idTable) {
-	delete idTable;
-	idTable = NULL;
+        delete idTable;
+        idTable = NULL;
     }
     if (tagTable) {
-	delete tagTable;
-	tagTable = NULL;
+        delete tagTable;
+        tagTable = NULL;
     }
     if (typeTable) {
-	delete typeTable;
-	typeTable = NULL;
+        delete typeTable;
+        typeTable = NULL;
     }
     if (optionTable) {
-	delete optionTable;
-	optionTable = NULL;
+        delete optionTable;
+        optionTable = NULL;
     }
     if (optionIdTable) {
-	delete optionIdTable;
-	optionIdTable = NULL;
+        delete optionIdTable;
+        optionIdTable = NULL;
     }
     pad = NULL;
     if (treeroot) {
         delete treeroot;
-	treeroot = NULL;
+        treeroot = NULL;
     }
     view->pad = NULL;
 }
@@ -140,14 +140,14 @@ Pad::Pad(Pad_View *newView)
 
     Add_tag("Pad");
 
-				// Make the special layers "all"
+                                // Make the special layers "all"
     Add_to_layer("all");
     
     Set_id();
     Set_findable(FALSE);
     objectsRendered = 0;
 
-				// Don't initialize default event handlers for pads
+                                // Don't initialize default event handlers for pads
     Init_events(FALSE);
 }
 
@@ -158,11 +158,11 @@ Pad::Pad(Pad_View *newView)
 void
 Pad::Create_treeroot(void) {
     if (!treeroot) {
-	treeroot = new Pad_TreeNode((Pad_TreeNode *)NULL, this);
-	treeroot->Get_layout()->Get_link()->Set_transparency(0);
-	treeroot->Get_layout()->Get_link()->Set_events(FALSE);
-	treeroot->Get_obj()->Delete_tag("treenode");
-	treeroot->Get_obj()->Add_tag("treeroot");
+        treeroot = new Pad_TreeNode((Pad_TreeNode *)NULL, this);
+        treeroot->Get_layout()->Get_link()->Set_transparency(0);
+        treeroot->Get_layout()->Get_link()->Set_events(FALSE);
+        treeroot->Get_obj()->Delete_tag("treenode");
+        treeroot->Get_obj()->Add_tag("treeroot");
     }
 }
 
@@ -198,7 +198,7 @@ Pad::Get_layer_from_id(int layerId)
 {
     Pad_Layer *layer;
 
-    layer = (Pad_Layer *)layerIdTable.Get((void *)layerId);
+    layer = (Pad_Layer *)layerIdTable.Get((void *)(uintptr_t)layerId);
     return(layer);
 }
 
@@ -220,47 +220,48 @@ Pad::Create_layer(const char *name)
     Pad_Iterator oi;
     Pad_HashTableIterator hi;
 
-				// If layer already exists, return it
+    // If layer already exists, return it
     layer = Get_layer_from_name(name);
     if (layer) {
-	return(layer);
+        return(layer);
     }
 
-				// Find unused layer with lowest id
+    // Find unused layer with lowest id
     len = pad->layerNameTable.Length() + 1;
     layerIds = new Pad_Bool[len];
     DOTIMES(i, len) {
-	layerIds[i] = FALSE;
+        layerIds[i] = FALSE;
     }
     DOTABLE(hi, pad->layerNameTable, Pad_Layer, layerPtr) {
-	layerIds[layerPtr->id] = TRUE;
+        layerIds[layerPtr->id] = TRUE;
     }
     DOTIMES(i, len) {
-	if (!layerIds[i]) {
-	    layerId = i;
-	    break;
-	}
+        if (!layerIds[i]) {
+            layerId = i;
+            break;
+        }
     }
 
-				// Create new layer
+    // Create new layer
     layer = new Pad_Layer(this);
     layer->name = Pad_GetUid(name);
     layer->id = layerId;
     layerNameTable.Set(layer->name, layer);
-    layerIdTable.Set((void *)layer->id, layer);
+    layerIdTable.Set((void *)(uintptr_t)layer->id, layer);
     delete [] layerIds;
 
     layers.Push_last(layer);
 
-				// Update all views to know about this new layer.
+
+    // Update all views to know about this new layer.
     view->Update_layers();
     DOLIST(oi, view->win->lookonPortals, Pad_Portal, portal) {
-	portal->Update_layers();
+        portal->Update_layers();
     }
     DOLIST(oi, view->win->viewPortals, Pad_Portal, portal) {
-	if (portal->lookon == view->win) {
-	    portal->Update_layers();
-	}
+        if (portal->lookon == view->win) {
+            portal->Update_layers();
+        }
     }
 
     return(layer);
@@ -278,22 +279,22 @@ Pad::Delete_layer(Pad_Layer *layer)
     Pad_Object *obj;
     Pad_Iterator oi;
 
-				// Delete items on layer
-				// Carefully, built list of item ids,
-				// and then delete items by id.  This
-				// is safe in case deleting one object
-				// results in the deletion of another.
+                                // Delete items on layer
+                                // Carefully, built list of item ids,
+                                // and then delete items by id.  This
+                                // is safe in case deleting one object
+                                // results in the deletion of another.
     Find_with_layer(layer, items, FALSE);
     layer->first = NULL;
     layer->last = NULL;
     DOLIST(oi, items, Pad_Object, obj) {
-	ids.Push_last(obj->id);
+        ids.Push_last(obj->id);
     }
     for (i=0; i<ids.Length(); i++) {
-	pad->Delete_obj(ids.Nth(i));
+        pad->Delete_obj(ids.Nth(i));
     }
 
-				// Update layer order
+                                // Update layer order
     layers.Remove(layer);
 }
 
@@ -309,19 +310,19 @@ Pad::Raise_layer(Pad_Layer *layer)
     Pad_Iterator oi;
 
     if (!layer) {
-	return(TRUE);
+        return(TRUE);
     }
-				// Raise items on layer
+                                // Raise items on layer
     Find_with_layer(layer, items, FALSE);
-				// Set layer to empty so items will 
-				// raise all the way to the top
+                                // Set layer to empty so items will 
+                                // raise all the way to the top
     layer->first = NULL;
     layer->last = NULL;
     DOLIST(oi, items, Pad_Object, obj) {
-	obj->Raise();
+        obj->Raise();
     }
 
-				// Update layer order
+                                // Update layer order
     layers.Remove(layer);
     layers.Push_last(layer);
 
@@ -340,20 +341,20 @@ Pad::Lower_layer(Pad_Layer *layer)
     Pad_Iterator oi;
 
     if (!layer) {
-	return(TRUE);
+        return(TRUE);
     }
-				// Raise items on layer
+                                // Raise items on layer
     Find_with_layer(layer, items, FALSE);
-				// Set layer to empty so items will 
-				// lower all the way to the bottom
+                                // Set layer to empty so items will 
+                                // lower all the way to the bottom
     layer->first = NULL;
     layer->last = NULL;
     items.Reverse();
     DOLIST(oi, items, Pad_Object, obj) {
-	obj->Lower();
+        obj->Lower();
     }
 
-				// Update layer order
+                                // Update layer order
     layers.Remove(layer);
     layers.Push(layer);
 
@@ -373,68 +374,68 @@ Pad::Raise_layer(Pad_Layer *layer1, Pad_Layer *layer2)
 
     realLayer2 = layer2;
     if (!layer1 || !layer2 || (layer1 == layer2)) {
-	return(TRUE);
+        return(TRUE);
     }
 
     // if layer2 doesn't have any objects yet raise above the first layer
     // below it which has something.
     if (!layer2->first) {
         int i = layers.Index(layer2)-1;
-	while ((i >= 0) && (layer2=(Pad_Layer*)layers.Nth(i)) && 
-	       (layer2->first == NULL)) {
-	    i--;
-	}
+        while ((i >= 0) && (layer2=(Pad_Layer*)layers.Nth(i)) && 
+               (layer2->first == NULL)) {
+            i--;
+        }
 
-	if ((i < 0) || (layer1 == layer2)) {
-	    // couldn't find a non-empty layer which layer1 could go after
-	    return(TRUE);
-	}
+        if ((i < 0) || (layer1 == layer2)) {
+            // couldn't find a non-empty layer which layer1 could go after
+            return(TRUE);
+        }
     }
    
     // remove layer1 objects from display list
     if (layer1->first) {
         if (layer1->first->prev) {
-	    layer1->first->prev->next = layer1->last->next;
-	}
-	if (layer1->last->next) {
-	    layer1->last->next->prev = layer1->first->prev;
-	}
+            layer1->first->prev->next = layer1->last->next;
+        }
+        if (layer1->last->next) {
+            layer1->last->next->prev = layer1->first->prev;
+        }
 
-	// take care of special cases for pad's first and last pointers
-	if (first == layer1->first) { 
-	    first = layer1->last->next;
-	    if (first) {
-	        first->prev = NULL;
-	    }
-	}
-	if (last == layer1->last) {
-	    last = layer1->first->prev;
-	    if (last) {
-	        last->next = NULL;
-	    }
-	}
+        // take care of special cases for pad's first and last pointers
+        if (first == layer1->first) { 
+            first = layer1->last->next;
+            if (first) {
+                first->prev = NULL;
+            }
+        }
+        if (last == layer1->last) {
+            last = layer1->first->prev;
+            if (last) {
+                last->next = NULL;
+            }
+        }
 
-	layer1->first->prev = NULL;
-	layer1->last->next = NULL;
+        layer1->first->prev = NULL;
+        layer1->last->next = NULL;
     }
 
     // insert layer1 objects after layer2 objects
     if (layer1->first) {
         layer1->first->prev = layer2->last;
-	if (layer2->last) {
-	    if (layer1->last) {
-	      layer1->last->next = layer2->last->next;
-	    } 
-	    layer2->last->next = layer1->first;
-	    if (layer1->last && layer1->last->next) {
-	        layer1->last->next->prev = layer1->last;
-	    }
-	}
+        if (layer2->last) {
+            if (layer1->last) {
+              layer1->last->next = layer2->last->next;
+            } 
+            layer2->last->next = layer1->first;
+            if (layer1->last && layer1->last->next) {
+                layer1->last->next->prev = layer1->last;
+            }
+        }
 
-	// take care of special cases for pad's first and last pointer
-	if (last == layer2->last) { 
-	    last = layer1->last;
-	}
+        // take care of special cases for pad's first and last pointer
+        if (last == layer2->last) { 
+            last = layer1->last;
+        }
     }
 
     // fix layers list
@@ -461,67 +462,67 @@ Pad::Lower_layer(Pad_Layer *layer1, Pad_Layer *layer2)
 
     realLayer2 = layer2;
     if (!layer1 || !layer2 || (layer1 == layer2)) {
-	return(TRUE);
+        return(TRUE);
     }
 
     // if layer2 doesn't have any objects then lower below the first layer
     // above it which has something.
     if (!layer2->first) {
         int i = layers.Index(layer2)+1;
-	while ((i < layers.Length()) && (layer2=(Pad_Layer*)layers.Nth(i)) && 
-	       (layer2->first == NULL)) {
-	    i++;
-	}
+        while ((i < layers.Length()) && (layer2=(Pad_Layer*)layers.Nth(i)) && 
+               (layer2->first == NULL)) {
+            i++;
+        }
 
-	if ((i >= layers.Length()) || (layer1 == layer2)) {
-	    // couldn't find a non-empty layer which layer1 could go below
-	  return(TRUE);
-	}
+        if ((i >= layers.Length()) || (layer1 == layer2)) {
+            // couldn't find a non-empty layer which layer1 could go below
+          return(TRUE);
+        }
     }
    
     // remove layer1 objects from display list
     if (layer1->first) {
         if (layer1->first->prev) {
-	    layer1->first->prev->next = layer1->last->next;
-	}
-	if (layer1->last->next) {
-	  layer1->last->next->prev = layer1->first->prev;
-	}
+            layer1->first->prev->next = layer1->last->next;
+        }
+        if (layer1->last->next) {
+          layer1->last->next->prev = layer1->first->prev;
+        }
 
-	// take care of special cases for pad's first and last pointer
-	if (first == layer1->first) { 
-	    first = layer1->last->next;
-	    if (first) {
-	        first->prev = NULL;
-	    }
-	}
-	if (last == layer1->last) {
-	    last = layer1->first->prev;
-	    if (last) {
-	        last->next = NULL;
-	    }
-	}
-	layer1->first->prev = NULL;
-	layer1->last->next = NULL;
+        // take care of special cases for pad's first and last pointer
+        if (first == layer1->first) { 
+            first = layer1->last->next;
+            if (first) {
+                first->prev = NULL;
+            }
+        }
+        if (last == layer1->last) {
+            last = layer1->first->prev;
+            if (last) {
+                last->next = NULL;
+            }
+        }
+        layer1->first->prev = NULL;
+        layer1->last->next = NULL;
     }
 
     // insert layer1 objects before layer2 objects
     if (layer1->last) {
         layer1->last->next = layer2->first;
-	if (layer2->first) {
-	    if (layer1->first) {
-	        layer1->first->prev = layer2->first->prev;
-	    }
-	    layer2->first->prev = layer1->last;
-	    if (layer1->first && layer1->first->prev) {
-	        layer1->first->prev->next = layer1->first;
-	    }
-	}
-		
-	// take care of special cases for pad's first and last pointer
-	if (first == layer2->first) { 
-	    first = layer1->first;
-	}
+        if (layer2->first) {
+            if (layer1->first) {
+                layer1->first->prev = layer2->first->prev;
+            }
+            layer2->first->prev = layer1->last;
+            if (layer1->first && layer1->first->prev) {
+                layer1->first->prev->next = layer1->first;
+            }
+        }
+                
+        // take care of special cases for pad's first and last pointer
+        if (first == layer2->first) { 
+            first = layer1->first;
+        }
     }
 
     // fix layers list
@@ -549,15 +550,15 @@ Line_intersects_hor_line(Pad_Point &p1, Pad_Point &p2, Pad_Point &p3, Pad_Point 
     Pad_Bool intersect = FALSE;
 
     if (p1.y != p2.y) {
-	t = (p3.y - p1.y) / (p2.y - p1.y);
-	if ((t >= 0) && (t <= 1)) {
-	    intersect = TRUE;
-	    x = p1.x + t*(p2.x - p1.x);
-	    if (((x < p3.x) && (x < p4.x)) ||
-		((x > p3.x) && (x > p4.x))) {
-		intersect = FALSE;
-	    }
-	}
+        t = (p3.y - p1.y) / (p2.y - p1.y);
+        if ((t >= 0) && (t <= 1)) {
+            intersect = TRUE;
+            x = p1.x + t*(p2.x - p1.x);
+            if (((x < p3.x) && (x < p4.x)) ||
+                ((x > p3.x) && (x > p4.x))) {
+                intersect = FALSE;
+            }
+        }
     }
 
     return(intersect);
@@ -575,15 +576,15 @@ Line_intersects_ver_line(Pad_Point &p1, Pad_Point &p2, Pad_Point &p3, Pad_Point 
     Pad_Bool intersect = FALSE;
     
     if (p1.x != p2.x) {
-	t = (p3.x - p1.x) / (p2.x - p1.x);
-	if ((t >= 0) && (t <= 1)) {
-	    intersect = TRUE;
-	    y = p1.y + t*(p2.y - p1.y);
-	    if (((y < p3.y) && (y < p4.y)) ||
-		((y > p3.y) && (y > p4.y))) {
-		intersect = FALSE;
-	    }
-	}
+        t = (p3.x - p1.x) / (p2.x - p1.x);
+        if ((t >= 0) && (t <= 1)) {
+            intersect = TRUE;
+            y = p1.y + t*(p2.y - p1.y);
+            if (((y < p3.y) && (y < p4.y)) ||
+                ((y > p3.y) && (y > p4.y))) {
+                intersect = FALSE;
+            }
+        }
     }
 
     return(intersect);
@@ -607,45 +608,45 @@ Compute_alignment_point(int orientation, Pad_Point &point, Pad_PList &points, Pa
 
     len = points.Length();
     if (len == 1) {
-				// If just one point, then extend it to be a horizontal or vertical line
-	intersect = TRUE;
-	p1 = points.Nth(0);
-	switch (orientation) {
-	  case PAD_LAYOUT_HORIZONTAL:
-	    resultPoint.Set(p1->x, point.y);
-	    break;
-	  case PAD_LAYOUT_VERTICAL:
-	    resultPoint.Set(point.x, p1->y);
-	    break;
-	}
+                                // If just one point, then extend it to be a horizontal or vertical line
+        intersect = TRUE;
+        p1 = points.Nth(0);
+        switch (orientation) {
+          case PAD_LAYOUT_HORIZONTAL:
+            resultPoint.Set(p1->x, point.y);
+            break;
+          case PAD_LAYOUT_VERTICAL:
+            resultPoint.Set(point.x, p1->y);
+            break;
+        }
     } else {
-	for (i=0; i<len-1; i++) {
-	    p1 = points.Nth(i);
-	    p2 = points.Nth(i+1);
-	    switch (orientation) {
-	      case PAD_LAYOUT_HORIZONTAL:
-		if (p1->y != p2->y) {
-		    t = (point.y - p1->y) / (p2->y - p1->y);
-		    if ((t >= 0) && (t <= 1)) {
-			intersect = TRUE;
-			resultPoint.Set(p1->x + t*(p2->x - p1->x), point.y);
-		    }
-		}
-		break;
-	      case PAD_LAYOUT_VERTICAL:
-		if (p1->x != p2->x) {
-		    t = (point.x - p1->x) / (p2->x - p1->x);
-		    if ((t >= 0) && (t <= 1)) {
-			intersect = TRUE;
-			resultPoint.Set(point.x, p1->y + t*(p2->y - p1->y));
-		    }
-		}
-		break;
-	    }
-	    if (intersect) {
-		break;
-	    }
-	}
+        for (i=0; i<len-1; i++) {
+            p1 = points.Nth(i);
+            p2 = points.Nth(i+1);
+            switch (orientation) {
+              case PAD_LAYOUT_HORIZONTAL:
+                if (p1->y != p2->y) {
+                    t = (point.y - p1->y) / (p2->y - p1->y);
+                    if ((t >= 0) && (t <= 1)) {
+                        intersect = TRUE;
+                        resultPoint.Set(p1->x + t*(p2->x - p1->x), point.y);
+                    }
+                }
+                break;
+              case PAD_LAYOUT_VERTICAL:
+                if (p1->x != p2->x) {
+                    t = (point.x - p1->x) / (p2->x - p1->x);
+                    if ((t >= 0) && (t <= 1)) {
+                        intersect = TRUE;
+                        resultPoint.Set(point.x, p1->y + t*(p2->y - p1->y));
+                    }
+                }
+                break;
+            }
+            if (intersect) {
+                break;
+            }
+        }
     }
 
     return(intersect);
@@ -665,36 +666,36 @@ BBox_intersects_path(Pad_BBox &bbox, Pad_PList &coords) {
 
     len = coords.Length();
     for (i=0; i<len-1; i++) {
-	p1 = coords.Nth(i);
-	p2 = coords.Nth(i+1);
-				// Test left edge
-	p3.Set(bbox.Xmin(), bbox.Ymin());
-	p4.Set(bbox.Xmin(), bbox.Ymax());
-	if (Line_intersects_ver_line(*p1, *p2, p3, p4)) {
-	    intersect = TRUE;
-	    break;
-	}
-				// Test right edge
-	p3.Set(bbox.Xmax(), bbox.Ymin());
-	p4.Set(bbox.Xmax(), bbox.Ymax());
-	if (Line_intersects_ver_line(*p1, *p2, p3, p4)) {
-	    intersect = TRUE;
-	    break;
-	}
-				// Test top edge
-	p3.Set(bbox.Xmin(), bbox.Ymax());
-	p4.Set(bbox.Xmax(), bbox.Ymax());
-	if (Line_intersects_hor_line(*p1, *p2, p3, p4)) {
-	    intersect = TRUE;
-	    break;
-	}
-				// Test bottom edge
-	p3.Set(bbox.Xmin(), bbox.Ymin());
-	p4.Set(bbox.Xmax(), bbox.Ymin());
-	if (Line_intersects_hor_line(*p1, *p2, p3, p4)) {
-	    intersect = TRUE;
-	    break;
-	}
+        p1 = coords.Nth(i);
+        p2 = coords.Nth(i+1);
+                                // Test left edge
+        p3.Set(bbox.Xmin(), bbox.Ymin());
+        p4.Set(bbox.Xmin(), bbox.Ymax());
+        if (Line_intersects_ver_line(*p1, *p2, p3, p4)) {
+            intersect = TRUE;
+            break;
+        }
+                                // Test right edge
+        p3.Set(bbox.Xmax(), bbox.Ymin());
+        p4.Set(bbox.Xmax(), bbox.Ymax());
+        if (Line_intersects_ver_line(*p1, *p2, p3, p4)) {
+            intersect = TRUE;
+            break;
+        }
+                                // Test top edge
+        p3.Set(bbox.Xmin(), bbox.Ymax());
+        p4.Set(bbox.Xmax(), bbox.Ymax());
+        if (Line_intersects_hor_line(*p1, *p2, p3, p4)) {
+            intersect = TRUE;
+            break;
+        }
+                                // Test bottom edge
+        p3.Set(bbox.Xmin(), bbox.Ymin());
+        p4.Set(bbox.Xmax(), bbox.Ymin());
+        if (Line_intersects_hor_line(*p1, *p2, p3, p4)) {
+            intersect = TRUE;
+            break;
+        }
     }
 
     return(intersect);
@@ -717,48 +718,48 @@ Pad::Align(Pad_List &objs, int type, Pad_Bool anchor)
     Pad_Point point;
 
     if (objs.Is_empty()) {
-	return(TRUE);
+        return(TRUE);
     }
 
-				// First find most extreme object
+                                // First find most extreme object
     DOLIST(oi, objs, Pad_Object, obj) {
-	if (anchor) {
-	    bb.Set(obj->anchorpt.x, obj->anchorpt.y, obj->anchorpt.x, obj->anchorpt.y);
-	} else {
-	    obj->Get_global_bbox(bb);
-	}
-	switch (type) {
-	  case PAD_LAYOUT_LEFT:
-	    objEdge = bb.Xmin();
-	    break;
-	  case PAD_LAYOUT_RIGHT:
-	    objEdge = bb.Xmax();
-	    break;
-	  case PAD_LAYOUT_BOTTOM:
-	    objEdge = bb.Ymin();
-	    break;
-	  case PAD_LAYOUT_TOP:
-	    objEdge = bb.Ymax();
-	    break;
-	default:
-	    Pad_errorString = "Invalid alignment type.";
-	    return(FALSE);
-	}
-	if (first) {
-	    edge = objEdge;
-	    first = FALSE;
-	} else {
-	    switch (type) {
-	      case PAD_LAYOUT_LEFT:
-	      case PAD_LAYOUT_BOTTOM:
-		edge = MIN(edge, objEdge);
-		break;
-	      case PAD_LAYOUT_RIGHT:
-	      case PAD_LAYOUT_TOP:
-		edge = MAX(edge, objEdge);
-		break;
-	    }
-	}
+        if (anchor) {
+            bb.Set(obj->anchorpt.x, obj->anchorpt.y, obj->anchorpt.x, obj->anchorpt.y);
+        } else {
+            obj->Get_global_bbox(bb);
+        }
+        switch (type) {
+          case PAD_LAYOUT_LEFT:
+            objEdge = bb.Xmin();
+            break;
+          case PAD_LAYOUT_RIGHT:
+            objEdge = bb.Xmax();
+            break;
+          case PAD_LAYOUT_BOTTOM:
+            objEdge = bb.Ymin();
+            break;
+          case PAD_LAYOUT_TOP:
+            objEdge = bb.Ymax();
+            break;
+        default:
+            Pad_errorString = "Invalid alignment type.";
+            return(FALSE);
+        }
+        if (first) {
+            edge = objEdge;
+            first = FALSE;
+        } else {
+            switch (type) {
+              case PAD_LAYOUT_LEFT:
+              case PAD_LAYOUT_BOTTOM:
+                edge = MIN(edge, objEdge);
+                break;
+              case PAD_LAYOUT_RIGHT:
+              case PAD_LAYOUT_TOP:
+                edge = MAX(edge, objEdge);
+                break;
+            }
+        }
     }
 
     point.Set(edge, edge);
@@ -793,98 +794,98 @@ Pad::Align(Pad_List &objs, int type, Pad_PList &coords, Pad_Bool overlapOnly, Pa
     switch (type) {
       case PAD_LAYOUT_LEFT:
       case PAD_LAYOUT_RIGHT:
-	orientation = PAD_LAYOUT_HORIZONTAL;
-	break;
+        orientation = PAD_LAYOUT_HORIZONTAL;
+        break;
       case PAD_LAYOUT_BOTTOM:
       case PAD_LAYOUT_TOP:
-	orientation = PAD_LAYOUT_VERTICAL;
-	break;
+        orientation = PAD_LAYOUT_VERTICAL;
+        break;
       default:
-	Pad_errorString = "Invalid alignment type.";
-	return(FALSE);
+        Pad_errorString = "Invalid alignment type.";
+        return(FALSE);
     }
 
     DOLIST(oi, objs, Pad_Object, obj) {
-	if (anchor) {
-	    bb.Set(obj->anchorpt.x, obj->anchorpt.y, obj->anchorpt.x, obj->anchorpt.y);
-	} else {
-	    obj->Get_global_bbox(bb);
-	}
-	dx = 0.0;
-	dy = 0.0;
-	if (!overlapOnly || BBox_intersects_path(bb, coords)) {
-	    switch (type) {
-	      case PAD_LAYOUT_LEFT:
-		point.Set(bb.Xmin(), bb.Ymin());
-		intersection1 = Compute_alignment_point(orientation, point, coords, resultPoint1);
-		point.Set(bb.Xmin(), bb.Ymax());
-		intersection2 = Compute_alignment_point(orientation, point, coords, resultPoint2);
+        if (anchor) {
+            bb.Set(obj->anchorpt.x, obj->anchorpt.y, obj->anchorpt.x, obj->anchorpt.y);
+        } else {
+            obj->Get_global_bbox(bb);
+        }
+        dx = 0.0;
+        dy = 0.0;
+        if (!overlapOnly || BBox_intersects_path(bb, coords)) {
+            switch (type) {
+              case PAD_LAYOUT_LEFT:
+                point.Set(bb.Xmin(), bb.Ymin());
+                intersection1 = Compute_alignment_point(orientation, point, coords, resultPoint1);
+                point.Set(bb.Xmin(), bb.Ymax());
+                intersection2 = Compute_alignment_point(orientation, point, coords, resultPoint2);
 
-		if (intersection1 && intersection2) {
-		    edge = MAX(resultPoint1.x, resultPoint2.x);
-		} else if (intersection1) {
-		    edge = resultPoint1.x;
-		} else if (intersection2) {
-		    edge = resultPoint2.x;
-		} else {
-		    continue;
-		}
-		dx = edge - bb.Xmin();
-		break;
-	      case PAD_LAYOUT_RIGHT:
-		point.Set(bb.Xmax(), bb.Ymin());
-		intersection1 = Compute_alignment_point(orientation, point, coords, resultPoint1);
-		point.Set(bb.Xmax(), bb.Ymax());
-		intersection2 = Compute_alignment_point(orientation, point, coords, resultPoint2);
+                if (intersection1 && intersection2) {
+                    edge = MAX(resultPoint1.x, resultPoint2.x);
+                } else if (intersection1) {
+                    edge = resultPoint1.x;
+                } else if (intersection2) {
+                    edge = resultPoint2.x;
+                } else {
+                    continue;
+                }
+                dx = edge - bb.Xmin();
+                break;
+              case PAD_LAYOUT_RIGHT:
+                point.Set(bb.Xmax(), bb.Ymin());
+                intersection1 = Compute_alignment_point(orientation, point, coords, resultPoint1);
+                point.Set(bb.Xmax(), bb.Ymax());
+                intersection2 = Compute_alignment_point(orientation, point, coords, resultPoint2);
 
-		if (intersection1 && intersection2) {
-		    edge = MIN(resultPoint1.x, resultPoint2.x);
-		} else if (intersection1) {
-		    edge = resultPoint1.x;
-		} else if (intersection2) {
-		    edge = resultPoint2.x;
-		} else {
-		    continue;
-		}
-		dx = edge - bb.Xmax();
-		break;
-	      case PAD_LAYOUT_BOTTOM:
-		point.Set(bb.Xmin(), bb.Ymin());
-		intersection1 = Compute_alignment_point(orientation, point, coords, resultPoint1);
-		point.Set(bb.Xmax(), bb.Ymin());
-		intersection2 = Compute_alignment_point(orientation, point, coords, resultPoint2);
+                if (intersection1 && intersection2) {
+                    edge = MIN(resultPoint1.x, resultPoint2.x);
+                } else if (intersection1) {
+                    edge = resultPoint1.x;
+                } else if (intersection2) {
+                    edge = resultPoint2.x;
+                } else {
+                    continue;
+                }
+                dx = edge - bb.Xmax();
+                break;
+              case PAD_LAYOUT_BOTTOM:
+                point.Set(bb.Xmin(), bb.Ymin());
+                intersection1 = Compute_alignment_point(orientation, point, coords, resultPoint1);
+                point.Set(bb.Xmax(), bb.Ymin());
+                intersection2 = Compute_alignment_point(orientation, point, coords, resultPoint2);
 
-		if (intersection1 && intersection2) {
-		    edge = MAX(resultPoint1.y, resultPoint2.y);
-		} else if (intersection1) {
-		    edge = resultPoint1.y;
-		} else if (intersection2) {
-		    edge = resultPoint2.y;
-		} else {
-		    continue;
-		}
-		dy = edge - bb.Ymin();
-		break;
-	      case PAD_LAYOUT_TOP:
-		point.Set(bb.Xmin(), bb.Ymax());
-		intersection1 = Compute_alignment_point(orientation, point, coords, resultPoint1);
-		point.Set(bb.Xmax(), bb.Ymax());
-		intersection2 = Compute_alignment_point(orientation, point, coords, resultPoint2);
+                if (intersection1 && intersection2) {
+                    edge = MAX(resultPoint1.y, resultPoint2.y);
+                } else if (intersection1) {
+                    edge = resultPoint1.y;
+                } else if (intersection2) {
+                    edge = resultPoint2.y;
+                } else {
+                    continue;
+                }
+                dy = edge - bb.Ymin();
+                break;
+              case PAD_LAYOUT_TOP:
+                point.Set(bb.Xmin(), bb.Ymax());
+                intersection1 = Compute_alignment_point(orientation, point, coords, resultPoint1);
+                point.Set(bb.Xmax(), bb.Ymax());
+                intersection2 = Compute_alignment_point(orientation, point, coords, resultPoint2);
 
-		if (intersection1 && intersection2) {
-		    edge = MIN(resultPoint1.y, resultPoint2.y);
-		} else if (intersection1) {
-		    edge = resultPoint1.y;
-		} else if (intersection2) {
-		    edge = resultPoint2.y;
-		} else {
-		    continue;
-		}
-		dy = edge - bb.Ymax();
-		break;
-	    }
-	}
-	obj->Slide(dx, dy, TRUE);
+                if (intersection1 && intersection2) {
+                    edge = MIN(resultPoint1.y, resultPoint2.y);
+                } else if (intersection1) {
+                    edge = resultPoint1.y;
+                } else if (intersection2) {
+                    edge = resultPoint2.y;
+                } else {
+                    continue;
+                }
+                dy = edge - bb.Ymax();
+                break;
+            }
+        }
+        obj->Slide(dx, dy, TRUE);
     }
 
     return(TRUE);
@@ -936,7 +937,7 @@ Path_length(Pad_PList &coords)
 
     len = 0.0;
     for (i=0; i<(coords.Length() - 1); i++) {
-	len += coords.Nth(i)->Distance(*coords.Nth(i+1));
+        len += coords.Nth(i)->Distance(*coords.Nth(i+1));
     }
 
     return(len);
@@ -958,19 +959,19 @@ Closest_obj_to_point(Pad_Point &point, Pad_List &objs)
     Pad_BBox bb;
 
     DOLIST(oi, objs, Pad_Object, obj) {
-	obj->Get_global_bbox(bb);
-	ctr.Set(bb.Xctr(), bb.Yctr());
-	dist = point.Distance(ctr);
-	if (first) {
-	    minDist = dist;
-	    closestObj = obj;
-	    first = FALSE;
-	} else {
-	    if (dist < minDist) {
-		minDist = dist;
-		closestObj = obj;
-	    }
-	}
+        obj->Get_global_bbox(bb);
+        ctr.Set(bb.Xctr(), bb.Yctr());
+        dist = point.Distance(ctr);
+        if (first) {
+            minDist = dist;
+            closestObj = obj;
+            first = FALSE;
+        } else {
+            if (dist < minDist) {
+                minDist = dist;
+                closestObj = obj;
+            }
+        }
     }
 
     return(closestObj);
@@ -988,23 +989,23 @@ Obj_len_along_dir(Pad_Object *obj, Pad_Point &origDir)
     Pad_BBox bb;
 
     if ((origDir.x == 0.0) && (origDir.y == 0.0)) {
-	return(0.0);
+        return(0.0);
     }
 
     dir = origDir;
     obj->Get_global_bbox(bb);
-				// Flip direction so it is always in the first quadrant
+                                // Flip direction so it is always in the first quadrant
     if (dir.x < 0) {
-	dir.x *= -1;
+        dir.x *= -1;
     }
     if (dir.y < 0) {
-	dir.y *= -1;
+        dir.y *= -1;
     }
 
     if (dir.x >= dir.y) {
-	pt.Set(bb.Width(), bb.Width() * (dir.y / dir.x));
+        pt.Set(bb.Width(), bb.Width() * (dir.y / dir.x));
     } else {
-	pt.Set(bb.Height() * (dir.x / dir.y), bb.Height());
+        pt.Set(bb.Height() * (dir.x / dir.y), bb.Height());
     }
     len = pt.Vector_length();
 
@@ -1028,43 +1029,43 @@ Pad::Distribute(Pad_List &objs, int type)
     Pad_BBox bb;
 
     if (objs.Is_empty()) {
-	return(TRUE);
+        return(TRUE);
     }
 
-				// First, compute space between objects
+                                // First, compute space between objects
     totalDim = 0.0;
     numObjs = 0;
     DOLIST(oi, objs, Pad_Object, obj) {
-	obj->Get_global_bbox(bb);
-	switch (type) {
-	  case PAD_LAYOUT_HORIZONTAL:
-	      objExtremeMin = bb.Xmin();
-	      objExtremeMax = bb.Xmax();
-	      totalDim += bb.Width();
-	    break;
-	  case PAD_LAYOUT_VERTICAL:
-	      objExtremeMin = bb.Ymin();
-	      objExtremeMax = bb.Ymax();
-	      totalDim += bb.Height();
-	    break;
-	default:
-	    Pad_errorString = "Invalid distribution type.";
-	    return(FALSE);
-	}
-	if (first) {
-	    extremeMin = objExtremeMin;
-	    extremeMax = objExtremeMax;
-	    first = FALSE;
-	} else {
-	    extremeMin = MIN(extremeMin, objExtremeMin);
-	    extremeMax = MAX(extremeMax, objExtremeMax);
-	}
-	numObjs++;
+        obj->Get_global_bbox(bb);
+        switch (type) {
+          case PAD_LAYOUT_HORIZONTAL:
+              objExtremeMin = bb.Xmin();
+              objExtremeMax = bb.Xmax();
+              totalDim += bb.Width();
+            break;
+          case PAD_LAYOUT_VERTICAL:
+              objExtremeMin = bb.Ymin();
+              objExtremeMax = bb.Ymax();
+              totalDim += bb.Height();
+            break;
+        default:
+            Pad_errorString = "Invalid distribution type.";
+            return(FALSE);
+        }
+        if (first) {
+            extremeMin = objExtremeMin;
+            extremeMax = objExtremeMax;
+            first = FALSE;
+        } else {
+            extremeMin = MIN(extremeMin, objExtremeMin);
+            extremeMax = MAX(extremeMax, objExtremeMax);
+        }
+        numObjs++;
     }
     totalSpace = (extremeMax - extremeMin) - totalDim;
     space = totalSpace / (numObjs - 1);
 
-				// Now call function to actually distribute objects
+                                // Now call function to actually distribute objects
     rc = Distribute(objs, type, space);
 
     return(rc);
@@ -1087,52 +1088,52 @@ Pad::Distribute(Pad_List &objs, int type, float space)
     Pad_ObjectPtr *sortedObjs;
 
     if (objs.Is_empty()) {
-	return(TRUE);
+        return(TRUE);
     }
 
-				// Sort objects horizontally or vertically, as appropriate
+                                // Sort objects horizontally or vertically, as appropriate
     i = 0;
     numObjs = objs.Length();
     sortedObjs = new Pad_ObjectPtr[numObjs];
 
     DOLIST(oi, objs, Pad_Object, obj) {
-	sortedObjs[i++] = obj;
+        sortedObjs[i++] = obj;
     }
     switch (type) {
       case PAD_LAYOUT_HORIZONTAL:
-	qsort(sortedObjs, numObjs, sizeof(Pad_ObjectPtr), Hor_sort);
-	sortedObjs[0]->Get_global_bbox(bb);
-	position = bb.Xmin();
-	break;
+        qsort(sortedObjs, numObjs, sizeof(Pad_ObjectPtr), Hor_sort);
+        sortedObjs[0]->Get_global_bbox(bb);
+        position = bb.Xmin();
+        break;
       case PAD_LAYOUT_VERTICAL:
-	qsort(sortedObjs, numObjs, sizeof(Pad_ObjectPtr), Ver_sort);
-	sortedObjs[0]->Get_global_bbox(bb);
-	position = bb.Ymin();
-	break;
+        qsort(sortedObjs, numObjs, sizeof(Pad_ObjectPtr), Ver_sort);
+        sortedObjs[0]->Get_global_bbox(bb);
+        position = bb.Ymin();
+        break;
       default:
-	Pad_errorString = "Invalid distribution type.";
-	delete [] sortedObjs;
-	return(FALSE);
+        Pad_errorString = "Invalid distribution type.";
+        delete [] sortedObjs;
+        return(FALSE);
     }
-	
-				// Then, distribute objects
+        
+                                // Then, distribute objects
     for (i=0; i<numObjs; i++) {
-	obj = sortedObjs[i];
-	obj->Get_global_bbox(bb);
-	dx = 0.0;
-	dy = 0.0;
-	switch (type) {
-	  case PAD_LAYOUT_HORIZONTAL:
-	    dx = position - bb.Xmin();
-	    position += bb.Width();
-	    break;
-	  case PAD_LAYOUT_VERTICAL:
-	    dy = position - bb.Ymin();
-	    position += bb.Height();
-	    break;
-	}
-	obj->Slide(dx, dy, TRUE);
-	position += space;
+        obj = sortedObjs[i];
+        obj->Get_global_bbox(bb);
+        dx = 0.0;
+        dy = 0.0;
+        switch (type) {
+          case PAD_LAYOUT_HORIZONTAL:
+            dx = position - bb.Xmin();
+            position += bb.Width();
+            break;
+          case PAD_LAYOUT_VERTICAL:
+            dy = position - bb.Ymin();
+            position += bb.Height();
+            break;
+        }
+        obj->Slide(dx, dy, TRUE);
+        position += space;
     }
     
     delete [] sortedObjs;
@@ -1158,25 +1159,25 @@ Pad::Distribute(Pad_List &objs, Pad_PList &coords)
     Pad_BBox bb;
 
     if (objs.Is_empty() || coords.Is_empty()) {
-	return(TRUE);
+        return(TRUE);
     }
 
-				// First, compute total path length
+                                // First, compute total path length
     pathLength = Path_length(coords);
 
-				// Next, compute average total box dimensions
+                                // Next, compute average total box dimensions
     totalDim = 0.0;
     numObjs = 0;
     DOLIST(oi, objs, Pad_Object, obj) {
-	obj->Get_global_bbox(bb);
-	totalDim += bb.Avg_dim();
-	numObjs++;
+        obj->Get_global_bbox(bb);
+        totalDim += bb.Avg_dim();
+        numObjs++;
     }
 
-				// Then, compute space between objects
+                                // Then, compute space between objects
     space = (pathLength - totalDim) / (numObjs - 1);
 
-				// Finally, call function to actually distribute objects
+                                // Finally, call function to actually distribute objects
     rc = Distribute(objs, coords, space, TRUE);
 
     return(rc);
@@ -1195,25 +1196,25 @@ Pad::Distribute(Pad_List &objs, Pad_PList &coords)
 Pad_Bool
 Pad::Distribute(Pad_List &objsOrig, Pad_PList &coords, float space, Pad_Bool exact)
 {
-#define MAX_DIST_ERROR 0.01	// Max error percentage if exact spacing requested
+#define MAX_DIST_ERROR 0.01        // Max error percentage if exact spacing requested
     int          numCoords;
     int          numObjs;
-    int          index;		// Current path point index
+    int          index;                // Current path point index
     float        dx, dy;
     float        error;
-    float        segmentLen;	// Length of current path segment
-    float        curDist;	// Distance from current path point to current point
-    float        newDist;	// Distance from current point to new point
+    float        segmentLen;        // Length of current path segment
+    float        curDist;        // Distance from current path point to current point
+    float        newDist;        // Distance from current point to new point
     float        pathLength;    // Total length of distribution path
     Pad_Object * obj;
     Pad_BBox     bb;
-    Pad_Point    pt;		// Current point along path
-    Pad_Point    dir;		// Current direction of path
-    Pad_List     objs;		// Unplaced objects
+    Pad_Point    pt;                // Current point along path
+    Pad_Point    dir;                // Current direction of path
+    Pad_List     objs;                // Unplaced objects
     Pad_Bool     loop = FALSE;
 
     if ((objsOrig.Is_empty()) || (coords.Is_empty())) {
-	return(TRUE);
+        return(TRUE);
     }
 
     // The following is an O(n^2) algorithm to place objects
@@ -1226,66 +1227,66 @@ Pad::Distribute(Pad_List &objsOrig, Pad_PList &coords, float space, Pad_Bool exa
     numCoords = coords.Length();
     numObjs = objsOrig.Length();
     do {
-				// First, initialize things
-	objs = objsOrig;
-	index = 0;
-	curDist = 0.0;
-	pt = coords.Nth(0);
-	dir.Set(coords.Nth(1)->x - pt.x, coords.Nth(1)->y - pt.y);
-	dir.Vector_normalize();
-	segmentLen = pt.Distance(*coords.Nth(1));
-	do {
-				// Find closest object to current point on path,
-				// and place it on path, accounting for object dimension
-				// along path direction.  If we're on our second
-				// iteration through the objects, then just use the
-				// same order we used the first time.
-	    if (loop) {
-		obj = Closest_obj_to_point(pt, objs);
-		objs.Remove(obj);
-	    } else {
-		obj = (Pad_Object *)objs.Pop();
-	    }
+                                // First, initialize things
+        objs = objsOrig;
+        index = 0;
+        curDist = 0.0;
+        pt = coords.Nth(0);
+        dir.Set(coords.Nth(1)->x - pt.x, coords.Nth(1)->y - pt.y);
+        dir.Vector_normalize();
+        segmentLen = pt.Distance(*coords.Nth(1));
+        do {
+                                // Find closest object to current point on path,
+                                // and place it on path, accounting for object dimension
+                                // along path direction.  If we're on our second
+                                // iteration through the objects, then just use the
+                                // same order we used the first time.
+            if (loop) {
+                obj = Closest_obj_to_point(pt, objs);
+                objs.Remove(obj);
+            } else {
+                obj = (Pad_Object *)objs.Pop();
+            }
 
-	    newDist = Obj_len_along_dir(obj, dir);
-	    obj->Get_global_bbox(bb);
-	    dx = pt.x + (0.5 * dir.x * newDist) - bb.Xctr();
-	    dy = pt.y + (0.5 * dir.y * newDist) - bb.Yctr();
-	    obj->Slide(dx, dy, TRUE);
+            newDist = Obj_len_along_dir(obj, dir);
+            obj->Get_global_bbox(bb);
+            dx = pt.x + (0.5 * dir.x * newDist) - bb.Xctr();
+            dy = pt.y + (0.5 * dir.y * newDist) - bb.Yctr();
+            obj->Slide(dx, dy, TRUE);
 
-				// Find next point on path, and update path direction
-				// If no more points, keep following same direction.
-	    if (!objs.Is_empty()) {
-		do {
-		    if (((curDist + newDist + space) < segmentLen) || (index == (numCoords-2))) {
-			curDist += newDist + space;
-			pt.x += dir.x * (newDist + space);
-			pt.y += dir.y * (newDist + space);
-			break;
-		    } else {
-			index++;
-			pt = coords.Nth(index);
-			dir.Set(coords.Nth(index+1)->x - pt.x, coords.Nth(index+1)->y - pt.y);
-			dir.Vector_normalize();
-			newDist -= (segmentLen - curDist);
-			curDist = 0.0;
-			segmentLen = pt.Distance(*coords.Nth(index + 1));
-		    }
-		} while (1);
-	    }
-	} while (!objs.Is_empty());
-				// If exact spacing was requested, then check to see how
-				// we did.  If the initial estimate of spacing was
-				// inaccurate, we could be substantially off - so,
-				// modify the space between objects and try again.
-	error = (curDist + newDist - segmentLen)/pathLength;
-	if (exact && (ABS(error) > MAX_DIST_ERROR)) {
-	    loop = TRUE;
-	    exact = FALSE;
-	    space -= (curDist + newDist - segmentLen) / (numObjs - 1);
-	} else {
-	    loop = FALSE;
-	}
+                                // Find next point on path, and update path direction
+                                // If no more points, keep following same direction.
+            if (!objs.Is_empty()) {
+                do {
+                    if (((curDist + newDist + space) < segmentLen) || (index == (numCoords-2))) {
+                        curDist += newDist + space;
+                        pt.x += dir.x * (newDist + space);
+                        pt.y += dir.y * (newDist + space);
+                        break;
+                    } else {
+                        index++;
+                        pt = coords.Nth(index);
+                        dir.Set(coords.Nth(index+1)->x - pt.x, coords.Nth(index+1)->y - pt.y);
+                        dir.Vector_normalize();
+                        newDist -= (segmentLen - curDist);
+                        curDist = 0.0;
+                        segmentLen = pt.Distance(*coords.Nth(index + 1));
+                    }
+                } while (1);
+            }
+        } while (!objs.Is_empty());
+                                // If exact spacing was requested, then check to see how
+                                // we did.  If the initial estimate of spacing was
+                                // inaccurate, we could be substantially off - so,
+                                // modify the space between objects and try again.
+        error = (curDist + newDist - segmentLen)/pathLength;
+        if (exact && (ABS(error) > MAX_DIST_ERROR)) {
+            loop = TRUE;
+            exact = FALSE;
+            space -= (curDist + newDist - segmentLen) / (numObjs - 1);
+        } else {
+            loop = FALSE;
+        }
     } while (loop);
 
     return(TRUE);
@@ -1328,21 +1329,21 @@ Pad::Layout_position(Pad_BBox &targetBBox, Pad_Point &targetPt, Pad_List &objs, 
     targetX = LERP(targetPt.x, targetBBox.Xmin(), targetBBox.Xmax());
     targetY = LERP(targetPt.y, targetBBox.Ymin(), targetBBox.Ymax());
     DOLIST(oi, objs, Pad_Object, obj) {
-	obj->Get_global_bbox(srcBBox);
-	srcX = LERP(srcPt.x, srcBBox.Xmin(), srcBBox.Xmax());
-	srcY = LERP(srcPt.y, srcBBox.Ymin(), srcBBox.Ymax());
-	dx = targetX - srcX;
-	dy = targetY - srcY;
-	if (animationTime == 0) {
-	    obj->Slide(dx, dy, TRUE);
-	} else {
-	    delta.Set(dx, dy);
-	    deltas.Push_last(&delta);
-	}
+        obj->Get_global_bbox(srcBBox);
+        srcX = LERP(srcPt.x, srcBBox.Xmin(), srcBBox.Xmax());
+        srcY = LERP(srcPt.y, srcBBox.Ymin(), srcBBox.Ymax());
+        dx = targetX - srcX;
+        dy = targetY - srcY;
+        if (animationTime == 0) {
+            obj->Slide(dx, dy, TRUE);
+        } else {
+            delta.Set(dx, dy);
+            deltas.Push_last(&delta);
+        }
     }
 
     if (animationTime > 0) {
-	Slide(objs, deltas, TRUE, animationTime);
+        Slide(objs, deltas, TRUE, animationTime);
     }
 
     return(TRUE);
@@ -1365,26 +1366,26 @@ Pad::Layout_size(int type, Pad_Object *refObj, Pad_List &objs, float scale)
     refObj->Get_global_bbox(refBBox);
     switch (type) {
       case PAD_LAYOUT_WIDTH:
-	refDim = refBBox.Width();
-	break;
+        refDim = refBBox.Width();
+        break;
       case PAD_LAYOUT_HEIGHT:
-	refDim = refBBox.Height();
-	break;
+        refDim = refBBox.Height();
+        break;
     }
 
     DOLIST(oi, objs, Pad_Object, obj) {
-	obj->Get_global_bbox(bb);
-	switch (type) {
-	  case PAD_LAYOUT_WIDTH:
-	    dim = bb.Width();
-	    break;
-	  case PAD_LAYOUT_HEIGHT:
-	    dim = bb.Height();
-	    break;
-	}
+        obj->Get_global_bbox(bb);
+        switch (type) {
+          case PAD_LAYOUT_WIDTH:
+            dim = bb.Width();
+            break;
+          case PAD_LAYOUT_HEIGHT:
+            dim = bb.Height();
+            break;
+        }
 
-	ds = refDim * scale / dim;
-	obj->Scale(obj->anchorpt.x, obj->anchorpt.y, ds);
+        ds = refDim * scale / dim;
+        obj->Scale(obj->anchorpt.x, obj->anchorpt.y, ds);
     }
 
     return(TRUE);
@@ -1405,18 +1406,18 @@ Pad::Layout_size(int type, Pad_List &objs, float newDim)
     Pad_Iterator oi;
 
     DOLIST(oi, objs, Pad_Object, obj) {
-	obj->Get_global_bbox(bb);
-	switch (type) {
-	  case PAD_LAYOUT_WIDTH:
-	    dim = bb.Width();
-	    break;
-	  case PAD_LAYOUT_HEIGHT:
-	    dim = bb.Height();
-	    break;
-	}
+        obj->Get_global_bbox(bb);
+        switch (type) {
+          case PAD_LAYOUT_WIDTH:
+            dim = bb.Width();
+            break;
+          case PAD_LAYOUT_HEIGHT:
+            dim = bb.Height();
+            break;
+        }
 
-	ds = newDim / dim;
-	obj->Scale(obj->anchorpt.x, obj->anchorpt.y, ds);
+        ds = newDim / dim;
+        obj->Scale(obj->anchorpt.x, obj->anchorpt.y, ds);
     }
 
     return(TRUE);
@@ -1434,10 +1435,10 @@ Pad::Snap(float grid, Pad_List &objs)
     Pad_Iterator oi;
 
     DOLIST(oi, objs, Pad_Object, obj) {
-	obj->Get_rel_position(x, y, s);
-	x = ((int)((x + (SIGN(x) * 0.5 * grid)) / grid)) * grid;
-	y = ((int)((y + (SIGN(y) * 0.5 * grid)) / grid)) * grid;
-	obj->Set_rel_position(x, y, s);
+        obj->Get_rel_position(x, y, s);
+        x = ((int)((x + (SIGN(x) * 0.5 * grid)) / grid)) * grid;
+        y = ((int)((y + (SIGN(y) * 0.5 * grid)) / grid)) * grid;
+        obj->Set_rel_position(x, y, s);
     }
 
     return(TRUE);
@@ -1455,54 +1456,54 @@ Pad::Scale(Pad_List &objs, float x, float y, float zmult, Pad_Bool transformp, i
 
     if (animationTime <= 0) {
         DOLIST(oi, objs, Pad_Object, obj) {
-	    obj->Scale(x, y, zmult, transformp);
-	}
+            obj->Scale(x, y, zmult, transformp);
+        }
     } else {
-	float deltaz, prevz, desiredz;
+        float deltaz, prevz, desiredz;
         float lerp, oldLerp, straightLerp;
         float elapsedTime;
-	long  startSec, startUsec;
-	Pad_Time time;
-	Pad_Bool rc;
+        long  startSec, startUsec;
+        Pad_Time time;
+        Pad_Bool rc;
 
-				// Record current time
-	time.Update();
-	startSec = time.Get_sec();
-	startUsec = time.Get_usec();
+                                // Record current time
+        time.Update();
+        startSec = time.Get_sec();
+        startUsec = time.Get_usec();
 
-	lerp = 0.0;
-	oldLerp = lerp;
-	prevz = 1.0;
+        lerp = 0.0;
+        oldLerp = lerp;
+        prevz = 1.0;
 
-	do {
-				// Scale objects a little bit
-	    desiredz = LERP(lerp, 1.0, zmult);
-	    deltaz = desiredz / prevz;
-	    prevz = desiredz;
-	    DOLIST(oi, objs, Pad_Object, obj) {
-	        obj->Scale(x, y, deltaz, transformp);
-	    }
-	    view->Update_display();
+        do {
+                                // Scale objects a little bit
+            desiredz = LERP(lerp, 1.0, zmult);
+            deltaz = desiredz / prevz;
+            prevz = desiredz;
+            DOLIST(oi, objs, Pad_Object, obj) {
+                obj->Scale(x, y, deltaz, transformp);
+            }
+            view->Update_display();
 
-				// Calculate total elapsed time
-	    time.Update();
-	    elapsedTime = (1000000 * (time.Get_sec() - startSec) + (time.Get_usec() - startUsec)) / 1000;
+                                // Calculate total elapsed time
+            time.Update();
+            elapsedTime = (1000000 * (time.Get_sec() - startSec) + (time.Get_usec() - startUsec)) / 1000;
 
-				// Calculate next interpolation step
-	    straightLerp = elapsedTime / animationTime;
-	    oldLerp = lerp;
-	    lerp = Pad_Siso_lerp(straightLerp);
-				// Check for interruption
-	    rc = Pad_renderer->Is_interrupted(view->win);
-	} while ((elapsedTime < animationTime) && !rc);
+                                // Calculate next interpolation step
+            straightLerp = elapsedTime / animationTime;
+            oldLerp = lerp;
+            lerp = Pad_Siso_lerp(straightLerp);
+                                // Check for interruption
+            rc = Pad_renderer->Is_interrupted(view->win);
+        } while ((elapsedTime < animationTime) && !rc);
 
-				// Correct scale so it finally is correct
-	desiredz = zmult;
-	deltaz = desiredz / prevz;
-	DOLIST(oi, objs, Pad_Object, obj) {
-	    obj->Scale(x, y, deltaz, transformp);
-	}
-	view->Update_display();
+                                // Correct scale so it finally is correct
+        desiredz = zmult;
+        deltaz = desiredz / prevz;
+        DOLIST(oi, objs, Pad_Object, obj) {
+            obj->Scale(x, y, deltaz, transformp);
+        }
+        view->Update_display();
     }
 
     return(TRUE);
@@ -1524,7 +1525,7 @@ Pad::Slide(Pad_List &objs, float dx, float dy, Pad_Bool transformp, int animatio
 
     delta.Set(dx, dy);
     DOLIST(oi, objs, Pad_Object, obj) {
-	deltas.Push_last(&delta);
+        deltas.Push_last(&delta);
     }
 
     return(Slide(objs, deltas, transformp, animationTime));
@@ -1539,63 +1540,63 @@ Pad::Slide(Pad_List &objs, Pad_PList &deltas, Pad_Bool transformp, int animation
 
     if (animationTime <= 0) {
         DOLIST(oi, objs, Pad_Object, obj) {
-	    delta = deltas.Pop();
-	    obj->Slide(delta->x, delta->y, transformp);
-	}
+            delta = deltas.Pop();
+            obj->Slide(delta->x, delta->y, transformp);
+        }
     } else {
         int i;
         float lerp, straightLerp;
         float elapsedTime;
-	long  startSec, startUsec;
-	Pad_Time time;
-	Pad_Bool rc;
-	Pad_Point *start;
+        long  startSec, startUsec;
+        Pad_Time time;
+        Pad_Bool rc;
+        Pad_Point *start;
 
-				// Record current time
-	time.Update();
-	startSec = time.Get_sec();
-	startUsec = time.Get_usec();
+                                // Record current time
+        time.Update();
+        startSec = time.Get_sec();
+        startUsec = time.Get_usec();
 
-	lerp = 0.0;
+        lerp = 0.0;
 
-	start = new Pad_Point[objs.Length()];
-	i = 0;
-	DOLIST(oi, objs, Pad_Object, obj) {
-	    start[i].Set(obj->Get_rel_position_x(), obj->Get_rel_position_y());
-	    i++;
-	}
+        start = new Pad_Point[objs.Length()];
+        i = 0;
+        DOLIST(oi, objs, Pad_Object, obj) {
+            start[i].Set(obj->Get_rel_position_x(), obj->Get_rel_position_y());
+            i++;
+        }
 
-	do {
-				// Slide objects a little bit
-	    i = 0;
-	    DOLIST(oi, objs, Pad_Object, obj) {
-		delta = deltas.Nth(i);
-	        obj->Set_rel_position(start[i].x + (lerp * delta->x), start[i].y + (lerp * delta->y), obj->Get_rel_position_z());
-		i++;
-	    }
-	    view->Update_display();
+        do {
+                                // Slide objects a little bit
+            i = 0;
+            DOLIST(oi, objs, Pad_Object, obj) {
+                delta = deltas.Nth(i);
+                obj->Set_rel_position(start[i].x + (lerp * delta->x), start[i].y + (lerp * delta->y), obj->Get_rel_position_z());
+                i++;
+            }
+            view->Update_display();
 
-				// Calculate total elapsed time
-	    time.Update();
-	    elapsedTime = (1000000 * (time.Get_sec() - startSec) + (time.Get_usec() - startUsec)) / 1000;
+                                // Calculate total elapsed time
+            time.Update();
+            elapsedTime = (1000000 * (time.Get_sec() - startSec) + (time.Get_usec() - startUsec)) / 1000;
 
-				// Calculate next interpolation step
-	    straightLerp = elapsedTime / animationTime;
-	    lerp = Pad_Siso_lerp(straightLerp);
-				// Check for interruption
-	    rc = Pad_renderer->Is_interrupted(view->win);
-	} while ((elapsedTime < animationTime) && !rc);
+                                // Calculate next interpolation step
+            straightLerp = elapsedTime / animationTime;
+            lerp = Pad_Siso_lerp(straightLerp);
+                                // Check for interruption
+            rc = Pad_renderer->Is_interrupted(view->win);
+        } while ((elapsedTime < animationTime) && !rc);
 
-				// When done, put each object at exact point in case there was rounding error
-	i = 0;
-	DOLIST(oi, objs, Pad_Object, obj) {
-	    delta = deltas.Nth(i);
-	    obj->Set_rel_position(start[i].x + delta->x, start[i].y + delta->y , obj->Get_rel_position_z());
-	    i++;
-	}
-	view->Update_display();
+                                // When done, put each object at exact point in case there was rounding error
+        i = 0;
+        DOLIST(oi, objs, Pad_Object, obj) {
+            delta = deltas.Nth(i);
+            obj->Set_rel_position(start[i].x + delta->x, start[i].y + delta->y , obj->Get_rel_position_z());
+            i++;
+        }
+        view->Update_display();
 
-	delete [] start;
+        delete [] start;
     }
 
     return(TRUE);
@@ -1612,9 +1613,9 @@ void
 Pad::Set_event_control(Pad_Bool state)
 {
     if (state) {
-	padFlags &= ~PADROOT_EVENTSOFF;
+        padFlags &= ~PADROOT_EVENTSOFF;
     } else {
-	padFlags |= PADROOT_EVENTSOFF;
+        padFlags |= PADROOT_EVENTSOFF;
     }
 }
 
@@ -1630,9 +1631,9 @@ void
 Pad::Set_create_event_control(Pad_Bool state)
 {
     if (state) {
-	padFlags |= PADROOT_MANUAL_CREATE_EVENT;
+        padFlags |= PADROOT_MANUAL_CREATE_EVENT;
     } else {
-	padFlags &= ~PADROOT_MANUAL_CREATE_EVENT;
+        padFlags &= ~PADROOT_MANUAL_CREATE_EVENT;
     }
 }
 
@@ -1644,9 +1645,9 @@ void
 Pad::Set_active(Pad_Bool active)
 {
     if (active) {
-	padFlags |= PADROOT_ACTIVE;
+        padFlags |= PADROOT_ACTIVE;
     } else {
-	padFlags &= ~PADROOT_ACTIVE;
+        padFlags &= ~PADROOT_ACTIVE;
     }
 }
 
@@ -1665,11 +1666,11 @@ Pad::Get_object_from_id(int obj_id)
 {
     Pad_Object *obj;
 
-				// This pad widget could have been
-				// deleted and this can be called
-				// on a timer callback, so check for that.
+                                // This pad widget could have been
+                                // deleted and this can be called
+                                // on a timer callback, so check for that.
     if (!idTable) {
-	return(NULL);
+        return(NULL);
     }
 
     obj = (Pad_Object *)idTable->Get((char *)obj_id);
@@ -1689,7 +1690,7 @@ Pad::Get_objects_from_tag(char *tag, Pad_List &objs)
     uid = Pad_GetUid(tag);
     tagObjs = (Pad_List *)pad->tagTable->Get(uid);
     if (tagObjs) {
-	objs = tagObjs;
+        objs = tagObjs;
     }
 }
 
@@ -1708,9 +1709,9 @@ Pad::Get_ids_from_tag(char *tag, Pad_IList &ids)
     uid = Pad_GetUid(tag);
     tagObjs = (Pad_List *)pad->tagTable->Get(uid);
     if (tagObjs) {
-	DOLIST(oi, *tagObjs, Pad_Object, obj) {
-	    ids.Push_last(obj->id);
-	}
+        DOLIST(oi, *tagObjs, Pad_Object, obj) {
+            ids.Push_last(obj->id);
+        }
     }
 }
 
@@ -1727,10 +1728,10 @@ Pad::Delete_obj(int id)
 
     obj = Get_object_from_id(id);
     if (obj && !obj->Get_lock()) {
-	delete obj;
-	rc = TRUE;
+        delete obj;
+        rc = TRUE;
     } else {
-	rc = FALSE;
+        rc = FALSE;
     }
 
     return(rc);
@@ -1761,7 +1762,7 @@ Pad::Render(void)
     rc = Render_display_list(first);
 
     if (view->win->debugBB) {
-	Render_bounding_box();
+        Render_bounding_box();
     }
 
     return(rc);
@@ -1782,72 +1783,72 @@ Pad::Render_display_list(Pad_Object *obj)
     Pad_Bool interrupted = FALSE;
     Pad_Time time;
     long     startSec, startUsec;
-    int      renderTime;	// Time (in ms) of current render so far
+    int      renderTime;        // Time (in ms) of current render so far
     long     desiredTime = (1000 / view->win->desiredFrameRate);
     Pad_Bool visible, viewable;
 
-				// Get the current time
+                                // Get the current time
     time.Update();
     startSec = time.Get_sec();
     startUsec = time.Get_usec();
 
     while (obj) 
       {
-	  visible = FALSE;
-	  viewable = FALSE;
-	  if (Pad_Is_overlapping(obj->Get_global_bbox()->Get(), Pad_prc->activeBBox.Get())) {
-	      viewable = TRUE;
-	      if (obj->Check_for_render()) {
-	          visible = TRUE;
-				// Every once in a while, check to see how much time has elapsed
-		  if (!Pad_prc->slow && (level == 0) && (count++ % OBJECTS_PER_TIME_CHECK) == 0) {
-		      time.Update();
-		      renderTime = ((time.Get_sec() - startSec) * 1000) + ((time.Get_usec() - startUsec) / 1000);
-		      if (renderTime > desiredTime) {
-				// System has gotten slow.  So, request objects to draw themselves
-				// very simply, and schedule a refinement
-			  Pad_prc->slow = TRUE;
-			  Pad_prc->win->refiningRestorer->Make_full();
-		      }
-		  }
+          visible = FALSE;
+          viewable = FALSE;
+          if (Pad_Is_overlapping(obj->Get_global_bbox()->Get(), Pad_prc->activeBBox.Get())) {
+              viewable = TRUE;
+              if (obj->Check_for_render()) {
+                  visible = TRUE;
+                                // Every once in a while, check to see how much time has elapsed
+                  if (!Pad_prc->slow && (level == 0) && (count++ % OBJECTS_PER_TIME_CHECK) == 0) {
+                      time.Update();
+                      renderTime = ((time.Get_sec() - startSec) * 1000) + ((time.Get_usec() - startUsec) / 1000);
+                      if (renderTime > desiredTime) {
+                                // System has gotten slow.  So, request objects to draw themselves
+                                // very simply, and schedule a refinement
+                          Pad_prc->slow = TRUE;
+                          Pad_prc->win->refiningRestorer->Make_full();
+                      }
+                  }
 
-		  renderSpeed = 0;
-		  if (Pad_prc->slow) {
-		      if (!obj->Get_alwaysrender() && !obj->Is_sticky()) {
-			  if (obj->pixelDim < view->win->smallObjSize) {
-			      renderSpeed = 3;  // Don't render small objects
-			  } else if (obj->pixelDim < view->win->mediumObjSize) {
-			      renderSpeed = 2;   // Render medium size objects ugly
-			  } else {
-			      renderSpeed = 1;   // Render large objects a bit faster 
-			  }
-		      }
-		  }
-		  
-		  if (renderSpeed < 3) {
-		      if (!Render_object(obj, renderSpeed)) {
-				// If interrupted, render other objects at level 0.
-			  if (level > 0) {
-			      float w, h;
+                  renderSpeed = 0;
+                  if (Pad_prc->slow) {
+                      if (!obj->Get_alwaysrender() && !obj->Is_sticky()) {
+                          if (obj->pixelDim < view->win->smallObjSize) {
+                              renderSpeed = 3;  // Don't render small objects
+                          } else if (obj->pixelDim < view->win->mediumObjSize) {
+                              renderSpeed = 2;   // Render medium size objects ugly
+                          } else {
+                              renderSpeed = 1;   // Render large objects a bit faster 
+                          }
+                      }
+                  }
+                  
+                  if (renderSpeed < 3) {
+                      if (!Render_object(obj, renderSpeed)) {
+                                // If interrupted, render other objects at level 0.
+                          if (level > 0) {
+                              float w, h;
 
-			      interrupted = TRUE;
-			      level = 0;
-			      obj->Compute_dimensions(w, h);     // Re-compute dimensions as render level can get updated here
-			      Render_object(obj, renderSpeed);   // Re-render this object
-			  }
-		      }
-		  }
-	      }
-	  }
-	  /*
-	  if (obj->findable && obj->visible ^ visible)
-	    cerr << (visible ? "visible " : "invisible ") << obj->id << endl;
-	  if (obj->findable && obj->viewable ^ viewable)
-	    cerr << (viewable ? "enter " : "leave ") << obj->id << endl;
-	  */
-	  obj->visible = visible;
-	  obj->viewable = viewable;
-	  obj = obj->next;
+                              interrupted = TRUE;
+                              level = 0;
+                              obj->Compute_dimensions(w, h);     // Re-compute dimensions as render level can get updated here
+                              Render_object(obj, renderSpeed);   // Re-render this object
+                          }
+                      }
+                  }
+              }
+          }
+          /*
+          if (obj->findable && obj->visible ^ visible)
+            cerr << (visible ? "visible " : "invisible ") << obj->id << endl;
+          if (obj->findable && obj->viewable ^ viewable)
+            cerr << (viewable ? "enter " : "leave ") << obj->id << endl;
+          */
+          obj->visible = visible;
+          obj->viewable = viewable;
+          obj = obj->next;
       }
       time.Update();
       this->renderTime = ((time.Get_sec() - startSec) * 1000) + ((time.Get_usec() - startUsec) / 1000);
@@ -1878,15 +1879,15 @@ Pad::Render_object(Pad_Object *obj, int renderSpeed)
 
     fade = obj->Compute_fade();
 
-				// Multiply the current transparency by this object's
+                                // Multiply the current transparency by this object's
     view = (Pad_View *)Pad_prc->views.Last();
     transparency = fade * obj->Get_transparency();
     if (transparency > 0) {
-	visible = TRUE;
+        visible = TRUE;
     } else {
-				// Note, even if an object is transparent, we must
-				// continue in case we need to fire a zoomaction.
-	visible = FALSE;
+                                // Note, even if an object is transparent, we must
+                                // continue in case we need to fire a zoomaction.
+        visible = FALSE;
     }
     currentTransparency = Pad_renderer->Get_transparency();
     Pad_renderer->Set_transparency(currentTransparency * transparency);
@@ -1894,109 +1895,109 @@ Pad::Render_object(Pad_Object *obj, int renderSpeed)
     bb = obj->Get_bbox();
     Pad_renderer->Push_object(obj);
 
-				// Turn on clipping if required
+                                // Turn on clipping if required
     if (obj->Check_render_clipped()) {
-	Pad_prc->win->activeRestorer->Push_clip(bb->Get());
-	clipped = TRUE;
+        Pad_prc->win->activeRestorer->Push_clip(bb->Get());
+        clipped = TRUE;
     }
 
     Pad_prc->objects.Push(obj);
     Pad_prc->result = 1;
-				// Fire zoom actions
-				// (even if not visible)
+                                // Fire zoom actions
+                                // (even if not visible)
     Pad_List *zoomActions = obj->Get_zoomaction();
     if (zoomActions) {
-	Pad_Iterator zi;
-	Pad_ZoomAction *zoomAction;
-	Pad_ZoomActionSize *prevSize;
-	Pad_Callback *script = NULL;
-	Pad_Bool found;
+        Pad_Iterator zi;
+        Pad_ZoomAction *zoomAction;
+        Pad_ZoomActionSize *prevSize;
+        Pad_Callback *script = NULL;
+        Pad_Bool found;
 
-	Pad_List *prevSizes = obj->Get_prevsizes();
-	found = FALSE;
-	DOLIST(zi, *prevSizes, Pad_ZoomActionSize, prevSize) {
-	    if (prevSize->view == view) {
-		found = TRUE;
-		break;
-	    }
-	}
-	if (!found) {
-	    prevSize = new Pad_ZoomActionSize;
-	    prevSize->pixelDim = obj->pixelDim;
-	    prevSize->view = view;
-	    prevSizes->Push_last(prevSize);
-	}
+        Pad_List *prevSizes = obj->Get_prevsizes();
+        found = FALSE;
+        DOLIST(zi, *prevSizes, Pad_ZoomActionSize, prevSize) {
+            if (prevSize->view == view) {
+                found = TRUE;
+                break;
+            }
+        }
+        if (!found) {
+            prevSize = new Pad_ZoomActionSize;
+            prevSize->pixelDim = obj->pixelDim;
+            prevSize->view = view;
+            prevSizes->Push_last(prevSize);
+        }
 
-	DOLIST(zi, *zoomActions, Pad_ZoomAction, zoomAction) {
-	    if ((prevSize->pixelDim < zoomAction->actionSize) &&
-		(obj->pixelDim >= zoomAction->actionSize)) {
-		script = zoomAction->growScript;
-	    }
-	    else if ((prevSize->pixelDim > zoomAction->actionSize) &&
-		     (obj->pixelDim <= zoomAction->actionSize)) {
-		script = zoomAction->shrinkScript;
-	    }
-	}
-	
-	prevSize->pixelDim = obj->pixelDim;	   // Remember size
+        DOLIST(zi, *zoomActions, Pad_ZoomAction, zoomAction) {
+            if ((prevSize->pixelDim < zoomAction->actionSize) &&
+                (obj->pixelDim >= zoomAction->actionSize)) {
+                script = zoomAction->growScript;
+            }
+            else if ((prevSize->pixelDim > zoomAction->actionSize) &&
+                     (obj->pixelDim <= zoomAction->actionSize)) {
+                script = zoomAction->shrinkScript;
+            }
+        }
+        
+        prevSize->pixelDim = obj->pixelDim;           // Remember size
 
-	if (script) {
-	    prevDamageEnabled = obj->pad->view->win->damageEnabled;
-	    obj->pad->view->win->damageEnabled = FALSE;
-	    handle = new Pad_ObjectHandle(obj);
-	    result = script->Eval();
-				// Be careful, this object could have been deleted by script
-	    if (handle->Get_object() == NULL) {
-	        delete handle;
-	        return(TRUE);
-	    }
-	    delete handle;
-	    if (result == PAD_ERROR) {
-		Pad_Background_error("Pad threshold callback");
-	    }
-	    obj->pad->view->win->damageEnabled = prevDamageEnabled;
-	    rc = Pad_prc->result;
-	    callback = TRUE;
-	}
+        if (script) {
+            prevDamageEnabled = obj->pad->view->win->damageEnabled;
+            obj->pad->view->win->damageEnabled = FALSE;
+            handle = new Pad_ObjectHandle(obj);
+            result = script->Eval();
+                                // Be careful, this object could have been deleted by script
+            if (handle->Get_object() == NULL) {
+                delete handle;
+                return(TRUE);
+            }
+            delete handle;
+            if (result == PAD_ERROR) {
+                Pad_Background_error("Pad threshold callback");
+            }
+            obj->pad->view->win->damageEnabled = prevDamageEnabled;
+            rc = Pad_prc->result;
+            callback = TRUE;
+        }
     }
-				// Fire render callbacks
+                                // Fire render callbacks
     Pad_Callback *renderScript = obj->Get_renderscript();
     if (visible && renderScript) {
         handle = new Pad_ObjectHandle(obj);
-	rc = obj->Fire_render_script(renderScriptRefinement);
-				// Be careful, this object could have been deleted by script
-	if (handle->Get_object() == NULL) {
-	    delete handle;
-	    return(TRUE);
-	}
-	delete handle;
-	callback = TRUE;
+        rc = obj->Fire_render_script(renderScriptRefinement);
+                                // Be careful, this object could have been deleted by script
+        if (handle->Get_object() == NULL) {
+            delete handle;
+            return(TRUE);
+        }
+        delete handle;
+        callback = TRUE;
     }
-				// Call object render method if visible
-				// and no callbacks were fired.
+                                // Call object render method if visible
+                                // and no callbacks were fired.
     if (visible && (callback == FALSE)) {
-	if (renderSpeed > 0) {
-	    if (renderSpeed == 1) {
-		rc = obj->Render_medium();
-	    } else {
-		rc = obj->Render_fast();
-	    }
-	} else {
-	    rc = obj->Render();
-	}
+        if (renderSpeed > 0) {
+            if (renderSpeed == 1) {
+                rc = obj->Render_medium();
+            } else {
+                rc = obj->Render_fast();
+            }
+        } else {
+            rc = obj->Render();
+        }
     }
 
     if (clipped) {
-	Pad_prc->win->activeRestorer->Pop_clip();
+        Pad_prc->win->activeRestorer->Pop_clip();
     }
-			// Test if there is more to render for this object
+                        // Test if there is more to render for this object
     if (visible &&
-	((obj->Continue_refinement()) || (renderScript && (renderScriptRefinement))))
+        ((obj->Continue_refinement()) || (renderScript && (renderScriptRefinement))))
       {
-	  Pad_prc->win->refiningRestorer->Add_rect_to_refiner(bb->Get());
+          Pad_prc->win->refiningRestorer->Add_rect_to_refiner(bb->Get());
       }
     if (visible) {
-	view->pad->objectsRendered++;
+        view->pad->objectsRendered++;
     }
 
     Pad_prc->objects.Pop();
@@ -2025,11 +2026,11 @@ Pad::Render_bounding_box(void)
 
     obj = pad->First();
     while (obj) {
-	bb = obj->Get_global_bbox();
-	if (Pad_Is_overlapping(bb->Get(), viewBB)) {
-	    Pad_renderer->Draw_box(bb->Xmin(), bb->Ymin(), bb->Xmax(), bb->Ymax());
-	}
-	obj = Next(obj);
+        bb = obj->Get_global_bbox();
+        if (Pad_Is_overlapping(bb->Get(), viewBB)) {
+            Pad_renderer->Draw_box(bb->Xmin(), bb->Ymin(), bb->Xmax(), bb->Ymax());
+        }
+        obj = Next(obj);
     }    
 }
 
@@ -2052,8 +2053,8 @@ Pad::Find_pick(Pad_Event *event)
     Pad_Point origPt;
     float origMag;
 
-    if (!first) {		// No items at all
-	return(this);
+    if (!first) {                // No items at all
+        return(this);
     }
 
     currentView = view;
@@ -2061,48 +2062,48 @@ Pad::Find_pick(Pad_Event *event)
     lastDrawNum = first->drawingOrder - 1;
 
     do {
-	eventObj = _Pick_recurse(currentView, event, NULL, currentView->pad->last, 
-				      lastDrawNum, found);
+        eventObj = _Pick_recurse(currentView, event, NULL, currentView->pad->last, 
+                                      lastDrawNum, found);
 
-				// Now, if object is a portal, then fire PortalIntercept, 
-				// and go through it
-	passThroughPortal = FALSE;
-	if (eventObj && (eventObj->Type() == PAD_PORTAL)) 
-	    {
-		portal = (Pad_Portal *)eventObj;
-		origPt = event->pt;
-		origMag = event->mag;
-		portal->Screen_to_local(*event);
-		if (!portal->Pick_border(event, currentView->win->closeEnough) && portal->lookon) 
-		    {
-				// Store event that is generating intercept into a string for event info
-			if (event->eventPtr) {
-			    eventType = Pad_GetEventName(event->eventPtr->type);
-			}
-				// Fire PortalIntercept
-			result = portal->Generate_event(Pad_PortalInterceptNotify, &event->portals, eventType.Get());
-			if (result != PAD_BREAK) {
-				// If return code not break, then pass through portal
-			    event->pt = origPt;
-			    event->mag = origMag;
-			    portal->Pass_through(event);
-			    event->portals.Push_last(portal);
-			    lastDrawNum = portal->lookon->view->pad->first->drawingOrder - 1;
-			    currentView = portal->lookon->view;
-			    event->win = currentView->win;
-			    passThroughPortal = TRUE;
-			}
-		    }
-		if (!passThroughPortal) {
-				// Didn't go through portal, so restore event
-		    event->pt = origPt;
-		    event->mag = origMag;
-		}
-	    }
+                                // Now, if object is a portal, then fire PortalIntercept, 
+                                // and go through it
+        passThroughPortal = FALSE;
+        if (eventObj && (eventObj->Type() == PAD_PORTAL)) 
+            {
+                portal = (Pad_Portal *)eventObj;
+                origPt = event->pt;
+                origMag = event->mag;
+                portal->Screen_to_local(*event);
+                if (!portal->Pick_border(event, currentView->win->closeEnough) && portal->lookon) 
+                    {
+                                // Store event that is generating intercept into a string for event info
+                        if (event->eventPtr) {
+                            eventType = Pad_GetEventName(event->eventPtr->type);
+                        }
+                                // Fire PortalIntercept
+                        result = portal->Generate_event(Pad_PortalInterceptNotify, &event->portals, eventType.Get());
+                        if (result != PAD_BREAK) {
+                                // If return code not break, then pass through portal
+                            event->pt = origPt;
+                            event->mag = origMag;
+                            portal->Pass_through(event);
+                            event->portals.Push_last(portal);
+                            lastDrawNum = portal->lookon->view->pad->first->drawingOrder - 1;
+                            currentView = portal->lookon->view;
+                            event->win = currentView->win;
+                            passThroughPortal = TRUE;
+                        }
+                    }
+                if (!passThroughPortal) {
+                                // Didn't go through portal, so restore event
+                    event->pt = origPt;
+                    event->mag = origMag;
+                }
+            }
     } while (passThroughPortal);
-				// If event doesn't hit an object, send it to the pad surface
+                                // If event doesn't hit an object, send it to the pad surface
     if (!eventObj && (currentView->pad->Gets_events())) {
-	eventObj = currentView->pad;
+        eventObj = currentView->pad;
     }
 
     return(eventObj);
@@ -2125,29 +2126,29 @@ Pad::Find_pick(Pad_Event *event, Pad_List &portals, Pad_List &objects)
     Pad_String eventName;
     Pad_View *currentView;
 
-    if (!first) {		// No items at all
-	return(this);
+    if (!first) {                // No items at all
+        return(this);
     }
 
     pt = event->pt;
     mag = event->mag;
 
     DOLIST(oi, portals, Pad_Portal, portal) {
-	event->pt = pt;
-	event->mag = mag;
-				// Store event that is generating intercept into a string for event info
-	if (event->eventPtr) {
-	    eventName = Pad_GetEventName(event->eventPtr->type);
-	}
-	portal->Generate_event(Pad_PortalInterceptNotify, &portalsCopy, eventName.Get());
-				// Ignore return code of PortalIntercept since portal list was grabbed
-	portal->Pass_through(event);
-	portalsCopy.Push_last(portal);
+        event->pt = pt;
+        event->mag = mag;
+                                // Store event that is generating intercept into a string for event info
+        if (event->eventPtr) {
+            eventName = Pad_GetEventName(event->eventPtr->type);
+        }
+        portal->Generate_event(Pad_PortalInterceptNotify, &portalsCopy, eventName.Get());
+                                // Ignore return code of PortalIntercept since portal list was grabbed
+        portal->Pass_through(event);
+        portalsCopy.Push_last(portal);
     }
 
     currentView = view;
     lastDrawNum = first->drawingOrder - 1;
-	
+        
     pt = event->pt;
     mag = event->mag;
 
@@ -2156,19 +2157,19 @@ Pad::Find_pick(Pad_Event *event, Pad_List &portals, Pad_List &objects)
     event->portals = portals;
     eventObj = _Pick_recurse(currentView, event, NULL, last, lastDrawNum, found);
 
-				// Now transform the point by the list of grabbed objects.
+                                // Now transform the point by the list of grabbed objects.
     DOLIST(oi, objectsCopy, Pad_Object, obj) {
-	obj->transform.Invert(event);
+        obj->transform.Invert(event);
     }
-				// Copy the transformed point to object coordinates
+                                // Copy the transformed point to object coordinates
     event->objPt = event->pt;
     event->objMag = event->mag;
-				// Restore the pad coordinate
+                                // Restore the pad coordinate
     event->pt = pt;
     event->mag = mag;
 
     if (!eventObj && Gets_events()) {
-	eventObj = this;
+        eventObj = this;
     }
 
     return(eventObj);
@@ -2176,7 +2177,7 @@ Pad::Find_pick(Pad_Event *event, Pad_List &portals, Pad_List &objects)
 
 Pad_Object *
 Pad::_Pick_recurse(Pad_View *currentView, Pad_Event *event, Pad_Object *eventObj, Pad_Object *last, 
-		   int &lastDrawNum, Pad_Bool &found)
+                   int &lastDrawNum, Pad_Bool &found)
 {
     int otype;
     float globalWidth, globalHeight;
@@ -2191,101 +2192,101 @@ Pad::_Pick_recurse(Pad_View *currentView, Pad_Event *event, Pad_Object *eventObj
     obj = last;
     while (obj)
       {
-	  if (!found) {
-	      pt = event->pt;
-	      mag = event->mag;
-	      otype = obj->Type();
-				// Necessary to check size of object
-	      obj->Pad_Object::Compute_dimensions(event, globalWidth, globalHeight);
-				// Convert event to object's coordinates
-	      obj->transform.Invert(event);
-				// Find portal item is being picked within, or top-level view if none
-	      viewObj = (Pad_View *)event->portals.Last();
-	      if (!viewObj) {
-		  viewObj = view;
-	      }
-				// Pick objects that are visible, get events, and see the event.
-				// Only test real pick method
-				// if event is within bbox of object.
-	      if (obj->Pad_Object::Pick(event, view->win->closeEnough) &&
-		  obj->Check_render_size() &&
-		  obj->Check_render_layer(viewObj) &&
-		  obj->Pick(event, view->win->closeEnough))
-		{
-				// Find out if the event should go to a sub-component
-				// of the object.
-		    if (obj->Is_group()) {
-			if (event->Get_divisible() == AUTOMATIC) {
-			    divisible = ((Pad_Group *)obj)->Get_divisible();
-			} else {
-			    divisible = (Pad_Bool)event->Get_divisible();
-			}
-		    } else {
-			divisible = FALSE;
-		    }
-		    
-		    if (!divisible) {
-			if (obj->Gets_events() &&
-			    (obj->drawingOrder > lastDrawNum))
-			  {
-				// Don't pick object if it is the portal
-				// being viewed through.
-			      if ((otype != PAD_PORTAL) ||
-				  (((Pad_Portal *)obj)->serial != event->serial)) 
-				{
-				    lastDrawNum = obj->drawingOrder;
-				    eventObj = obj;
-				    event->objPt = event->pt;
-				    event->objMag = event->mag;
-				    event->objects.Push_last(obj);
-				    found = TRUE;
-				    if (otype == PAD_PORTAL) {
-					((Pad_Portal *)obj)->serial = event->serial;
-				    }
-				}
-			  }
-				// If item is a divisible group, then check its members.
-		    } else {
-			Pad_Inset *inset;
-			Pad_BBox bb;
+          if (!found) {
+              pt = event->pt;
+              mag = event->mag;
+              otype = obj->Type();
+                                // Necessary to check size of object
+              obj->Pad_Object::Compute_dimensions(event, globalWidth, globalHeight);
+                                // Convert event to object's coordinates
+              obj->transform.Invert(event);
+                                // Find portal item is being picked within, or top-level view if none
+              viewObj = (Pad_View *)event->portals.Last();
+              if (!viewObj) {
+                  viewObj = view;
+              }
+                                // Pick objects that are visible, get events, and see the event.
+                                // Only test real pick method
+                                // if event is within bbox of object.
+              if (obj->Pad_Object::Pick(event, view->win->closeEnough) &&
+                  obj->Check_render_size() &&
+                  obj->Check_render_layer(viewObj) &&
+                  obj->Pick(event, view->win->closeEnough))
+                {
+                                // Find out if the event should go to a sub-component
+                                // of the object.
+                    if (obj->Is_group()) {
+                        if (event->Get_divisible() == AUTOMATIC) {
+                            divisible = ((Pad_Group *)obj)->Get_divisible();
+                        } else {
+                            divisible = (Pad_Bool)event->Get_divisible();
+                        }
+                    } else {
+                        divisible = FALSE;
+                    }
+                    
+                    if (!divisible) {
+                        if (obj->Gets_events() &&
+                            (obj->drawingOrder > lastDrawNum))
+                          {
+                                // Don't pick object if it is the portal
+                                // being viewed through.
+                              if ((otype != PAD_PORTAL) ||
+                                  (((Pad_Portal *)obj)->serial != event->serial)) 
+                                {
+                                    lastDrawNum = obj->drawingOrder;
+                                    eventObj = obj;
+                                    event->objPt = event->pt;
+                                    event->objMag = event->mag;
+                                    event->objects.Push_last(obj);
+                                    found = TRUE;
+                                    if (otype == PAD_PORTAL) {
+                                        ((Pad_Portal *)obj)->serial = event->serial;
+                                    }
+                                }
+                          }
+                                // If item is a divisible group, then check its members.
+                    } else {
+                        Pad_Inset *inset;
+                        Pad_BBox bb;
 
-			grp = (Pad_Group *)obj;
-			if (!grp->members.Is_empty()) {
-			    grp->Get_bbox(bb);
-			    inset = grp->Get_inset();
-				// Don't pick members in groups borders
-			    if ((event->pt.x > (bb.Xmin() + inset->left)) &&
-				(event->pt.y > (bb.Ymin() + inset->bottom)) &&
-				(event->pt.x < (bb.Xmax() - inset->right)) &&
-				(event->pt.y < (bb.Ymax() - inset->top))) 
-				{
-				    event->objects.Push_last(obj);
-				    eventObj = _Pick_recurse(currentView, event, eventObj, 
-							     (Pad_Object *)grp->members.First(), 
-							     lastDrawNum, found);
-				    if (!found) {
-					event->objects.Remove(obj);
-				    }
-				}
-			}
-				// If members weren't picked, check if should pick group object.
-			if (!found) {
-			    if (grp->Pick_group(event)) {
-				event->objects.Push_last(obj);
-				eventObj = obj;
-				event->objPt = event->pt;
-				event->objMag = event->mag;
-				lastDrawNum = obj->drawingOrder;
-				found = TRUE;
-			    }
-			}
-		    }
-		}
-	      event->pt = pt;
-	      event->mag = mag;
-	  }
+                        grp = (Pad_Group *)obj;
+                        if (!grp->members.Is_empty()) {
+                            grp->Get_bbox(bb);
+                            inset = grp->Get_inset();
+                                // Don't pick members in groups borders
+                            if ((event->pt.x > (bb.Xmin() + inset->left)) &&
+                                (event->pt.y > (bb.Ymin() + inset->bottom)) &&
+                                (event->pt.x < (bb.Xmax() - inset->right)) &&
+                                (event->pt.y < (bb.Ymax() - inset->top))) 
+                                {
+                                    event->objects.Push_last(obj);
+                                    eventObj = _Pick_recurse(currentView, event, eventObj, 
+                                                             (Pad_Object *)grp->members.First(), 
+                                                             lastDrawNum, found);
+                                    if (!found) {
+                                        event->objects.Remove(obj);
+                                    }
+                                }
+                        }
+                                // If members weren't picked, check if should pick group object.
+                        if (!found) {
+                            if (grp->Pick_group(event)) {
+                                event->objects.Push_last(obj);
+                                eventObj = obj;
+                                event->objPt = event->pt;
+                                event->objMag = event->mag;
+                                lastDrawNum = obj->drawingOrder;
+                                found = TRUE;
+                            }
+                        }
+                    }
+                }
+              event->pt = pt;
+              event->mag = mag;
+          }
 
-	  obj = obj->prev;	// Check previous item on display list
+          obj = obj->prev;        // Check previous item on display list
       }
 
     return(eventObj);
@@ -2317,11 +2318,11 @@ Pad_Object *
 Pad::Next(Pad_Object *obj)
 {
     if (obj->Is_group() && !((Pad_Group *)obj)->members.Is_empty()) {
-				// Group members in reverse display list order
-	return((Pad_Object *)((Pad_Group *)obj)->members.Last());
+                                // Group members in reverse display list order
+        return((Pad_Object *)((Pad_Group *)obj)->members.Last());
     }
     while (!obj->next && obj->group) {
-	obj = obj->group;
+        obj = obj->group;
     }
     return(obj->next);
 }
@@ -2333,11 +2334,11 @@ Pad_Object *
 Pad::Prev(Pad_Object *obj)
 {
     if (obj->Is_group() && !((Pad_Group *)obj)->members.Is_empty()) {
-				// Group members in reverse display list order
-	return((Pad_Object *)((Pad_Group *)obj)->members.First());
+                                // Group members in reverse display list order
+        return((Pad_Object *)((Pad_Group *)obj)->members.First());
     }
     while (!obj->prev && obj->group) {
-	obj = obj->group;
+        obj = obj->group;
     }
     return (obj->prev);
 }
@@ -2357,26 +2358,26 @@ Pad::Find_ids_with_tagorid(char *tagorid, Pad_IList &ids, Pad_Bool groups)
     
     ids.Make_empty();
     if (!strcmp(tagorid, "all")) {
-	Find_all_ids(ids, groups);
-	return;
+        Find_all_ids(ids, groups);
+        return;
     }
 
 
     if (isdigit(tagorid[0])) {
-	id = atoi(tagorid);
-	obj = Get_object_from_id(id);
-	if (obj) {
-	    objs.Push(obj);
-	}
+        id = atoi(tagorid);
+        obj = Get_object_from_id(id);
+        if (obj) {
+            objs.Push(obj);
+        }
     } else {
-	Get_objects_from_tag(tagorid, objs);
+        Get_objects_from_tag(tagorid, objs);
     }
 
     DOLIST(oi, objs, Pad_Object, obj) {
-	if ((groups || !obj->group) && obj->Is_findable())
-	  {
-	      ids.Push_last(obj->id);
-	  }
+        if ((groups || !obj->group) && obj->Is_findable())
+          {
+              ids.Push_last(obj->id);
+          }
     }
 }
 
@@ -2392,11 +2393,11 @@ Pad::Find_all_ids(Pad_IList &ids, Pad_Bool groups)
     ids.Make_empty();
     obj = First();
     while (obj) {
-	if ((groups || !obj->group) && obj->Is_findable())
-	  {
-	      ids.Push_last(obj->id);
-	  }
-	obj = Next(obj);	// Get next object in display list
+        if ((groups || !obj->group) && obj->Is_findable())
+          {
+              ids.Push_last(obj->id);
+          }
+        obj = Next(obj);        // Get next object in display list
     }
 }
 
@@ -2411,11 +2412,11 @@ Pad::Find_all(Pad_List &items, Pad_Bool groups)
     items.Make_empty();
     obj = First();
     while (obj) {
-	if ((groups || !obj->group) && obj->Is_findable())
-	  {
-	      items.Push_last(obj);
-	  }
-	obj = Next(obj);	// Get next object in display list
+        if ((groups || !obj->group) && obj->Is_findable())
+          {
+              items.Push_last(obj);
+          }
+        obj = Next(obj);        // Get next object in display list
     }
 }
 //
@@ -2433,28 +2434,28 @@ Pad::Find_with_tagorid(char *tagorid, Pad_List &items, Pad_Bool groups, Pad_Bool
     Pad_List objs;
     
     if (!append) {
-	items.Make_empty();
+        items.Make_empty();
     }
     if (!strcmp(tagorid, "all")) {
-	Find_all(items, groups);
-	return;
+        Find_all(items, groups);
+        return;
     }
 
     if (isdigit(tagorid[0])) {
-	id = atoi(tagorid);
-	obj = Get_object_from_id(id);
-	if (obj) {
-	    objs.Push(obj);
-	}
+        id = atoi(tagorid);
+        obj = Get_object_from_id(id);
+        if (obj) {
+            objs.Push(obj);
+        }
     } else {
-	Get_objects_from_tag(tagorid, objs);
+        Get_objects_from_tag(tagorid, objs);
     }
 
     DOLIST(oi, objs, Pad_Object, obj) {
-	if (groups || !obj->group)
-	  {
-	      items.Push_last(obj);
-	  }
+        if (groups || !obj->group)
+          {
+              items.Push_last(obj);
+          }
     }
 }
 
@@ -2469,13 +2470,13 @@ Pad::Find_with_text(char *text, Pad_List &items, Pad_Bool groups)
     items.Make_empty();
     obj = First();
     while (obj) {
-	if ((groups || !obj->group) && 
-	    (obj->Is_findable()) &&
-	    (obj->Contains_text(text))) 
-	  {
-	      items.Push_last(obj);
-	  }
-	obj = Next(obj);	// Get next object in display list
+        if ((groups || !obj->group) && 
+            (obj->Is_findable()) &&
+            (obj->Contains_text(text))) 
+          {
+              items.Push_last(obj);
+          }
+        obj = Next(obj);        // Get next object in display list
     }
 }
 
@@ -2490,18 +2491,18 @@ Pad::Find_with_layer(Pad_Layer *layer, Pad_List &items, Pad_Bool groups)
 
     items.Make_empty();
     if (!layer) {
-	return;
+        return;
     }
     requestedLayerId = layer->id;
     obj = First();
     while (obj) {
-	if ((groups || !obj->group) && 
-	    (obj->Is_findable()) &&
-	    (obj->layerId == requestedLayerId))
-	  {
-	      items.Push_last(obj);
-	  }
-	obj = Next(obj);	// Get next object in display list
+        if ((groups || !obj->group) && 
+            (obj->Is_findable()) &&
+            (obj->layerId == requestedLayerId))
+          {
+              items.Push_last(obj);
+          }
+        obj = Next(obj);        // Get next object in display list
     }
 }
 
@@ -2518,14 +2519,14 @@ Pad::Find_with_info(char *infoptr, Pad_List &items, Pad_Bool groups)
     items.Make_empty();
     obj = First();
     while (obj) {
-	if ((groups || !obj->group) && 
-	    (obj->Is_findable()) &&
-	    (info = obj->Get_info()) &&
-	    (strstr(info, infoptr)))
-	  {
-	    items.Push_last(obj);
-	  }
-	obj = Next(obj);	// Get next object in display list
+        if ((groups || !obj->group) && 
+            (obj->Is_findable()) &&
+            (info = obj->Get_info()) &&
+            (strstr(info, infoptr)))
+          {
+            items.Push_last(obj);
+          }
+        obj = Next(obj);        // Get next object in display list
     }
 }
 
@@ -2545,20 +2546,20 @@ Pad::Find_with_type(char *type_name, Pad_List &items, Pad_Bool groups)
     type = (Pad_Type *)typeTable->Get(typeUid);
     items.Make_empty();
     if (type) {
-	objType = type->id;
+        objType = type->id;
 
-	obj = First();
-	while (obj) {
-	    otype = obj->Type();
+        obj = First();
+        while (obj) {
+            otype = obj->Type();
             userType = obj->Get_usertype();
-	    if ((groups || !obj->group) && 
-		(obj->Is_findable()) && 
-		(((otype == objType) || (userType && (*userType == typeUid)))))
-	        {
-		    items.Push_last(obj);
-		}
-	    obj = Next(obj);	// Get next object in display list
-	}
+            if ((groups || !obj->group) && 
+                (obj->Is_findable()) && 
+                (((otype == objType) || (userType && (*userType == typeUid)))))
+                {
+                    items.Push_last(obj);
+                }
+            obj = Next(obj);        // Get next object in display list
+        }
     }
 }
 
@@ -2574,12 +2575,12 @@ Pad::Find_with_sticky(int stickyType, Pad_List &items, Pad_Bool groups)
 
     items.Make_empty();
     DOLIST(oi, view->stickyObjects, Pad_Object, obj) {
-	if (((stickyType == -1) || (stickyType == obj->Get_sticky())) &&
-	    (groups || !obj->group) &&
-	    (obj->Is_findable()))
-	    {
-		items.Push_last(obj);
-	    }
+        if (((stickyType == -1) || (stickyType == obj->Get_sticky())) &&
+            (groups || !obj->group) &&
+            (obj->Is_findable()))
+            {
+                items.Push_last(obj);
+            }
     }
 }
 
@@ -2598,10 +2599,10 @@ Pad::Find_above(char *tagorid, Pad_Bool groups)
     Find_with_tagorid(tagorid, objs, groups);
     obj = (Pad_Object *)objs.Last();
     if (obj) {
-	do {
-	    above = Next(obj);
-	    obj = above;
-	} while (above && above->Is_findable());
+        do {
+            above = Next(obj);
+            obj = above;
+        } while (above && above->Is_findable());
     }
 
     return(above);
@@ -2622,10 +2623,10 @@ Pad::Find_below(char *tagorid, Pad_Bool groups)
     Find_with_tagorid(tagorid, objs, groups);
     obj = (Pad_Object *)objs.First();
     if (obj) {
-	do {
-	    below = Prev(obj);
-	    obj = below;
-	} while (below && below->Is_findable());
+        do {
+            below = Prev(obj);
+            obj = below;
+        } while (below && below->Is_findable());
     }
 
     return(below);
@@ -2655,43 +2656,43 @@ Pad::Find_closest(Pad_Event *event, float halo, char *start_tagorid, Pad_Bool gr
     Pad_Point pt;
     float mag;
 
-				// Find the item to end the search with
-				// (Tk's notation of start is messed up).
+                                // Find the item to end the search with
+                                // (Tk's notation of start is messed up).
     last = Last();
     if (start_tagorid) {
-	Find_with_tagorid(start_tagorid, objs, groups);
-	obj = (Pad_Object *)objs.First();
-	if (obj) {
-	    last = obj;
-	}
+        Find_with_tagorid(start_tagorid, objs, groups);
+        obj = (Pad_Object *)objs.First();
+        if (obj) {
+            last = obj;
+        }
     }
 
     obj = First();
     while (obj) {
-				// Check to see if at end of list.
-	if (obj == last) {
-	    if (closestObj) {
-		break;
-	    } else {
-		if (last == Last()) {
-		    break;
-		} else {
-		    last = Last();
-		}
-	    }
-	}
-	if ((groups || !obj->group) && obj->Is_findable())
-	  {
-	      pt = event->pt;
-	      mag = event->mag;
-	      obj->transform.Invert(event);
-	      if (obj->Pick(event, halo)) {
-		  closestObj = obj;
-	      }
-	      event->pt = pt;
-	      event->mag = mag;
-	  }
-	obj = Next(obj);	// Get next object in display list
+                                // Check to see if at end of list.
+        if (obj == last) {
+            if (closestObj) {
+                break;
+            } else {
+                if (last == Last()) {
+                    break;
+                } else {
+                    last = Last();
+                }
+            }
+        }
+        if ((groups || !obj->group) && obj->Is_findable())
+          {
+              pt = event->pt;
+              mag = event->mag;
+              obj->transform.Invert(event);
+              if (obj->Pick(event, halo)) {
+                  closestObj = obj;
+              }
+              event->pt = pt;
+              event->mag = mag;
+          }
+        obj = Next(obj);        // Get next object in display list
     }
 
     return(closestObj);
@@ -2721,31 +2722,31 @@ Pad::Find_enclosed(float x1, float y1, float x2, float y2, Pad_List &items, Pad_
     float bb[4];
     Pad_Object *obj;
 
-				// Normalize input bbox
+                                // Normalize input bbox
     if (x1 > x2) {
-	Pad_Swap(x1, x2);
+        Pad_Swap(x1, x2);
     }
     if (y1 > y2) {
-	Pad_Swap(y1, y2);
+        Pad_Swap(y1, y2);
     }
-	
+        
     items.Make_empty();
     obj = First();
     while (obj) {
-	if ((groups || !obj->group) && 
-	    obj->Is_findable())
-	  {
-	      obj->Get_global_bbox(bb);
-	      
-	      if ((bb[XMIN] >= x1) &&
-		  (bb[YMIN] >= y1) &&
-		  (bb[XMAX] <= x2) &&
-		  (bb[YMAX] <= y2)) 
-		{
-		    items.Push_last(obj);
-		}
-	  }
-	obj = Next(obj);	// Get next object in display list
+        if ((groups || !obj->group) && 
+            obj->Is_findable())
+          {
+              obj->Get_global_bbox(bb);
+              
+              if ((bb[XMIN] >= x1) &&
+                  (bb[YMIN] >= y1) &&
+                  (bb[XMAX] <= x2) &&
+                  (bb[YMAX] <= y2)) 
+                {
+                    items.Push_last(obj);
+                }
+          }
+        obj = Next(obj);        // Get next object in display list
     }
 }
 
@@ -2759,31 +2760,31 @@ Pad::Find_overlapping(float x1, float y1, float x2, float y2, Pad_List &items, P
     float bb[4];
     Pad_Object *obj;
 
-				// Normalize input bbox
+                                // Normalize input bbox
     if (x1 > x2) {
-	Pad_Swap(x1, x2);
+        Pad_Swap(x1, x2);
     }
     if (y1 > y2) {
-	Pad_Swap(y1, y2);
+        Pad_Swap(y1, y2);
     }
 
     items.Make_empty();
     obj = First();
     while (obj) {
-	if ((groups || !obj->group) && 
-	    obj->Is_findable())
-	  {
-	      obj->Get_global_bbox(bb);
-	      
-	      if ((bb[XMIN] <= x2) &&
-		  (bb[YMIN] <= y2) &&
-		  (bb[XMAX] >= x1) &&
-		  (bb[YMAX] >= y1)) 
-		{
-		    items.Push_last(obj);
-		}
-	  }
-	obj = Next(obj);	// Get next object in display list
+        if ((groups || !obj->group) && 
+            obj->Is_findable())
+          {
+              obj->Get_global_bbox(bb);
+              
+              if ((bb[XMIN] <= x2) &&
+                  (bb[YMIN] <= y2) &&
+                  (bb[XMAX] >= x1) &&
+                  (bb[YMAX] >= y1)) 
+                {
+                    items.Push_last(obj);
+                }
+          }
+        obj = Next(obj);        // Get next object in display list
     }
 }
 
@@ -2795,15 +2796,15 @@ Pad_Bool
 Pad::Set_modifier(const char *modifier)
 {
     if (modifier[0] == '\0') {
-	mode = 0;
-	return(TRUE);
+        mode = 0;
+        return(TRUE);
     } else {
-	mode = Pad_GetBindingModifier(modifier);
-	if (mode) {
-	    return(TRUE);
-	} else {
-	    return(FALSE);
-	}
+        mode = Pad_GetBindingModifier(modifier);
+        if (mode) {
+            return(TRUE);
+        } else {
+            return(FALSE);
+        }
     }
 }
 
@@ -2827,89 +2828,89 @@ Pad::Create_object(int type)
 
     switch (type) {
     case PAD_ALIAS:
-	obj = new Pad_Alias(this);
-	break;
+        obj = new Pad_Alias(this);
+        break;
     case PAD_BUTTON:
-	obj = new Pad_Button(this);
-	break;
+        obj = new Pad_Button(this);
+        break;
     case PAD_CHECKBOX:
-	obj = new Pad_Checkbox(this);
-	break;
+        obj = new Pad_Checkbox(this);
+        break;
     case PAD_MENUITEM:
-	obj = new Pad_MenuItem(this);
-	break;
+        obj = new Pad_MenuItem(this);
+        break;
     case PAD_CHECKBOXMENUITEM:
-	obj = new Pad_CheckboxMenuItem(this);
-	break;
+        obj = new Pad_CheckboxMenuItem(this);
+        break;
     case PAD_MENU:
-	obj = new Pad_Menu(this);
-	break;
+        obj = new Pad_Menu(this);
+        break;
     case PAD_CHOICEMENU:
-	obj = new Pad_ChoiceMenu(this);
-	break;
+        obj = new Pad_ChoiceMenu(this);
+        break;
     case PAD_MENUBAR:
-	obj = new Pad_MenuBar(this);
-	break;
+        obj = new Pad_MenuBar(this);
+        break;
     case PAD_CANVAS:
-	obj = new Pad_Canvas(this);
-	break;
+        obj = new Pad_Canvas(this);
+        break;
     case PAD_CONTAINER:
-	obj = new Pad_Container(this);
-	break;
+        obj = new Pad_Container(this);
+        break;
     case PAD_FRAME:
-	obj = new Pad_Frame(this);
-	break;
+        obj = new Pad_Frame(this);
+        break;
     case PAD_GROUP:
-	obj = new Pad_Group(this);
-	break;
+        obj = new Pad_Group(this);
+        break;
     case PAD_IMAGE:
-	obj = new Pad_Image(this);
-	break;
+        obj = new Pad_Image(this);
+        break;
     case PAD_LABEL:
-	obj = new Pad_Label(this);
-	break;
+        obj = new Pad_Label(this);
+        break;
     case PAD_LINE:
-	obj = new Pad_Line(this);
-	break;
+        obj = new Pad_Line(this);
+        break;
     case PAD_PANEL:
-	obj = new Pad_Panel(this);
-	break;
+        obj = new Pad_Panel(this);
+        break;
     case PAD_OVAL:
-	obj = new Pad_Oval(this);
-	break;
+        obj = new Pad_Oval(this);
+        break;
     case PAD_POLYGON:
-	obj = new Pad_Polygon(this);
-	break;
+        obj = new Pad_Polygon(this);
+        break;
     case PAD_PORTAL:
-	obj = new Pad_Portal(this);
-	break;
+        obj = new Pad_Portal(this);
+        break;
     case PAD_RECTANGLE:
-	obj = new Pad_Rectangle(this);
-	break;
+        obj = new Pad_Rectangle(this);
+        break;
     case PAD_SCROLLBAR:
-	obj = new Pad_Scrollbar(this);
-	break;
+        obj = new Pad_Scrollbar(this);
+        break;
     case PAD_SPLINE:
-	obj = new Pad_Spline(this);
-	break;
+        obj = new Pad_Spline(this);
+        break;
     case PAD_TEXT:
-	obj = new Pad_Text(this);
-	break;
+        obj = new Pad_Text(this);
+        break;
     case PAD_TEXTFILE:
-	obj = new Pad_TextFile(this);
-	break;
+        obj = new Pad_TextFile(this);
+        break;
     case PAD_TEXTFIELD:
-	obj = new Pad_TextField(this);
-	break;
+        obj = new Pad_TextField(this);
+        break;
     case PAD_TEXTAREA:
-	obj = new Pad_TextArea(this);
-	break;
+        obj = new Pad_TextArea(this);
+        break;
     case PAD_WINDOW:
-	obj = new Pad_Window(this);
-	break;
+        obj = new Pad_Window(this);
+        break;
     default:
-	obj = NULL;
-	break;
+        obj = NULL;
+        break;
     }
 
     return(obj);
@@ -2922,7 +2923,7 @@ Pad::Create_object(int type)
 //
 //////////////////////////////////////////////////////////////
 
-				// Variables to control zooming of frames
+                                // Variables to control zooming of frames
 static float zoomSpeed = 1.05;
 static float zoomAmt = 1;
 static float zoomX=0, zoomY=0;     // Zooming center
@@ -2937,68 +2938,68 @@ Pad::Init_events(Pad_Bool status)
 {
     Pad_Callback *callback;
 
-				// Define a special event modifier called "Run".
-				// This modifier is used for the default event handlers
-				// for all widgets.
+                                // Define a special event modifier called "Run".
+                                // This modifier is used for the default event handlers
+                                // for all widgets.
     Pad_AddBindingModifier("Run");
 
-				// If turning events on
+                                // If turning events on
     if (status) {
-				// If already initialized for this window, then return.
-				// Else, initalize
-	if (defaultEvents) {
-	    return;
-	}
-	defaultEvents = TRUE;
+                                // If already initialized for this window, then return.
+                                // Else, initalize
+        if (defaultEvents) {
+            return;
+        }
+        defaultEvents = TRUE;
 
 
-				// Pan on Button 1
-	callback = new Pad_Callback(Pan_press, view->win);
-	Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonPress-1>", callback);
-	
-	callback = new Pad_Callback(Pan_drag, view->win);
-	Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<B1-Motion>", callback);
-	
-	callback = new Pad_Callback(Pan_release, view->win);
-	Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonRelease-1>", callback);
+                                // Pan on Button 1
+        callback = new Pad_Callback(Pan_press, view->win);
+        Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonPress-1>", callback);
+        
+        callback = new Pad_Callback(Pan_drag, view->win);
+        Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<B1-Motion>", callback);
+        
+        callback = new Pad_Callback(Pan_release, view->win);
+        Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonRelease-1>", callback);
 
-				// Zoom in on Button 2
-	callback = new Pad_Callback(Zoom_in_press, view->win);
-	Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonPress-2>", callback);
-	
-	callback = new Pad_Callback(Zoom_in_drag, view->win);
-	Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<B2-Motion>", callback);
-	
-	callback = new Pad_Callback(Zoom_in_release, view->win);
-	Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonRelease-2>", callback);
+                                // Zoom in on Button 2
+        callback = new Pad_Callback(Zoom_in_press, view->win);
+        Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonPress-2>", callback);
+        
+        callback = new Pad_Callback(Zoom_in_drag, view->win);
+        Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<B2-Motion>", callback);
+        
+        callback = new Pad_Callback(Zoom_in_release, view->win);
+        Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonRelease-2>", callback);
 
-				// Zoom out on Button 3
-	callback = new Pad_Callback(Zoom_out_press, view->win);
-	Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonPress-3>", callback);
-	
-	callback = new Pad_Callback(Zoom_out_drag, view->win);
-	Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<B3-Motion>", callback);
-	
-	callback = new Pad_Callback(Zoom_out_release, view->win);
-	Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonRelease-3>", callback);
+                                // Zoom out on Button 3
+        callback = new Pad_Callback(Zoom_out_press, view->win);
+        Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonPress-3>", callback);
+        
+        callback = new Pad_Callback(Zoom_out_drag, view->win);
+        Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<B3-Motion>", callback);
+        
+        callback = new Pad_Callback(Zoom_out_release, view->win);
+        Pad_CreateBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonRelease-3>", callback);
     } else {
-				// Turning events off
-				// If not already initialized for this window, then return.
-				// Else, unitialize
-	if (!defaultEvents) {
-	    return;
-	}
-	defaultEvents = FALSE;
+                                // Turning events off
+                                // If not already initialized for this window, then return.
+                                // Else, unitialize
+        if (!defaultEvents) {
+            return;
+        }
+        defaultEvents = FALSE;
 
-	Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonPress-1>");
-	Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<B1-Motion>");
-	Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonRelease-1>");
-	Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonPress-2>");
-	Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<B2-Motion>");
-	Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonRelease-2>");
-	Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonPress-3>");
-	Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<B3-Motion>");
-	Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonRelease-3>");
+        Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonPress-1>");
+        Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<B1-Motion>");
+        Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonRelease-1>");
+        Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonPress-2>");
+        Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<B2-Motion>");
+        Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonRelease-2>");
+        Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonPress-3>");
+        Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<B3-Motion>");
+        Pad_DeleteBinding(view->win->bindingTable, Pad_GetUid("all"), "<ButtonRelease-3>");
     }
 }
 
@@ -3253,7 +3254,7 @@ Pad_FindTreeNode::Evaluate(Pad_Object *obj)
   
     switch (_operation) {
         case PAD_FIND_AND:  
-	    if (!_noShortCircuit) {
+            if (!_noShortCircuit) {
               ans = (_left->Evaluate(obj) && _right->Evaluate(obj));
             } else {
               ansLeft  = _left->Evaluate(obj);
@@ -3262,7 +3263,7 @@ Pad_FindTreeNode::Evaluate(Pad_Object *obj)
             }
             break;
         case PAD_FIND_OR:   
-	    if (!_noShortCircuit) {
+            if (!_noShortCircuit) {
               ans = (_left->Evaluate(obj) || _right->Evaluate(obj));
             } else {
               ansLeft  = _left->Evaluate(obj);
@@ -3272,55 +3273,55 @@ Pad_FindTreeNode::Evaluate(Pad_Object *obj)
             break;
         case PAD_SEARCH_ALL:
             ans =  TRUE;
-  	    break;
+              break;
         case PAD_SEARCH_ABOVE:
-	    if (_idOrSticky == -1) {                                      // id was never set
+            if (_idOrSticky == -1) {                                      // id was never set
                 ans = FALSE;
-	    } else if (_passedObject) {
+            } else if (_passedObject) {
                 ans = TRUE;
             } else {
-	        if (obj->id == _idOrSticky) {
+                if (obj->id == _idOrSticky) {
                     _passedObject = TRUE;
                 }
                 ans = FALSE;
             }
-  	    break;
+              break;
         case PAD_SEARCH_BELOW:
-	    if (_idOrSticky == -1) {                                     // id was never set
+            if (_idOrSticky == -1) {                                     // id was never set
                 ans = FALSE;
-	    } else if ( _passedObject) {
+            } else if ( _passedObject) {
                 ans = FALSE;
             } else {
-	        if (obj->id == _idOrSticky) {
+                if (obj->id == _idOrSticky) {
                     _passedObject = TRUE;
                     ans = FALSE;
                  } else {
                     ans = TRUE;
                  }
             }
-  	    break;
+              break;
         case PAD_SEARCH_CLOSEST:
-	      pt = _event->pt;
-	      mag = _event->mag;
-	      obj->transform.Invert(_event);
-	      if (obj->Pick(_event, _x2)) {
+              pt = _event->pt;
+              mag = _event->mag;
+              obj->transform.Invert(_event);
+              if (obj->Pick(_event, _x2)) {
                   ans=TRUE;
-	      } else {
+              } else {
                   ans=FALSE;
               }
-	      _event->pt = pt;
-	      _event->mag = mag;
+              _event->pt = pt;
+              _event->mag = mag;
 
-  	    break;
+              break;
         case PAD_SEARCH_WITHTAG:
-	    if (_idOrSticky != -1) { 
+            if (_idOrSticky != -1) { 
                 ans =  (obj->id == _idOrSticky);
             } else if (_matchType == PAD_FIND_EXACT) {                     // exact expression 
                 ans =  (obj->tags.Member(_uid));
-	    } else  {                                                      // regular/glob expression
+            } else  {                                                      // regular/glob expression
                 DOLISTI(ti, obj->tags, Pad_Uid, tag) {
-		    if (_matchType == PAD_FIND_REGEXP) {                   // regular expression
-		        ans = Pad_RegExpExec(_regExpToken, tag);
+                    if (_matchType == PAD_FIND_REGEXP) {                   // regular expression
+                        ans = Pad_RegExpExec(_regExpToken, tag);
                         if (ans == -1) {
                             Pad_errorString = _string;
                             Pad_errorString += ": ";
@@ -3331,30 +3332,30 @@ Pad_FindTreeNode::Evaluate(Pad_Object *obj)
                         if (_string == NULL || tag == NULL) {
                             Pad_errorString = "INTERNAL ERROR, Please Contact Developers with this code: FC1 ";
                             return(-1);
-			}
+                        }
                         ans = Pad_StringMatch(tag, _string);
                     }
                     if (ans) {                                            // have ans, break out of tag list loop
                         break;
                     }
-		}
-	    } 
-  	    break;
+                }
+            } 
+              break;
         case PAD_SEARCH_WITHTEXT:
-	    if (obj->Get_text(string)) {
+            if (obj->Get_text(string)) {
                 strToStrCmp = TRUE;
             } else {
                 ans = FALSE;
             }
-  	    break;
+              break;
         case PAD_SEARCH_WITHNAME:
-	    if (obj->Get_name(string)) {
+            if (obj->Get_name(string)) {
                 strToStrCmp = TRUE;
             } else {
                 ans = FALSE;
             }
             break;
-	case PAD_SEARCH_WITHTYPE:
+        case PAD_SEARCH_WITHTYPE:
             typeName = obj->Type_name();
             if (typeName) {
                 strToStrCmp = TRUE;
@@ -3364,14 +3365,14 @@ Pad_FindTreeNode::Evaluate(Pad_Object *obj)
             }
             break;
         case PAD_SEARCH_WITHINFO:
-	    info = obj->Get_info();
+            info = obj->Get_info();
             if (info) {
                 strToStrCmp = TRUE;
                 string = info;
             } else {
                 ans = FALSE;
             }
-  	    break;
+              break;
         case PAD_SEARCH_WITHLAYER:
             layerName = obj->Get_layer();
             if (layerName){
@@ -3380,27 +3381,27 @@ Pad_FindTreeNode::Evaluate(Pad_Object *obj)
             } else {
                 ans = FALSE;
             }
-  	    break;
+              break;
         case PAD_SEARCH_WITHSTICKY:
             ans =  (_idOrSticky == -1) || (_idOrSticky == obj->Get_sticky());
-  	    break;
+              break;
         case PAD_SEARCH_ENCLOSED:
             obj->Get_global_bbox(bb);
             ans = (bb[XMIN] >= _x1) && (bb[YMIN] >= _y1) &&
                   (bb[XMAX] <= _x2) && (bb[YMAX] <= _y2);
-  	    break;
+              break;
         case PAD_SEARCH_OVERLAPPING:
             obj->Get_global_bbox(bb);
             ans = (bb[XMIN] <= _x2) && (bb[YMIN] <= _y2) &&
                   (bb[XMAX] >= _x1) && (bb[YMAX] >= _y1);
-  	    break;
+              break;
         default: 
             Pad_errorString = "INTERNAL ERROR, Please Contact Developers with this code: FC3 ";
             return(-1);
     }
     if (strToStrCmp) {
         if (_matchType == PAD_FIND_EXACT) {                        // exact expression 
-	    if (!strcmp(string.Get(),_string)){
+            if (!strcmp(string.Get(),_string)){
                 ans = TRUE;
             } else {
                 ans = FALSE;
@@ -3451,43 +3452,43 @@ Pad_FindTreeNode::Print()
           break;
         case PAD_SEARCH_ALL:
           cerr << " all ";
-	  break;
+          break;
         case PAD_SEARCH_ABOVE:
           cerr << " above " << _idOrSticky;
-	  break;
+          break;
         case PAD_SEARCH_BELOW:
           cerr << " below " << _idOrSticky;
-	  break;
+          break;
         case PAD_SEARCH_CLOSEST:
           cerr << " closest " <<  _x1 << " " << _y1 << " " << _x2 << " " << _idOrSticky;
-	  break;
+          break;
         case PAD_SEARCH_WITHTAG:
           cerr << " withtag " << _idOrSticky;
-	  break;
+          break;
         case PAD_SEARCH_WITHTEXT:
           cerr << " withtext " << _string;
-	  break;
+          break;
         case PAD_SEARCH_WITHNAME:
           cerr << " withname " << _string;
-	  break;
+          break;
         case PAD_SEARCH_WITHTYPE:
           cerr << " withtype ";
-	  break;
+          break;
         case PAD_SEARCH_WITHINFO:
           cerr << " withinfo " << _string;
-	  break;
+          break;
         case PAD_SEARCH_WITHLAYER:
           cerr << " withlayer ";
-	  break;
+          break;
         case PAD_SEARCH_WITHSTICKY:
           cerr << " withsticky " << _idOrSticky;;
-	  break;
+          break;
         case PAD_SEARCH_ENCLOSED:
           cerr << " enclosed " << _x1 << " " << _y1 << " " << _x2 << " " << _y2;
-	  break;
+          break;
         case PAD_SEARCH_OVERLAPPING:
           cerr << " overlapping " << _x1 << " " << _y1 << " " << _x2 << " " << _y2;
-	  break;
+          break;
         default: cerr << "Switch fell through:" << _operation << endl;
     }
     
@@ -3645,12 +3646,12 @@ Pad_Find::Eval(Pad *pad, Pad_List &list, ClientData clientData, Pad_Bool groupMe
     if (_expr) {
         //if (_exactWithtag && (_commandCnt == 1)) {                            // use hash table to get answer-quicker
         if (0) {                            // use hash table to get answer-quicker
-	    //if (_idOrSticky != -1) { 
+            //if (_idOrSticky != -1) { 
                 //list.Push_last(obj);
-	    //} else {
+            //} else {
             
             uid = _expr->Get_uid();
-	    tagObjs = (Pad_List *)_pad->tagTable->Get(*uid);
+            tagObjs = (Pad_List *)_pad->tagTable->Get(*uid);
             if (tagObjs) {
                 objs = tagObjs;
             }
@@ -3667,11 +3668,11 @@ Pad_Find::Eval(Pad *pad, Pad_List &list, ClientData clientData, Pad_Bool groupMe
                 if ((obj->group  && !groupMembers) || !obj->Is_findable()) {
                     obj = _pad->Next(obj);
                 } else {
-	            ans = _expr->Evaluate(obj);
+                    ans = _expr->Evaluate(obj);
                     if (ans == -1) {
                         obj = NULL;
                     } else {
-	                if (ans) {
+                        if (ans) {
                             list.Push_last(obj);
                         }
                         obj = _pad->Next(obj);
@@ -3808,9 +3809,9 @@ Pad_Find::_Get_tokens(int argc, char **argv, int &tokenc)
         cur = argv[s][c];
         while (cur != '\0') {
             switch (cur) {
-	      case '(':
-	      case ')':
-	      case '!':
+              case '(':
+              case ')':
+              case '!':
                 if (prev != '\\') {
                     if (string.Length()!= 0) {                            // save current string
                         tokenv[tokenc] = new char[string.Length()+1];     // make the room for the new string
@@ -3824,11 +3825,11 @@ Pad_Find::_Get_tokens(int argc, char **argv, int &tokenc)
                     string += cur;
                 }
                 break;
-	      case '&':
-	      case '|':
+              case '&':
+              case '|':
                 if (prev == cur) {
                     if (string.Length() > 1) {                                    // save current string
-	                tokenv[tokenc] = new char[string.Length()];               // make the room for the new string
+                        tokenv[tokenc] = new char[string.Length()];               // make the room for the new string
                                                                                   // dont use + 1.  We only want
                                                                                   // to include all but the last ch
                         strncpy(tokenv[tokenc], string.Get(), string.Length()-1); // copy it over (except the last ch)
@@ -3846,14 +3847,14 @@ Pad_Find::_Get_tokens(int argc, char **argv, int &tokenc)
                     string += cur;
                 }
                 break;
-	      case '\\':                                         //
+              case '\\':                                         //
                 if (prev == '\\') {                              // add it to the string or  ignore it
                     string += cur;                               //
                 } else {                                         // ignore it
                 }
            
                 break;
-	      default:
+              default:
                 string += cur;
             }
             prev = cur;
@@ -3861,11 +3862,11 @@ Pad_Find::_Get_tokens(int argc, char **argv, int &tokenc)
             cur = argv[s][c];
             if (newToken || (cur == '\0')) {
                 newToken = FALSE;
-	        tokenv[tokenc] = new char[string.Length()+1];     // make the room for the new string
+                tokenv[tokenc] = new char[string.Length()+1];     // make the room for the new string
                 strcpy(tokenv[tokenc], string.Get());           // copy it over
                 tokenc++;
                 string="";                                      // reset the string
-	    }
+            }
         }
     }
     if (tokenc != size) {
@@ -3944,7 +3945,7 @@ Pad_Find::_Parse(int tokenc, char **tokenv)
         if (!strcmp(tokenv[i],"(")) {
             i++;                                                         // skip the (
             range   = _Compute_range(tokenc-i, tokenv+i);
-	    if (range == -1) {
+            if (range == -1) {
                 return(NULL);
             }
             rightExp = _Parse(range, tokenv+i);                          // send it the sublist
@@ -4055,11 +4056,11 @@ Pad_Find::_Resolve_tagorid(Pad_Bool onlyFirstId, char *tagorid)
           case PAD_FIND_EXACT: 
             _uid = Pad_GetUid(tagorid);
             break;
-	  case PAD_FIND_GLOB:
+          case PAD_FIND_GLOB:
             _string = tagorid;
             break;
-	  case PAD_FIND_REGEXP:
-	    // done above
+          case PAD_FIND_REGEXP:
+            // done above
             break;
         } 
         return (TRUE);
@@ -4071,8 +4072,8 @@ Pad_Find::_Resolve_tagorid(Pad_Bool onlyFirstId, char *tagorid)
             if (obj) {
                 _idOrSticky = obj->id;
             }
-	} else {
-	    next = (Pad_List *)_pad->tagTable->Init(hashSearchPtr, (void *)tag);
+        } else {
+            next = (Pad_List *)_pad->tagTable->Init(hashSearchPtr, (void *)tag);
             found = FALSE;
             firstTag = NULL;
             while (next) {
@@ -4082,17 +4083,17 @@ Pad_Find::_Resolve_tagorid(Pad_Bool onlyFirstId, char *tagorid)
                         //Pad_errorString += _interp->result;                 // error
                         return (FALSE);
                     }
-	        } else {                                                    // glob
+                } else {                                                    // glob
                     found = Pad_StringMatch(tag, tagorid);
                 }
                 if (found) {
-		    if (firstTag == NULL || (strcmp(firstTag, tag) > 0)) {  // tag is less then firstTag
+                    if (firstTag == NULL || (strcmp(firstTag, tag) > 0)) {  // tag is less then firstTag
                         firstTag = tag;
                     }
                 }
                 found = FALSE;
-	        next = (Pad_List *)_pad->tagTable->Init(hashSearchPtr, (void *)tag);
-	    }
+                next = (Pad_List *)_pad->tagTable->Init(hashSearchPtr, (void *)tag);
+            }
             if (firstTag) {
                 _pad->Find_with_tagorid(firstTag, objs, TRUE);
                 obj = (Pad_Object *)objs.First();
@@ -4148,39 +4149,39 @@ Pad_Find::_Parse_command(int tokenc, char **tokenv, int &range)
     if (!strcmp(tokenv[0], "all")) {
         if (argcount == 1) {
             searchType = PAD_SEARCH_ALL;          
-	} else {
-	    Pad_errorString = "wrong # args: searchCommand should be \"all\"";
+        } else {
+            Pad_errorString = "wrong # args: searchCommand should be \"all\"";
             return(NULL);
-	}
+        }
     } else if (!strcmp(tokenv[0], "above")) {
-	if (argcount == 2) {    
+        if (argcount == 2) {    
             _noShortCircuit = TRUE;
             searchType = PAD_SEARCH_ABOVE;
             if (!_Resolve_tagorid(TRUE, tokenv[1]))  {                          // get first id
                 return (NULL);
             }
-	} else {
-	    Pad_errorString = "wrong # args: searchCommand should be \"allabove tagorid\"";
+        } else {
+            Pad_errorString = "wrong # args: searchCommand should be \"allabove tagorid\"";
             return(NULL);
-	}
+        }
     } else if (!strcmp(tokenv[0], "below")) {
-	if (argcount == 2) {
+        if (argcount == 2) {
             _noShortCircuit = TRUE;
-	    searchType = PAD_SEARCH_BELOW;
+            searchType = PAD_SEARCH_BELOW;
             if (!_Resolve_tagorid(TRUE, tokenv[1]))  {                          // get first id
                 return (NULL);
             }
-	} else {
-	    Pad_errorString = "wrong # args: searchCommand should be \"allbelow tagorid\"";
+        } else {
+            Pad_errorString = "wrong # args: searchCommand should be \"allbelow tagorid\"";
             return(NULL);
-	}
+        }
     } else if (!strcmp(tokenv[0], "closest")) {
-	if ((argcount >= 3) && (argcount <= 4)) {
+        if ((argcount >= 3) && (argcount <= 4)) {
             searchType = PAD_SEARCH_CLOSEST;
             _x1 = ATOXF(_tkwin, tokenv[1]);                                     // x
             _y1 = ATOYF(_tkwin, tokenv[2]);                                     // y
             _event = new Pad_Event(_tkwin);                                     // MUST be deleted by
-	                                                                        // who it is sent to
+                                                                                // who it is sent to
             _event->Update_pad_coords(_x1,_y1);
             _event->mag = 1.0;                                                  // Search should be independent 
             _event->objMag = _event->mag;                                       // of current view
@@ -4190,77 +4191,77 @@ Pad_Find::_Parse_command(int tokenc, char **tokenv, int &range)
                     Pad_errorString = "halo must be greater than zero.";
                 }
             } else {
-	        _x2 = 0.0;                                                      // halo
+                _x2 = 0.0;                                                      // halo
             }
-	} else {
-	    Pad_errorString = "wrong # args: searchCommand should be \"closest x y ?halo \"";
+        } else {
+            Pad_errorString = "wrong # args: searchCommand should be \"closest x y ?halo \"";
             return(NULL);
-	}
+        }
     } else if (!strcmp(tokenv[0], "enclosed")) {
-	if (argcount == 5) {
-	    searchType = PAD_SEARCH_ENCLOSED;
+        if (argcount == 5) {
+            searchType = PAD_SEARCH_ENCLOSED;
             _x1 = ATOXF(_tkwin, tokenv[1]);
             _y1 = ATOYF(_tkwin, tokenv[2]);
             _x2 = ATOXF(_tkwin, tokenv[3]);
             _y2 = ATOYF(_tkwin, tokenv[4]);
-				// Normalize input bbox
-	    if (_x1 > _x2) {
-		Pad_Swap(_x1, _x2);
-	    }
-	    if (_y1 > _y2) {
-		Pad_Swap(_y1, _y2);
-	    }
-	} else {
-	    Pad_errorString = "wrong # args: searchCommand should be \"enclosed x1 y1 x2 y2\"";
+                                // Normalize input bbox
+            if (_x1 > _x2) {
+                Pad_Swap(_x1, _x2);
+            }
+            if (_y1 > _y2) {
+                Pad_Swap(_y1, _y2);
+            }
+        } else {
+            Pad_errorString = "wrong # args: searchCommand should be \"enclosed x1 y1 x2 y2\"";
             return(NULL);
-	}
+        }
     } else if (!strcmp(tokenv[0], "overlapping")) {
-	if (argcount == 5) {
-	    searchType = PAD_SEARCH_OVERLAPPING;
+        if (argcount == 5) {
+            searchType = PAD_SEARCH_OVERLAPPING;
             _x1 = ATOXF(_tkwin, tokenv[1]);
             _y1 = ATOYF(_tkwin, tokenv[2]);
             _x2 = ATOXF(_tkwin, tokenv[3]);
             _y2 = ATOYF(_tkwin, tokenv[4]);
-				// Normalize input bbox
-	    if (_x1 > _x2) {
-		Pad_Swap(_x1, _x2);
-	    }
-	    if (_y1 > _y2) {
-		Pad_Swap(_y1, _y2);
-	    }
-	} else {
-	    Pad_errorString = "wrong # args: searchCommand should be \"overlapping x1 y1 x2 y2\"";
+                                // Normalize input bbox
+            if (_x1 > _x2) {
+                Pad_Swap(_x1, _x2);
+            }
+            if (_y1 > _y2) {
+                Pad_Swap(_y1, _y2);
+            }
+        } else {
+            Pad_errorString = "wrong # args: searchCommand should be \"overlapping x1 y1 x2 y2\"";
             return(NULL);
-	}
+        }
     } else if (!strcmp(tokenv[0], "withlayer")) {
-	if (argcount == 2) {
-	    searchType = PAD_SEARCH_WITHLAYER;
+        if (argcount == 2) {
+            searchType = PAD_SEARCH_WITHLAYER;
             if (_matchType == PAD_FIND_EXACT || _matchType == PAD_FIND_GLOB) {  // exact && glob
                 _string = tokenv[1];
             } else if (_matchType == PAD_FIND_REGEXP) {                         // regexp
                 _regExpToken = Pad_RegExpCompile(tokenv[1]);
                 _string = tokenv[1];
             }
-	} else {
-	    Pad_errorString = "wrong # args: searchCommand should be \"withlayer layer\"";
+        } else {
+            Pad_errorString = "wrong # args: searchCommand should be \"withlayer layer\"";
             return(NULL);
-	}
+        }
     } else if (!strcmp(tokenv[0], "withinfo")) {
-	if (argcount == 2) {
-	    searchType = PAD_SEARCH_WITHINFO;
+        if (argcount == 2) {
+            searchType = PAD_SEARCH_WITHINFO;
             if (_matchType == PAD_FIND_EXACT || _matchType == PAD_FIND_GLOB) {  // exact && glob
                 _string = tokenv[1];
             } else if (_matchType == PAD_FIND_REGEXP) {                         // regexp
                 _regExpToken = Pad_RegExpCompile(tokenv[1]);
                 _string = tokenv[1];
             }
-	} else {
-	    Pad_errorString = "wrong # args: searchCommand should be \"withinfo infoString\"";
+        } else {
+            Pad_errorString = "wrong # args: searchCommand should be \"withinfo infoString\"";
             return(NULL);
-	}
+        }
     } else if (!strcmp(tokenv[0], "withsticky")) {
-	if (argcount == 2) {
-	    searchType = PAD_SEARCH_WITHSTICKY;
+        if (argcount == 2) {
+            searchType = PAD_SEARCH_WITHSTICKY;
             if (!strcasecmp(tokenv[1], "all")) {
                 _idOrSticky = -1;
             } else if (!strcasecmp(tokenv[1], "1")) {
@@ -4273,67 +4274,67 @@ Pad_Find::_Parse_command(int tokenc, char **tokenv, int &range)
                 Pad_errorString = "Invalid sticky type.  Must be all, 1, z, or view";
                 return(NULL);
             }
-	} else {
-	    Pad_errorString = "wrong # args: searchCommand should be \"withsticky stickyType\"";
+        } else {
+            Pad_errorString = "wrong # args: searchCommand should be \"withsticky stickyType\"";
             return(NULL);
-	}
+        }
     } else if (!strcmp(tokenv[0], "withtag")) {
-	if (argcount == 2) {
+        if (argcount == 2) {
             if (!strcmp(tokenv[1],"all")) {
                 searchType = PAD_SEARCH_ALL;
             } else {
                 if (_matchType == PAD_FIND_EXACT) {
                     _exactWithtag = TRUE;
                 }
-	        searchType = PAD_SEARCH_WITHTAG;
+                searchType = PAD_SEARCH_WITHTAG;
                 if (!_Resolve_tagorid(FALSE, tokenv[1]))  {                     // get first id
                     return (NULL);
                 }
                 _string = tokenv[1];
             }
-	} else {
-	    Pad_errorString = "wrong # args: searchCommand should be \"withtag tagOrId\"";
+        } else {
+            Pad_errorString = "wrong # args: searchCommand should be \"withtag tagOrId\"";
             return(NULL);
-	}
+        }
     } else if (!strcmp(tokenv[0], "withtext")) {
-	if (argcount == 2) {
-	    searchType = PAD_SEARCH_WITHTEXT;
+        if (argcount == 2) {
+            searchType = PAD_SEARCH_WITHTEXT;
             if (_matchType == PAD_FIND_EXACT || _matchType == PAD_FIND_GLOB) {  // exact && glob
                 _string = tokenv[1];
             } else if (_matchType == PAD_FIND_REGEXP) {                         // regexp
                 _regExpToken = Pad_RegExpCompile(tokenv[1]);
                 _string = tokenv[1];
             }
-	} else {
-	    Pad_errorString = "wrong # args: searchCommand should be \"withtext text\"";
+        } else {
+            Pad_errorString = "wrong # args: searchCommand should be \"withtext text\"";
             return(NULL);
-	}
+        }
     } else if (!strcmp(tokenv[0], "withname")) {
-	if (argcount == 2) {
-	    searchType = PAD_SEARCH_WITHNAME;
+        if (argcount == 2) {
+            searchType = PAD_SEARCH_WITHNAME;
             if (_matchType == PAD_FIND_EXACT || _matchType == PAD_FIND_GLOB) {  // exact && glob
                 _string = tokenv[1];
             } else if (_matchType == PAD_FIND_REGEXP) {                         // regexp
                 _regExpToken = Pad_RegExpCompile(tokenv[1]);
                 _string = tokenv[1];
             }
-	} else {
-	    Pad_errorString = "wrong # args: searchCommand should be \"withname name\"";
+        } else {
+            Pad_errorString = "wrong # args: searchCommand should be \"withname name\"";
             return(NULL);
-	}
+        }
     } else if (!strcmp(tokenv[0], "withtype")) {
-	if (argcount == 2) {
-	    searchType = PAD_SEARCH_WITHTYPE;
+        if (argcount == 2) {
+            searchType = PAD_SEARCH_WITHTYPE;
             if (_matchType == PAD_FIND_EXACT || _matchType == PAD_FIND_GLOB) {  // exact && glob
                 _string = tokenv[1];
             } else if (_matchType == PAD_FIND_REGEXP) {                         // regexp
                 _regExpToken = Pad_RegExpCompile(tokenv[1]);
                 _string = tokenv[1];
             }
-	} else {
-	    Pad_errorString = "wrong # args: searchCommand should be \"withtype type\"";
+        } else {
+            Pad_errorString = "wrong # args: searchCommand should be \"withtype type\"";
             return(NULL);
-	}
+        }
     } else {
         Pad_errorString = "unknown searchCommand: "; 
         Pad_errorString += tokenv[0];

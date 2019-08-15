@@ -819,7 +819,7 @@ Pad_Frame::Get_cursor(void)
 // Sets the title of this frame to the specified title.
 //
 void
-Pad_Frame::Set_title(char *title)
+Pad_Frame::Set_title(const char *title)
 {
     _title = title;
 }

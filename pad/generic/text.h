@@ -104,7 +104,7 @@ class Pad_Text : public Pad_Component
             float    Compute_height(void);
     virtual float    Compute_scale_within_frame(float *frame);
             float    Compute_width(void);
-    virtual Pad_Bool Contains_text(char *);
+    virtual Pad_Bool Contains_text(const char *);
     virtual Pad_Bool Continue_refinement(void);
     virtual void     Pen_changed(void);
     virtual Pad_Bool Get_editable(void);
@@ -130,7 +130,7 @@ class Pad_Text : public Pad_Component
     virtual void     Set_focus(void);                  // This object is now the focus object
     virtual void     Set_font_default(void);
     virtual Pad_Bool Set_height(float height);
-    virtual Pad_Bool Set_text(char *new_text);
+    virtual Pad_Bool Set_text(const char *new_text);
     virtual Pad_Bool Set_text_default(void);
     virtual Pad_Bool Set_width(float width);
     virtual void     Unset_focus(void);	                // This object is no longer the focus object
@@ -155,7 +155,7 @@ class Pad_Text : public Pad_Component
             void Update_index(Pad_TextIndex &start_index, Pad_TextIndex &end_index);
             void Bbox_of_index(Pad_TextIndex &index, float *bb);
     virtual void Delete_chars(Pad_TextIndex &index1, Pad_TextIndex &index2, Pad_Bool reshape=TRUE);
-    virtual void Insert_chars(char *str, Pad_TextIndex &index, Pad_Bool reshape=TRUE);
+    virtual void Insert_chars(const char *str, Pad_TextIndex &index, Pad_Bool reshape=TRUE);
             void Get_chars(Pad_String &result, Pad_TextIndex &index1, Pad_TextIndex &index2);
 
 				// Event handlers
@@ -193,17 +193,17 @@ class Pad_TextFile : public Pad_Text
     Pad_Bool    fileLoaded;
     int         writeFormat;
 
-            char *   Get_file(void);
-    virtual Pad_Bool Get_name(Pad_String &string);
-    virtual int      Get_writeformat(void);
-            void     Init(void);
-            Pad_Bool Load_file(void);
-    virtual Pad_Bool Render(void);
-            Pad_Bool Set_file(char *filename);
-            void     Set_file_default(void);
-            Pad_Bool Set_text(char *new_text);
-            Pad_Bool Set_writeformat(int);
-            void     Set_writeformat_default(void);
+            const char *Get_file(void);
+    virtual Pad_Bool    Get_name(Pad_String &string);
+    virtual int         Get_writeformat(void);
+            void        Init(void);
+            Pad_Bool    Load_file(void);
+    virtual Pad_Bool    Render(void);
+            Pad_Bool    Set_file(const char *filename);
+            void        Set_file_default(void);
+            Pad_Bool    Set_text(const char *new_text);
+            Pad_Bool    Set_writeformat(int);
+            void        Set_writeformat_default(void);
 
     virtual ~Pad_TextFile();
     Pad_TextFile(Pad *pad);
@@ -224,8 +224,8 @@ class Pad_TextField : public Pad_Text
     virtual void       Minimum_size(Pad_Dimension &dimension, int cols);
     virtual void       Preferred_size(Pad_Dimension &dimension);
 
-    virtual Pad_Bool   Set_text(char *new_text);
-    virtual void       Insert_chars(char *str, Pad_TextIndex &index, Pad_Bool reshape=TRUE);
+    virtual Pad_Bool   Set_text(const char *new_text);
+    virtual void       Insert_chars(const char *str, Pad_TextIndex &index, Pad_Bool reshape=TRUE);
     virtual void       Delete_chars(Pad_TextIndex &index1, Pad_TextIndex &index2, Pad_Bool reshape=TRUE);
     virtual void       Set_editable_default(void);
     virtual Pad_Bool   Set_width(float width);
@@ -273,8 +273,8 @@ class _TextArea : public Pad_TextField
 
     virtual Pad_Bool Render(void);
 	
-    virtual Pad_Bool Set_text(char *new_text);
-    virtual void     Insert_chars(char *str, Pad_TextIndex &index, Pad_Bool reshape=TRUE);
+    virtual Pad_Bool Set_text(const char *new_text);
+    virtual void     Insert_chars(const char *str, Pad_TextIndex &index, Pad_Bool reshape=TRUE);
 				// Nice dimensions
     virtual void     Minimum_size(Pad_Dimension &dimension);
     virtual void     Minimum_size(Pad_Dimension &dimension, int cols);
@@ -321,9 +321,9 @@ class Pad_TextArea : public Pad_Container
             int      Get_selection_start(void);       
     virtual void     Set_editable(Pad_Bool editable); 
     virtual Pad_Bool Get_text(Pad_String &text);
-    virtual Pad_Bool Set_text(char *new_text);
+    virtual Pad_Bool Set_text(const char *new_text);
     virtual void     Delete_chars(Pad_TextIndex &index1, Pad_TextIndex &index2, Pad_Bool reshape=TRUE);
-    virtual void     Insert_chars(char *str, Pad_TextIndex &index, Pad_Bool reshape=TRUE);
+    virtual void     Insert_chars(const char *str, Pad_TextIndex &index, Pad_Bool reshape=TRUE);
     virtual Pad_Text *Get_text_obj(void);
 				// Nice dimensions
     virtual void     Minimum_size(Pad_Dimension &dimension);

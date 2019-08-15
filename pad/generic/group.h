@@ -72,7 +72,7 @@ class Pad_Group : public Pad_Component
 
     virtual Pad_Bool Add(Pad_Object *obj, Pad_Bool transform=FALSE);     // Move object into group
             void     Add_to_drawing_order(Pad_Object *obj, Pad_Object *prev_obj);
-    virtual void     Add_to_layer(char *name);
+    virtual void     Add_to_layer(const char *name);
     virtual Pad_Bool Check_render_clipped(void);
     virtual void     Compute_bounding_box(void);
     virtual void     Create_obj_error(void);    // Called if there is an error configuring obj during create

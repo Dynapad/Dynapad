@@ -155,8 +155,8 @@ Pad_3DBorder
 Pad_Alloc3DBorder(Pad_Display *dpy, int r, int g, int b)
 {
     BorderKey key;
-    register Border *borderPtr;
-    int newc;
+    Border *borderPtr;
+    // [unused]: int newc;
     XGCValues gcValues;
 
     if (!initialized) {
@@ -172,7 +172,7 @@ Pad_Alloc3DBorder(Pad_Display *dpy, int r, int g, int b)
     key.colormap = dpy->colormap;
     key.screen = dpy->screen;
 
-    if (borderPtr = (Border *)borderTable->Get((void *)&key)) {
+    if ((borderPtr = (Border *)borderTable->Get((void *)&key))) {
 	borderPtr->refCount++;
     } else {
 
@@ -497,7 +497,7 @@ Pad_3DBorderGC(Pad_Display *dpy, Pad_3DBorder border, int which)
 void
 Pad_Free3DBorder(Pad_Display *dpy, Pad_3DBorder border)
 {
-    register Border *borderPtr = (Border *) border;
+    Border *borderPtr = (Border *) border;
     Display *display = DisplayOfScreen(borderPtr->screen);
 
     borderPtr->refCount--;
@@ -556,7 +556,7 @@ Pad_Draw3DPolygon(Pad_Display *dpy, Drawable drawable, Pad_3DBorder border, XPoi
 {
     XPoint poly[4], b1, b2, newB1, newB2;
     XPoint perp, c, shift1, shift2;	/* Used for handling parallel lines. */
-    register XPoint *p1Ptr, *p2Ptr;
+    XPoint *p1Ptr, *p2Ptr;
     Border *borderPtr = (Border *) border;
     GC gc;
     int i, lightOnLeft, dx, dy, parallel, pointsSeen;
@@ -748,7 +748,7 @@ void
 Pad_Fill3DRectangle(Pad_Display *dpy, Drawable drawable, Pad_3DBorder border, 
 		    int x, int y, int width, int height, int borderWidth, int relief)
 {
-    register Border *borderPtr = (Border *) border;
+    Border *borderPtr = (Border *) border;
 
     XFillRectangle(dpy->display, drawable, borderPtr->bgGC,
 	    x, y, (unsigned int) width, (unsigned int) height);
@@ -778,7 +778,7 @@ void
 Pad_Fill3DPolygon(Pad_Display *dpy, Drawable drawable, Pad_3DBorder border, XPoint *pointPtr, int numPoints,
 		  int borderWidth, int leftRelief)
 {
-    register Border *borderPtr = (Border *) border;
+    Border *borderPtr = (Border *) border;
 
     XFillPolygon(dpy->display, drawable, borderPtr->bgGC,
 	    pointPtr, numPoints, Complex, CoordModeOrigin);

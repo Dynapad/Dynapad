@@ -159,6 +159,7 @@ typedef enum {
 int Pad_GetAnchor(char *string, Pad_Anchor *anchorPtr);
 char *Pad_NameOfAnchor(Pad_Anchor anchor);
 
+const char *casestrstr(const char *s1, const char *s2);
 char *casestrstr(char *s1, char *s2);
 
 int Pad_StringMatch(char *string, char *pattern);

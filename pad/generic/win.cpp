@@ -419,8 +419,8 @@ Pad_Win::Is_mapped(void)
 void
 Pad_Win::Map(void)
 {
-    char buf[200];
     XGCValues gcValues;
+    // unuused char buf[200];
 
     flags |= WIN_MAPPED;
     

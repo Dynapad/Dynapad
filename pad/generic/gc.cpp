@@ -121,7 +121,7 @@ Pad_GetGC(Pad_Display *dpy, unsigned long valueMask, XGCValues *valuePtr)
 {
     ValueKey valueKey;
     IdKey idKey;
-    register PadGC *gcPtr;
+    PadGC *gcPtr;
     int newc;
 
     if (!initialized) {
@@ -309,7 +309,7 @@ void
 Pad_FreeGC(Pad_Display *dpy, GC gc)
 {
     IdKey idKey;
-    register PadGC *gcPtr;
+    PadGC *gcPtr;
 
     if (!initialized) {
 	cerr << "Pad_FreeGC called before Pad_GetGC" << endl;

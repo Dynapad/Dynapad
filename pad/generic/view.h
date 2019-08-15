@@ -93,7 +93,7 @@ class Pad_View : public Pad_Object
     virtual Pad_Bool Render(void);
     virtual Pad_Bool Render(Pad_Restorer *);
     virtual Pad_Bool Set_view(float newXview, float newYview, float newZoom, Pad_Bool render_now=FALSE);
-    virtual void     Set_visiblelayers(char *layers);
+    virtual void     Set_visiblelayers(const char *layers);
     virtual void     Set_visiblelayers_default(void);
             void     Update_display(void);
             void     Update_display(int dissolveSpeed, Pad_Bool withRefinements);

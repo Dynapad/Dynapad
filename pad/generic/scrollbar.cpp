@@ -352,7 +352,7 @@ static void
 _Eval_callback(Pad_Scrollbar *scrollbar, Pad_Callback *callback, Pad_Event *event)
 {
     Pad_String str;
-    Pad_Callback *newCallback;
+    Pad_Callback *newCallback = nullptr;
 
 				// First fire specific callback
     if (callback) {
