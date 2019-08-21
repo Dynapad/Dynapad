@@ -173,5 +173,8 @@ void Pad_RegExpFree(Pad_RegExp regexp);
 
 #ifndef HAVE_STRCASECMP_PROTO
 // note: was previous throw ()/ noexcept(true)
+// causes a compile error on systems that have /usr/include/strings.h from glibc
+#ifdef __APPLE__
 extern "C" int strcasecmp(const char *str1, const char *str2);
+#endif
 #endif
