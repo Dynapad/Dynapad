@@ -35,7 +35,7 @@ case "${host_os}" in
       ;;
     linux*)
       # note: this doesn't seem portable...
-      PLT_LIBS="/usr/lib/libracket.so"
+      PLT_LIBS="$PLT/lib/mzdyn.o"
       AC_SUBST(PLT_LIBS)
       ;;
 esac
