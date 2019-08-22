@@ -1,8 +1,7 @@
 (require compatibility/mlist)
 
 ;======= Change Modifier ========
-#| ;obsolete?
-(define _gui-mode-cursor ())
+(define _gui-mode-cursor '())
 
 (define gui-mode-cursor
   (case-lambda
@@ -15,7 +14,6 @@
 
 (define (gui-add-mode-cursor mode cursor)
   (set! gui-mode-cursor (append gui-mode-cursor (list (list mode cursor)))))
-|#
 
 ; Cursors:
 ; 0,13 = arrow
