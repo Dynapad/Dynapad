@@ -1,0 +1,54 @@
+# -*- mode: org; -*-
+* ubuntu setup
+I keep all my repos in =~/git/= so adjust paths accordingly if you clone elsewhere
+
+Run the following as root.
+#+BEGIN_SRC bash
+apt install \
+build-essential \
+lib64readline-dev \
+libdb-dev \
+libfreetype6-dev \
+libmagick++-dev \
+libx11-dev \
+libxft-dev \
+libxi-dev \
+tk-dev \
+libconfig-dev \
+automake \
+libtool
+#+END_SRC
+
+NOTE if pkgconfig is not populated you will get _MANY_ silent errors
+and the configure scripts do not do the right thing when checking.
+On ubuntu =/usr/lib/x86_64-linux-gnu/pkgconfig= seems to be the right place?
+
+#+BEGIN_SRC bash
+pushd ~/git
+git clone https://github.com/racket/racket.git
+pushd racket/racket/src
+./configure
+make cgc
+make install-cgc
+popd
+
+~/git/racket/racket/bin/racocgc pkg install compatibility-lib htdp-lib xrepl
+
+git clone git@github.com:DylanLukes/Dynapad.git
+pushd Dynapad
+# Apply changes from the PR if it has not gone through yet
+# https://github.com/DylanLukes/Dynapad/pull/5/files
+autoreconf --warnings=all --verbose --install &&
+# NOTE CPPFLAGS is only required on ubuntu where tk.h is installed in a non-standard location
+./configure \
+    CPPFLAGS="-I/usr/include/tk/ -I/usr/include/ImageMagick-6/" \  # I think these are actually pkgconfig issues!??
+    --with-plt=${HOME}/git/racket/racket &&
+make all -j 8 &&
+
+~/git/racket/racket/bin/racketcgc
+#+END_SRC
+
+#+BEGIN_SRC racket
+(load "dynapad.ss")  ; this will error at the moment
+(dynaload "apps/paddraw/paddraw.ss")
+#+END_SRC
