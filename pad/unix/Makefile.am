@@ -1,6 +1,7 @@
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
 
+CXXFLAGS = -fPIC
 CFLAGS = --pedantic -Wall -Werror -std=c99 -O2
 # LDFLAGS = 
 
