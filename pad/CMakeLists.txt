@@ -16,7 +16,7 @@ find_package(ImageMagick 6
 find_package(Freetype 
   MODULE REQUIRED)
 
-find_package(FontConfig 
+find_package(Fontconfig 
   MODULE REQUIRED)
 
 find_package(BerkeleyDB
@@ -98,7 +98,7 @@ target_include_directories(pad
     ${X11_INCLUDE_DIR}
     ${ImageMagick_INCLUDE_DIRS}
     ${FREETYPE_INCLUDE_DIRS}
-    ${FONTCONFIG_INCLUDE_DIR}
+    ${Fontconfig_INCLUDE_DIRS}
     ${BerkeleyDB_INCLUDE_DIRS})
 
 target_link_libraries(pad
@@ -108,5 +108,5 @@ target_link_libraries(pad
     ${X11_Xi_LIB}
     ${ImageMagick_LIBRARIES}
     ${FREETYPE_LIBRARIES}
-    ${FONTCONFIG_LIBRARY}
+    ${Fontconfig_LIBRARIES}
     ${BerkeleyDB_LIBRARY})

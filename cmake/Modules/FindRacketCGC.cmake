@@ -63,6 +63,11 @@ if (RacketCGC_FOUND)
     "scheme_real_to_double"
     "scheme_thread_local_key"
     "scheme_thread_local_offset"
+    "scheme_thread_block"
+    "scheme_block_until"
+    "scheme_making_progress"
+    "scheme_fdset"
+    "scheme_get_fdset"
     "scheme_warning"
     "scheme_wrong_count"
     "scheme_wrong_type")

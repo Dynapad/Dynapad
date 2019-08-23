@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(Dynapad VERSION 1.0 LANGUAGES CXX)
+project(Dynapad VERSION 1.0 LANGUAGES CXX C)
 
 option (FORCE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." TRUE)
 if (${FORCE_COLORED_OUTPUT})
@@ -10,26 +10,27 @@ if (${FORCE_COLORED_OUTPUT})
     endif()
 endif()
 
-find_package(PkgConfig REQUIRED)
-
 if (UNIX AND NOT APPLE)
     set(LINUX TRUE)
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules")
 
+find_package(PkgConfig REQUIRED)
+
 find_package(RacketCGC MODULE REQUIRED)
 
-find_package(Freetype MODULE REQUIRED)
-
 find_package(X11 MODULE REQUIRED)
+
+find_package(Freetype MODULE REQUIRED)
 
 add_definitions(-DXSHM)
 
 add_subdirectory(pad)
 
 add_library(dynapad MODULE 
-  dynapad.cpp)
+  "dynapad.cpp"
+  "tclSchemeNotify.c")
 
 target_include_directories(dynapad
   PRIVATE pad/generic  # todo move to dep
