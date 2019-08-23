@@ -1,14 +1,18 @@
+option (RACKET_DIR "Path to racket [cgc] installation." OFF)
+
 find_path(RacketCGC_INCLUDE_DIR_escheme
     NAMES escheme.h
-    PATHS /usr/local/opt/racket/include
-          /usr/local/include
+    PATHS "${RACKET_DIR}/include"
+          "/usr/local/opt/racket/include"
+          "/usr/local/include"
     PATH_SUFFIXES racket)
 
 list(APPEND CMAKE_FIND_LIBRARY_SUFFIXES ".o")
 find_library(RacketCGC_LIBRARY_mzdyn
     NAMES mzdyn.o
-    PATHS /usr/local/opt/racket/lib
-          /usr/local/lib
+    PATHS "${RACKET_DIR}/lib"
+          "/usr/local/opt/racket/lib"
+          "/usr/local/lib"
     PATH_SUFFIXES racket)
 
 # set(RacketCGC_VERSION ...)
