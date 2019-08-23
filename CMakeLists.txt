@@ -18,15 +18,11 @@ endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules")
 
-find_package(RacketCGC
-  MODULE REQUIRED)
+find_package(RacketCGC MODULE REQUIRED)
 
-find_package(Freetype 
-  MODULE REQUIRED)
+find_package(Freetype MODULE REQUIRED)
 
-find_package(X11 
-  MODULE REQUIRED
-  COMPONENTS Xi)
+find_package(X11 MODULE REQUIRED)
 
 add_definitions(-DXSHM)
 

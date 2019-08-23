@@ -1,15 +1,25 @@
 cmake_minimum_required(VERSION 3.14)
 project(Dynapad VERSION 1.0 LANGUAGES CXX)
 
+if (APPLE)
+  list(APPEND CMAKE_PREFIX_PATH "/usr/local/opt/imagemagick@6")
+endif()
+
 find_package(X11 
   MODULE REQUIRED
-  COMPONENTS Xi)
+  COMPONENTS Xi Xext Xft)
 
-find_package(ImageMagick
+find_package(ImageMagick 6
   MODULE REQUIRED
   COMPONENTS MagickCore)
 
 find_package(Freetype 
+  MODULE REQUIRED)
+
+find_package(FontConfig 
+  MODULE REQUIRED)
+
+find_package(BerkeleyDB
   MODULE REQUIRED)
 
 add_library(pad STATIC
@@ -87,10 +97,16 @@ target_include_directories(pad
   PRIVATE 
     ${X11_INCLUDE_DIR}
     ${ImageMagick_INCLUDE_DIRS}
-    ${FREETYPE_INCLUDE_DIRS})
+    ${FREETYPE_INCLUDE_DIRS}
+    ${FONTCONFIG_INCLUDE_DIR}
+    ${BerkeleyDB_INCLUDE_DIRS})
 
 target_link_libraries(pad
   PRIVATE
     ${X11_LIBRARIES}
+    ${X11_Xft_LIB}
+    ${X11_Xi_LIB}
     ${ImageMagick_LIBRARIES}
-    ${FREETYPE_LIBRARIES})
+    ${FREETYPE_LIBRARIES}
+    ${FONTCONFIG_LIBRARY}
+    ${BerkeleyDB_LIBRARY})
