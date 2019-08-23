@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.14)
 project(Dynapad VERSION 1.0 LANGUAGES CXX C)
 
 option (FORCE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." TRUE)
@@ -24,6 +24,8 @@ find_package(X11 MODULE REQUIRED)
 
 find_package(Freetype MODULE REQUIRED)
 
+find_package(TCL MODULE REQUIRED)
+
 add_definitions(-DXSHM)
 
 add_subdirectory(pad)
@@ -37,7 +39,9 @@ target_include_directories(dynapad
   PRIVATE 
     ${RacketCGC_INCLUDE_DIRS}
     ${X11_INCLUDE_DIR}
-    ${FREETYPE_INCLUDE_DIRS})
+    ${FREETYPE_INCLUDE_DIRS}
+    ${TCL_INCLUDE_PATH}
+    ${TK_INCLUDE_PATH})
 
 target_link_libraries(dynapad
   PRIVATE

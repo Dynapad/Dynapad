@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(Dynapad VERSION 1.0 LANGUAGES CXX)
+project(Pad++ VERSION 1.0 LANGUAGES CXX)
 
 if (APPLE)
   list(APPEND CMAKE_PREFIX_PATH "/usr/local/opt/imagemagick@6")
@@ -13,6 +13,9 @@ find_package(ImageMagick 6
   MODULE REQUIRED
   COMPONENTS MagickCore)
 
+find_package(TCL 
+  MODULE REQUIRED)
+
 find_package(Freetype 
   MODULE REQUIRED)
 
@@ -22,7 +25,7 @@ find_package(Fontconfig
 find_package(BerkeleyDB
   MODULE REQUIRED)
 
-add_library(pad STATIC
+add_library(pad SHARED
   "unix/x-win-shape.cpp"
   "unix/shm.cpp"
   "generic/win.cpp"
@@ -99,6 +102,8 @@ target_include_directories(pad
     ${ImageMagick_INCLUDE_DIRS}
     ${FREETYPE_INCLUDE_DIRS}
     ${Fontconfig_INCLUDE_DIRS}
+    ${TCL_INCLUDE_PATH}
+    ${TK_INCLUDE_PATH}
     ${BerkeleyDB_INCLUDE_DIRS})
 
 target_link_libraries(pad
