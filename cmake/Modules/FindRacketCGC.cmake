@@ -1,37 +1,37 @@
-find_path(RACKETCGC_INCLUDE_DIR_escheme
+find_path(RacketCGC_INCLUDE_DIR_escheme
     NAMES escheme.h
     PATHS /usr/local/opt/racket/include
           /usr/local/include
     PATH_SUFFIXES racket)
 
 list(APPEND CMAKE_FIND_LIBRARY_SUFFIXES ".o")
-find_library(RACKETCGC_LIBRARY_mzdyn
+find_library(RacketCGC_LIBRARY_mzdyn
     NAMES mzdyn.o
     PATHS /usr/local/opt/racket/lib
           /usr/local/lib
     PATH_SUFFIXES racket)
 
-# set(RACKETCGC_VERSION ...)
+# set(RacketCGC_VERSION ...)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(RacketCGC
-  FOUND_VAR RACKETCGC_FOUND
+  FOUND_VAR RacketCGC_FOUND
   REQUIRED_VARS
-    RACKETCGC_INCLUDE_DIR_escheme
-    RACKETCGC_LIBRARY_mzdyn
-  VERSION_VAR RACKETCGC_VERSION
+    RacketCGC_INCLUDE_DIR_escheme
+    RacketCGC_LIBRARY_mzdyn
+  VERSION_VAR RacketCGC_VERSION
 )
 
-if (RACKETCGC_FOUND)
-  set(RACKETCGC_INCLUDE_DIRS ${RACKETCGC_INCLUDE_DIR_escheme})
-  set(RACKETCGC_LIBRARIES ${RACKETCGC_LIBRARY_mzdyn})
-  # set(RACKETCGC_DEFINITIONS ${PC_Foo_CFLAGS_OTHER})
+if (RacketCGC_FOUND)
+  set(RacketCGC_INCLUDE_DIRS ${RacketCGC_INCLUDE_DIR_escheme})
+  set(RacketCGC_LIBRARIES ${RacketCGC_LIBRARY_mzdyn})
+  # set(RacketCGC_DEFINITIONS ${PC_Foo_CFLAGS_OTHER})
 
 
   # These are the symbols that will be undefined at compile-time.
   # MacOS is a lot more picky about these, but we don't want to disable 
   # complaining about missing symbols globally, so we list them here.
-  set(RACKETCGC_DYNAMIC_SYMBOLS
+  set(RacketCGC_DYNAMIC_SYMBOLS
     "scheme_add_global"
     "scheme_append"
     "scheme_byte_string_to_char_string"
@@ -65,7 +65,7 @@ if (RACKETCGC_FOUND)
 endif()
 
 mark_as_advanced(
-  RACKETCGC_INCLUDE_DIR_escheme
+  RacketCGC_INCLUDE_DIR_escheme
   RACKET_LIBRARY_mzdyn
-  RACKETCGC_DYNAMIC_SYMBOLS
+  RacketCGC_DYNAMIC_SYMBOLS
 )
