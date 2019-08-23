@@ -25,7 +25,7 @@ find_package(Fontconfig
 find_package(BerkeleyDB
   MODULE REQUIRED)
 
-add_library(pad SHARED
+add_library(pad STATIC
   "unix/x-win-shape.cpp"
   "unix/shm.cpp"
   "generic/win.cpp"
