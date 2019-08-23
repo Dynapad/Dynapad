@@ -28,6 +28,8 @@ find_package(X11 MODULE REQUIRED)
 
 find_package(Freetype MODULE REQUIRED)
 
+find_package(TCL MODULE REQUIRED)
+
 add_definitions(-DXSHM)
 
 add_subdirectory(pad)
