@@ -95,6 +95,8 @@ add_library(pad STATIC
 
 target_include_directories(pad
   PRIVATE 
+    ${TCL_INCLUDE_PATH}
+    ${TK_INCLUDE_PATH}
     ${X11_INCLUDE_DIR}
     ${ImageMagick_INCLUDE_DIRS}
     ${FREETYPE_INCLUDE_DIRS}

@@ -35,6 +35,8 @@ add_library(dynapad MODULE
 target_include_directories(dynapad
   PRIVATE pad/generic  # todo move to dep
   PRIVATE 
+    ${TCL_INCLUDE_PATH}
+    ${TK_INCLUDE_PATH}
     ${RacketCGC_INCLUDE_DIRS}
     ${X11_INCLUDE_DIR}
     ${FREETYPE_INCLUDE_DIRS})
