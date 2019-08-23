@@ -21,10 +21,8 @@ find_package(X11
 
 add_definitions(-DXSHM)
 
-add_library(dynapad SHARED 
-  dynapad.cpp
-  builtin.cpp 
-  tclSchemeNotify.c)
+add_library(dynapad MODULE 
+  dynapad.cpp)
 
 target_include_directories(dynapad
   PRIVATE pad/generic  # todo move to dep
@@ -38,4 +36,15 @@ target_link_libraries(dynapad
   PRIVATE
     ${RACKETCGC_LIBRARY_mzdyn}
     ${X11_LIBRARIES}
+)
+
+set(DYNAPAD_LINK_OPTIONS)
+
+foreach(SYMBOL IN ITEMS ${RACKETCGC_DYNAMIC_SYMBOLS})
+  list(APPEND DYNAPAD_LINK_OPTIONS "LINKER:-U,_${SYMBOL}")
+endforeach()
+
+target_link_options(dynapad
+  PRIVATE
+    ${DYNAPAD_LINK_OPTIONS}
 )
