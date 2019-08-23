@@ -96,6 +96,10 @@ add_library(pad STATIC
   "generic/ZFont.cpp"
   "generic/Buffer.cpp")
 
+set_target_properties(pad
+  PROPERTIES
+    POSITION_INDEPENDENT_CODE True)
+
 target_include_directories(pad
   PRIVATE 
     ${X11_INCLUDE_DIR}
