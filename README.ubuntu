@@ -3,6 +3,17 @@
 I keep all my repos in =~/git/= so adjust paths accordingly if you clone elsewhere
 
 Run the following as root.
+From https://apt.kitware.com/. Needed for a recent version of =cmake=.
+WARNING this adds a new ppa.
+#+BEGIN_SRC bash
+apt update
+apt install apt-transport-https ca-certificates gnupg software-properties-common wget
+wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | apt-key add -  # EVIL
+apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
+apt update
+#+END_SRC
+
+Run the following as root.
 #+BEGIN_SRC bash
 apt install \
 build-essential \
@@ -15,13 +26,12 @@ libxft-dev \
 libxi-dev \
 tk-dev \
 libconfig-dev \
-automake \
-libtool
+libfontconfig1-dev \
+cmake \ 
+ninja-build
 #+END_SRC
 
-NOTE if pkgconfig is not populated you will get _MANY_ silent errors
-and the configure scripts do not do the right thing when checking.
-On ubuntu =/usr/lib/x86_64-linux-gnu/pkgconfig= seems to be the right place?
+This works on 19.04, but for reasons beyond my understanding fails to find tk.h on 18.10.
 
 #+BEGIN_SRC bash
 pushd ~/git
@@ -34,16 +44,15 @@ popd
 
 ~/git/racket/racket/bin/racocgc pkg install compatibility-lib htdp-lib xrepl
 
-git clone git@github.com:DylanLukes/Dynapad.git
-pushd Dynapad
-# Apply changes from the PR if it has not gone through yet
-# https://github.com/DylanLukes/Dynapad/pull/5/files
-autoreconf --warnings=all --verbose --install &&
-# NOTE CPPFLAGS is only required on ubuntu where tk.h is installed in a non-standard location
-./configure \
-    CPPFLAGS="-I/usr/include/tk/ -I/usr/include/ImageMagick-6/" \  # I think these are actually pkgconfig issues!??
-    --with-plt=${HOME}/git/racket/racket &&
-make all -j 8 &&
+#git clone git@github.com:DylanLukes/Dynapad.git dynapad
+git clone git@github.com:tgbugs/dynapad.git
+
+pushd dynapad
+git checkout cmake-tcl-tk  # temporary until changes are merged
+pushd build
+cmake .. -G Ninja -DRACKET_DIR=${HOME}/git/racket/racket
+ninja
+popd
 
 ~/git/racket/racket/bin/racketcgc
 #+END_SRC
