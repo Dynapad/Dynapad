@@ -51,79 +51,71 @@ long random();
 #endif
 
 
-
-
 //
 // System independent way of getting the current
 // time in seconds and microseconds.
 //
 void
-Pad_Time::Update(void)
-{
+Pad_Time::Update(void) {
 
     gettimeofday(&_time, NULL);
 
 }
 
 long
-Pad_Time::Get_sec(void)
-{
-    return(_time.tv_sec);
+Pad_Time::Get_sec(void) {
+    return (_time.tv_sec);
 }
 
 long
-Pad_Time::Get_usec(void)
-{
-    return(_time.tv_usec);
+Pad_Time::Get_usec(void) {
+    return (_time.tv_usec);
 }
 
 //
 // Convert a string to a Pad_Bool
 //
 Pad_Bool
-Pad_Atob(char *string)
-{
+Pad_Atob(char *string) {
     int ival;
     Pad_Bool rc;
 
     ival = atoi(string);
     if (ival == 0) {
-	rc = FALSE;
+        rc = FALSE;
     } else {
-	rc = TRUE;
+        rc = TRUE;
     }
 
-    return(rc);
+    return (rc);
 }
 
 //
 // Return a random integer between <min> and <max>, inclusively
 //
 int
-Pad_Random(int min, int max)
-{
+Pad_Random(int min, int max) {
     int r;
 
     r = min + (random() % (max - min + 1));
 
-    return(r);
+    return (r);
 }
 
 //
 // Map the input linear lerp (a linear interpolation from (0-1) to
 // a slow-in, slow-out lerp.
 //
-float 
-Pad_Siso_lerp(float t)
-{
+float
+Pad_Siso_lerp(float t) {
     float siso, t1, t2, l;
 
     t1 = t * t;
     t2 = 1 - (1 - t) * (1 - t);
     l = LERP(t, t1, t2);
     siso = LERP(l, t1, t2);
-    
-    return(siso);
+
+    return (siso);
 }
 
 //
@@ -136,10 +128,8 @@ void
 Pad_Debug_output(Pad_Win *win, char *msg) {
 
     if (msg) fprintf(stderr, "event %s\n", msg);
-    if (win->debugOut) {
-	    ; //???
-    } else {
-	    ; //???
+    if (win->debugOut) { ; //???
+    } else { ; //???
     }
 }
 
@@ -156,34 +146,32 @@ Pad_Debug_output(Pad_Win *win, char *msg) {
 //
 void
 Pad_Rotate(Pad_PList &coordPlist,
-	   float theta,
-	   Pad_Point &center) 
-{
+           float theta,
+           Pad_Point &center) {
 
-  Pad_Point *tmpPt;
-  int pt, lenPlist;
-  double thetaRad;
-  float oldTmpx,oldTmpy;
+    Pad_Point *tmpPt;
+    int pt, lenPlist;
+    double thetaRad;
+    float oldTmpx, oldTmpy;
 
-  thetaRad = -DEG2RAD(theta);
-  lenPlist = coordPlist.Length();
+    thetaRad = -DEG2RAD(theta);
+    lenPlist = coordPlist.Length();
 
-  for (pt=0;pt<lenPlist;pt++)
-    {
+    for (pt = 0; pt < lenPlist; pt++) {
 
-      tmpPt = coordPlist.Nth(pt);
-      oldTmpx = tmpPt->x;
-      oldTmpy = tmpPt->y;
+        tmpPt = coordPlist.Nth(pt);
+        oldTmpx = tmpPt->x;
+        oldTmpy = tmpPt->y;
 
-      tmpPt->x =
-	center.x +
-	((oldTmpx)-center.x)*cos(thetaRad) +
-	((oldTmpy)-center.y)*sin(thetaRad);
+        tmpPt->x =
+            center.x +
+            ((oldTmpx) - center.x) * cos(thetaRad) +
+            ((oldTmpy) - center.y) * sin(thetaRad);
 
-      tmpPt->y =
-	center.y +
-	((oldTmpy)-center.y)*cos(thetaRad) -
-	((oldTmpx)-center.x)*sin(thetaRad);
+        tmpPt->y =
+            center.y +
+            ((oldTmpy) - center.y) * cos(thetaRad) -
+            ((oldTmpx) - center.x) * sin(thetaRad);
     }
 }
 
@@ -192,30 +180,29 @@ Pad_Rotate(Pad_PList &coordPlist,
 // with the specified line width
 // 
 float
-Pad_Miter_length(float lineWidth, float x1, float y1, float x2, float y2, float x3, float y3)
-{
+Pad_Miter_length(float lineWidth, float x1, float y1, float x2, float y2, float x3, float y3) {
     int cdeg;
     double c;
     double a2, b2, c2;
 #define S 0.00001
 
-				// Use cosine rule to convert lengths a,b,c to angle ABC
-    a2 = (double)(POW2(x3 - x2) + POW2(y3 - y2));
-    b2 = (double)(POW2(x2 - x1) + POW2(y2 - y1));
-    c2 = (double)(POW2(x3 - x1) + POW2(y3 - y1));
+    // Use cosine rule to convert lengths a,b,c to angle ABC
+    a2 = (double) (POW2(x3 - x2) + POW2(y3 - y2));
+    b2 = (double) (POW2(x2 - x1) + POW2(y2 - y1));
+    c2 = (double) (POW2(x3 - x1) + POW2(y3 - y1));
     c = acos((a2 + b2 - c2) / (2.0 * sqrt(a2 + S) * sqrt(b2 + S)));
-	
-				// Coerce angle C to degrees to test for angles < 11
-    cdeg = (int)((c * 360.0) / PITIMES2);
-	
-				// Miter length is line width * (1 / (sin(C / 2))
+
+    // Coerce angle C to degrees to test for angles < 11
+    cdeg = (int) ((c * 360.0) / PITIMES2);
+
+    // Miter length is line width * (1 / (sin(C / 2))
     c = sin(c / 2.0);
-	
-				// Cut off a bit early to be careful
+
+    // Cut off a bit early to be careful
     if ((cdeg % 360 <= 9) || (cdeg % 360 > 85) || (c == 0.0)) {
-	return(0.0);
+        return (0.0);
     } else {
-	return(lineWidth * (0.5 / c));
+        return (lineWidth * (0.5 / c));
     }
 }
 
@@ -226,8 +213,7 @@ Pad_Miter_length(float lineWidth, float x1, float y1, float x2, float y2, float 
 // or FALSE otherwise.
 //
 Pad_Bool
-Pad_Expand_pathname(char *name, Pad_String &fullName)
-{
+Pad_Expand_pathname(char *name, Pad_String &fullName) {
     int i, j;
     int index;
     Pad_String buf;
@@ -236,61 +222,61 @@ Pad_Expand_pathname(char *name, Pad_String &fullName)
     // Take care of ~-expansion ???
 
     fullName = name;
-	
-				// Expand relative pathname
+
+    // Expand relative pathname
     if (fullName.Get_char(0) != '/' &&
-		( (fullName.Get_char(1) != ':') || (fullName.Get_char(2) != '/')) ) {
-	//extern int errno; 
-	char cwd[10240]; // yes, someday it will be too small - genghis ron
-	if (!getcwd((char *)&cwd, sizeof(cwd))) {
-	    fprintf(stderr, "Pad_Expand_pathname getcwd failed %s\n",
-		strerror(errno));
-	    return FALSE;
-	}
-	buf = cwd;
-	buf += "/";
-	buf += fullName;
-	fullName = buf;
+        ((fullName.Get_char(1) != ':') || (fullName.Get_char(2) != '/'))) {
+        //extern int errno;
+        char cwd[10240]; // yes, someday it will be too small - genghis ron
+        if (!getcwd((char *) &cwd, sizeof(cwd))) {
+            fprintf(stderr, "Pad_Expand_pathname getcwd failed %s\n",
+                    strerror(errno));
+            return FALSE;
+        }
+        buf = cwd;
+        buf += "/";
+        buf += fullName;
+        fullName = buf;
     }
 
-				// Take care of '.'s and '..'s
+    // Take care of '.'s and '..'s
     index = 0;
     do {
-				// Find delimiting '/'s
-	i = fullName.Strchr('/', index);
-	j = fullName.Strchr('/', i + 1);
-	if (i == -1) {
-	    break;
-	}
-	if (j == -1) {
-	    j = i + 1;
-	}
-	if ((j == i+2) && (fullName.Get_char(i+1) == '.')) {
-				// '.' found
-	    buf = fullName.Get(j);
-	    fullName.Insert(&buf, i);
-	    index = i;
-	} else if ((j == i+3) && 
-		   (fullName.Get_char(i+1) == '.') &&
-		   (fullName.Get_char(i+2) == '.')) {
-				// '..' found
-	    
-	    buf = fullName.Get(j);
-	    fullName.Insert('\0', i);
-	    i = fullName.Strrchr('/');
-	    if (i == -1) {
-		Pad_errorString = "Invalid filename, there are too many '..'s";
-		return(FALSE);
-	    }
-	    fullName.Insert('\0', i);
-	    fullName.Append(buf);
-	    index = i;
-	} else {
-	    index = j;
-	}
-    } while(1);
+        // Find delimiting '/'s
+        i = fullName.Strchr('/', index);
+        j = fullName.Strchr('/', i + 1);
+        if (i == -1) {
+            break;
+        }
+        if (j == -1) {
+            j = i + 1;
+        }
+        if ((j == i + 2) && (fullName.Get_char(i + 1) == '.')) {
+            // '.' found
+            buf = fullName.Get(j);
+            fullName.Insert(&buf, i);
+            index = i;
+        } else if ((j == i + 3) &&
+                   (fullName.Get_char(i + 1) == '.') &&
+                   (fullName.Get_char(i + 2) == '.')) {
+            // '..' found
 
-    return(TRUE);
+            buf = fullName.Get(j);
+            fullName.Insert('\0', i);
+            i = fullName.Strrchr('/');
+            if (i == -1) {
+                Pad_errorString = "Invalid filename, there are too many '..'s";
+                return (FALSE);
+            }
+            fullName.Insert('\0', i);
+            fullName.Append(buf);
+            index = i;
+        } else {
+            index = j;
+        }
+    } while (1);
+
+    return (TRUE);
 }
 
 //
@@ -299,51 +285,50 @@ Pad_Expand_pathname(char *name, Pad_String &fullName)
 // or FALSE otherwise.
 //
 Pad_Bool
-Pad_Get_relative_pathname(char *dir, char *newName, Pad_String &relativeName)
-{
+Pad_Get_relative_pathname(char *dir, char *newName, Pad_String &relativeName) {
     int i, j, k;
     int common;
     Pad_Bool rc;
     Pad_String name;
     Pad_String currentDir;
 
-				// Compare filename with directory, one
-				// dir at a time, finding which shared
-				// dirs there are.
+    // Compare filename with directory, one
+    // dir at a time, finding which shared
+    // dirs there are.
     currentDir = dir;
     rc = Pad_Expand_pathname(newName, name);  // Turn into a standard absolute pathname
     if (!rc) {
-	return(FALSE);
+        return (FALSE);
     }
     common = 0;
     k = 0;
     do {
-	i = currentDir.Strchr('/', k);
-	j = name.Strchr('/', k);
-	if ((i == j) && (i != -1) && (!currentDir.Strncmp(name, i))) {
-	    common = i;
-	    k = i + 1;
-	} else {
-	    break;
-	}
-    } while(1);
+        i = currentDir.Strchr('/', k);
+        j = name.Strchr('/', k);
+        if ((i == j) && (i != -1) && (!currentDir.Strncmp(name, i))) {
+            common = i;
+            k = i + 1;
+        } else {
+            break;
+        }
+    } while (1);
 
-				// Now, build result, backing up as many
-				// directories as are not shared
+    // Now, build result, backing up as many
+    // directories as are not shared
     k = common + 1;
     relativeName = "";
     do {
-	i = currentDir.Strchr('/', k);
-	if (i == -1) {
-	    break;
-	} else {
-	    relativeName += "../";
-	    k = i + 1;
-	}
+        i = currentDir.Strchr('/', k);
+        if (i == -1) {
+            break;
+        } else {
+            relativeName += "../";
+            k = i + 1;
+        }
     } while (1);
     relativeName += name.Get(common + 1);
 
-    return(TRUE);
+    return (TRUE);
 }
 
 //
@@ -359,8 +344,7 @@ static Pad_String errorStr;
 //   (of zero seconds) expires.  Thus, the error occurs at the top
 //   level.
 //
-void Pad_Background_error(const char *err)
-{
+void Pad_Background_error(const char *err) {
     fprintf(stderr, "Pad_Background_error: %s\n", err);
 }
 
@@ -368,8 +352,7 @@ void Pad_Background_error(const char *err)
 // Swap the two specified numbers
 //
 void
-Pad_Swap(float &a, float &b)
-{
+Pad_Swap(float &a, float &b) {
     float temp;
 
     temp = a;
@@ -378,138 +361,142 @@ Pad_Swap(float &a, float &b)
 }
 
 int
-Pad_GetAnchor(char *string, Pad_Anchor *anchorPtr)
-{
+Pad_GetAnchor(char *string, Pad_Anchor *anchorPtr) {
     switch (string[0]) {
-	case 'n':
-	    if (string[1] == 0) {
-		*anchorPtr = PAD_ANCHOR_N;
-		return PAD_OK;
-	    } else if ((string[1] == 'e') && (string[2] == 0)) {
-		*anchorPtr = PAD_ANCHOR_NE;
-		return PAD_OK;
-	    } else if ((string[1] == 'w') && (string[2] == 0)) {
-		*anchorPtr = PAD_ANCHOR_NW;
-		return PAD_OK;
-	    }
-	    goto error;
-	case 's':
-	    if (string[1] == 0) {
-		*anchorPtr = PAD_ANCHOR_S;
-		return PAD_OK;
-	    } else if ((string[1] == 'e') && (string[2] == 0)) {
-		*anchorPtr = PAD_ANCHOR_SE;
-		return PAD_OK;
-	    } else if ((string[1] == 'w') && (string[2] == 0)) {
-		*anchorPtr = PAD_ANCHOR_SW;
-		return PAD_OK;
-	    } else {
-		goto error;
-	    }
-	case 'e':
-	    if (string[1] == 0) {
-		*anchorPtr = PAD_ANCHOR_E;
-		return PAD_OK;
-	    }
-	    goto error;
-	case 'w':
-	    if (string[1] == 0) {
-		*anchorPtr = PAD_ANCHOR_W;
-		return PAD_OK;
-	    }
-	    goto error;
-	case 'c':
-	    if (strncmp(string, "center", strlen(string)) == 0) {
-		*anchorPtr = PAD_ANCHOR_CENTER;
-		return PAD_OK;
-	    }
-	    goto error;
+        case 'n':
+            if (string[1] == 0) {
+                *anchorPtr = PAD_ANCHOR_N;
+                return PAD_OK;
+            } else if ((string[1] == 'e') && (string[2] == 0)) {
+                *anchorPtr = PAD_ANCHOR_NE;
+                return PAD_OK;
+            } else if ((string[1] == 'w') && (string[2] == 0)) {
+                *anchorPtr = PAD_ANCHOR_NW;
+                return PAD_OK;
+            }
+            goto error;
+        case 's':
+            if (string[1] == 0) {
+                *anchorPtr = PAD_ANCHOR_S;
+                return PAD_OK;
+            } else if ((string[1] == 'e') && (string[2] == 0)) {
+                *anchorPtr = PAD_ANCHOR_SE;
+                return PAD_OK;
+            } else if ((string[1] == 'w') && (string[2] == 0)) {
+                *anchorPtr = PAD_ANCHOR_SW;
+                return PAD_OK;
+            } else {
+                goto error;
+            }
+        case 'e':
+            if (string[1] == 0) {
+                *anchorPtr = PAD_ANCHOR_E;
+                return PAD_OK;
+            }
+            goto error;
+        case 'w':
+            if (string[1] == 0) {
+                *anchorPtr = PAD_ANCHOR_W;
+                return PAD_OK;
+            }
+            goto error;
+        case 'c':
+            if (strncmp(string, "center", strlen(string)) == 0) {
+                *anchorPtr = PAD_ANCHOR_CENTER;
+                return PAD_OK;
+            }
+            goto error;
     }
 
     error:
-        /*
-        "bad anchor position \"", string,
-        "\": must be n, ne, e, se, s, sw, w, nw, or center",
-        */
+    /*
+    "bad anchor position \"", string,
+    "\": must be n, ne, e, se, s, sw, w, nw, or center",
+    */
     return PAD_ERROR;
 }
 
 const char *
-Pad_NameOfAnchor(Pad_Anchor anchor)
-{
+Pad_NameOfAnchor(Pad_Anchor anchor) {
     switch (anchor) {
-	case PAD_ANCHOR_N: return "n";
-	case PAD_ANCHOR_NE: return "ne";
-	case PAD_ANCHOR_E: return "e";
-	case PAD_ANCHOR_SE: return "se";
-	case PAD_ANCHOR_S: return "s";
-	case PAD_ANCHOR_SW: return "sw";
-	case PAD_ANCHOR_W: return "w";
-	case PAD_ANCHOR_NW: return "nw";
-	case PAD_ANCHOR_CENTER: return "center";
+        case PAD_ANCHOR_N:
+            return "n";
+        case PAD_ANCHOR_NE:
+            return "ne";
+        case PAD_ANCHOR_E:
+            return "e";
+        case PAD_ANCHOR_SE:
+            return "se";
+        case PAD_ANCHOR_S:
+            return "s";
+        case PAD_ANCHOR_SW:
+            return "sw";
+        case PAD_ANCHOR_W:
+            return "w";
+        case PAD_ANCHOR_NW:
+            return "nw";
+        case PAD_ANCHOR_CENTER:
+            return "center";
     }
     return "unknown anchor position";
 }
 
 char *
-Pad_GetUid(const char *string)
-{
-	static int init;
-	static Pad_HashTable *uidTable;
-	char *value;
+Pad_GetUid(const char *string) {
+    static int init;
+    static Pad_HashTable *uidTable;
+    char *value;
 
-	if (!init) {
-		uidTable = new Pad_HashTable(PAD_STRING_TABLE);
-		init++;
-	}
-	if (value = (char *)uidTable->Get((void *)string))
-		return value;
-	value = strdup(string);
-	uidTable->Set(value, value);
+    if (!init) {
+        uidTable = new Pad_HashTable(PAD_STRING_TABLE);
+        init++;
+    }
+    if (value = (char *) uidTable->Get((void *) string))
+        return value;
+    value = strdup(string);
+    uidTable->Set(value, value);
 
-	return value;
+    return value;
 }
 
 //
 // Case insensitive version of strstr
 //
 
-const char *casestrstr(const char *s1, const char *s2) 
-{
+const char *casestrstr(const char *s1, const char *s2) {
     const char *p1, *p2;
 
     if (*s2 == 0) {
-	return((char *)0);
+        return ((char *) 0);
     }
     while (*s1) {
-	p1 = s1;
-	p2 = s2;
-	do {
-	    if (*p2 == 0) {
-		return(s1);
-	    }
-	    if (tolower(*p1) != tolower(*p2)) {
-		break;
-	    }
-	    p1++;
-	    p2++;
-	} while (1);
-	s1++;
+        p1 = s1;
+        p2 = s2;
+        do {
+            if (*p2 == 0) {
+                return (s1);
+            }
+            if (tolower(*p1) != tolower(*p2)) {
+                break;
+            }
+            p1++;
+            p2++;
+        } while (1);
+        s1++;
     }
 
-    return((char *)0);
+    return ((char *) 0);
 }
 
 char *casestrstr(char *s1, char *s2) {
-	return casestrstr(s1, s2);
+    return casestrstr(s1, s2);
 }
 
 #include <sys/types.h>
 #include <regex.h>
 
 int
-Pad_StringMatch(char *string, char *pattern)
-{
+Pad_StringMatch(const char *string, const char *pattern) {
     int errcode;
     int errbuf_size = 1024;
     char errbuf[errbuf_size];
@@ -520,15 +507,15 @@ Pad_StringMatch(char *string, char *pattern)
     sprintf(patbuf, "^%s$", pattern);
 
     if ((errcode = regcomp(&preg, patbuf, 0)) != 0) {
-	regerror(errcode, &preg, errbuf, errbuf_size);
+        regerror(errcode, &preg, errbuf, errbuf_size);
         fprintf(stderr, "regcomp(%s) failed %s\n", patbuf, errbuf);
         return 1;
     }
 
     if ((errcode = regexec(&preg, string, 0, 0, 0)) != 0) {
-	regerror(errcode, &preg, errbuf, errbuf_size);
+        regerror(errcode, &preg, errbuf, errbuf_size);
         //fprintf(stderr, "regexec(%s) failed %s\n", patbuf, errbuf);
-	match = 1;
+        match = 1;
     }
 
     regfree(&preg);
@@ -537,49 +524,46 @@ Pad_StringMatch(char *string, char *pattern)
 }
 
 Pad_RegExp
-Pad_RegExpCompile(char *pattern)
-{
+Pad_RegExpCompile(char *pattern) {
     regex_t *regexp;
     int errcode;
     int errbuf_size = 1024;
     char errbuf[errbuf_size];
 
-    if ((regexp = (regex_t *)calloc(sizeof(regex_t), 1)) == NULL) {
+    if ((regexp = (regex_t *) calloc(sizeof(regex_t), 1)) == NULL) {
         fprintf(stderr, "Pad_RegExpCompile: malloc failed\n");
-	return NULL;
+        return NULL;
     }
     if ((errcode = regcomp(regexp, pattern, 0)) != 0) {
-	regerror(errcode, regexp, errbuf, errbuf_size);
+        regerror(errcode, regexp, errbuf, errbuf_size);
         fprintf(stderr, "Pad_RegExpCompile: regcomp(%s) failed %s\n",
-	  pattern, errbuf);
+                pattern, errbuf);
         return NULL;
     }
 
-    return (Pad_RegExp)regexp;
+    return (Pad_RegExp) regexp;
 }
 
 int
-Pad_RegExpExec(Pad_RegExp regexp, char *string)
-{
+Pad_RegExpExec(Pad_RegExp regexp, const char *string) {
     int errcode;
     int errbuf_size = 1024;
     char errbuf[errbuf_size];
     int match = 0;
 
     if ((errcode = regexec(regexp, string, 0, 0, 0)) != 0) {
-	regerror(errcode, regexp, errbuf, errbuf_size);
+        regerror(errcode, regexp, errbuf, errbuf_size);
         fprintf(stderr, "Pad_RegExpExec: regexec(%s) failed %s\n",
-	  string, errbuf);
-	match = 1;
+                string, errbuf);
+        match = 1;
     }
     return match;
 }
 
 void
-Pad_RegExpFree(Pad_RegExp regexp)
-{
+Pad_RegExpFree(Pad_RegExp regexp) {
     if (regexp != NULL) {
         regfree(regexp);
-	free(regexp);
+        free(regexp);
     }
 }

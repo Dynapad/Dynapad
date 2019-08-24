@@ -2050,7 +2050,7 @@ Pad_XRenderer::Alloc_image(char *name, Pad_Bool *newflag)
     Pad_Expand_pathname(name, expandedName);
     nameUid = Pad_GetUid(expandedName.Get());
 
-    image = (Pad_ImageData *)Pad_imageNameTable.Get(nameUid);
+    image = (Pad_ImageData *)Pad_imageNameTable.Get((void *) nameUid);
     if (image) {
         *newflag = FALSE;
 	image->count++;

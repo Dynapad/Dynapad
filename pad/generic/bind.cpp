@@ -62,9 +62,13 @@ software in general.
 
 #include <ctype.h>
 #include <iostream>
+
 using namespace std;
+
 #include <stdlib.h>
-#  include <X11/keysym.h>
+
+#include <X11/keysym.h>
+#include <X11/XKBlib.h>
 
 #include <X11/extensions/XInput.h>
 
@@ -74,13 +78,13 @@ using namespace std;
  */
 
 typedef struct PatternTableKey {
-    ClientData object;		/* Identifies object (or class of objects)
+    ClientData object;        /* Identifies object (or class of objects)
 				 * relative to which event occurred.  For
 				 * example, in the widget binding table for
 				 * an application this is the path name of
 				 * a widget, or a widget class, or "all". */
-    int type;			/* Type of event (from X). */
-    int detail;			/* Additional information, such as
+    int type;            /* Type of event (from X). */
+    int detail;            /* Additional information, such as
 				 * keysym or button, or 0 if nothing
 				 * additional.*/
 } PatternTableKey;
@@ -92,11 +96,11 @@ typedef struct PatternTableKey {
  */
 
 typedef struct Pattern {
-    int eventType;		/* Type of X event, e.g. ButtonPress. */
-    int needMods;		/* Mask of modifiers that must be
+    int eventType;        /* Type of X event, e.g. ButtonPress. */
+    int needMods;        /* Mask of modifiers that must be
 				 * present (0 means no modifiers are
 				 * required). */
-    int detail;			/* Additional information that must
+    int detail;            /* Additional information that must
 				 * match event.  Normally this is 0,
 				 * meaning no additional information
 				 * must match.  For KeyPress and
@@ -106,7 +110,7 @@ typedef struct Pattern {
 				 * keystrokes).  For button events,
 				 * specifies a particular button (0
 				 * means any buttons are OK). */
-    int mode;			/* Mode that must match.
+    int mode;            /* Mode that must match.
 				 * 0 means that any mode will do. */
 } Pattern;
 
@@ -118,28 +122,28 @@ typedef struct Pattern {
  */
 
 typedef struct PatSeq {
-    int numPats;		/* Number of patterns in sequence
+    int numPats;        /* Number of patterns in sequence
 				 * (usually 1). */
-    Pad_Callback *command;	/* Command to invoke when this
+    Pad_Callback *command;    /* Command to invoke when this
 				 * pattern sequence matches (malloc-ed). */
-    int flags;			/* Miscellaneous flag values;  see
+    int flags;            /* Miscellaneous flag values;  see
 				 * below for definitions. */
     struct PatSeq *nextSeqPtr;
-				/* Next in list of all pattern
-				 * sequences that have the same
-				 * initial pattern.  NULL means
-				 * end of list. */
-    PatternTableKey key;	/* Hash table key, needed to find the
+    /* Next in list of all pattern
+     * sequences that have the same
+     * initial pattern.  NULL means
+     * end of list. */
+    PatternTableKey key;    /* Hash table key, needed to find the
 				 * head of the list of which nextSeqPtr
 				 * forms a part. */
-    ClientData object;		/* Identifies object with which event is
+    ClientData object;        /* Identifies object with which event is
 				 * associated (e.g. window). */
     struct PatSeq *nextObjPtr;
-				/* Next in list of all pattern
-				 * sequences for the same object
-				 * (NULL for end of list).  Needed to
-				 * implement Tk_DeleteAllBindings. */
-    Pattern pats[1];		/* Array of "numPats" patterns.  Only
+    /* Next in list of all pattern
+     * sequences for the same object
+     * (NULL for end of list).  Needed to
+     * implement Tk_DeleteAllBindings. */
+    Pattern pats[1];        /* Array of "numPats" patterns.  Only
 				 * one element is declared here but
 				 * in actuality enough space will be
 				 * allocated for "numPats" patterns.
@@ -158,15 +162,15 @@ typedef struct PatSeq {
  *			button presses.
  */
 
-#define PAT_NEARBY		1
+#define PAT_NEARBY        1
 
 /*
  * Constants that define how close together two events must be
  * in milliseconds or pixels to meet the PAT_NEARBY constraint:
  */
 
-#define NEARBY_PIXELS		5
-#define NEARBY_MS		500
+#define NEARBY_PIXELS        5
+#define NEARBY_MS        500
 
 static int initialized = 0;
 
@@ -179,8 +183,8 @@ static int initialized = 0;
 
 typedef struct {
     const char *name;   /* Name of modifier. */
-    int mask;			/* Button/modifier mask value, such as Button1Mask. */
-    int flags;			/* Various flags;  see below for definitions. */
+    int mask;            /* Button/modifier mask value, such as Button1Mask. */
+    int flags;            /* Various flags;  see below for definitions. */
 } ModInfo;
 
 /*
@@ -193,8 +197,8 @@ typedef struct {
  * USER -               Non-zero means there is a user-defined modifier
  */
 
-#define DOUBLE		1
-#define TRIPLE		2
+#define DOUBLE        1
+#define TRIPLE        2
 #define USER            4
 static int max_mode = USER;
 
@@ -220,41 +224,41 @@ static int max_mode = USER;
 // are integers which don't use the bottom two bits.
 //
 
-#define META_MASK	(AnyModifier<<1)
-#define ALT_MASK	(AnyModifier<<2)
-#define USER_MASK	(AnyModifier<<3)
+#define META_MASK    (AnyModifier<<1)
+#define ALT_MASK    (AnyModifier<<2)
+#define USER_MASK    (AnyModifier<<3)
 
 static ModInfo modArray[] = {
-    {"Control",		ControlMask,	0},
-    {"Shift",		ShiftMask,	0},
-    {"Lock",		LockMask,	0},
-    {"Meta",		META_MASK,	0},
-    {"M",		META_MASK,	0},
-    {"Alt",		ALT_MASK,	0},
-    {"B1",		Button1Mask,	0},
-    {"Button1",		Button1Mask,	0},
-    {"B2",		Button2Mask,	0},
-    {"Button2",		Button2Mask,	0},
-    {"B3",		Button3Mask,	0},
-    {"Button3",		Button3Mask,	0},
-    {"B4",		Button4Mask,	0},
-    {"Button4",		Button4Mask,	0},
-    {"B5",		Button5Mask,	0},
-    {"Button5",		Button5Mask,	0},
-    {"Mod1",		Mod1Mask,	0},
-    {"M1",		Mod1Mask,	0},
-    {"Mod2",		Mod2Mask,	0},
-    {"M2",		Mod2Mask,	0},
-    {"Mod3",		Mod3Mask,	0},
-    {"M3",		Mod3Mask,	0},
-    {"Mod4",		Mod4Mask,	0},
-    {"M4",		Mod4Mask,	0},
-    {"Mod5",		Mod5Mask,	0},
-    {"M5",		Mod5Mask,	0},
-    {"Double",		0,		DOUBLE},
-    {"Triple",		0,		TRIPLE},
-    {"Any",		0,		0},	/* Ignored: historical relic. */
-    {NULL,		0,		0}
+    {"Control", ControlMask, 0},
+    {"Shift",   ShiftMask,   0},
+    {"Lock",    LockMask,    0},
+    {"Meta",    META_MASK,   0},
+    {"M",       META_MASK,   0},
+    {"Alt",     ALT_MASK,    0},
+    {"B1",      Button1Mask, 0},
+    {"Button1", Button1Mask, 0},
+    {"B2",      Button2Mask, 0},
+    {"Button2", Button2Mask, 0},
+    {"B3",      Button3Mask, 0},
+    {"Button3", Button3Mask, 0},
+    {"B4",      Button4Mask, 0},
+    {"Button4", Button4Mask, 0},
+    {"B5",      Button5Mask, 0},
+    {"Button5", Button5Mask, 0},
+    {"Mod1",    Mod1Mask,    0},
+    {"M1",      Mod1Mask,    0},
+    {"Mod2",    Mod2Mask,    0},
+    {"M2",      Mod2Mask,    0},
+    {"Mod3",    Mod3Mask,    0},
+    {"M3",      Mod3Mask,    0},
+    {"Mod4",    Mod4Mask,    0},
+    {"M4",      Mod4Mask,    0},
+    {"Mod5",    Mod5Mask,    0},
+    {"M5",      Mod5Mask,    0},
+    {"Double", 0, DOUBLE},
+    {"Triple", 0, TRIPLE},
+    {"Any",    0,            0},    /* Ignored: historical relic. */
+    {NULL,     0,            0}
 };
 static Pad_HashTable *modTable;
 
@@ -267,8 +271,8 @@ static Pad_HashTable *modTable;
 
 typedef struct {
     const char *name;   /* Name of event. */
-    int type;			/* Event type for X, such as ButtonPress. */
-    int eventMask;		/* Mask bits (for XSelectInput) for this event type. */
+    int type;            /* Event type for X, such as ButtonPress. */
+    int eventMask;        /* Mask bits (for XSelectInput) for this event type. */
 } EventInfo;
 
 /*
@@ -280,41 +284,41 @@ typedef struct {
  */
 
 static EventInfo eventArray[] = {
-    {"MotionType",	  MotionType,  		1},
-    {"ButtonPressType",	  ButtonPressType,  	1},
-    {"ButtonReleaseType", ButtonReleaseType,  	1},
-    {"ProximityInType",   ProximityInType,  	1},
-    {"ProximityOutType",  ProximityOutType,  	1},
-    {"Motion",		MotionNotify,  ButtonPressMask|PointerMotionMask},
-    {"Button",		ButtonPress,		ButtonPressMask},
-    {"ButtonPress",	ButtonPress,		ButtonPressMask},
-    {"ButtonRelease",	ButtonRelease, ButtonPressMask|ButtonReleaseMask},
-    {"Colormap",	ColormapNotify,		ColormapChangeMask},
-    {"Enter",		EnterNotify,		EnterWindowMask},
-    {"Leave",		LeaveNotify,		LeaveWindowMask},
-    {"Expose",		Expose,			ExposureMask},
-    {"FocusIn",		FocusIn,		FocusChangeMask},
-    {"FocusOut",	FocusOut,		FocusChangeMask},
-    {"Key",		KeyPress,		KeyPressMask},
-    {"KeyPress",	KeyPress,		KeyPressMask},
-    {"KeyRelease",	KeyRelease,    KeyPressMask|KeyReleaseMask},
-    {"Property",	PropertyNotify,		PropertyChangeMask},
-    {"Circulate",	CirculateNotify,	StructureNotifyMask},
-    {"Configure",	ConfigureNotify,	StructureNotifyMask},
-    {"Destroy",		DestroyNotify,		StructureNotifyMask},
-    {"Gravity",		GravityNotify,		StructureNotifyMask},
-    {"Map",		MapNotify,		StructureNotifyMask},
-    {"Reparent",	ReparentNotify,		StructureNotifyMask},
-    {"Unmap",		UnmapNotify,		StructureNotifyMask},
-    {"Visibility",	VisibilityNotify,	VisibilityChangeMask},
-    {"Activate",	ActivateNotify,		ActivateMask},
-    {"Deactivate",	DeactivateNotify,	ActivateMask},
-    {"PortalIntercept", Pad_PortalInterceptNotify, Pad_PortalInterceptMask},
-    {"Create",          Pad_CreateNotify,          Pad_CreateMask},
-    {"Modify",          Pad_ModifyNotify,          Pad_ModifyMask},
-    {"Delete",          Pad_DeleteNotify,          Pad_DeleteMask},
-    {"Write",           Pad_WriteNotify,           Pad_WriteMask},
-    {(char *) NULL,	0,			0}
+    {"MotionType",        MotionType,        1},
+    {"ButtonPressType",   ButtonPressType,   1},
+    {"ButtonReleaseType", ButtonReleaseType, 1},
+    {"ProximityInType",   ProximityInType,   1},
+    {"ProximityOutType",  ProximityOutType,  1},
+    {"Motion",            MotionNotify,              ButtonPressMask | PointerMotionMask},
+    {"Button",            ButtonPress,               ButtonPressMask},
+    {"ButtonPress",       ButtonPress,               ButtonPressMask},
+    {"ButtonRelease",     ButtonRelease,             ButtonPressMask | ButtonReleaseMask},
+    {"Colormap",          ColormapNotify,            ColormapChangeMask},
+    {"Enter",             EnterNotify,               EnterWindowMask},
+    {"Leave",             LeaveNotify,               LeaveWindowMask},
+    {"Expose",            Expose,                    ExposureMask},
+    {"FocusIn",           FocusIn,                   FocusChangeMask},
+    {"FocusOut",          FocusOut,                  FocusChangeMask},
+    {"Key",               KeyPress,                  KeyPressMask},
+    {"KeyPress",          KeyPress,                  KeyPressMask},
+    {"KeyRelease",        KeyRelease,                KeyPressMask | KeyReleaseMask},
+    {"Property",          PropertyNotify,            PropertyChangeMask},
+    {"Circulate",         CirculateNotify,           StructureNotifyMask},
+    {"Configure",         ConfigureNotify,           StructureNotifyMask},
+    {"Destroy",           DestroyNotify,             StructureNotifyMask},
+    {"Gravity",           GravityNotify,             StructureNotifyMask},
+    {"Map",               MapNotify,                 StructureNotifyMask},
+    {"Reparent",          ReparentNotify,            StructureNotifyMask},
+    {"Unmap",             UnmapNotify,               StructureNotifyMask},
+    {"Visibility",        VisibilityNotify,          VisibilityChangeMask},
+    {"Activate",          ActivateNotify,            ActivateMask},
+    {"Deactivate",        DeactivateNotify,          ActivateMask},
+    {"PortalIntercept",   Pad_PortalInterceptNotify, Pad_PortalInterceptMask},
+    {"Create",            Pad_CreateNotify,          Pad_CreateMask},
+    {"Modify",            Pad_ModifyNotify,          Pad_ModifyMask},
+    {"Delete",            Pad_DeleteNotify,          Pad_DeleteMask},
+    {"Write",             Pad_WriteNotify,           Pad_WriteMask},
+    {(char *) NULL, 0,                       0}
 };
 static Pad_HashTable *eventTable;
 
@@ -326,142 +330,144 @@ static Pad_HashTable *eventTable;
  * out quickly where to extract information from events.
  */
 
-#define KEY_BUTTON_MOTION	0x1
-#define CROSSING		0x2
-#define FOCUS			0x4
-#define EXPOSE			0x8
-#define VISIBILITY		0x10
-#define BIND_CREATE		0x20
-#define MAP			0x40
-#define REPARENT		0x80
-#define CONFIG			0x100
-#define CONFIG_REQ		0x200
-#define RESIZE_REQ		0x400
-#define GRAVITY			0x800
-#define PROP			0x1000
-#define SEL_CLEAR		0x2000
-#define SEL_REQ			0x4000
-#define SEL_NOTIFY		0x8000
-#define COLORMAP		0x10000
-#define MAPPING			0x20000
-#define ACTIVATE		0x40000
+#define KEY_BUTTON_MOTION    0x1
+#define CROSSING        0x2
+#define FOCUS            0x4
+#define EXPOSE            0x8
+#define VISIBILITY        0x10
+#define BIND_CREATE        0x20
+#define MAP            0x40
+#define REPARENT        0x80
+#define CONFIG            0x100
+#define CONFIG_REQ        0x200
+#define RESIZE_REQ        0x400
+#define GRAVITY            0x800
+#define PROP            0x1000
+#define SEL_CLEAR        0x2000
+#define SEL_REQ            0x4000
+#define SEL_NOTIFY        0x8000
+#define COLORMAP        0x10000
+#define MAPPING            0x20000
+#define ACTIVATE        0x40000
 
 static int flagArray[TK_LASTEVENT] = {
-   /* Not used */		0,
-   /* Not used */		0,
-   /* KeyPress */		KEY_BUTTON_MOTION,
-   /* KeyRelease */		KEY_BUTTON_MOTION,
-   /* ButtonPress */		KEY_BUTTON_MOTION,
-   /* ButtonRelease */		KEY_BUTTON_MOTION,
-   /* MotionNotify */		KEY_BUTTON_MOTION,
-   /* EnterNotify */		CROSSING,
-   /* LeaveNotify */		CROSSING,
-   /* FocusIn */		FOCUS,
-   /* FocusOut */		FOCUS,
-   /* KeymapNotify */		0,
-   /* Expose */			EXPOSE,
-   /* GraphicsExpose */		EXPOSE,
-   /* NoExpose */		0,
-   /* VisibilityNotify */	VISIBILITY,
-   /* CreateNotify */		BIND_CREATE,
-   /* DestroyNotify */		0,
-   /* UnmapNotify */		0,
-   /* MapNotify */		MAP,
-   /* MapRequest */		0,
-   /* ReparentNotify */		REPARENT,
-   /* ConfigureNotify */	CONFIG,
-   /* ConfigureRequest */	CONFIG_REQ,
-   /* GravityNotify */		0,
-   /* ResizeRequest */		RESIZE_REQ,
-   /* CirculateNotify */	0,
-   /* CirculateRequest */	0,
-   /* PropertyNotify */		PROP,
-   /* SelectionClear */		SEL_CLEAR,
-   /* SelectionRequest */	SEL_REQ,
-   /* SelectionNotify */	SEL_NOTIFY,
-   /* ColormapNotify */		COLORMAP,
-   /* ClientMessage */		0,
-   /* MappingNotify */		MAPPING,
-   /* Activate */		ACTIVATE,
-   /* Deactivate */		ACTIVATE
+    /* Not used */        0,
+    /* Not used */        0,
+    /* KeyPress */        KEY_BUTTON_MOTION,
+    /* KeyRelease */        KEY_BUTTON_MOTION,
+    /* ButtonPress */        KEY_BUTTON_MOTION,
+    /* ButtonRelease */        KEY_BUTTON_MOTION,
+    /* MotionNotify */        KEY_BUTTON_MOTION,
+    /* EnterNotify */        CROSSING,
+    /* LeaveNotify */        CROSSING,
+    /* FocusIn */        FOCUS,
+    /* FocusOut */        FOCUS,
+    /* KeymapNotify */        0,
+    /* Expose */            EXPOSE,
+    /* GraphicsExpose */        EXPOSE,
+    /* NoExpose */        0,
+    /* VisibilityNotify */    VISIBILITY,
+    /* CreateNotify */        BIND_CREATE,
+    /* DestroyNotify */        0,
+    /* UnmapNotify */        0,
+    /* MapNotify */        MAP,
+    /* MapRequest */        0,
+    /* ReparentNotify */        REPARENT,
+    /* ConfigureNotify */    CONFIG,
+    /* ConfigureRequest */    CONFIG_REQ,
+    /* GravityNotify */        0,
+    /* ResizeRequest */        RESIZE_REQ,
+    /* CirculateNotify */    0,
+    /* CirculateRequest */    0,
+    /* PropertyNotify */        PROP,
+    /* SelectionClear */        SEL_CLEAR,
+    /* SelectionRequest */    SEL_REQ,
+    /* SelectionNotify */    SEL_NOTIFY,
+    /* ColormapNotify */        COLORMAP,
+    /* ClientMessage */        0,
+    /* MappingNotify */        MAPPING,
+    /* Activate */        ACTIVATE,
+    /* Deactivate */        ACTIVATE
 };
 
 /*
  * Prototypes for local procedures defined in this file:
  */
 
-static void		ChangeScreen(char *dispName, int screenIndex);
-static PatSeq *		FindSequence(BindingTable *bindPtr,
-			    ClientData object,
-			    const char *eventString, int create,
-			    unsigned long *maskPtr);
-static const char *	GetField(const char *p, char *copy, int size);
-static KeySym		GetKeySym(Pad_Display *dispPtr,
-			    XEvent *eventPtr);
-static void		InitKeymapInfo(Pad_Display *dispPtr);
-static PatSeq *		MatchPatterns(Pad_Display *dispPtr,
-			    BindingTable *bindPtr, PatSeq *psPtr, int mode);
-static void             PrintPatSeq(Pad_String *ds, PatSeq *psPtr);
+static void ChangeScreen(char *dispName, int screenIndex);
+
+static PatSeq *FindSequence(BindingTable *bindPtr,
+                            ClientData object,
+                            const char *eventString, int create,
+                            unsigned long *maskPtr);
+
+static const char *GetField(const char *p, char *copy, int size);
+
+static KeySym GetKeySym(Pad_Display *dispPtr,
+                        XEvent *eventPtr);
+
+static void InitKeymapInfo(Pad_Display *dispPtr);
+
+static PatSeq *MatchPatterns(Pad_Display *dispPtr,
+                             BindingTable *bindPtr, PatSeq *psPtr, int mode);
+
+static void PrintPatSeq(Pad_String *ds, PatSeq *psPtr);
 
 
 static unsigned int
-Get_state(XEvent *event)
-{
+Get_state(XEvent *event) {
     switch (event->type) {
-	case MotionType:
-	    return ((XDeviceMotionEvent *)event)->device_state;
-	case ButtonPressType:
-	case ButtonReleaseType:
-	    return ((XDeviceButtonEvent *)event)->device_state;
-	case ProximityInType:
-	case ProximityOutType:
-	    return ((XProximityNotifyEvent *)event)->device_state;
+        case MotionType:
+            return ((XDeviceMotionEvent *) event)->device_state;
+        case ButtonPressType:
+        case ButtonReleaseType:
+            return ((XDeviceButtonEvent *) event)->device_state;
+        case ProximityInType:
+        case ProximityOutType:
+            return ((XProximityNotifyEvent *) event)->device_state;
         default:
-            return(event->xbutton.state);
+            return (event->xbutton.state);
     }
 }
 
 static unsigned int
-Get_button(XEvent *event)
-{
+Get_button(XEvent *event) {
     switch (event->type) {
-      case ButtonPressType:
-      case ButtonReleaseType:
-        return ((XDeviceButtonEvent *)event)->button;
+        case ButtonPressType:
+        case ButtonReleaseType:
+            return ((XDeviceButtonEvent *) event)->button;
     }
-    return(event->xbutton.button);
+    return (event->xbutton.button);
 }
 
 unsigned int
-Pad_Get_x(XEvent *event, Pad_Event *)
-{
+Pad_Get_x(XEvent *event, Pad_Event *) {
     switch (event->type) {
-      case MotionType:
-        return ((XDeviceMotionEvent *)event)->x;
-      case ButtonPressType:
-      case ButtonReleaseType:
-        return ((XDeviceButtonEvent *)event)->x;
-      case ProximityInType:
-      case ProximityOutType:
-        return ((XProximityNotifyEvent *)event)->x;
+        case MotionType:
+            return ((XDeviceMotionEvent *) event)->x;
+        case ButtonPressType:
+        case ButtonReleaseType:
+            return ((XDeviceButtonEvent *) event)->x;
+        case ProximityInType:
+        case ProximityOutType:
+            return ((XProximityNotifyEvent *) event)->x;
     }
-    return(event->xbutton.x);
+    return (event->xbutton.x);
 }
 
 unsigned int
-Pad_Get_y(XEvent *event, Pad_Event *)
-{
+Pad_Get_y(XEvent *event, Pad_Event *) {
     switch (event->type) {
-      case MotionType:
-	return ((XDeviceMotionEvent *)event)->y;
-      case ButtonPressType:
-      case ButtonReleaseType:
-	return ((XDeviceButtonEvent *)event)->y;
-      case ProximityInType:
-      case ProximityOutType:
-        return ((XProximityNotifyEvent *)event)->y;
+        case MotionType:
+            return ((XDeviceMotionEvent *) event)->y;
+        case ButtonPressType:
+        case ButtonReleaseType:
+            return ((XDeviceButtonEvent *) event)->y;
+        case ProximityInType:
+        case ProximityOutType:
+            return ((XProximityNotifyEvent *) event)->y;
     }
-    return(event->xbutton.y);
+    return (event->xbutton.y);
 }
 
 /*
@@ -478,19 +484,18 @@ Pad_Get_y(XEvent *event, Pad_Event *)
  */
 
 const char *
-Pad_GetEventName(int type)
-{
+Pad_GetEventName(int type) {
     const char *name = NULL;
     EventInfo *eiPtr;
 
     for (eiPtr = eventArray; eiPtr->name != NULL; eiPtr++) {
-	if (eiPtr->type == type) {
-	    name = eiPtr->name;
-	    break;
-	}
+        if (eiPtr->type == type) {
+            name = eiPtr->name;
+            break;
+        }
     }
 
-    return(name);
+    return (name);
 }
 
 /*
@@ -507,25 +512,24 @@ Pad_GetEventName(int type)
  */
 
 void
-Pad_AddBindingModifier(const char *modifier)
-{
+Pad_AddBindingModifier(const char *modifier) {
     int rc;
     int new_modifier;
     ModInfo *modPtr;
 
-	// First check to see if it's already there
+    // First check to see if it's already there
     rc = Pad_GetBindingModifier(modifier);
     if (rc == 0) {
-		modPtr = new ModInfo;
+        modPtr = new ModInfo;
 
-		char *name = new char[strlen(modifier) + 1];
-		strcpy(name, modifier);
+        char *name = new char[strlen(modifier) + 1];
+        strcpy(name, modifier);
 
-		modPtr->name = name;
-		modPtr->mask = USER_MASK;
-		modPtr->flags = max_mode;
-		max_mode += USER;
-		modTable->Set((void *)modPtr->name, (void *)modPtr);
+        modPtr->name = name;
+        modPtr->mask = USER_MASK;
+        modPtr->flags = max_mode;
+        max_mode += USER;
+        modTable->Set((void *) modPtr->name, (void *) modPtr);
     }
 }
 
@@ -544,17 +548,16 @@ Pad_AddBindingModifier(const char *modifier)
  */
 
 Pad_Bool
-Pad_DeleteBindingModifier(const char *modifier)
-{
+Pad_DeleteBindingModifier(const char *modifier) {
     int rc;
 
-    if (!modTable->Remove((void *)modifier)) {
-	rc = FALSE;
+    if (!modTable->Remove((void *) modifier)) {
+        rc = FALSE;
     } else {
-	rc = TRUE;
+        rc = TRUE;
     }
 
-    return(rc);
+    return (rc);
 }
 
 /*
@@ -573,39 +576,37 @@ Pad_DeleteBindingModifier(const char *modifier)
  */
 
 int
-Pad_GetBindingModifier(const char *modifier)
-{
+Pad_GetBindingModifier(const char *modifier) {
     int mode;
     ModInfo *modPtr;
 
-    if (!(modPtr = (ModInfo *)modTable->Get((void *)modifier))) {
-	mode = 0;
+    if (!(modPtr = (ModInfo *) modTable->Get((void *) modifier))) {
+        mode = 0;
     } else {
-	mode = modPtr->flags;
+        mode = modPtr->flags;
     }
 
-    return(mode);
+    return (mode);
 }
 
 const char *
-Pad_GetBindingModifier(int mode)
-{
+Pad_GetBindingModifier(int mode) {
     const char *modifier;
     ModInfo *modPtr;
     Pad_HashSearch search;
     void *key;
 
     modifier = NULL;
-    for (modPtr = (ModInfo *)modTable->Init(search, key);
-	    modPtr != NULL;
-	    modPtr = (ModInfo *)modTable->Next(search, key)) {
-	if ((modPtr->mask == USER_MASK) && (modPtr->flags == mode)) {
-	    modifier = modPtr->name;
-	    break;
-	}
+    for (modPtr = (ModInfo *) modTable->Init(search, key);
+         modPtr != NULL;
+         modPtr = (ModInfo *) modTable->Next(search, key)) {
+        if ((modPtr->mask == USER_MASK) && (modPtr->flags == mode)) {
+            modifier = modPtr->name;
+            break;
+        }
     }
 
-    return(modifier);
+    return (modifier);
 }
 
 /*
@@ -626,8 +627,7 @@ Pad_GetBindingModifier(int mode)
  */
 
 BindingTable *
-Pad_CreateBindingTable()
-{
+Pad_CreateBindingTable() {
     BindingTable *bindPtr;
     int i;
 
@@ -637,21 +637,21 @@ Pad_CreateBindingTable()
      */
 
     if (!initialized) {
-	ModInfo *modPtr;
-	EventInfo *eiPtr;
-	int dummy;
+        ModInfo *modPtr;
+        EventInfo *eiPtr;
+        int dummy;
 
-	initialized = 1;
+        initialized = 1;
 
-	modTable = new Pad_HashTable(PAD_STRING_TABLE);
-	for (modPtr = modArray; modPtr->name != NULL; modPtr++) {
-	    modTable->Set((void *)modPtr->name, (void *)modPtr);
-	}
+        modTable = new Pad_HashTable(PAD_STRING_TABLE);
+        for (modPtr = modArray; modPtr->name != NULL; modPtr++) {
+            modTable->Set((void *) modPtr->name, (void *) modPtr);
+        }
 
-	eventTable = new Pad_HashTable(PAD_STRING_TABLE);
-	for (eiPtr = eventArray; eiPtr->name != NULL; eiPtr++) {
-	    eventTable->Set((void *)eiPtr->name, (void *)eiPtr);
-	}
+        eventTable = new Pad_HashTable(PAD_STRING_TABLE);
+        for (eiPtr = eventArray; eiPtr->name != NULL; eiPtr++) {
+            eventTable->Set((void *) eiPtr->name, (void *) eiPtr);
+        }
     }
 
     /*
@@ -660,10 +660,10 @@ Pad_CreateBindingTable()
 
     bindPtr = new BindingTable;
     for (i = 0; i < EVENT_BUFFER_SIZE; i++) {
-	bindPtr->eventRing[i].type = -1;
+        bindPtr->eventRing[i].type = -1;
     }
     bindPtr->curEvent = 0;
-    bindPtr->patternTable = new Pad_HashTable(sizeof(PatternTableKey)/sizeof(int));
+    bindPtr->patternTable = new Pad_HashTable(sizeof(PatternTableKey) / sizeof(int));
     bindPtr->objectTable = new Pad_HashTable(PAD_VOID_TABLE);
     return bindPtr;
 }
@@ -687,8 +687,7 @@ Pad_CreateBindingTable()
  */
 
 void
-Pad_DeleteBindingTable(BindingTable *bindPtr)
-{
+Pad_DeleteBindingTable(BindingTable *bindPtr) {
     PatSeq *psPtr, *nextPtr;
     Pad_HashSearch search;
     void *key;
@@ -698,20 +697,20 @@ Pad_DeleteBindingTable(BindingTable *bindPtr)
      * table.
      */
 
-    for (psPtr = (PatSeq *)bindPtr->patternTable->Init(search, key);
-            psPtr != NULL;
-	    psPtr = (PatSeq *)bindPtr->patternTable->Next(search, key)) {
-	for ( ;
-		psPtr != NULL; psPtr = nextPtr) {
-	    nextPtr = psPtr->nextSeqPtr;
-	    if (psPtr->command) {
-		psPtr->command->Decrement_refcount();
-		if (psPtr->command->Get_refcount() == 0) {
-		    delete psPtr->command;
-		}
-	    }
-	    free((char *) psPtr);
-	}
+    for (psPtr = (PatSeq *) bindPtr->patternTable->Init(search, key);
+         psPtr != NULL;
+         psPtr = (PatSeq *) bindPtr->patternTable->Next(search, key)) {
+        for (;
+            psPtr != NULL; psPtr = nextPtr) {
+            nextPtr = psPtr->nextSeqPtr;
+            if (psPtr->command) {
+                psPtr->command->Decrement_refcount();
+                if (psPtr->command->Get_refcount() == 0) {
+                    delete psPtr->command;
+                }
+            }
+            free((char *) psPtr);
+        }
     }
 
     /*
@@ -750,21 +749,20 @@ Pad_DeleteBindingTable(BindingTable *bindPtr)
 
 unsigned long
 Pad_CreateBinding(BindingTable *bindPtr, ClientData object,
-		  const char *eventString, Pad_Callback *callback)
-{
+                  const char *eventString, Pad_Callback *callback) {
     PatSeq *psPtr;
     unsigned long eventMask;
 
     psPtr = FindSequence(bindPtr, object, eventString, 1, &eventMask);
     if (psPtr == NULL) {
-	return 0;
+        return 0;
     }
     callback->Increment_refcount();
     if (psPtr->command) {
-	psPtr->command->Decrement_refcount();
-	if (psPtr->command->Get_refcount() == 0) {
-	    delete psPtr->command;
-	}
+        psPtr->command->Decrement_refcount();
+        if (psPtr->command->Get_refcount() == 0) {
+            delete psPtr->command;
+        }
     }
     psPtr->command = callback;
 
@@ -790,15 +788,14 @@ Pad_CreateBinding(BindingTable *bindPtr, ClientData object,
  */
 
 int
-Pad_DeleteBinding(BindingTable *bindPtr, ClientData object, const char *eventString)
-{
+Pad_DeleteBinding(BindingTable *bindPtr, ClientData object, const char *eventString) {
     PatSeq *psPtr, *prevPtr;
     unsigned long eventMask;
 
     psPtr = FindSequence(bindPtr, object, eventString, 0, &eventMask);
     if (psPtr == NULL) {
-	Pad_resultString = "";
-	return PAD_OK;
+        Pad_resultString = "";
+        return PAD_OK;
     }
 
     /*
@@ -806,47 +803,47 @@ Pad_DeleteBinding(BindingTable *bindPtr, ClientData object, const char *eventStr
      * list for its pattern.
      */
 
-    if (!(prevPtr = (PatSeq *)bindPtr->objectTable->Get((void *)object))) {
-	cerr << "Tk_DeleteBinding couldn't find object table entry" << endl;
-	exit(1);
+    if (!(prevPtr = (PatSeq *) bindPtr->objectTable->Get((void *) object))) {
+        cerr << "Tk_DeleteBinding couldn't find object table entry" << endl;
+        exit(1);
     }
     if (prevPtr == psPtr) {
-	bindPtr->objectTable->Set((void *)object, (void *)prevPtr->nextObjPtr);
+        bindPtr->objectTable->Set((void *) object, (void *) prevPtr->nextObjPtr);
     } else {
-	for ( ; ; prevPtr = prevPtr->nextObjPtr) {
-	    if (prevPtr == NULL) {
-		cerr << "Tk_DeleteBinding couldn't find on object list" << endl;
-		exit(1);
-	    }
-	    if (prevPtr->nextObjPtr == psPtr) {
-		prevPtr->nextObjPtr = psPtr->nextObjPtr;
-		break;
-	    }
-	}
+        for (;; prevPtr = prevPtr->nextObjPtr) {
+            if (prevPtr == NULL) {
+                cerr << "Tk_DeleteBinding couldn't find on object list" << endl;
+                exit(1);
+            }
+            if (prevPtr->nextObjPtr == psPtr) {
+                prevPtr->nextObjPtr = psPtr->nextObjPtr;
+                break;
+            }
+        }
     }
-    prevPtr = (PatSeq *)bindPtr->patternTable->Get((void *)&psPtr->key);
+    prevPtr = (PatSeq *) bindPtr->patternTable->Get((void *) &psPtr->key);
     if (prevPtr == psPtr) {
-	if (psPtr->nextSeqPtr == NULL) {
-	    bindPtr->patternTable->Remove((void *)&psPtr->key);
-	} else {
-	    bindPtr->patternTable->Set((void *)&psPtr->key,
-	            (void *)psPtr->nextSeqPtr);
-	}
+        if (psPtr->nextSeqPtr == NULL) {
+            bindPtr->patternTable->Remove((void *) &psPtr->key);
+        } else {
+            bindPtr->patternTable->Set((void *) &psPtr->key,
+                                       (void *) psPtr->nextSeqPtr);
+        }
     } else {
-	for ( ; ; prevPtr = prevPtr->nextSeqPtr) {
-	    if (prevPtr == NULL) {
-		cerr << "Tk_DeleteBinding couldn't find on hash chain" << endl;
-		exit(1);
-	    }
-	    if (prevPtr->nextSeqPtr == psPtr) {
-		prevPtr->nextSeqPtr = psPtr->nextSeqPtr;
-		break;
-	    }
-	}
+        for (;; prevPtr = prevPtr->nextSeqPtr) {
+            if (prevPtr == NULL) {
+                cerr << "Tk_DeleteBinding couldn't find on hash chain" << endl;
+                exit(1);
+            }
+            if (prevPtr->nextSeqPtr == psPtr) {
+                prevPtr->nextSeqPtr = psPtr->nextSeqPtr;
+                break;
+            }
+        }
     }
     psPtr->command->Decrement_refcount();
     if (psPtr->command->Get_refcount() == 0) {
-	delete psPtr->command;
+        delete psPtr->command;
     }
     free((char *) psPtr);
     return PAD_OK;
@@ -875,14 +872,13 @@ Pad_DeleteBinding(BindingTable *bindPtr, ClientData object, const char *eventStr
  */
 
 Pad_Callback *
-Pad_GetCallback(BindingTable *bindPtr, ClientData object, const char *eventString)
-{
+Pad_GetCallback(BindingTable *bindPtr, ClientData object, const char *eventString) {
     PatSeq *psPtr;
     unsigned long eventMask;
 
     psPtr = FindSequence(bindPtr, object, eventString, 0, &eventMask);
     if (psPtr == NULL) {
-	return NULL;
+        return NULL;
     }
     return psPtr->command;
 }
@@ -908,19 +904,18 @@ Pad_GetCallback(BindingTable *bindPtr, ClientData object, const char *eventStrin
  */
 
 void
-Pad_GetAllBindings(BindingTable *bindPtr, ClientData object, Pad_List &list)
-{
+Pad_GetAllBindings(BindingTable *bindPtr, ClientData object, Pad_List &list) {
     PatSeq *psPtr;
     Pad_String *string;
 
-    if (!(psPtr = (PatSeq *)bindPtr->objectTable->Get((void *)object))) {
-	return;
+    if (!(psPtr = (PatSeq *) bindPtr->objectTable->Get((void *) object))) {
+        return;
     }
-    for ( ; psPtr != NULL;
-	    psPtr = psPtr->nextObjPtr) {
-	string = new Pad_String();
-	PrintPatSeq(string, psPtr);
-	list.Push((void *)string);
+    for (; psPtr != NULL;
+           psPtr = psPtr->nextObjPtr) {
+        string = new Pad_String();
+        PrintPatSeq(string, psPtr);
+        list.Push((void *) string);
     }
     return;
 }
@@ -947,8 +942,7 @@ Pad_GetAllBindings(BindingTable *bindPtr, ClientData object, Pad_List &list)
  */
 
 static void
-PrintPatSeq(Pad_String *ds, PatSeq *psPtr)
-{
+PrintPatSeq(Pad_String *ds, PatSeq *psPtr) {
     Pattern *patPtr;
     char c, buffer[10];
     int patsLeft, needMods;
@@ -959,89 +953,90 @@ PrintPatSeq(Pad_String *ds, PatSeq *psPtr)
 
     *ds = "";
     for (patsLeft = psPtr->numPats,
-	     patPtr = &psPtr->pats[psPtr->numPats - 1];
-	 patsLeft > 0; patsLeft--, patPtr--) {
+             patPtr = &psPtr->pats[psPtr->numPats - 1];
+         patsLeft > 0; patsLeft--, patPtr--) {
 
-	/*
-	 * Check for simple case of an ASCII character.
-	 */
+        /*
+         * Check for simple case of an ASCII character.
+         */
 
-	if ((patPtr->eventType == KeyPress)
-	    && (patPtr->needMods == 0)
-	    && (patPtr->detail < 128)
-	    && isprint(UCHAR(patPtr->detail))
-	    && (patPtr->detail != '<')
-	    && (patPtr->detail != ' ')) {
+        if ((patPtr->eventType == KeyPress)
+            && (patPtr->needMods == 0)
+            && (patPtr->detail < 128)
+            && isprint(UCHAR(patPtr->detail))
+            && (patPtr->detail != '<')
+            && (patPtr->detail != ' ')) {
 
-	    c = patPtr->detail;
-	    *ds += c;
-	    continue;
-	}
+            c = patPtr->detail;
+            *ds += c;
+            continue;
+        }
 
-	/*
-	 * It's a more general event specification.  First check
-	 * for "Double" or "Triple", then modifiers, then event type,
-	 * then keysym or button detail.
-	 */
+        /*
+         * It's a more general event specification.  First check
+         * for "Double" or "Triple", then modifiers, then event type,
+         * then keysym or button detail.
+         */
 
-	*ds += '<';
-	if ((patsLeft > 1) && (memcmp((char *) patPtr,
-				      (char *) (patPtr-1), sizeof(Pattern)) == 0)) {
-	    patsLeft--;
-	    patPtr--;
-	    if ((patsLeft > 1) && (memcmp((char *) patPtr,
-					  (char *) (patPtr-1), sizeof(Pattern)) == 0)) {
-		patsLeft--;
-		patPtr--;
-		*ds += "Triple-";
-	    } else {
-		*ds += "Double-";
-	    }
-	}
-	// Go through hash table instead of array
-	// to access user-defined modifiers.
-	needMods = patPtr->needMods;
-	modPtr = (ModInfo *)modTable->Init(searchPtr, key);
-	while (modPtr) {
-	    if (needMods == 0) {
-		break;
-	    }
-	    if (((modPtr->mask == USER_MASK) && (modPtr->flags == patPtr->mode)) ||
-		((modPtr->mask != USER_MASK) && (modPtr->mask & needMods))) {
-		needMods &= ~modPtr->mask;
-		*ds += modPtr->name;
-		*ds += '-';
-	    }
-	    modPtr = (ModInfo *)modTable->Next(searchPtr, key);
-	}
+        *ds += '<';
+        if ((patsLeft > 1) && (memcmp((char *) patPtr,
+                                      (char *) (patPtr - 1), sizeof(Pattern)) == 0)) {
+            patsLeft--;
+            patPtr--;
+            if ((patsLeft > 1) && (memcmp((char *) patPtr,
+                                          (char *) (patPtr - 1), sizeof(Pattern)) == 0)) {
+                patsLeft--;
+                patPtr--;
+                *ds += "Triple-";
+            } else {
+                *ds += "Double-";
+            }
+        }
+        // Go through hash table instead of array
+        // to access user-defined modifiers.
+        needMods = patPtr->needMods;
+        modPtr = (ModInfo *) modTable->Init(searchPtr, key);
+        while (modPtr) {
+            if (needMods == 0) {
+                break;
+            }
+            if (((modPtr->mask == USER_MASK) && (modPtr->flags == patPtr->mode)) ||
+                ((modPtr->mask != USER_MASK) && (modPtr->mask & needMods))) {
+                needMods &= ~modPtr->mask;
+                *ds += modPtr->name;
+                *ds += '-';
+            }
+            modPtr = (ModInfo *) modTable->Next(searchPtr, key);
+        }
 
-	for (eiPtr = eventArray; eiPtr->name != NULL; eiPtr++) {
-	    if (eiPtr->type == patPtr->eventType) {
-		*ds += eiPtr->name;
-		if (patPtr->detail != 0) {
-		    *ds += '-';
-		}
-		break;
-	    }
-	}
+        for (eiPtr = eventArray; eiPtr->name != NULL; eiPtr++) {
+            if (eiPtr->type == patPtr->eventType) {
+                *ds += eiPtr->name;
+                if (patPtr->detail != 0) {
+                    *ds += '-';
+                }
+                break;
+            }
+        }
 
-	if (patPtr->detail != 0) {
-	    if ((patPtr->eventType == KeyPress)
-		|| (patPtr->eventType == KeyRelease)) {
-		char *string;
+        if (patPtr->detail != 0) {
+            if ((patPtr->eventType == KeyPress)
+                || (patPtr->eventType == KeyRelease)) {
+                char *string;
 
-		string = XKeysymToString((KeySym) patPtr->detail);
-		if (string != NULL) {
-		    *ds += string;
-		}
-	    } else {
-		sprintf(buffer, "%d", patPtr->detail);
-		*ds += buffer;
-	    }
-	}
-	*ds += '>';
+                string = XKeysymToString((KeySym) patPtr->detail);
+                if (string != NULL) {
+                    *ds += string;
+                }
+            } else {
+                sprintf(buffer, "%d", patPtr->detail);
+                *ds += buffer;
+            }
+        }
+        *ds += '>';
     }
 }
+
 /*
  *--------------------------------------------------------------
  *
@@ -1061,52 +1056,51 @@ PrintPatSeq(Pad_String *ds, PatSeq *psPtr)
  */
 
 void
-Pad_DeleteAllBindings(BindingTable *bindPtr, ClientData object)
-{
+Pad_DeleteAllBindings(BindingTable *bindPtr, ClientData object) {
     PatSeq *psPtr, *prevPtr;
     PatSeq *nextPtr;
 
-    if (!(psPtr = (PatSeq *)bindPtr->objectTable->Get((void *)object))) {
-	return;
+    if (!(psPtr = (PatSeq *) bindPtr->objectTable->Get((void *) object))) {
+        return;
     }
-    nextPtr = NULL;		// For compiler warnings only
-    for ( ; psPtr != NULL;
-	    psPtr = nextPtr) {
-	nextPtr  = psPtr->nextObjPtr;
+    nextPtr = NULL;        // For compiler warnings only
+    for (; psPtr != NULL;
+           psPtr = nextPtr) {
+        nextPtr = psPtr->nextObjPtr;
 
-	/*
-	 * Be sure to remove each binding from its hash chain in the
-	 * pattern table.  If this is the last pattern in the chain,
-	 * then delete the hash entry too.
-	 */
+        /*
+         * Be sure to remove each binding from its hash chain in the
+         * pattern table.  If this is the last pattern in the chain,
+         * then delete the hash entry too.
+         */
 
-	prevPtr = (PatSeq *)bindPtr->patternTable->Get((void *)&psPtr->key);
-	if (prevPtr == psPtr) {
-	    if (psPtr->nextSeqPtr == NULL) {
-		bindPtr->patternTable->Remove((void *)&psPtr->key);
-	    } else {
-		bindPtr->patternTable->Set((void *)&psPtr->key,
-		        (void *)psPtr->nextSeqPtr);
-	    }
-	} else {
-	    for ( ; ; prevPtr = prevPtr->nextSeqPtr) {
-		if (prevPtr == NULL) {
-		    cerr << "Tk_DeleteAllBindings couldn't find on hash chain" << endl;
-		    exit(1);
-		}
-		if (prevPtr->nextSeqPtr == psPtr) {
-		    prevPtr->nextSeqPtr = psPtr->nextSeqPtr;
-		    break;
-		}
-	    }
-	}
-	psPtr->command->Decrement_refcount();
-	if (psPtr->command->Get_refcount() == 0) {
-	    delete psPtr->command;
-	}
-	free((char *) psPtr);
+        prevPtr = (PatSeq *) bindPtr->patternTable->Get((void *) &psPtr->key);
+        if (prevPtr == psPtr) {
+            if (psPtr->nextSeqPtr == NULL) {
+                bindPtr->patternTable->Remove((void *) &psPtr->key);
+            } else {
+                bindPtr->patternTable->Set((void *) &psPtr->key,
+                                           (void *) psPtr->nextSeqPtr);
+            }
+        } else {
+            for (;; prevPtr = prevPtr->nextSeqPtr) {
+                if (prevPtr == NULL) {
+                    cerr << "Tk_DeleteAllBindings couldn't find on hash chain" << endl;
+                    exit(1);
+                }
+                if (prevPtr->nextSeqPtr == psPtr) {
+                    prevPtr->nextSeqPtr = psPtr->nextSeqPtr;
+                    break;
+                }
+            }
+        }
+        psPtr->command->Decrement_refcount();
+        if (psPtr->command->Get_refcount() == 0) {
+            delete psPtr->command;
+        }
+        free((char *) psPtr);
     }
-    bindPtr->objectTable->Remove((void *)object);
+    bindPtr->objectTable->Remove((void *) object);
 }
 
 /*
@@ -1133,14 +1127,13 @@ Pad_DeleteAllBindings(BindingTable *bindPtr, ClientData object)
 
 void
 Pad_BindEvent(BindingTable *bindPtr, XEvent *eventPtr, Pad_Event *padEvent,
-	      int numObjects, ClientData *objectPtr, Pad_Object *itemPtr)
-{
+              int numObjects, ClientData *objectPtr, Pad_Object *itemPtr) {
     Pad_Display *dispPtr = padEvent->win->dpy;
     XEvent *ringPtr;
     PatSeq *matchPtr, *psPtr;
     PatternTableKey key;
     int detail, code, oldScreen;
-    Pad_List callbacks;		// List of Pad_Callback's
+    Pad_List callbacks;        // List of Pad_Callback's
     Pad_Callback *callback = NULL;
     Pad_Win *win;
     Pad_List debug_event_list;
@@ -1162,15 +1155,15 @@ Pad_BindEvent(BindingTable *bindPtr, XEvent *eventPtr, Pad_Event *padEvent,
      * people watching the parent.
      */
 
-    if ((eventPtr->type == EnterNotify)  || (eventPtr->type == LeaveNotify)) {
-	if (eventPtr->xcrossing.detail == NotifyInferior) {
-	    return;
-	}
+    if ((eventPtr->type == EnterNotify) || (eventPtr->type == LeaveNotify)) {
+        if (eventPtr->xcrossing.detail == NotifyInferior) {
+            return;
+        }
     }
-    if ((eventPtr->type == FocusIn)  || (eventPtr->type == FocusOut)) {
-	if (eventPtr->xfocus.detail == NotifyInferior) {
-	    return;
-	}
+    if ((eventPtr->type == FocusIn) || (eventPtr->type == FocusOut)) {
+        if (eventPtr->xfocus.detail == NotifyInferior) {
+            return;
+        }
     }
 
     /*
@@ -1191,56 +1184,56 @@ Pad_BindEvent(BindingTable *bindPtr, XEvent *eventPtr, Pad_Event *padEvent,
      */
 
     if ((eventPtr->type == MotionNotify)
-	    && (bindPtr->eventRing[bindPtr->curEvent].type == MotionNotify)) {
-	/*
-	 * Don't advance the ring pointer.
-	 */
+        && (bindPtr->eventRing[bindPtr->curEvent].type == MotionNotify)) {
+        /*
+         * Don't advance the ring pointer.
+         */
     } else if (eventPtr->type == KeyPress) {
-	int i;
-	for (i = 0; ; i++) {
-	    if (i >= dispPtr->numModKeyCodes) {
-		goto advanceRingPointer;
-	    }
-	    if (dispPtr->modKeyCodes[i] == eventPtr->xkey.keycode) {
-		break;
-	    }
-	}
-	ringPtr = &bindPtr->eventRing[bindPtr->curEvent];
-	if ((ringPtr->type != KeyRelease)
-		|| (ringPtr->xkey.keycode != eventPtr->xkey.keycode)) {
-	    goto advanceRingPointer;
-	}
-	if (bindPtr->curEvent <= 0) {
-	    i = EVENT_BUFFER_SIZE - 1;
-	} else {
-	    i = bindPtr->curEvent - 1;
-	}
-	ringPtr = &bindPtr->eventRing[i];
-	if ((ringPtr->type != KeyPress)
-		|| (ringPtr->xkey.keycode != eventPtr->xkey.keycode)) {
-	    goto advanceRingPointer;
-	}
-	bindPtr->eventRing[bindPtr->curEvent].type = -1;
-	bindPtr->curEvent = i;
+        int i;
+        for (i = 0;; i++) {
+            if (i >= dispPtr->numModKeyCodes) {
+                goto advanceRingPointer;
+            }
+            if (dispPtr->modKeyCodes[i] == eventPtr->xkey.keycode) {
+                break;
+            }
+        }
+        ringPtr = &bindPtr->eventRing[bindPtr->curEvent];
+        if ((ringPtr->type != KeyRelease)
+            || (ringPtr->xkey.keycode != eventPtr->xkey.keycode)) {
+            goto advanceRingPointer;
+        }
+        if (bindPtr->curEvent <= 0) {
+            i = EVENT_BUFFER_SIZE - 1;
+        } else {
+            i = bindPtr->curEvent - 1;
+        }
+        ringPtr = &bindPtr->eventRing[i];
+        if ((ringPtr->type != KeyPress)
+            || (ringPtr->xkey.keycode != eventPtr->xkey.keycode)) {
+            goto advanceRingPointer;
+        }
+        bindPtr->eventRing[bindPtr->curEvent].type = -1;
+        bindPtr->curEvent = i;
     } else {
-	advanceRingPointer:
-	bindPtr->curEvent++;
-	if (bindPtr->curEvent >= EVENT_BUFFER_SIZE) {
-	    bindPtr->curEvent = 0;
-	}
+        advanceRingPointer:
+        bindPtr->curEvent++;
+        if (bindPtr->curEvent >= EVENT_BUFFER_SIZE) {
+            bindPtr->curEvent = 0;
+        }
     }
     ringPtr = &bindPtr->eventRing[bindPtr->curEvent];
     memcpy((void *) ringPtr, (void *) eventPtr, sizeof(XEvent));
     detail = 0;
     bindPtr->detailRing[bindPtr->curEvent] = 0;
     if ((ringPtr->type == KeyPress) || (ringPtr->type == KeyRelease)) {
-	detail = (int) GetKeySym(dispPtr, ringPtr);
-	if (detail == NoSymbol) {
-	    detail = 0;
-	}
+        detail = (int) GetKeySym(dispPtr, ringPtr);
+        if (detail == NoSymbol) {
+            detail = 0;
+        }
     } else if ((ringPtr->type == ButtonPress)
-	    || (ringPtr->type == ButtonRelease)) {
-	detail = Get_button(ringPtr);
+               || (ringPtr->type == ButtonRelease)) {
+        detail = Get_button(ringPtr);
     }
     bindPtr->detailRing[bindPtr->curEvent] = detail;
 
@@ -1251,75 +1244,75 @@ Pad_BindEvent(BindingTable *bindPtr, XEvent *eventPtr, Pad_Event *padEvent,
      */
 
     if (win->debugEvent) {
-	debug_ds = "";
+        debug_ds = "";
     }
-    for ( ; numObjects > 0; numObjects--, objectPtr++) {
+    for (; numObjects > 0; numObjects--, objectPtr++) {
 
-	/*
-	 * Match the new event against those recorded in the
-	 * pattern table, saving the longest matching pattern.
-	 * For events with details (button and key events) first
-	 * look for a binding for the specific key or button.
-	 * If none is found, then look for a binding for all
-	 * keys or buttons (detail of 0).
-	 */
+        /*
+         * Match the new event against those recorded in the
+         * pattern table, saving the longest matching pattern.
+         * For events with details (button and key events) first
+         * look for a binding for the specific key or button.
+         * If none is found, then look for a binding for all
+         * keys or buttons (detail of 0).
+         */
 
-	matchPtr = NULL;
-	key.object = *objectPtr;
-	key.type = ringPtr->type;
-	key.detail = detail;
-	if ((psPtr = (PatSeq *)bindPtr->patternTable->Get((void *)&key))) {
-	    matchPtr = MatchPatterns(dispPtr, bindPtr,
-		    psPtr, win->view->pad->mode);
-	}
-	if ((detail != 0) && (matchPtr == NULL)) {
-	    key.detail = 0;
-	    if ((psPtr = (PatSeq *)bindPtr->patternTable->Get((void *)&key))) {
-		matchPtr = MatchPatterns(dispPtr, bindPtr,
-			psPtr, win->view->pad->mode);
-	    }
-	}
-
-
-	if (matchPtr != NULL) {
-				// Debugging info to see events as they fire.
-				// For each event for which an event handler is defined
-				// on tagOrIds that are being tracked, store a nice
-				// user-readable description of that event for later output.
-	    if (win->debugEvent) {
-		debug_event = new Pad_String();
-		PrintPatSeq(&debug_ds, matchPtr);
-		*debug_event += debug_ds;
-		*debug_event += " ";
-		if (itemPtr) {
-		    *debug_event += itemPtr->id;
-		} else {
-		    *debug_event += "1";
-		}
-		*debug_event += " ";
-		if (key.object != itemPtr) {
-		    *debug_event += (char *)key.object;
-		}
-		// Hackery from Dan: adds window coords to debug string
-		*debug_event += " sx=";
-		*debug_event += padEvent->stickyPt.x;
-		*debug_event += " sy=";
-		*debug_event += padEvent->stickyPt.y;
-		  //end Dan hackery
-
-		debug_event_list.Push_last(debug_event);
+        matchPtr = NULL;
+        key.object = *objectPtr;
+        key.type = ringPtr->type;
+        key.detail = detail;
+        if ((psPtr = (PatSeq *) bindPtr->patternTable->Get((void *) &key))) {
+            matchPtr = MatchPatterns(dispPtr, bindPtr,
+                                     psPtr, win->view->pad->mode);
+        }
+        if ((detail != 0) && (matchPtr == NULL)) {
+            key.detail = 0;
+            if ((psPtr = (PatSeq *) bindPtr->patternTable->Get((void *) &key))) {
+                matchPtr = MatchPatterns(dispPtr, bindPtr,
+                                         psPtr, win->view->pad->mode);
+            }
+        }
 
 
-	    }
+        if (matchPtr != NULL) {
+            // Debugging info to see events as they fire.
+            // For each event for which an event handler is defined
+            // on tagOrIds that are being tracked, store a nice
+            // user-readable description of that event for later output.
+            if (win->debugEvent) {
+                debug_event = new Pad_String();
+                PrintPatSeq(&debug_ds, matchPtr);
+                *debug_event += debug_ds;
+                *debug_event += " ";
+                if (itemPtr) {
+                    *debug_event += itemPtr->id;
+                } else {
+                    *debug_event += "1";
+                }
+                *debug_event += " ";
+                if (key.object != itemPtr) {
+                    *debug_event += (char *) key.object;
+                }
+                // Hackery from Dan: adds window coords to debug string
+                *debug_event += " sx=";
+                *debug_event += padEvent->stickyPt.x;
+                *debug_event += " sy=";
+                *debug_event += padEvent->stickyPt.y;
+                //end Dan hackery
 
-				// check if callback
-				// is a script, and if it is, expand '%' macros.
-	    callback = matchPtr->command;
+                debug_event_list.Push_last(debug_event);
 
-	    if (callback) {
+
+            }
+
+            // check if callback
+            // is a script, and if it is, expand '%' macros.
+            callback = matchPtr->command;
+
+            if (callback) {
                 callbacks.Push_last(callback);
-	    }
-	}
+            }
+        }
     }
 
     //
@@ -1327,11 +1320,11 @@ Pad_BindEvent(BindingTable *bindPtr, XEvent *eventPtr, Pad_Event *padEvent,
     // so that it gets called first
     //
     if (win->globalEventCallback) {
-      callbacks.Push(win->globalEventCallback);
+        callbacks.Push(win->globalEventCallback);
     }
 
     if (callbacks.Is_empty()) {
-	return;
+        return;
     }
 
 
@@ -1354,76 +1347,76 @@ Pad_BindEvent(BindingTable *bindPtr, XEvent *eventPtr, Pad_Event *padEvent,
      */
 
 
-				// There can be multiple handlers, and the object
-				// could be deleted by one of them - so keep a handle
-				// and if it does get deleted, then stop firing the events.
+    // There can be multiple handlers, and the object
+    // could be deleted by one of them - so keep a handle
+    // and if it does get deleted, then stop firing the events.
     Pad_ObjectHandle handle(itemPtr);
 
     while (!callbacks.Is_empty()) {
-	callback = (Pad_Callback *)callbacks.Pop();
-				// Event handler is about to fire.
-				// If debugging is on, then output debugging info
-				// for this event
-	if (win->debugEvent) {
-	    debug_event = (Pad_String *)debug_event_list.Pop();
-	    Pad_Debug_output(win, debug_event->Get());
-	}
+        callback = (Pad_Callback *) callbacks.Pop();
+        // Event handler is about to fire.
+        // If debugging is on, then output debugging info
+        // for this event
+        if (win->debugEvent) {
+            debug_event = (Pad_String *) debug_event_list.Pop();
+            Pad_Debug_output(win, debug_event->Get());
+        }
 
         code = callback->Eval(itemPtr, padEvent);
 
-	if (itemPtr && handle.Get_object() == NULL) {
-				// Object has been deleted, so don't fire any more events
-	    break;
-	}
+        if (itemPtr && handle.Get_object() == NULL) {
+            // Object has been deleted, so don't fire any more events
+            break;
+        }
 
-				// Event handler just fired.
-				// If debugging is on, then output debugging info
-				// on event handler status
-	if (win->debugEvent) {
-	    if ((code == PAD_BREAK) || (code == PAD_ERROR)) {
-		if (code == PAD_BREAK) {
-		    debug_notice = "break";
-		} else if (code == PAD_ERROR) {
-		    debug_notice = "error";
-		}
-		if (!debug_event_list.Is_empty()) {
-		    debug_notice += ": The following indented events were not fired";
-		}
-		Pad_Debug_output(win, debug_notice.Get());
-		DOLIST(di, debug_event_list, Pad_String, debug_event) {
-		    debug_notice = "   ";
-		    debug_notice += debug_event;
-		    Pad_Debug_output(win, debug_notice.Get());
-		}
-	    }
-	}
+        // Event handler just fired.
+        // If debugging is on, then output debugging info
+        // on event handler status
+        if (win->debugEvent) {
+            if ((code == PAD_BREAK) || (code == PAD_ERROR)) {
+                if (code == PAD_BREAK) {
+                    debug_notice = "break";
+                } else if (code == PAD_ERROR) {
+                    debug_notice = "error";
+                }
+                if (!debug_event_list.Is_empty()) {
+                    debug_notice += ": The following indented events were not fired";
+                }
+                Pad_Debug_output(win, debug_notice.Get());
+                DOLIST(di, debug_event_list, Pad_String, debug_event) {
+                    debug_notice = "   ";
+                    debug_notice += debug_event;
+                    Pad_Debug_output(win, debug_notice.Get());
+                }
+            }
+        }
 
-				// Necessary because codes from the Tcl "return"
-				// command aren't passed back unless this is evaluated
-				// at the top-level, and it might not be because
-				// the event could be generated from within
-				// a Tcl function (such as ".pad write")
-	/*
-	if (code == PAD_RETURN) {
-	    code = ((Tcl_Interp *)interp)->returnCode;
-	}
-	*/
-	if ((code != PAD_ERROR) && (padEvent->result)) {
-	    //*padEvent->result += interp->result;
-	    *padEvent->result += "\n";
-	}
-	if (code != PAD_OK) {
-	    if ((code == PAD_CONTINUE) || (code == PAD_RETURN)) {
-		/*
-		 * Do nothing:  just go on to the next script.
-		 */
-	    } else if (code == PAD_BREAK) {
-		break;
-	    } else {
-		Pad_Background_error("command bound to event");
-		break;
-	    }
-	}
+        // Necessary because codes from the Tcl "return"
+        // command aren't passed back unless this is evaluated
+        // at the top-level, and it might not be because
+        // the event could be generated from within
+        // a Tcl function (such as ".pad write")
+        /*
+        if (code == PAD_RETURN) {
+            code = ((Tcl_Interp *)interp)->returnCode;
+        }
+        */
+        if ((code != PAD_ERROR) && (padEvent->result)) {
+            //*padEvent->result += interp->result;
+            *padEvent->result += "\n";
+        }
+        if (code != PAD_OK) {
+            if ((code == PAD_CONTINUE) || (code == PAD_RETURN)) {
+                /*
+                 * Do nothing:  just go on to the next script.
+                 */
+            } else if (code == PAD_BREAK) {
+                break;
+            } else {
+                Pad_Background_error("command bound to event");
+                break;
+            }
+        }
     }
 
     padEvent->resultCode = code;
@@ -1457,8 +1450,7 @@ Pad_BindEvent(BindingTable *bindPtr, XEvent *eventPtr, Pad_Event *padEvent,
 
 static PatSeq *
 FindSequence(BindingTable *bindPtr, ClientData object, const char *eventString,
-	     int create, unsigned long *maskPtr)
-{
+             int create, unsigned long *maskPtr) {
     Pattern pats[EVENT_BUFFER_SIZE];
     int numPats;
     const char *p;
@@ -1485,155 +1477,155 @@ FindSequence(BindingTable *bindPtr, ClientData object, const char *eventString,
     p = eventString;
     flags = 0;
     eventMask = 0;
-    for (numPats = 0, patPtr = &pats[EVENT_BUFFER_SIZE-1];
-	    numPats < EVENT_BUFFER_SIZE;
-	    numPats++, patPtr--) {
-	patPtr->eventType = -1;
-	patPtr->needMods = 0;
-	patPtr->detail = 0;
-	patPtr->mode = 0;
-	while (isspace(UCHAR(*p))) {
-	    p++;
-	}
-	if (*p == '\0') {
-	    break;
-	}
+    for (numPats = 0, patPtr = &pats[EVENT_BUFFER_SIZE - 1];
+         numPats < EVENT_BUFFER_SIZE;
+         numPats++, patPtr--) {
+        patPtr->eventType = -1;
+        patPtr->needMods = 0;
+        patPtr->detail = 0;
+        patPtr->mode = 0;
+        while (isspace(UCHAR(*p))) {
+            p++;
+        }
+        if (*p == '\0') {
+            break;
+        }
 
-	/*
-	 * Handle simple ASCII characters.
-	 */
+        /*
+         * Handle simple ASCII characters.
+         */
 
-	if (*p != '<') {
-	    char string[2];
+        if (*p != '<') {
+            char string[2];
 
-	    patPtr->eventType = KeyPress;
-	    eventMask |= KeyPressMask;
-	    string[0] = *p;
-	    string[1] = 0;
-	    patPtr->detail = XStringToKeysym(string);
-	    if (patPtr->detail == NoSymbol) {
-		if (isprint(UCHAR(*p))) {
-		    patPtr->detail = *p;
-		} else {
-		    Pad_errorString.Printf("%s%s",
-			    "bad ASCII character 0x%x", (unsigned char) *p);
-		    return NULL;
-		}
-	    }
-	    p++;
-	    continue;
-	}
+            patPtr->eventType = KeyPress;
+            eventMask |= KeyPressMask;
+            string[0] = *p;
+            string[1] = 0;
+            patPtr->detail = XStringToKeysym(string);
+            if (patPtr->detail == NoSymbol) {
+                if (isprint(UCHAR(*p))) {
+                    patPtr->detail = *p;
+                } else {
+                    Pad_errorString.Printf("%s%s",
+                                           "bad ASCII character 0x%x", (unsigned char) *p);
+                    return NULL;
+                }
+            }
+            p++;
+            continue;
+        }
 
-	/*
-	 * A fancier event description.  Must consist of
-	 * 1. open angle bracket.
-	 * 2. any number of modifiers, each followed by spaces
-	 *    or dashes.
-	 * 3. an optional event name.
-	 * 4. an option button or keysym name.  Either this or
-	 *    item 3 *must* be present;  if both are present
-	 *    then they are separated by spaces or dashes.
-	 * 5. a close angle bracket.
-	 */
+        /*
+         * A fancier event description.  Must consist of
+         * 1. open angle bracket.
+         * 2. any number of modifiers, each followed by spaces
+         *    or dashes.
+         * 3. an optional event name.
+         * 4. an option button or keysym name.  Either this or
+         *    item 3 *must* be present;  if both are present
+         *    then they are separated by spaces or dashes.
+         * 5. a close angle bracket.
+         */
 
-	count = 1;
-	p++;
-	while (1) {
-	    ModInfo *modPtr;
-	    p = GetField(p, field, FIELD_SIZE);
-	    modPtr = (ModInfo *)modTable->Get((void *)field);
-	    if (modPtr == NULL) {
-		break;
-	    }
-	    if (modPtr->mask == USER_MASK) {
-		if (user_modifier) {
-		    Pad_errorString = "only one user-defined modifier is allowed";
-		    return NULL;
-		}
-		user_modifier = 1;
-		patPtr->mode = modPtr->flags;
-	    }
-	    patPtr->needMods |= modPtr->mask;
-	    if (modPtr->flags & (DOUBLE|TRIPLE)) {
-		flags |= PAT_NEARBY;
-		if (modPtr->flags & DOUBLE) {
-		    count = 2;
-		} else {
-		    count = 3;
-		}
-	    }
-	    while ((*p == '-') || isspace(UCHAR(*p))) {
-		p++;
-	    }
-	}
-	if (eiPtr = (EventInfo *)eventTable->Get((void *)field)) {
-	    patPtr->eventType = eiPtr->type;
-	    eventMask |= eiPtr->eventMask;
-	    while ((*p == '-') || isspace(UCHAR(*p))) {
-		p++;
-	    }
-	    p = GetField(p, field, FIELD_SIZE);
-	}
-	if (*field != '\0') {
-	    if ((*field >= '1') && (*field <= '5') && (field[1] == '\0')) {
-		if (patPtr->eventType == -1) {
-		    patPtr->eventType = ButtonPress;
-		    eventMask |= ButtonPressMask;
-		} else if ((patPtr->eventType == KeyPress)
-			|| (patPtr->eventType == KeyRelease)) {
-		    goto getKeysym;
-		} else if ((patPtr->eventType != ButtonPress)
-			&& (patPtr->eventType != ButtonRelease)) {
-		    Pad_errorString.Printf("%s%s%s",
-		        "specified button \"", field, "\" for non-button event");
-		    return NULL;
-		}
-		patPtr->detail = (*field - '0');
-	    } else {
-		getKeysym:
-		patPtr->detail = XStringToKeysym(field);
-		if (patPtr->detail == NoSymbol) {
-		    Pad_errorString.Printf("%s%s%s",
-		        "bad event type or keysym \"", field, "\"");
-		    return NULL;
-		}
-		if (patPtr->eventType == -1) {
-		    patPtr->eventType = KeyPress;
-		    eventMask |= KeyPressMask;
-		} else if ((patPtr->eventType != KeyPress)
-			&& (patPtr->eventType != KeyRelease)) {
-		    Pad_errorString.Printf("%s%s%s",
-		        "specified keysym \"", field, "\" for non-key event");
-		    return NULL;
-		}
-	    }
-	} else if (patPtr->eventType == -1) {
-	    Pad_errorString = "no event type or button # or keysym";
-	    return NULL;
-	}
-	while ((*p == '-') || isspace(UCHAR(*p))) {
-	    p++;
-	}
-	if (*p != '>') {
-	    Pad_errorString = "missing \">\" in binding";
-	    return NULL;
-	}
-	p++;
+        count = 1;
+        p++;
+        while (1) {
+            ModInfo *modPtr;
+            p = GetField(p, field, FIELD_SIZE);
+            modPtr = (ModInfo *) modTable->Get((void *) field);
+            if (modPtr == NULL) {
+                break;
+            }
+            if (modPtr->mask == USER_MASK) {
+                if (user_modifier) {
+                    Pad_errorString = "only one user-defined modifier is allowed";
+                    return NULL;
+                }
+                user_modifier = 1;
+                patPtr->mode = modPtr->flags;
+            }
+            patPtr->needMods |= modPtr->mask;
+            if (modPtr->flags & (DOUBLE | TRIPLE)) {
+                flags |= PAT_NEARBY;
+                if (modPtr->flags & DOUBLE) {
+                    count = 2;
+                } else {
+                    count = 3;
+                }
+            }
+            while ((*p == '-') || isspace(UCHAR(*p))) {
+                p++;
+            }
+        }
+        if ((eiPtr = (EventInfo *) eventTable->Get((void *) field))) {
+            patPtr->eventType = eiPtr->type;
+            eventMask |= eiPtr->eventMask;
+            while ((*p == '-') || isspace(UCHAR(*p))) {
+                p++;
+            }
+            p = GetField(p, field, FIELD_SIZE);
+        }
+        if (*field != '\0') {
+            if ((*field >= '1') && (*field <= '5') && (field[1] == '\0')) {
+                if (patPtr->eventType == -1) {
+                    patPtr->eventType = ButtonPress;
+                    eventMask |= ButtonPressMask;
+                } else if ((patPtr->eventType == KeyPress)
+                           || (patPtr->eventType == KeyRelease)) {
+                    goto getKeysym;
+                } else if ((patPtr->eventType != ButtonPress)
+                           && (patPtr->eventType != ButtonRelease)) {
+                    Pad_errorString.Printf("%s%s%s",
+                                           "specified button \"", field, "\" for non-button event");
+                    return NULL;
+                }
+                patPtr->detail = (*field - '0');
+            } else {
+                getKeysym:
+                patPtr->detail = XStringToKeysym(field);
+                if (patPtr->detail == NoSymbol) {
+                    Pad_errorString.Printf("%s%s%s",
+                                           "bad event type or keysym \"", field, "\"");
+                    return NULL;
+                }
+                if (patPtr->eventType == -1) {
+                    patPtr->eventType = KeyPress;
+                    eventMask |= KeyPressMask;
+                } else if ((patPtr->eventType != KeyPress)
+                           && (patPtr->eventType != KeyRelease)) {
+                    Pad_errorString.Printf("%s%s%s",
+                                           "specified keysym \"", field, "\" for non-key event");
+                    return NULL;
+                }
+            }
+        } else if (patPtr->eventType == -1) {
+            Pad_errorString = "no event type or button # or keysym";
+            return NULL;
+        }
+        while ((*p == '-') || isspace(UCHAR(*p))) {
+            p++;
+        }
+        if (*p != '>') {
+            Pad_errorString = "missing \">\" in binding";
+            return NULL;
+        }
+        p++;
 
-	/*
-	 * Replicate events for DOUBLE and TRIPLE.
-	 */
+        /*
+         * Replicate events for DOUBLE and TRIPLE.
+         */
 
-	if ((count > 1) && (numPats < EVENT_BUFFER_SIZE-1)) {
-	    patPtr[-1] = patPtr[0];
-	    patPtr--;
-	    numPats++;
-	    if ((count == 3) && (numPats < EVENT_BUFFER_SIZE-1)) {
-		patPtr[-1] = patPtr[0];
-		patPtr--;
-		numPats++;
-	    }
-	}
+        if ((count > 1) && (numPats < EVENT_BUFFER_SIZE - 1)) {
+            patPtr[-1] = patPtr[0];
+            patPtr--;
+            numPats++;
+            if ((count == 3) && (numPats < EVENT_BUFFER_SIZE - 1)) {
+                patPtr[-1] = patPtr[0];
+                patPtr--;
+                numPats++;
+            }
+        }
     }
 
     /*
@@ -1644,49 +1636,49 @@ FindSequence(BindingTable *bindPtr, ClientData object, const char *eventString,
      */
 
     if (numPats == 0) {
-	Pad_errorString = "no events specified in binding";
-	return NULL;
+        Pad_errorString = "no events specified in binding";
+        return NULL;
     }
-    patPtr = &pats[EVENT_BUFFER_SIZE-numPats];
+    patPtr = &pats[EVENT_BUFFER_SIZE - numPats];
     key.object = object;
     key.type = patPtr->eventType;
     key.detail = patPtr->detail;
-    sequenceSize = numPats*sizeof(Pattern);
-    if (found = (PatSeq *)bindPtr->patternTable->Get((void *)&key)) {
-	for (psPtr = found; psPtr != NULL;
-		psPtr = psPtr->nextSeqPtr) {
-	    if ((numPats == psPtr->numPats)
-		    && ((flags & PAT_NEARBY) == (psPtr->flags & PAT_NEARBY))
-		    && (memcmp((char *) patPtr, (char *) psPtr->pats,
-		    sequenceSize) == 0)) {
-		goto done;
-	    }
-	}
+    sequenceSize = numPats * sizeof(Pattern);
+    if ((found = (PatSeq *) bindPtr->patternTable->Get((void *) &key))) {
+        for (psPtr = found; psPtr != NULL;
+             psPtr = psPtr->nextSeqPtr) {
+            if ((numPats == psPtr->numPats)
+                && ((flags & PAT_NEARBY) == (psPtr->flags & PAT_NEARBY))
+                && (memcmp((char *) patPtr, (char *) psPtr->pats,
+                           sequenceSize) == 0)) {
+                goto done;
+            }
+        }
     }
     if (!create) {
-	Pad_errorString.Printf("%s%s%s",
-	    "no binding exists for \"", eventString, "\"");
-	return NULL;
+        Pad_errorString.Printf("%s%s%s",
+                               "no binding exists for \"", eventString, "\"");
+        return NULL;
     }
     psPtr = (PatSeq *) malloc((unsigned) (sizeof(PatSeq)
-	    + (numPats-1)*sizeof(Pattern)));
+                                          + (numPats - 1) * sizeof(Pattern)));
     psPtr->numPats = numPats;
     psPtr->command = NULL;
     psPtr->flags = flags;
     psPtr->nextSeqPtr = found;
-    bindPtr->patternTable->Set((void *)&key, (void *)psPtr);
+    bindPtr->patternTable->Set((void *) &key, (void *) psPtr);
 
     /*
      * Link the pattern into the list associated with the object.
      */
 
     psPtr->object = object;
-    if (found = (PatSeq *)bindPtr->objectTable->Get((void *)object)) {
-	psPtr->nextObjPtr = found;
+    if ((found = (PatSeq *) bindPtr->objectTable->Get((void *) object))) {
+        psPtr->nextObjPtr = found;
     } else {
-	psPtr->nextObjPtr = NULL;
+        psPtr->nextObjPtr = NULL;
     }
-    bindPtr->objectTable->Set((void *)object, (void *)psPtr);
+    bindPtr->objectTable->Set((void *) object, (void *) psPtr);
 
     memcpy((void *) psPtr->pats, (void *) patPtr, sequenceSize);
     memcpy((void *) &psPtr->key, (void *) &key, sizeof(PatternTableKey));
@@ -1720,14 +1712,13 @@ FindSequence(BindingTable *bindPtr, ClientData object, const char *eventString,
  */
 
 static const char *
-GetField(const char *p, char *copy, int size)
-{
+GetField(const char *p, char *copy, int size) {
     while ((*p != '\0') && !isspace(UCHAR(*p)) && (*p != '>')
-	    && (*p != '-') && (size > 1)) {
-	*copy = *p;
-	p++;
-	copy++;
-	size--;
+           && (*p != '-') && (size > 1)) {
+        *copy = *p;
+        p++;
+        copy++;
+        size--;
     }
     *copy = '\0';
     return p;
@@ -1754,8 +1745,7 @@ GetField(const char *p, char *copy, int size)
  */
 
 static KeySym
-GetKeySym(Pad_Display *dispPtr, XEvent *eventPtr)
-{
+GetKeySym(Pad_Display *dispPtr, XEvent *eventPtr) {
     KeySym sym;
     int index;
 
@@ -1764,7 +1754,7 @@ GetKeySym(Pad_Display *dispPtr, XEvent *eventPtr)
      */
 
     if (dispPtr->bindInfoStale) {
-	InitKeymapInfo(dispPtr);
+        InitKeymapInfo(dispPtr);
     }
 
     /*
@@ -1775,14 +1765,14 @@ GetKeySym(Pad_Display *dispPtr, XEvent *eventPtr)
 
     index = 0;
     if (Get_state(eventPtr) & dispPtr->modeModMask) {
-	index = 2;
+        index = 2;
     }
     if ((Get_state(eventPtr) & ShiftMask)
-	    || ((dispPtr->lockUsage != LU_IGNORE)
-	    && (Get_state(eventPtr) & LockMask))) {
-	index += 1;
+        || ((dispPtr->lockUsage != LU_IGNORE)
+            && (Get_state(eventPtr) & LockMask))) {
+        index += 1;
     }
-    sym = XKeycodeToKeysym(dispPtr->display, eventPtr->xkey.keycode, index);
+    sym = XkbKeycodeToKeysym(dispPtr->display, eventPtr->xkey.keycode, 0, index);
 
     /*
      * Special handling:  if the key was shifted because of Lock, but
@@ -1792,14 +1782,16 @@ GetKeySym(Pad_Display *dispPtr, XEvent *eventPtr)
      */
 
     if ((index & 1) && !(Get_state(eventPtr) & ShiftMask)
-	    && (dispPtr->lockUsage == LU_CAPS)) {
-	if (!(((sym >= XK_A) && (sym <= XK_Z))
-		|| ((sym >= XK_Agrave) && (sym <= XK_Odiaeresis))
-		|| ((sym >= XK_Ooblique) && (sym <= XK_Thorn)))) {
-	    index &= ~1;
-	    sym = XKeycodeToKeysym(dispPtr->display, eventPtr->xkey.keycode,
-		    index);
-	}
+        && (dispPtr->lockUsage == LU_CAPS)) {
+        if (!(((sym >= XK_A) && (sym <= XK_Z))
+              || ((sym >= XK_Agrave) && (sym <= XK_Odiaeresis))
+              || ((sym >= XK_Ooblique) && (sym <= XK_Thorn)))) {
+            index &= ~1;
+            sym = XkbKeycodeToKeysym(dispPtr->display,
+                                     eventPtr->xkey.keycode,
+                                     0,
+                                     index);
+        }
     }
 
     /*
@@ -1808,8 +1800,10 @@ GetKeySym(Pad_Display *dispPtr, XEvent *eventPtr)
      */
 
     if ((index & 1) && (sym == NoSymbol)) {
-	sym = XKeycodeToKeysym(dispPtr->display, eventPtr->xkey.keycode,
-		    index & ~1);
+        sym = XkbKeycodeToKeysym(dispPtr->display,
+                               eventPtr->xkey.keycode,
+                               0,
+                               index & ~1);
     }
     return sym;
 }
@@ -1836,217 +1830,217 @@ GetKeySym(Pad_Display *dispPtr, XEvent *eventPtr)
  */
 
 static PatSeq *
-MatchPatterns(Pad_Display *dispPtr, BindingTable *bindPtr, PatSeq *psPtr, int mode)
-{
+MatchPatterns(Pad_Display *dispPtr, BindingTable *bindPtr, PatSeq *psPtr, int mode) {
     PatSeq *bestPtr = NULL;
 
     /*
      * Iterate over all the pattern sequences.
      */
 
-    for ( ; psPtr != NULL; psPtr = psPtr->nextSeqPtr) {
-	XEvent *eventPtr;
-	Pattern *patPtr;
-	Window window;
-	int *detailPtr;
-	int patCount, ringCount, flags, state;
-	int modMask;
+    for (; psPtr != NULL; psPtr = psPtr->nextSeqPtr) {
+        XEvent *eventPtr;
+        Pattern *patPtr;
+        Window window;
+        int *detailPtr;
+        int patCount, ringCount, flags, state;
+        int modMask;
 
-	/*
-	 * Iterate over all the patterns in a sequence to be
-	 * sure that they all match.
-	 */
+        /*
+         * Iterate over all the patterns in a sequence to be
+         * sure that they all match.
+         */
 
-	eventPtr = &bindPtr->eventRing[bindPtr->curEvent];
-	detailPtr = &bindPtr->detailRing[bindPtr->curEvent];
-	window = eventPtr->xany.window;
-	patPtr = psPtr->pats;
-	patCount = psPtr->numPats;
-	ringCount = EVENT_BUFFER_SIZE;
-	while (patCount > 0) {
-	    if (ringCount <= 0) {
-		goto nextSequence;
-	    }
-	    if (eventPtr->xany.type != patPtr->eventType) {
-		/*
-		 * Most of the event types are considered superfluous
-		 * in that they are ignored if they occur in the middle
-		 * of a pattern sequence and have mismatching types.  The
-		 * only ones that cannot be ignored are ButtonPress and
-		 * ButtonRelease events (if the next event in the pattern
-		 * is a KeyPress or KeyRelease) and KeyPress and KeyRelease
-		 * events (if the next pattern event is a ButtonPress or
-		 * ButtonRelease).  Here are some tricky cases to consider:
-		 * 1. Double-Button or Double-Key events.
-		 * 2. Double-ButtonRelease or Double-KeyRelease events.
-		 * 3. The arrival of various events like Enter and Leave
-		 *    and FocusIn and GraphicsExpose between two button
-		 *    presses or key presses.
-		 * 4. Modifier keys like Shift and Control shouldn't
-		 *    generate conflicts with button events.
-		 */
+        eventPtr = &bindPtr->eventRing[bindPtr->curEvent];
+        detailPtr = &bindPtr->detailRing[bindPtr->curEvent];
+        window = eventPtr->xany.window;
+        patPtr = psPtr->pats;
+        patCount = psPtr->numPats;
+        ringCount = EVENT_BUFFER_SIZE;
+        while (patCount > 0) {
+            if (ringCount <= 0) {
+                goto nextSequence;
+            }
+            if (eventPtr->xany.type != patPtr->eventType) {
+                /*
+                 * Most of the event types are considered superfluous
+                 * in that they are ignored if they occur in the middle
+                 * of a pattern sequence and have mismatching types.  The
+                 * only ones that cannot be ignored are ButtonPress and
+                 * ButtonRelease events (if the next event in the pattern
+                 * is a KeyPress or KeyRelease) and KeyPress and KeyRelease
+                 * events (if the next pattern event is a ButtonPress or
+                 * ButtonRelease).  Here are some tricky cases to consider:
+                 * 1. Double-Button or Double-Key events.
+                 * 2. Double-ButtonRelease or Double-KeyRelease events.
+                 * 3. The arrival of various events like Enter and Leave
+                 *    and FocusIn and GraphicsExpose between two button
+                 *    presses or key presses.
+                 * 4. Modifier keys like Shift and Control shouldn't
+                 *    generate conflicts with button events.
+                 */
 
-		if ((patPtr->eventType == KeyPress)
-			|| (patPtr->eventType == KeyRelease)) {
-		    if ((eventPtr->xany.type == ButtonPress)
-			    || (eventPtr->xany.type == ButtonRelease)) {
-			goto nextSequence;
-		    }
-		} else if ((patPtr->eventType == ButtonPress)
-			|| (patPtr->eventType == ButtonRelease)) {
-		    if ((eventPtr->xany.type == KeyPress)
-			    || (eventPtr->xany.type == KeyRelease)) {
-			int i;
+                if ((patPtr->eventType == KeyPress)
+                    || (patPtr->eventType == KeyRelease)) {
+                    if ((eventPtr->xany.type == ButtonPress)
+                        || (eventPtr->xany.type == ButtonRelease)) {
+                        goto nextSequence;
+                    }
+                } else if ((patPtr->eventType == ButtonPress)
+                           || (patPtr->eventType == ButtonRelease)) {
+                    if ((eventPtr->xany.type == KeyPress)
+                        || (eventPtr->xany.type == KeyRelease)) {
+                        int i;
 
-			/*
-			 * Ignore key events if they are modifier keys.
-			 */
+                        /*
+                         * Ignore key events if they are modifier keys.
+                         */
 
-			for (i = 0; i < dispPtr->numModKeyCodes; i++) {
-			    if (dispPtr->modKeyCodes[i]
-				    == eventPtr->xkey.keycode) {
-				/*
-				 * This key is a modifier key, so ignore it.
-				 */
-				goto nextEvent;
-			    }
-			}
-			goto nextSequence;
-		    }
-		}
-		goto nextEvent;
-	    }
-	    if (eventPtr->xany.window != window) {
-		goto nextSequence;
-	    }
+                        for (i = 0; i < dispPtr->numModKeyCodes; i++) {
+                            if (dispPtr->modKeyCodes[i]
+                                == eventPtr->xkey.keycode) {
+                                /*
+                                 * This key is a modifier key, so ignore it.
+                                 */
+                                goto nextEvent;
+                            }
+                        }
+                        goto nextSequence;
+                    }
+                }
+                goto nextEvent;
+            }
+            if (eventPtr->xany.window != window) {
+                goto nextSequence;
+            }
 
-	    /*
-	     * Note: it's important for the keysym check to go before
-	     * the modifier check, so we can ignore unwanted modifier
-	     * keys before choking on the modifier check.
-	     */
+            /*
+             * Note: it's important for the keysym check to go before
+             * the modifier check, so we can ignore unwanted modifier
+             * keys before choking on the modifier check.
+             */
 
-	    if ((patPtr->detail != 0)
-		    && (patPtr->detail != *detailPtr)) {
-		/*
-		 * The detail appears not to match.  However, if the event
-		 * is a KeyPress for a modifier key then just ignore the
-		 * event.  Otherwise event sequences like "aD" never match
-		 * because the shift key goes down between the "a" and the
-		 * "D".
-		 */
+            if ((patPtr->detail != 0)
+                && (patPtr->detail != *detailPtr)) {
+                /*
+                 * The detail appears not to match.  However, if the event
+                 * is a KeyPress for a modifier key then just ignore the
+                 * event.  Otherwise event sequences like "aD" never match
+                 * because the shift key goes down between the "a" and the
+                 * "D".
+                 */
 
-		if (eventPtr->xany.type == KeyPress) {
-		    int i;
+                if (eventPtr->xany.type == KeyPress) {
+                    int i;
 
-		    for (i = 0; i < dispPtr->numModKeyCodes; i++) {
-			if (dispPtr->modKeyCodes[i] == eventPtr->xkey.keycode) {
-			    goto nextEvent;
-			}
-		    }
-		}
-		goto nextSequence;
-	    }
-	    flags = flagArray[eventPtr->type];
-	    if (flags & KEY_BUTTON_MOTION) {
-		state = Get_state(eventPtr);
-	    } else if (flags & CROSSING) {
-		state = eventPtr->xcrossing.state;
-	    } else {
-		state = 0;
-	    }
-	    if (patPtr->needMods != 0) {
-		modMask = patPtr->needMods;
-		if ((modMask & META_MASK) && (dispPtr->metaModMask != 0)) {
-		    modMask = (modMask & ~META_MASK) | dispPtr->metaModMask;
-		}
-		if ((modMask & ALT_MASK) && (dispPtr->altModMask != 0)) {
-		    modMask = (modMask & ~ALT_MASK) | dispPtr->altModMask;
-		}
-				// Check to make sure user-defined modifier matches
-		if (modMask & USER_MASK) {
-		    if (patPtr->mode != mode) {
-			goto nextSequence;
-		    }
-		    modMask &= ~USER_MASK;
-		}
-		if ((state & modMask) != modMask) {
-		    goto nextSequence;
-		}
-	    }
-	    if (psPtr->flags & PAT_NEARBY) {
-		XEvent *firstPtr;
-		unsigned long timeDiff;
+                    for (i = 0; i < dispPtr->numModKeyCodes; i++) {
+                        if (dispPtr->modKeyCodes[i] == eventPtr->xkey.keycode) {
+                            goto nextEvent;
+                        }
+                    }
+                }
+                goto nextSequence;
+            }
+            flags = flagArray[eventPtr->type];
+            if (flags & KEY_BUTTON_MOTION) {
+                state = Get_state(eventPtr);
+            } else if (flags & CROSSING) {
+                state = eventPtr->xcrossing.state;
+            } else {
+                state = 0;
+            }
+            if (patPtr->needMods != 0) {
+                modMask = patPtr->needMods;
+                if ((modMask & META_MASK) && (dispPtr->metaModMask != 0)) {
+                    modMask = (modMask & ~META_MASK) | dispPtr->metaModMask;
+                }
+                if ((modMask & ALT_MASK) && (dispPtr->altModMask != 0)) {
+                    modMask = (modMask & ~ALT_MASK) | dispPtr->altModMask;
+                }
+                // Check to make sure user-defined modifier matches
+                if (modMask & USER_MASK) {
+                    if (patPtr->mode != mode) {
+                        goto nextSequence;
+                    }
+                    modMask &= ~USER_MASK;
+                }
+                if ((state & modMask) != modMask) {
+                    goto nextSequence;
+                }
+            }
+            if (psPtr->flags & PAT_NEARBY) {
+                XEvent *firstPtr;
+                unsigned long timeDiff;
 
-		firstPtr = &bindPtr->eventRing[bindPtr->curEvent];
-		timeDiff = (Time) firstPtr->xkey.time - eventPtr->xkey.time;
-		if ((firstPtr->xkey.x_root
-			    < (eventPtr->xkey.x_root - NEARBY_PIXELS))
-			|| (firstPtr->xkey.x_root
-			    > (eventPtr->xkey.x_root + NEARBY_PIXELS))
-			|| (firstPtr->xkey.y_root
-			    < (eventPtr->xkey.y_root - NEARBY_PIXELS))
-			|| (firstPtr->xkey.y_root
-			    > (eventPtr->xkey.y_root + NEARBY_PIXELS))
-			|| (timeDiff > NEARBY_MS)) {
-		    goto nextSequence;
-		}
-	    }
-	    patPtr++;
-	    patCount--;
-	    nextEvent:
-	    if (eventPtr == bindPtr->eventRing) {
-		eventPtr = &bindPtr->eventRing[EVENT_BUFFER_SIZE-1];
-		detailPtr = &bindPtr->detailRing[EVENT_BUFFER_SIZE-1];
-	    } else {
-		eventPtr--;
-		detailPtr--;
-	    }
-	    ringCount--;
-	}
+                firstPtr = &bindPtr->eventRing[bindPtr->curEvent];
+                timeDiff = (Time) firstPtr->xkey.time - eventPtr->xkey.time;
+                if ((firstPtr->xkey.x_root
+                     < (eventPtr->xkey.x_root - NEARBY_PIXELS))
+                    || (firstPtr->xkey.x_root
+                        > (eventPtr->xkey.x_root + NEARBY_PIXELS))
+                    || (firstPtr->xkey.y_root
+                        < (eventPtr->xkey.y_root - NEARBY_PIXELS))
+                    || (firstPtr->xkey.y_root
+                        > (eventPtr->xkey.y_root + NEARBY_PIXELS))
+                    || (timeDiff > NEARBY_MS)) {
+                    goto nextSequence;
+                }
+            }
+            patPtr++;
+            patCount--;
+            nextEvent:
+            if (eventPtr == bindPtr->eventRing) {
+                eventPtr = &bindPtr->eventRing[EVENT_BUFFER_SIZE - 1];
+                detailPtr = &bindPtr->detailRing[EVENT_BUFFER_SIZE - 1];
+            } else {
+                eventPtr--;
+                detailPtr--;
+            }
+            ringCount--;
+        }
 
-	/*
-	 * This sequence matches.  If we've already got another match,
-	 * pick whichever is most specific.  Detail is most important,
-	 * then needMods.
-	 */
+        /*
+         * This sequence matches.  If we've already got another match,
+         * pick whichever is most specific.  Detail is most important,
+         * then needMods.
+         */
 
-	if (bestPtr != NULL) {
-	    Pattern *patPtr2;
-	    int i;
+        if (bestPtr != NULL) {
+            Pattern *patPtr2;
+            int i;
 
-	    if (psPtr->numPats != bestPtr->numPats) {
-		if (bestPtr->numPats > psPtr->numPats) {
-		    goto nextSequence;
-		} else {
-		    goto newBest;
-		}
-	    }
-	    for (i = 0, patPtr = psPtr->pats, patPtr2 = bestPtr->pats;
-		    i < psPtr->numPats; i++, patPtr++, patPtr2++) {
-		if (patPtr->detail != patPtr2->detail) {
-		    if (patPtr->detail == 0) {
-			goto nextSequence;
-		    } else {
-			goto newBest;
-		    }
-		}
-		if (patPtr->needMods != patPtr2->needMods) {
-		    if ((patPtr->needMods & patPtr2->needMods)
-			    == patPtr->needMods) {
-			goto nextSequence;
-		    } else if ((patPtr->needMods & patPtr2->needMods)
-			    == patPtr2->needMods) {
-			goto newBest;
-		    }
-		}
-	    }
-	    goto nextSequence;	/* Tie goes to newest pattern. */
-	}
-	newBest:
-	bestPtr = psPtr;
+            if (psPtr->numPats != bestPtr->numPats) {
+                if (bestPtr->numPats > psPtr->numPats) {
+                    goto nextSequence;
+                } else {
+                    goto newBest;
+                }
+            }
+            for (i = 0, patPtr = psPtr->pats, patPtr2 = bestPtr->pats;
+                 i < psPtr->numPats; i++, patPtr++, patPtr2++) {
+                if (patPtr->detail != patPtr2->detail) {
+                    if (patPtr->detail == 0) {
+                        goto nextSequence;
+                    } else {
+                        goto newBest;
+                    }
+                }
+                if (patPtr->needMods != patPtr2->needMods) {
+                    if ((patPtr->needMods & patPtr2->needMods)
+                        == patPtr->needMods) {
+                        goto nextSequence;
+                    } else if ((patPtr->needMods & patPtr2->needMods)
+                               == patPtr2->needMods) {
+                        goto newBest;
+                    }
+                }
+            }
+            goto nextSequence;    /* Tie goes to newest pattern. */
+        }
+        newBest:
+        bestPtr = psPtr;
 
-	nextSequence: continue;
+        nextSequence:
+        continue;
     }
     return bestPtr;
 }
@@ -2071,8 +2065,7 @@ MatchPatterns(Pad_Display *dispPtr, BindingTable *bindPtr, PatSeq *psPtr, int mo
  */
 
 static void
-InitKeymapInfo(Pad_Display *dispPtr)
-{
+InitKeymapInfo(Pad_Display *dispPtr) {
     XModifierKeymap *modMapPtr;
     KeyCode *codePtr;
     KeySym keysym;
@@ -2089,20 +2082,20 @@ InitKeymapInfo(Pad_Display *dispPtr)
      */
 
     dispPtr->lockUsage = LU_IGNORE;
-    codePtr = modMapPtr->modifiermap + modMapPtr->max_keypermod*LockMapIndex;
+    codePtr = modMapPtr->modifiermap + modMapPtr->max_keypermod * LockMapIndex;
     for (count = modMapPtr->max_keypermod; count > 0; count--, codePtr++) {
-	if (*codePtr == 0) {
-	    continue;
-	}
-	keysym = XKeycodeToKeysym(dispPtr->display, *codePtr, 0);
-	if (keysym == XK_Shift_Lock) {
-	    dispPtr->lockUsage = LU_SHIFT;
-	    break;
-	}
-	if (keysym == XK_Caps_Lock) {
-	    dispPtr->lockUsage = LU_CAPS;
-	    break;
-	}
+        if (*codePtr == 0) {
+            continue;
+        }
+        keysym = XkbKeycodeToKeysym(dispPtr->display, *codePtr, 0, 0);
+        if (keysym == XK_Shift_Lock) {
+            dispPtr->lockUsage = LU_SHIFT;
+            break;
+        }
+        if (keysym == XK_Caps_Lock) {
+            dispPtr->lockUsage = LU_CAPS;
+            break;
+        }
     }
 
     /*
@@ -2115,21 +2108,21 @@ InitKeymapInfo(Pad_Display *dispPtr)
     dispPtr->metaModMask = 0;
     dispPtr->altModMask = 0;
     codePtr = modMapPtr->modifiermap;
-    max = 8*modMapPtr->max_keypermod;
+    max = 8 * modMapPtr->max_keypermod;
     for (i = 0; i < max; i++, codePtr++) {
-	if (*codePtr == 0) {
-	    continue;
-	}
-	keysym = XKeycodeToKeysym(dispPtr->display, *codePtr, 0);
-	if (keysym == XK_Mode_switch) {
-	    dispPtr->modeModMask |= ShiftMask << (i/modMapPtr->max_keypermod);
-	}
-	if ((keysym == XK_Meta_L) || (keysym == XK_Meta_R)) {
-	    dispPtr->metaModMask |= ShiftMask << (i/modMapPtr->max_keypermod);
-	}
-	if ((keysym == XK_Alt_L) || (keysym == XK_Alt_R)) {
-	    dispPtr->altModMask |= ShiftMask << (i/modMapPtr->max_keypermod);
-	}
+        if (*codePtr == 0) {
+            continue;
+        }
+        keysym = XkbKeycodeToKeysym(dispPtr->display, *codePtr, 0, 0);
+        if (keysym == XK_Mode_switch) {
+            dispPtr->modeModMask |= ShiftMask << (i / modMapPtr->max_keypermod);
+        }
+        if ((keysym == XK_Meta_L) || (keysym == XK_Meta_R)) {
+            dispPtr->metaModMask |= ShiftMask << (i / modMapPtr->max_keypermod);
+        }
+        if ((keysym == XK_Alt_L) || (keysym == XK_Alt_R)) {
+            dispPtr->altModMask |= ShiftMask << (i / modMapPtr->max_keypermod);
+        }
     }
 
     /*
@@ -2137,42 +2130,43 @@ InitKeymapInfo(Pad_Display *dispPtr)
      */
 
     if (dispPtr->modKeyCodes != NULL) {
-	delete [] dispPtr->modKeyCodes;
+        delete[] dispPtr->modKeyCodes;
     }
     dispPtr->numModKeyCodes = 0;
     arraySize = KEYCODE_ARRAY_SIZE;
     dispPtr->modKeyCodes = new KeyCode[KEYCODE_ARRAY_SIZE];
     for (i = 0, codePtr = modMapPtr->modifiermap; i < max; i++, codePtr++) {
-	if (*codePtr == 0) {
-	    continue;
-	}
+        if (*codePtr == 0) {
+            continue;
+        }
 
-	/*
-	 * Make sure that the keycode isn't already in the array.
-	 */
+        /*
+         * Make sure that the keycode isn't already in the array.
+         */
 
-	for (j = 0; j < dispPtr->numModKeyCodes; j++) {
-	    if (dispPtr->modKeyCodes[j] == *codePtr) {
-		goto nextModCode;
-	    }
-	}
-	if (dispPtr->numModKeyCodes >= arraySize) {
-	    KeyCode *newk;
+        for (j = 0; j < dispPtr->numModKeyCodes; j++) {
+            if (dispPtr->modKeyCodes[j] == *codePtr) {
+                goto nextModCode;
+            }
+        }
+        if (dispPtr->numModKeyCodes >= arraySize) {
+            KeyCode *newk;
 
-	    /*
-	     * Ran out of space in the array;  grow it.
-	     */
+            /*
+             * Ran out of space in the array;  grow it.
+             */
 
-	    arraySize *= 2;
-	    newk = new KeyCode[arraySize];
-	    memcpy((void *) newk, (void *) dispPtr->modKeyCodes,
-		    (dispPtr->numModKeyCodes * sizeof(KeyCode)));
-	    delete [] dispPtr->modKeyCodes;
-	    dispPtr->modKeyCodes = newk;
-	}
-	dispPtr->modKeyCodes[dispPtr->numModKeyCodes] = *codePtr;
-	dispPtr->numModKeyCodes++;
-	nextModCode: continue;
+            arraySize *= 2;
+            newk = new KeyCode[arraySize];
+            memcpy((void *) newk, (void *) dispPtr->modKeyCodes,
+                   (dispPtr->numModKeyCodes * sizeof(KeyCode)));
+            delete[] dispPtr->modKeyCodes;
+            dispPtr->modKeyCodes = newk;
+        }
+        dispPtr->modKeyCodes[dispPtr->numModKeyCodes] = *codePtr;
+        dispPtr->numModKeyCodes++;
+        nextModCode:
+        continue;
     }
     XFreeModifiermap(modMapPtr);
 }

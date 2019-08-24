@@ -90,7 +90,7 @@ class Pad_Line : public Pad_Object
     virtual int        Get_arrow(void);
     virtual char *     Get_arrowshape(void);
     virtual void       Get_coords(Pad_PList &pts, Pad_Bool object_coords);
-    virtual char *     Get_joinstyle(void);
+    virtual const char * Get_joinstyle(void);
             void       Get_pen_name(Pad_String &penname);
             float      Get_penwidth(void);
             Pad_Bool   Get_abslinestyle(void);
@@ -109,7 +109,7 @@ class Pad_Line : public Pad_Object
     virtual void       Set_capstyle_default(void);
     virtual Pad_Bool   Set_coords(Pad_PList &pts, Pad_Bool object_coords);
     virtual Pad_Bool   Set_height(float height);
-    virtual Pad_Bool   Set_joinstyle(char *joinstyle);
+    virtual Pad_Bool   Set_joinstyle(const char *joinstyle);
     virtual void       Set_joinstyle_default(void);
             Pad_Bool   Set_pen(const char *colorname);
             Pad_Bool   Set_pen(int red, int green, int blue);

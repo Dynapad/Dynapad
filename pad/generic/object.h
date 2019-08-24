@@ -372,7 +372,7 @@ class Pad_Object
     Pad *         pad;		// Pad this object is on
     int           drawingOrder; // Number in drawing order list
 
-    int           id;		// Id of object
+    intptr_t      id;		// Id of object
     Pad_List      tags;		// List of tags (Pad_Uid's)
     Pad_Anchor    anchor;	// Anchor type (n, s, sw, etc.)
     Pad_Point     anchorpt;	// Anchor point (The point this object is positioned by
@@ -437,7 +437,7 @@ public:
             Clipping Get_clipping(void);
 
     virtual void     Get_coords(Pad_PList &pts, Pad_Bool object_coords);
-            char *   Get_event_order(void);
+            const char * Get_event_order(void);
             Pad_Bool Get_events(void);
             float    Get_faderange(void);
     virtual void     Get_fillname(Pad_String &fillname);
@@ -446,8 +446,8 @@ public:
             void     Get_global_bbox(Pad_BBox &bb);
             float    Get_global_size(void);
             float    Get_height(void);
-    virtual char *   Get_info(void);
-            char *   Get_layer(void);
+    virtual const char * Get_info(void);
+            const char * Get_layer(void);
             Pad_Bool Get_lock(void);
             void     Get_minsize(Pad_String &minsize);
             float    Get_minsize(void);
@@ -555,10 +555,10 @@ public:
     virtual Pad_Bool Set_height(float height);
     virtual void     Set_height_default(void);
             Pad_Bool Set_id(void);
-            Pad_Bool Set_id(int new_id);
+            Pad_Bool Set_id(intptr_t new_id);
             Pad_Bool Set_info(char *info);
             void     Set_info_default(void);
-            Pad_Bool Set_layer(char *l);
+            Pad_Bool Set_layer(const char *l);
             void     Set_layer_default(void);
             Pad_Bool Set_lock(Pad_Bool visible);
             void     Set_lock_default(void);
@@ -631,7 +631,7 @@ public:
     int      _traitFlags;  // Bit field of used traits         
     virtual Pad_Trait *_Get_trait(int);  // To get a trait for an option
 
-    virtual Pad_Trait *_Get_trait(int, char*&);     // Convinient routines for 
+    virtual Pad_Trait *_Get_trait(int, char*&);     // Convinient routines for
     virtual Pad_Trait *_Get_trait(int, Pad_String*&); // setting trait values.
     virtual Pad_Trait *_Get_trait(int, Pad_Callback*&);
     virtual Pad_Trait *_Get_trait(int, Pad_List*&);

@@ -377,12 +377,12 @@ Pad_Win::Set_cursor(int cursorType)
 // Set/Get window name
 //
 void
-Pad_Win::Set_name(char *name)
+Pad_Win::Set_name(const char *name)
 {
     _name = Pad_GetUid(name);
 }
 
-char *
+const char *
 Pad_Win::Get_name(void)
 {
     return(_name);
@@ -815,7 +815,7 @@ Pad_Win::Get_pads(Pad_List &padNames)
     _pad_id_node *node = _padHead;
 
     while (node) {
-	padNames.Push_last(node->padName);
+	padNames.Push_last((void *)node->padName);
 	node = node->next;
     }
 }

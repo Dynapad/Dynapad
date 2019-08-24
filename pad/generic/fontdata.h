@@ -34,7 +34,7 @@ software in general.
 class ZFontType1;
 class ZFontPoly;
 
-// Pad_FontData is a class for locating Type-1 Postscript font data for a 
+// Pad_FontData is a class for locating Type-1 Postscript font data for a
 // given fontname/style.
 
 class Pad_FontData {
@@ -65,8 +65,8 @@ class Pad_FontData {
     Pad_Bool xftfactorchanged;
 
     // used internally in fontdata.cpp
-    Pad_FontData(char *filename, char *name, int style);
-    Pad_FontData(char *name);
+    Pad_FontData(const char *filename, const char *name, int style);
+    Pad_FontData(const char *name);
     Pad_FontData(Pad_FontData *copy);
     ~Pad_FontData();
 

@@ -602,7 +602,7 @@ void
 Pad_TreeNode::Print(void)
 {
    if (_obj) {
-      printf("%d ", _obj->id);
+      printf("%ld ", _obj->id);
    } else {
       printf("no object in node\n");
    }

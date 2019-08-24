@@ -239,7 +239,7 @@ Pad_Line::Get_abslinestyle(void)
 }
 
 Pad_Bool
-Pad_Line::Set_joinstyle(char *joinstyle)
+Pad_Line::Set_joinstyle(const char *joinstyle)
 {
     if (!strcmp(joinstyle, "bevel")) {
 	joinStyle = JoinBevel;
@@ -265,7 +265,7 @@ Pad_Line::Set_joinstyle_default(void)
     lineFlags &= ~LINE_JOINSTYLE_SET;
 }
 
-char *
+const char *
 Pad_Line::Get_joinstyle(void)
 {
     char *joinstyle = NULL;

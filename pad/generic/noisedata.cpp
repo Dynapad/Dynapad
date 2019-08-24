@@ -129,7 +129,7 @@ Pad_NoiseData::Get_points(Pad_Point *points, int length, Pad_Bool closed, int &n
 	    for (i = 0; i < npts; i++) { 
 		new_pts[i] = pts[i]; 
 	    } 
-	    delete pts; 
+	    delete[] pts;
 	    pts = new_pts; 
 	    npts = new_npts; 
 	} 

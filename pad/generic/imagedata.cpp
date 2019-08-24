@@ -69,8 +69,8 @@ Pad_ImageData::~Pad_ImageData()
     }
     dpy->Remove_image_data(this);
 
-    Pad_imageTokenTable.Remove(token);
-    Pad_imageNameTable.Remove(name);
+    Pad_imageTokenTable.Remove((void *) token);
+    Pad_imageNameTable.Remove((void *) name);
 
     dpy = NULL;    
     if (rgbData) {

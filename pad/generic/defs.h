@@ -76,7 +76,7 @@ extern "C" {	// for X11/Xlib.h in win95
 #define NULL    0
 #endif
 
-typedef char *Pad_Uid;
+typedef const char *Pad_Uid;
 typedef unsigned char Pad_Bool;  // Booleans
 typedef void *voidPtr;           // Makes casting easier
 typedef void *ClientData;        // Makes casting easier

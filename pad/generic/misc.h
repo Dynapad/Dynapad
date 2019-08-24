@@ -162,11 +162,11 @@ const char *Pad_NameOfAnchor(Pad_Anchor anchor);
 const char *casestrstr(const char *s1, const char *s2);
 char *casestrstr(char *s1, char *s2);
 
-int Pad_StringMatch(char *string, char *pattern);
+int Pad_StringMatch(const char *string, const char *pattern);
 
 typedef regex_t* Pad_RegExp;
 Pad_RegExp Pad_RegExpCompile(char *pattern);
-int Pad_RegExpExec(Pad_RegExp regexp, char *string);
+int Pad_RegExpExec(Pad_RegExp regexp, const char *string);
 void Pad_RegExpFree(Pad_RegExp regexp);
 
 #endif

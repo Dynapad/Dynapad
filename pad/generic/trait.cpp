@@ -178,7 +178,7 @@ Pad_Trait(id),
 value(ps)
 {
 }
-                 
+
 Pad_StringTrait::Pad_StringTrait(int id, Pad_String &ps) :
 Pad_Trait(id),
 value(ps)
@@ -429,7 +429,7 @@ Pad_UCharTrait::Set_value(unsigned char *val)
     if (!val) {
       return FALSE;
     }
-    
+
     value = *val;
     return TRUE;
 }
@@ -455,7 +455,7 @@ Pad_FloatTrait::Set_value(float *val)
     if (!val) {
       return FALSE;
     }
-    
+
     value = *val;
     return TRUE;
 }

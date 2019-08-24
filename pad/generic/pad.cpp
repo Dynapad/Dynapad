@@ -246,7 +246,7 @@ Pad::Create_layer(const char *name)
     layer = new Pad_Layer(this);
     layer->name = Pad_GetUid(name);
     layer->id = layerId;
-    layerNameTable.Set(layer->name, layer);
+    layerNameTable.Set((void *) layer->name, layer);
     layerIdTable.Set((void *)(uintptr_t)layer->id, layer);
     delete [] layerIds;
 
@@ -1662,7 +1662,7 @@ Pad::Get_active(void)
 // or NULL if there is none.
 //
 Pad_Object *
-Pad::Get_object_from_id(int obj_id)
+Pad::Get_object_from_id(intptr_t id)
 {
     Pad_Object *obj;
 
@@ -1673,7 +1673,7 @@ Pad::Get_object_from_id(int obj_id)
         return(NULL);
     }
 
-    obj = (Pad_Object *)idTable->Get((char *)obj_id);
+    obj = (Pad_Object *)idTable->Get((char *)id);
 
     return(obj);
 }
@@ -1688,7 +1688,7 @@ Pad::Get_objects_from_tag(char *tag, Pad_List &objs)
     Pad_List *tagObjs;
 
     uid = Pad_GetUid(tag);
-    tagObjs = (Pad_List *)pad->tagTable->Get(uid);
+    tagObjs = (Pad_List *)pad->tagTable->Get((void *) uid);
     if (tagObjs) {
         objs = tagObjs;
     }
@@ -1707,7 +1707,7 @@ Pad::Get_ids_from_tag(char *tag, Pad_IList &ids)
     Pad_Object *obj;
 
     uid = Pad_GetUid(tag);
-    tagObjs = (Pad_List *)pad->tagTable->Get(uid);
+    tagObjs = (Pad_List *)pad->tagTable->Get((void *) uid);
     if (tagObjs) {
         DOLIST(oi, *tagObjs, Pad_Object, obj) {
             ids.Push_last(obj->id);
@@ -1721,7 +1721,7 @@ Pad::Get_ids_from_tag(char *tag, Pad_IList &ids)
 // or it was locked.
 //
 Pad_Bool
-Pad::Delete_obj(int id)
+Pad::Delete_obj(intptr_t id)
 {
     Pad_Bool rc;
     Pad_Object *obj;
@@ -2514,7 +2514,7 @@ void
 Pad::Find_with_info(char *infoptr, Pad_List &items, Pad_Bool groups)
 {
     Pad_Object *obj;
-    char *info;
+    const char *info;
 
     items.Make_empty();
     obj = First();
@@ -2543,7 +2543,7 @@ Pad::Find_with_type(char *type_name, Pad_List &items, Pad_Bool groups)
     Pad_String *userType;
 
     typeUid = Pad_GetUid(type_name);
-    type = (Pad_Type *)typeTable->Get(typeUid);
+    type = (Pad_Type *)typeTable->Get((void *) typeUid);
     items.Make_empty();
     if (type) {
         objType = type->id;
@@ -3237,8 +3237,8 @@ int
 Pad_FindTreeNode::Evaluate(Pad_Object *obj)
 {
 
-    char *info;
-    char *layerName;
+    const char *info;
+    const char *layerName;
     char *typeName;
     float bb[4];    
     float mag;
@@ -3651,7 +3651,7 @@ Pad_Find::Eval(Pad *pad, Pad_List &list, ClientData clientData, Pad_Bool groupMe
             //} else {
             
             uid = _expr->Get_uid();
-            tagObjs = (Pad_List *)_pad->tagTable->Get(*uid);
+            tagObjs = (Pad_List *)_pad->tagTable->Get((void *) *uid);
             if (tagObjs) {
                 objs = tagObjs;
             }
