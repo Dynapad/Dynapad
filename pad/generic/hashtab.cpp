@@ -69,7 +69,7 @@ Pad_HashTable::~Pad_HashTable()
 {
     int ret;
 
-    if (ret = dbp->close(dbp, 0))
+    if ((ret = dbp->close(dbp, 0)))
 	fprintf(stderr, "dbp->close %d\n", ret);
 }
 

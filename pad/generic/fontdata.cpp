@@ -453,8 +453,8 @@ static void Register_font_directory(char *dirname) {
     DIR *dirp;
     struct dirent *direntp;
 
-    if (dirp = opendir(dirname)) {
-        while (direntp = readdir(dirp)) {
+    if ((dirp = opendir(dirname))) {
+        while ((direntp = readdir(dirp))) {
             Pad_String name = dirname;
             int len;
             name += "/";
@@ -619,7 +619,7 @@ void Pad_FontData::Get_path(Pad_String &path) {
     path = fontPath;
 }
 
-void Pad_FontData::Set_path(char *path) {
+void Pad_FontData::Set_path(const char *path) {
     if (!strcmp(path, fontPath.Get()))
         return; /* do nothing if there is no change... */
 

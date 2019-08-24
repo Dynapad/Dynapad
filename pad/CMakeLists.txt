@@ -100,9 +100,10 @@ set_target_properties(pad
   PROPERTIES
     POSITION_INDEPENDENT_CODE True)
 
-#target_compile_definitions(pad
-#  PRIVATE
-#    MAGICKCORE_QUANTUM_DEPTH 16)
+target_compile_definitions(pad
+  PRIVATE
+    MAGICKCORE_QUANTUM_DEPTH=16
+    MAGICKCORE_HDRI_ENABLE=0)
 
 target_include_directories(pad
   PRIVATE 

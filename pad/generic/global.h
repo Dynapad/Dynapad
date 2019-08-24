@@ -77,7 +77,7 @@ extern Pad_Uid        Pad_windowUid;	 // Universal id for "window" type
 
 extern Pad_RenderContext *Pad_prc;       // Current render context
 extern Pad_Renderer *Pad_renderer;       // Current renderer
-extern char         *Pad_version;        // Version string
+extern const char   *Pad_version;        // Version string
 extern int           Pad_sharedMemory;   // True if shared memory should be tried
 extern int           Pad_rgb;            // True if images should stored RGB information
 extern Pad_Language *Pad_callbackLanguage; // Language new scripts should be interpreted as

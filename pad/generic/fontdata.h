@@ -78,7 +78,7 @@ class Pad_FontData {
 
     // Font Data Manager API
     // Sets the path used to locate postscript font files
-    static void Set_path(char *path);
+    static void Set_path(const char *path);
     
     // Returns the current path used to locate font files
     static void Get_path(Pad_String &path);
