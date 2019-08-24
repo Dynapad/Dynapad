@@ -51,9 +51,11 @@ target_link_libraries(dynapad
 
 set(DYNAPAD_LINK_OPTIONS)
 
-foreach(SYMBOL IN ITEMS ${RacketCGC_DYNAMIC_SYMBOLS})
-  list(APPEND DYNAPAD_LINK_OPTIONS "LINKER:-U,_${SYMBOL}")
-endforeach()
+if (APPLE)
+  foreach(SYMBOL IN ITEMS ${RacketCGC_DYNAMIC_SYMBOLS})
+    list(APPEND DYNAPAD_LINK_OPTIONS "LINKER:-U,_${SYMBOL}")
+  endforeach()
+endif()
 
 target_link_options(dynapad
   PRIVATE
