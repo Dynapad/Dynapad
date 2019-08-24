@@ -160,7 +160,7 @@ static unsigned long *pixel_map;
           } \
 
 
-        // win32 version, don't keep the pixel_map[b], which in win32, it is 
+        // win32 version, don't keep the pixel_map[b], which in win32, it is
         // 32 bit RGBA value, but instead, keep the index which is b.
 
 
@@ -240,10 +240,10 @@ Init_dither(Pad_ColorCube *colorcube)
 //
 int
 Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
-              void *img_data, unsigned char *mask, 
+              void *img_data, unsigned char *mask,
               int img_width, int img_height,
               int src_left, int src_top, int src_right, int src_bot,
-              int dst_left, int dst_top, int dst_right, int dst_bot, 
+              int dst_left, int dst_top, int dst_right, int dst_bot,
               Pad_Bool dither, float transparency)
 {
     int x, y;
@@ -260,12 +260,12 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
     float xfac, yfac;
     Pad_Stipple *stipple = NULL;
     Pixmap x_stipple;
-    XImage *xim = win->ximage;    
+    XImage *xim = win->ximage;
     int depth = win->dpy->depth;
 
     unsigned long *xpixelmap;
     int padncolors;
-        
+
     xpixelmap = NULL;
     padncolors = 0;
 
@@ -356,7 +356,7 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
       default:
         mode |= BANY; // unknown depth
         break;
-    }        
+    }
 
     if (dither) {
         mode |= BDITH;
@@ -379,7 +379,7 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
             char *srcrow = stipple->pattern[y];
             int *dstrow = stippat[y];
             for (x = 0; x < STIP_SIZE; x++) {
-                dstrow[x] = srcrow[(lmt_dst_left + x) & STIP_MASK]; 
+                dstrow[x] = srcrow[(lmt_dst_left + x) & STIP_MASK];
             }
         }
         if (!mask) {
@@ -418,8 +418,8 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
                     XPutPixel(xim, x, y, masklineptr[offsets[x]] ? 0xffffffff : 0);
                 }
                 break;
-                
-                
+
+
               case MASK_8:
               case DITHER_MASK_8:       // scaling an 8-bit image
                 // Unroll loop
@@ -435,13 +435,13 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
                     dstptr += 8;
                     tmp_offsets += 8;
                 }
-                
+
                 // Do bits of unrolled loop that didn't fit
                 for (; x < lmt_dst_width; x++) {
                     *dstptr++ = (char)masklineptr[offsets[x]];
                 }
                 break;
-                
+
               case MASK_32:             // scaling a mask on a 32-bit visual
                 {
                     Pixel *dlongptr = (Pixel*)dstptr;
@@ -458,7 +458,7 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
                         dlongptr += 8;
                         tmp_offsets += 8;
                     }
-                    
+
                     // Do bits of unrolled loop that didn't fit
                     for (; x < lmt_dst_width; x++) {
                         *dlongptr++ = masklineptr[offsets[x]] ? 0xffffffff : 0;
@@ -473,13 +473,13 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
               case MASK_STIPPLE_ANY:         // generic case with stippling
                 pat = stiprow;
                 for (x = 0; x < lmt_dst_width; x++) {
-                    XPutPixel(xim, x, y, (pat[x&7] ? 
-                                          (masklineptr[offsets[x]] ? 0xffffffff : 0) 
+                    XPutPixel(xim, x, y, (pat[x&7] ?
+                                          (masklineptr[offsets[x]] ? 0xffffffff : 0)
                                           : 0xffffffff));
                 }
                 break;
-                
-                
+
+
               case MASK_STIPPLE_8:
               case DITHER_MASK_STIPPLE_8:      // scaling an 8-bit mask with stippling
 
@@ -527,21 +527,21 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
                         dlongptr += 8;
                         tmp_offsets += 8;
                     }
-                    
+
                     // Do bits of unrolled loop that didn't fit
                     pat = stiprow;
                     for (; x < lmt_dst_width; x++) {
-                        *dlongptr++ = (!(*pat++) || masklineptr[offsets[x]] ? 
+                        *dlongptr++ = (!(*pat++) || masklineptr[offsets[x]] ?
                                        0xffffffff : 0);
                     }
-                    break;                    
+                    break;
 #undef DO_PIX
                 }
-                
+
             }
         }
 
-            // Now render the mask        
+            // Now render the mask
         XSetFunction(display, gc, GXand);
 
         if (win->sharedMemory) {
@@ -553,9 +553,9 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
 #endif
         } else {
             XPutImage(display, dbl, gc, xim,
-                      0, 0, lmt_dst_left, lmt_dst_top, 
+                      0, 0, lmt_dst_left, lmt_dst_top,
                       lmt_dst_width, lmt_dst_height);
-        }        
+        }
 
         XSetFunction(display, gc, GXor);
     }
@@ -588,7 +588,7 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
 
           case NORMAL_8:
           case MASK_8:
-            // fast version for 8-bit images 
+            // fast version for 8-bit images
 
             // Unroll loop
             for (x = 0; x < rolled_dst_width; x+=8) {
@@ -611,20 +611,20 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
 
           case NORMAL_32:
           case MASK_32:
-            // fast version for 32-bit images 
+            // fast version for 32-bit images
             for (x = 0; x < rolled_dst_width; x+=8) {
-                dlongptr[0] = srclineptr[tmp_offsets[0]]; 
-                dlongptr[1] = srclineptr[tmp_offsets[1]]; 
-                dlongptr[2] = srclineptr[tmp_offsets[2]]; 
-                dlongptr[3] = srclineptr[tmp_offsets[3]]; 
-                dlongptr[4] = srclineptr[tmp_offsets[4]]; 
-                dlongptr[5] = srclineptr[tmp_offsets[5]]; 
-                dlongptr[6] = srclineptr[tmp_offsets[6]]; 
-                dlongptr[7] = srclineptr[tmp_offsets[7]]; 
+                dlongptr[0] = srclineptr[tmp_offsets[0]];
+                dlongptr[1] = srclineptr[tmp_offsets[1]];
+                dlongptr[2] = srclineptr[tmp_offsets[2]];
+                dlongptr[3] = srclineptr[tmp_offsets[3]];
+                dlongptr[4] = srclineptr[tmp_offsets[4]];
+                dlongptr[5] = srclineptr[tmp_offsets[5]];
+                dlongptr[6] = srclineptr[tmp_offsets[6]];
+                dlongptr[7] = srclineptr[tmp_offsets[7]];
                 dlongptr += 8;
                 tmp_offsets += 8;
             }
-              
+
             // Do bits of unrolled loop that didn't fit
             for (; x < lmt_dst_width; x++) {
                 *dlongptr++ = srclineptr[offsets[x]];
@@ -632,7 +632,7 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
             break;
 
           case STIPPLE_ANY:
-          case MASK_STIPPLE_ANY:            
+          case MASK_STIPPLE_ANY:
             // Do bits of unrolled loop that didn't fit
             pat = stiprow;
             for (x = 0; x < lmt_dst_width; x++) {
@@ -642,11 +642,11 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
 
 
           case STIPPLE_8:
-          case MASK_STIPPLE_8:            
+          case MASK_STIPPLE_8:
             // Render stippled with (precomputed) closest available color
             // Unroll loop
             pat = stiprow;
-            for (x = 0; x < rolled_dst_width; x+=8) {                      
+            for (x = 0; x < rolled_dst_width; x+=8) {
               dstptr[0] = (pat[0] ? (char)srclineptr8[tmp_offsets[0]] : 0);
               dstptr[1] = (pat[1] ? (char)srclineptr8[tmp_offsets[1]] : 0);
               dstptr[2] = (pat[2] ? (char)srclineptr8[tmp_offsets[2]] : 0);
@@ -666,10 +666,10 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
             break;
 
           case STIPPLE_32:
-          case MASK_STIPPLE_32:            
+          case MASK_STIPPLE_32:
             // Unroll loop
             pat = stiprow;
-            for (x = 0; x < rolled_dst_width; x+=8) {                      
+            for (x = 0; x < rolled_dst_width; x+=8) {
                 dlongptr[0] = (pat[0] ? srclineptr[tmp_offsets[0]] : 0);
                 dlongptr[1] = (pat[1] ? srclineptr[tmp_offsets[1]] : 0);
                 dlongptr[2] = (pat[2] ? srclineptr[tmp_offsets[2]] : 0);
@@ -691,10 +691,10 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
           case DITHER_8:
             // Render dithered - no mask or stipple
             tabstart = lookup[0][0];
-            tabend = lookup[DITHER_LENGTH][0];
+            tabend = lookup[DITHER_LENGTH - 1][0];
             tab = lookup[(y * DITHER_SHIFT) % DITHER_LENGTH][0];
             orig_dstptr = dstptr;
-            
+
             // Unroll loop
             for (x = 0; x < rolled_dst_width; x+=8) {
                 DITHER_LOOP(0, p, b, tab, tabstart, tabend);
@@ -718,10 +718,10 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
           case DITHER_STIPPLE_8:
             // Render dithered through a stipple
             tabstart = lookup[0][0];
-            tabend = lookup[DITHER_LENGTH][0];
+            tabend = lookup[DITHER_LENGTH - 1][0];
             tab = lookup[(y * DITHER_SHIFT) % DITHER_LENGTH][0];
             orig_dstptr = dstptr;
-            
+
             // Unroll loop
             pat = stiprow;
             for (x = 0; x < rolled_dst_width; x+=8) {
@@ -742,14 +742,14 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
                 STIP_DITHER_LOOP((x - dx), p, b, tab, tabstart, tabend);
             }
             break;
-            
+
           case DITHER_MASK_8:
             // Render dithered through a mask
             tabstart = lookup[0][0];
-            tabend = lookup[DITHER_LENGTH][0];
+            tabend = lookup[DITHER_LENGTH - 1][0];
             tab = lookup[(y * DITHER_SHIFT) % DITHER_LENGTH][0];
             orig_dstptr = dstptr;
-            
+
             // Unroll loop
             for (x = 0; x < rolled_dst_width; x+=8) {
                 MASK_DITHER_LOOP(0, p, b, tab, tabstart, tabend);
@@ -773,10 +773,10 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
           case DITHER_MASK_STIPPLE_8:
             // Render dithered through a mask and a stipple
             tabstart = lookup[0][0];
-            tabend = lookup[DITHER_LENGTH][0];
+            tabend = lookup[DITHER_LENGTH - 1][0];
             tab = lookup[(y * DITHER_SHIFT) % DITHER_LENGTH][0];
             orig_dstptr = dstptr;
-            
+
             // Unroll loop
             pat = stiprow;
             for (x = 0; x < rolled_dst_width; x+=8) {
@@ -818,6 +818,6 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
     }
 
     delete [] offsets;
-    
+
     return(rc);
 }
