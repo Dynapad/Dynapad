@@ -434,7 +434,7 @@ Pad_GetAnchor(char *string, Pad_Anchor *anchorPtr)
     return PAD_ERROR;
 }
 
-char *
+const char *
 Pad_NameOfAnchor(Pad_Anchor anchor)
 {
     switch (anchor) {
@@ -476,7 +476,7 @@ Pad_GetUid(const char *string)
 
 const char *casestrstr(const char *s1, const char *s2) 
 {
-    char *p1, *p2;
+    const char *p1, *p2;
 
     if (*s2 == 0) {
 	return((char *)0);

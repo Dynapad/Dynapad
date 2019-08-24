@@ -13,7 +13,7 @@
 
 /*
 "(c) Copyright 1993-1997 Pad++ Consortium {University of New Mexico (UNM),
-and New York University (NYU)}, All Rights Reserved."  
+and New York University (NYU)}, All Rights Reserved."
 Licensee can not remove or obscure any of the
 copyright or trademark notices in this software.
 
@@ -346,7 +346,7 @@ static Pad_HashTable *eventTable;
 #define MAPPING			0x20000
 #define ACTIVATE		0x40000
 
-static int flagArray[myTK_LASTEVENT] = {
+static int flagArray[TK_LASTEVENT] = {
    /* Not used */		0,
    /* Not used */		0,
    /* KeyPress */		KEY_BUTTON_MOTION,
@@ -382,7 +382,7 @@ static int flagArray[myTK_LASTEVENT] = {
    /* ColormapNotify */		COLORMAP,
    /* ClientMessage */		0,
    /* MappingNotify */		MAPPING,
-   /* Activate */		ACTIVATE,	    
+   /* Activate */		ACTIVATE,
    /* Deactivate */		ACTIVATE
 };
 
@@ -642,12 +642,12 @@ Pad_CreateBindingTable()
 	int dummy;
 
 	initialized = 1;
-    
+
 	modTable = new Pad_HashTable(PAD_STRING_TABLE);
 	for (modPtr = modArray; modPtr->name != NULL; modPtr++) {
 	    modTable->Set((void *)modPtr->name, (void *)modPtr);
 	}
-    
+
 	eventTable = new Pad_HashTable(PAD_STRING_TABLE);
 	for (eiPtr = eventArray; eiPtr->name != NULL; eiPtr++) {
 	    eventTable->Set((void *)eiPtr->name, (void *)eiPtr);
@@ -699,7 +699,7 @@ Pad_DeleteBindingTable(BindingTable *bindPtr)
      */
 
     for (psPtr = (PatSeq *)bindPtr->patternTable->Init(search, key);
-            psPtr != NULL; 
+            psPtr != NULL;
 	    psPtr = (PatSeq *)bindPtr->patternTable->Next(search, key)) {
 	for ( ;
 		psPtr != NULL; psPtr = nextPtr) {
@@ -749,7 +749,7 @@ Pad_DeleteBindingTable(BindingTable *bindPtr)
  */
 
 unsigned long
-Pad_CreateBinding(BindingTable *bindPtr, ClientData object, 
+Pad_CreateBinding(BindingTable *bindPtr, ClientData object,
 		  const char *eventString, Pad_Callback *callback)
 {
     PatSeq *psPtr;
@@ -932,7 +932,7 @@ Pad_GetAllBindings(BindingTable *bindPtr, ClientData object, Pad_List &list)
  * PrintPatSeq --
  *
  *      For the specified PatSeq (an event binding), output information
- *      about each of the patterns in its sequence.  The order of the 
+ *      about each of the patterns in its sequence.  The order of the
  *      patterns in the sequence is backwards from the order in which they
  *      must be output.
  *
@@ -1263,23 +1263,23 @@ Pad_BindEvent(BindingTable *bindPtr, XEvent *eventPtr, Pad_Event *padEvent,
 	 * If none is found, then look for a binding for all
 	 * keys or buttons (detail of 0).
 	 */
-    
+
 	matchPtr = NULL;
 	key.object = *objectPtr;
 	key.type = ringPtr->type;
 	key.detail = detail;
-	if (psPtr = (PatSeq *)bindPtr->patternTable->Get((void *)&key)) {
+	if ((psPtr = (PatSeq *)bindPtr->patternTable->Get((void *)&key))) {
 	    matchPtr = MatchPatterns(dispPtr, bindPtr,
 		    psPtr, win->view->pad->mode);
 	}
 	if ((detail != 0) && (matchPtr == NULL)) {
 	    key.detail = 0;
-	    if (psPtr = (PatSeq *)bindPtr->patternTable->Get((void *)&key)) {
+	    if ((psPtr = (PatSeq *)bindPtr->patternTable->Get((void *)&key))) {
 		matchPtr = MatchPatterns(dispPtr, bindPtr,
 			psPtr, win->view->pad->mode);
 	    }
 	}
-    
+
 
 	if (matchPtr != NULL) {
 				// Debugging info to see events as they fire.
@@ -1370,7 +1370,7 @@ Pad_BindEvent(BindingTable *bindPtr, XEvent *eventPtr, Pad_Event *padEvent,
 	}
 
         code = callback->Eval(itemPtr, padEvent);
-	
+
 	if (itemPtr && handle.Get_object() == NULL) {
 				// Object has been deleted, so don't fire any more events
 	    break;
@@ -1401,7 +1401,7 @@ Pad_BindEvent(BindingTable *bindPtr, XEvent *eventPtr, Pad_Event *padEvent,
 				// Necessary because codes from the Tcl "return"
 				// command aren't passed back unless this is evaluated
 				// at the top-level, and it might not be because
-				// the event could be generated from within 
+				// the event could be generated from within
 				// a Tcl function (such as ".pad write")
 	/*
 	if (code == PAD_RETURN) {
@@ -1456,7 +1456,7 @@ Pad_BindEvent(BindingTable *bindPtr, XEvent *eventPtr, Pad_Event *padEvent,
  */
 
 static PatSeq *
-FindSequence(BindingTable *bindPtr, ClientData object, const char *eventString, 
+FindSequence(BindingTable *bindPtr, ClientData object, const char *eventString,
 	     int create, unsigned long *maskPtr)
 {
     Pattern pats[EVENT_BUFFER_SIZE];

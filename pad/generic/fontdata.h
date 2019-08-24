@@ -101,7 +101,7 @@ class Pad_FontData {
     static void *Get_font_data(char *name, int style);
 
     // Utility function to map style number to style name
-    static char *Style_as_string(int style);
+    static const char *Style_as_string(int style);
 };
 
 #endif

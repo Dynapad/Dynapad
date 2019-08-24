@@ -157,7 +157,7 @@ typedef enum {
 #define PAD_RESULT_SIZE 200
 
 int Pad_GetAnchor(char *string, Pad_Anchor *anchorPtr);
-char *Pad_NameOfAnchor(Pad_Anchor anchor);
+const char *Pad_NameOfAnchor(Pad_Anchor anchor);
 
 const char *casestrstr(const char *s1, const char *s2);
 char *casestrstr(char *s1, char *s2);

@@ -174,7 +174,7 @@ Pad_XRenderer::Set_color(Pad_Color *color)
     }
 
     xcol = (XColor*)color->Find(_dpy);
-    
+
 				// Set color
     XSetForeground(_display, _fgGC, xcol->pixel);
 
@@ -280,7 +280,7 @@ Pad_XRenderer::_Update_border_gc(void)
 		XSetStipple(_display, darkGC, pixmap);
 	    }
 	}
-	 
+
 	if (lightGC) {
 	    XCopyGC(_display, _win->fgGC, GCClipMask, lightGC);
 	    if (pixmap == None) {
@@ -470,7 +470,7 @@ Pad_XRenderer::Draw_3d_vertical_bevel(Pad_Point &min, Pad_Point &max, Pad_Bool l
 // Draw a horizontal bevel
 //
 void
-Pad_XRenderer::Draw_3d_horizontal_bevel(Pad_Point &min, Pad_Point &max, Pad_Bool leftIn, Pad_Bool rightIn, 
+Pad_XRenderer::Draw_3d_horizontal_bevel(Pad_Point &min, Pad_Point &max, Pad_Bool leftIn, Pad_Bool rightIn,
 					Pad_Bool topBevel, int relief)
 {
     int x1, y1, x2, y2, width, height;
@@ -630,7 +630,7 @@ Pad_XRenderer::Set_line_style(float width, unsigned char cap_style, unsigned cha
 {
     if (absLineStyle)
       Set_abs_line_style(width, cap_style, joinStyle);
-    else 
+    else
       Set_abs_line_style(width * Get_mag(), cap_style, joinStyle);
 }
 
@@ -1042,7 +1042,7 @@ Pad_XRenderer::V2f(const float x, const float y, float theta)
     if (_ptIndex >= _ptNum) {
 	_Reallocate_points();
     }
-  
+
     Pad_Point tmppt;
     Pad_Point center;
     tmppt.x = x;
@@ -1291,16 +1291,16 @@ Pad_XRenderer::Set_font(Pad_Font *font)
 	_fontData = &Pad_FontData::lineFontData;
     }
     _fontHeightMult = font->Get_size() / _fontData->Char_height();
-} 
+}
 
 void
 Pad_XRenderer::Set_font_height(float height)
 {
-    _fontHeightMult = height / _fontData->Char_height();    
+    _fontHeightMult = height / _fontData->Char_height();
 }
 
 void
-Pad_XRenderer::Get_font(Pad_String &name) 
+Pad_XRenderer::Get_font(Pad_String &name)
 {
     if (_font) {
 	_font->Get(name);
@@ -1417,7 +1417,7 @@ Pad_XRenderer::Draw_filled_box(float xmin, float ymin, float xmax, float ymax)
 #define XF_MIN_SIZE 8		// cutoff size below which X fonts are not used
 
 
-#define XF_WEIGHT 1.5		// the current zoom level is multiplied by this factor to 
+#define XF_WEIGHT 1.5		// the current zoom level is multiplied by this factor to
 				// get size of X font to use. Note that for other fonts
 				// than the ones listed below, this may need to be tuned.
 
@@ -1474,7 +1474,7 @@ static FontFamily families[] = {
 static Font Get_x_font(Display *dpy, char *name, int style,
 		       float magnification, int mode)
 {
-    static char *lastFontName = NULL;    
+    static char *lastFontName = NULL;
     static FontFamily *family = NULL;
 
     int size = (int)(magnification * XF_WEIGHT);
@@ -1488,7 +1488,7 @@ static Font Get_x_font(Display *dpy, char *name, int style,
     }
 
     if (index < 0 || index >= num_fonts)
-      return 0; // outside range of font sizes that use X fonts 
+      return 0; // outside range of font sizes that use X fonts
 
     if (name != lastFontName) {
 				// changed font - look for the new font name
@@ -1521,7 +1521,7 @@ static Font Get_x_font(Display *dpy, char *name, int style,
     }
 
     if (!family) {
-	return 0; 		// no X font replacement for this family 
+	return 0; 		// no X font replacement for this family
     }
 
     FontStyle *fs = &family->styles[style];
@@ -1533,7 +1533,7 @@ static Font Get_x_font(Display *dpy, char *name, int style,
     // -index- is in the range 0 to (XF_NUM_FONTS - 1)
     // indicating where in the list of fids the font for the
     // given -size- is.
-				// now get the X Font 
+				// now get the X Font
     switch (mode) {
       case XF_EXISTS:
 	return (Font)1;   // yes - an X font exists for this font/size
@@ -1560,14 +1560,14 @@ static Font Get_x_font(Display *dpy, char *name, int style,
     return fs->fids[index];
 }
 
-  
+
 //  
 // Brute force approach to load all available bitmap fonts for a    
 // given font family/style.
 //
 void Pad_load_x_font_bitmaps(Display *dpy, Pad_Font *font)
 {
-    Get_x_font(dpy, font->Name(), font->Get_style(), (XF_MIN_SIZE / XF_WEIGHT) + 1, 
+    Get_x_font(dpy, font->Name(), font->Get_style(), (XF_MIN_SIZE / XF_WEIGHT) + 1,
 	       XF_LOAD_ALL);
 }
 
@@ -1576,7 +1576,7 @@ void Pad_load_x_font_bitmaps(Display *dpy, Pad_Font *font)
 // setting this to a smaller value doesn't cause X fonts to get
 // unloaded.
 //
-void Pad_set_x_font_maxsize(Display *, int size) 
+void Pad_set_x_font_maxsize(Display *, int size)
 {
     int i, j, k;
 
@@ -1604,7 +1604,7 @@ void Pad_set_x_font_maxsize(Display *, int size)
 
 }
 
-int Pad_get_x_font_maxsize(Display *) 
+int Pad_get_x_font_maxsize(Display *)
 {
     return num_fonts;
 }
@@ -1634,7 +1634,7 @@ int Pad_get_x_font_maxsize(Display *)
 typedef void (*pfss)(short, short, float);
 
 Pad_Bool
-Pad_XRenderer::Draw_string(char *string, int level, 
+Pad_XRenderer::Draw_string(char *string, int level,
 			   float xoff, float yoff, float theta)
 {
     float magnification;
@@ -1723,7 +1723,7 @@ Pad_XRenderer::Draw_string(char *string, int level,
 	3 < magnification && magnification < 800) {
 	int screen_num = DefaultScreen(_display);
         XftColor color_fg;
-	XColor dummyc; 
+	XColor dummyc;
     // [unused]: XColor fg;
     // [unused]: Status retval;
 	XftPattern *pat;
@@ -1771,7 +1771,7 @@ Pad_XRenderer::Draw_string(char *string, int level,
 	        XFT_FILE, XftTypeString, _fontData->filename.Get(),
 	        XFT_PIXEL_SIZE, XftTypeDouble,
 		    (double)1.4*magnification*_fontData->xftfactor,
-	        0, nullptr);
+	        NULL);
             _fontData->xftfont = XftFontOpenPattern(_display, pat);
             if (!_fontData->xftfont) {
                 fprintf(stderr, "XftFontOpen failed\n");
@@ -1819,9 +1819,9 @@ Pad_XRenderer::Draw_string(char *string, int level,
 	// See if we can use the font cache or a bitmap font.
 
 	if (!rotated) {    // only use cache or bitmap fonts if NOT rotated
-	    xfont = Get_x_font(_display, _fontData->name, _fontData->style, 
-			       magnification, 
-			       globalLevel  ? XF_LOAD_NOW 
+	    xfont = Get_x_font(_display, _fontData->name, _fontData->style,
+			       magnification,
+			       globalLevel  ? XF_LOAD_NOW
 			                    : XF_IF_LOADED);
 	    if (xfont) {
 		// got a bitmap font
@@ -1845,7 +1845,7 @@ Pad_XRenderer::Draw_string(char *string, int level,
 	scaleMult = Pad_LineFont::CharHeight() / highRes->char_height('A');
 	Pop_transform();
 	transform.Scale(1.0/scaleMult);
-	Push_transform(transform);	    
+	Push_transform(transform);
 	renderType = rotated ? R_ROTATED_HASH : R_HASH;
 	canRefine = TRUE;
     }
@@ -1858,7 +1858,7 @@ Pad_XRenderer::Draw_string(char *string, int level,
 	    xoffset += (8 - (tabpos % 8)) * highRes->char_width(' ') * scaleMult;
 	    tabpos = 0;
 	    break;
-	    
+
 	  case '\n':
 	    xoffset = 0;
 	    tabpos = 0;
@@ -1909,25 +1909,25 @@ Pad_XRenderer::Draw_string(char *string, int level,
 		End_line();
 		break;
 
-	      case R_HASH:		
+	      case R_HASH:
 		// Draw using hash marks (no rotation)
 		Pad_LineFont::DrawChar_1(xoffset, 0.0);
 		cwidth *= scaleMult;
 		break;
 
-	      case R_ROTATED_HASH:		
+	      case R_ROTATED_HASH:
 		// Draw using hash marks with rotation
 		Pad_LineFont::DrawChar_1(xoffset, 0.0, theta);
 		cwidth *= scaleMult;
-		break;		
+		break;
 	    }
 	    xoffset += cwidth;
 	}
     }
     Set_concave(FALSE);
-	
+
     // Now set canRefine
-    
+
     switch (renderType) {
       case R_XFONT:  	    // Already using an X font, so no refining,
       case R_HASH:          // Line fonts don't get refined (unless tiny and substituting for another)
@@ -1941,7 +1941,7 @@ Pad_XRenderer::Draw_string(char *string, int level,
 	    // Are we at level 0?
 	    canRefine = (level < 2);
 	}
-    }	
+    }
 
   done:
     Pop_transform();
@@ -2074,19 +2074,19 @@ Pad_XRenderer::Alloc_image(char *name, Pad_Bool *newflag)
 
 // JM's experimental tiling facility
 void
-Pad_XRenderer::Set_tile(Pad_ImageData *image1, Pad_ImageData *image2, 
-			long *tmp, float d, int tx, int ty) 
+Pad_XRenderer::Set_tile(Pad_ImageData *image1, Pad_ImageData *image2,
+			long *tmp, float d, int tx, int ty)
 {
     if (!image1) {
 	XSetFillStyle(_display, _fgGC, FillSolid);
 	XSetTSOrigin(_display, _fgGC, 0, 0);
     } else {
- 
+
 	if (image1->tile == None) {
 	    // Make the tile
 
 	    image1->tile = XCreatePixmap(_display, _dpy->rootDrawable,
-					image1->width, image1->height, 
+					image1->width, image1->height,
 					_dpy->depth);
 	}
 	int x, y;
@@ -2108,16 +2108,16 @@ Pad_XRenderer::Set_tile(Pad_ImageData *image1, Pad_ImageData *image2,
 		    tmp[pix] =
 		      CC_RGBA(MAX(0, MIN(255, (int)LERP(d, CC_RED(src), CC_RED(dst)))),
 			      MAX(0, MIN(255, (int)LERP(d, CC_GREEN(src), CC_GREEN(dst)))),
-			      MAX(0, MIN(255, (int)LERP(d, CC_BLUE(src), CC_BLUE(dst)))), 
+			      MAX(0, MIN(255, (int)LERP(d, CC_BLUE(src), CC_BLUE(dst)))),
 			      0);
-		    
+
 		}
 	    }
 	    data = tmp;
 	}
 
 	if (gc == None) gc = XCreateGC(_display, _dpy->rootDrawable, 0, NULL);
-	    
+
 	Pad_DrawImage(_display, Pad_prc->win, image1->tile,
 		      gc, data, NULL, image1->width, image1->height,
 		      0, 0, image1->width-1, image1->height-1,
@@ -2146,7 +2146,7 @@ Pad_XRenderer::Alloc_image(unsigned char *data, int len)
 
     if (!(image->rgbData && image->width && image->height)) {
 	delete image;
-	image = NULL;	
+	image = NULL;
     } else {
 	if (!Pad_rgb) {
 	    image->Free_rgb();

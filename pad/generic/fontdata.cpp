@@ -591,7 +591,7 @@ Pad_FontData::File_name_and_style(const char *filename,
 //
 // Takes a font style, returns its symbolic name.
 //
-char *
+const char *
 Pad_FontData::Style_as_string(int style)
 {
     switch (style) {

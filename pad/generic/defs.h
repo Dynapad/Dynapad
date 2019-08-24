@@ -60,16 +60,17 @@ extern "C" {	// for X11/Xlib.h in win95
 #define PAD_3D_LIGHT_GC          2
 #define PAD_3D_DARK_GC           3
 
-#define VirtualEvent        (LASTEvent)
-#define ActivateNotify      (LASTEvent + 1)
-#define DeactivateNotify    (LASTEvent + 2)
-#define MouseWheelEvent     (LASTEvent + 3)
-#define myTK_LASTEVENT      (LASTEvent + 4)
+// Commented out, already defined by Tk (almost).
+// see https://github.com/DylanLukes/Dynapad/issues/11
+//#define VirtualEvent        (LASTEvent)
+//#define ActivateNotify      (LASTEvent + 1)
+//#define DeactivateNotify    (LASTEvent + 2)
+//#define MouseWheelEvent     (LASTEvent + 3)
+//#define myTK_LASTEVENT      (LASTEvent + 4)
 
-#define MouseWheelMask      (1L << 28)
-
-#define ActivateMask        (1L << 29)
-#define VirtualEventMask    (1L << 30)
+//#define MouseWheelMask      (1L << 28)
+//#define ActivateMask        (1L << 29)
+//#define VirtualEventMask    (1L << 30)
 
 #ifndef NULL
 #define NULL    0
