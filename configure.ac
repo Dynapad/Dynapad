@@ -35,7 +35,7 @@ case "${host_os}" in
       ;;
     linux*)
       # note: this doesn't seem portable...
-      PLT_LIBS="/usr/lib/libracket.so"
+      PLT_LIBS="$PLT/lib/mzdyn.o"
       AC_SUBST(PLT_LIBS)
       ;;
 esac
@@ -46,7 +46,7 @@ case "${host_os}" in
       export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/imagemagick@6/lib/pkgconfig"
     ;;
     linux*)
-      export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/lib/imagemagick6/pkgconfig"
+      export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/lib/pkgconfig"
     ;;
 esac
 

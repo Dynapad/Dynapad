@@ -11,7 +11,9 @@
 (load-relative "src/history/ids.ss") ;move this elsewhere?
 (load-relative "src/utils/hilights.ss")
 
-(load-relative-extension (path-replace-suffix ".libs/libdynapad" (system-type 'so-suffix)))
+;;; (load-relative-extension (path-replace-suffix "build/libdynapad" (system-type 'so-suffix)))
+(load-relative-extension "build/libdynapad.so")
+
 (define padthread
   (let
       ((new-es (make-eventspace)))

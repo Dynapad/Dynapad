@@ -27,7 +27,8 @@ software in general.
 #define DEFS_H 1
 
 
-#  include "../unix/config.h"
+// Wasn't used for anything – Dylan
+// #include "../unix/config.h"
 
 #include "list.h"
 

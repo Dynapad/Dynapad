@@ -47,7 +47,7 @@
   (if (not (directory-exists? dir))
     (begin (error "arrangeimages: directory doesn't exist " dir) #f)
     (let ((filelist (hires-list dir))
-          (images ()))
+          (images '()))
 
       (when (not (null? RE))
         (set! RE (regexp (string-append "^" (car RE) "$"))) ;; --> ^...$ force exact match
@@ -72,7 +72,7 @@
          (y view_y)
          (numrows (sqrt (length files)))
          )
-    (if *current-z-plane* (set! zfac *current-z-plane*))
+    (when *current-z-plane* (set! zfac *current-z-plane*))
     (for-each
       (lambda (file)
 	(when (sch_imagep file)
@@ -128,7 +128,7 @@
 
 (define (arrangedir-and-center dir . returnflag)
   (let ((image-list (arrangedir dir)))
-    (if image-list (send dynapad center image-list 1000 #t))
+    (when image-list (send dynapad center image-list 1000 #t))
     (if (null? returnflag) (length image-list) image-list)
     ))
 
@@ -139,8 +139,8 @@
     (init initpad initpath (initposition #f))
     (inherit hirespath dynaclass position writeoptions)
     (field (_path #f) (_name #f) (_dotdir #f) (_author #f) (_title #f)
-      (_firstpage #f) (_images ()) (_largest #f)
-      (_composite #f) (_composites ()) (_text #f))
+      (_firstpage #f) (_images '()) (_largest #f)
+      (_composite #f) (_composites '()) (_text #f))
 
     (override write)
 
@@ -189,7 +189,7 @@
 
     (define image_regexp (regexp "image-[0-9][0-9][0-9].[jJ][pP][gG]"))
 
-    (if (directory-exists? _dotdir)
+    (when (directory-exists? _dotdir)
     (set! _images
       (map (lambda(x) (dotpath x))
         (filter (lambda(file) (regexp-match image_regexp file))
@@ -198,7 +198,7 @@
 
     (define composite_regexp (regexp "composite-[0-9][0-9][0-9].[jJ][pP][gG]"))
 
-    (if (directory-exists? _dotdir)
+    (when (directory-exists? _dotdir)
     (set! _composites
       (map (lambda(x) (dotpath x))
         (filter (lambda(file) (regexp-match composite_regexp file))
@@ -206,9 +206,9 @@
     )
 
     (super-instantiate(initpad))
-    (if initposition
+    (when initposition
       (position initposition))
-    (if _composite (hirespath _composite))
+    (when _composite (hirespath _composite))
     (dynaclass 'pdf%)))
 
 (define pdf_rexp (regexp "(.*[/\\])?(.*)(\\.([pP][dD][fF]))$"))
@@ -243,7 +243,7 @@
          (y view_y)
          (numrows (sqrt (length files)))
          )
-    (if *current-z-plane* (set! zfac *current-z-plane*))
+    (when *current-z-plane* (set! zfac *current-z-plane*))
     (for-each
       (lambda (file)
         (set! pdfs
@@ -270,7 +270,7 @@
 
 (define (arrangepdfdir-and-center dir . returnflag)
   (let ((pdf-list (arrangepdfdir dir)))
-    (if pdf-list (send dynapad center pdf-list 1000 #t))
+    (when pdf-list (send dynapad center pdf-list 1000 #t))
     (if (null? returnflag) (length pdf-list) pdf-list)
     ))
 

@@ -55,7 +55,7 @@
       (class rect%
         (init pad)
         (inherit lower dynaclass)
-        (rename (super-coords coords))
+        (rename-super (super-coords coords))
         (define/override (coords . args)
           (remove this)
           (super-coords . args)
@@ -86,7 +86,7 @@
 	      (let*
 	        ((ent (vector-ref (car octstack) choice))
 		 (outcb (and ent (caddr ent))))
-		(if outcb
+		(when outcb
 		  (outcb this)))))
         (set! choice #f))))
     (send outer bind "<ButtonPress-1>"
@@ -96,15 +96,15 @@
           (let*
 	    ((ent (vector-ref (car octstack) choice))
 	     (incb (and ent (cadr ent))))
-            (if incb
+            (when incb
 	      (incb this)))
-          (if _debug (printf "choice ~a~%" choice)))
+          (when _debug (printf "choice ~a~%" choice)))
 	#f))
     (send outer bind "<Motion>"
       (lambda(o e)
         (let ((oct (octant (event-x e) (event-y e))))
           (when (and flag (not (eq? choice oct)))
-	    (if _debug (printf "~a -> ~a~%" choice oct))
+	    (when _debug (printf "~a -> ~a~%" choice oct))
 	    (send indicator coords (octantbbox oct))
             (set! choice oct)))))
     (send outer transparency 0.1)
@@ -152,12 +152,12 @@
         (send label lower)))
   
     (define (bindvec v)
-      (if (not (eq? (vector-length v) 8))
+      (when (not (eq? (vector-length v) 8))
         (error "flow vector length must be 8, given " v))
       (let*
         ((ents (filter (lambda(ent) (and ent (is-a? (car ent) text%))) (vector->list v)))
 	 (facs (map (lambda(ent) (fitfac 0 (car ent))) ents)))
-	(if (not (null? facs))
+	(when (not (null? facs))
 	  (set! textfac (apply min facs))))
       (do
         ((i 0 (+ i 1)))
@@ -166,7 +166,7 @@
           ((ent (vector-ref v i))
            (label (and ent (car ent))))
           (when label
-	    (if _debug (printf "~a~%" ent))
+	    (when _debug (printf "~a~%" ent))
             (bindoct i label)))))
 
     (field (octstack (list (make-vector 8 #f))))
@@ -180,7 +180,7 @@
            (label (and ent (car ent))))
           (when label
 	    (let ((g (send label getgroup)))
-	      (if g (send g remove label)))
+	      (when g (send g remove label)))
 	    (send* label
 	      (layer (send dynapad hidden))
 	      (findable #f)
@@ -195,7 +195,7 @@
     (define/public (pop)
       (hide-oct (car octstack))
       (set! octstack (cdr octstack))
-      (if (not (null? octstack))
+      (when (not (null? octstack))
         (bindvec (car octstack))))
 
     (define/public debug
@@ -235,7 +235,7 @@
   (let ((v (make-vector 8 #f))(label 0))
     (foreach octlist (lambda (entry)
       (set! label (cadr entry))
-      (if (string? label) (set! label (make-object text% dynapad label)))
+      (when (string? label) (set! label (make-object text% dynapad label)))
       (vector-set! v (car entry) (list label (caddr entry) #f))))
     (send menu hide-oct v)
     v))
