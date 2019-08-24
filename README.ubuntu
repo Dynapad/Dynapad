@@ -44,11 +44,10 @@ popd
 
 ~/git/racket/racket/bin/racocgc pkg install compatibility-lib htdp-lib xrepl
 
-#git clone git@github.com:DylanLukes/Dynapad.git dynapad
-git clone git@github.com:tgbugs/dynapad.git
+git clone git@github.com:DylanLukes/Dynapad.git dynapad
 
-pushd dynapad
-git checkout cmake-tcl-tk  # temporary until changes are merged
+pushd Dynapad
+git checkout cmake  # temporary until changes are merged
 pushd build
 cmake .. -G Ninja -DRACKET_DIR=${HOME}/git/racket/racket
 ninja
