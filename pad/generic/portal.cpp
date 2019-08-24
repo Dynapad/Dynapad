@@ -318,7 +318,7 @@ Pad_Portal::Set_pen(int red, int green, int blue)
 void
 Pad_Portal::Set_pen_default(void)
 {
-    int red, green, blue;
+    intptr_t red, green, blue;
     portalFlags &= ~PORTAL_PEN_SET;
 
     border.Get(red, green, blue);

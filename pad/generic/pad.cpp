@@ -2534,7 +2534,7 @@ Pad::Find_with_info(char *infoptr, Pad_List &items, Pad_Bool groups)
 // Construct list of items of the specified type in display-list order.
 //
 void 
-Pad::Find_with_type(char *type_name, Pad_List &items, Pad_Bool groups)
+Pad::Find_with_type(const char *type_name, Pad_List &items, Pad_Bool groups)
 {
     int otype, objType;
     Pad_Object *obj;

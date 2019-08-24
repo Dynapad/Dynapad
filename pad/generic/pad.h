@@ -274,7 +274,7 @@ Pad_TreeNode  *treeroot;             // root of all Pad_TreeNodes on the pad
             void         Find_with_sticky(int stickyType, Pad_List &items, Pad_Bool groups);
             void         Find_with_tagorid(char *tagorid, Pad_List &items, Pad_Bool groups, Pad_Bool append=FALSE);
             void         Find_with_text(char *text, Pad_List &items, Pad_Bool groups);
-            void         Find_with_type(char *type, Pad_List &items, Pad_Bool groups);
+            void         Find_with_type(const char *type_name, Pad_List &items, Pad_Bool groups);
             Pad_Object * First();
             Pad_Bool     Get_active(void);
             void         Get_ids_from_tag(char *tag, Pad_IList &ids);

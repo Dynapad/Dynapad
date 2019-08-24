@@ -543,7 +543,7 @@ public:
             void     Set_clipping(Clipping clipping);
             void     Set_clipping_default(void);
     virtual Pad_Bool Set_coords(Pad_PList &pts, Pad_Bool object_coords);
-            Pad_Bool Set_event_order(char *type);
+            Pad_Bool Set_event_order(const char *type);
             Pad_Bool Set_events(Pad_Bool events);
             void     Set_events_default(void);
             Pad_Bool Set_faderange(float faderange);

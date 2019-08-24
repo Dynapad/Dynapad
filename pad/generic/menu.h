@@ -54,7 +54,7 @@ public:
     Pad_MenuBar* Get_MenuBar(void);
 
                               // Override button label and render methods
-    virtual void     Set_label(char*);
+    virtual void     Set_label(const char *label);
     virtual Pad_Bool Render(void);
 
                               // Callbacks for mouse events

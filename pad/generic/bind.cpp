@@ -1285,7 +1285,7 @@ Pad_BindEvent(BindingTable *bindPtr, XEvent *eventPtr, Pad_Event *padEvent,
                 *debug_event += debug_ds;
                 *debug_event += " ";
                 if (itemPtr) {
-                    *debug_event += itemPtr->id;
+                    *debug_event += (int)itemPtr->id;
                 } else {
                     *debug_event += "1";
                 }
@@ -1801,9 +1801,9 @@ GetKeySym(Pad_Display *dispPtr, XEvent *eventPtr) {
 
     if ((index & 1) && (sym == NoSymbol)) {
         sym = XkbKeycodeToKeysym(dispPtr->display,
-                               eventPtr->xkey.keycode,
-                               0,
-                               index & ~1);
+                                 eventPtr->xkey.keycode,
+                                 0,
+                                 index & ~1);
     }
     return sym;
 }

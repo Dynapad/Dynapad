@@ -120,7 +120,7 @@ Pad_FontData::Char_width(char c) {
 }
 
 void
-Pad_FontData::String_extents(char *string, float &width, float &height) {
+Pad_FontData::String_extents(const char *string, float &width, float &height) {
 
     if (useLineFont) {
         width = Pad_LineFont::StringWidth(string);
@@ -128,7 +128,7 @@ Pad_FontData::String_extents(char *string, float &width, float &height) {
         return;
     }
 
-    char *p;
+    const char *p;
     float char_height;
     int tabpos;
 
@@ -158,7 +158,7 @@ Pad_FontData::String_extents(char *string, float &width, float &height) {
 // Fonts are looked up in the font table based on their name and style.
 //
 typedef struct {
-    char *name;
+    const char *name;
     int style;
 } FontKey;
 
@@ -172,7 +172,7 @@ static Pad_HashTable fontTable(sizeof(FontKey) / sizeof(int));
 static Pad_FontData *Substitute_font(FontKey key, Pad_Bool &isAlias);
 
 static Pad_FontData *
-Get_data(char *name, int style, Pad_Bool warn) {
+Get_data(const char *name, int style, Pad_Bool warn) {
     FontKey key;
     Pad_FontData *font;
 
@@ -388,7 +388,7 @@ char *Add_font(char *filename, char *firstline, int &styleReturn) {
         // get the tail of the path
         if (filename == NULL || filename[0] == '\0')
             name = NULL;
-        else if (name = strrchr(filename, '/'))
+        else if ((name = strrchr(filename, '/')))
             name++;
         else
             name = filename;
@@ -433,8 +433,8 @@ static char *Register_font_file(char *filename,
         char buf[1024];  // yes, someday it will be too small - ron
         char *p;
 
-        if (p = fgets(buf, sizeof(buf), fp)) {
-            if (p = strchr(buf, '\n'))
+        if ((p = fgets(buf, sizeof(buf), fp))) {
+            if ((p = strchr(buf, '\n')))
                 *p = '\0';
             result = Add_font(filename, buf, styleReturn);
         }

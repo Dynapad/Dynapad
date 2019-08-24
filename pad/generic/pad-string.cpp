@@ -691,7 +691,7 @@ Pad_String::Get(void) const {
     return (char *) ((_data ? _data : ""));
 }
 
-char *
+const char *
 Pad_String::Get(int index) const {
     if (_data && (index < _space)) {
         return (&_data[index]);

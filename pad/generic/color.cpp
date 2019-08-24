@@ -40,9 +40,8 @@ software in general.
 // slot (see resource.h / resource.cpp)
 //
 
-Pad_Color::~Pad_Color()
-{
-    Delete_per_display(); 
+Pad_Color::~Pad_Color() {
+    Delete_per_display();
 }
 
 //
@@ -61,47 +60,44 @@ Pad_Color Pad_Color::black(0, 0, 0);
 Pad_Color Pad_Color::white(255, 255, 255);
 Pad_Color Pad_Color::gray(128, 128, 128);
 
-Pad_Color::Pad_Color(const char *colorname) 
-{
-    int red, green, blue;
+Pad_Color::Pad_Color(const char *colorname) {
+    intptr_t red, green, blue;
 
-    if (colorname[0] == '#') {	// RGB encoded name - don't remember it
-	name = NULL;
+    if (colorname[0] == '#') {    // RGB encoded name - don't remember it
+        name = NULL;
     } else {                    // remember the Uid for the name
-	name = Pad_GetUid(colorname);
+        name = Pad_GetUid(colorname);
     }
-				// convert the name to rgb
+    // convert the name to rgb
     if (_Pad_colorname_to_rgb(colorname, red, green, blue)) {
-	r = red; 
-	g = green;
-	b = blue;
+        r = red;
+        g = green;
+        b = blue;
     } else {
-	r = g = b = 0;		// probably better to print a warning?
+        r = g = b = 0;        // probably better to print a warning?
     }
 
 }
 
 void
-Pad_Color::Get(Pad_String &colorname) const
-{
+Pad_Color::Get(Pad_String &colorname) const {
     if (name) {
-	colorname = name;
+        colorname = name;
     } else {
-	// print name using RGB encoding.
-	char buf[50];
-	sprintf(buf, "#%02x%02x%02x", (int)r, (int)g, (int)b);
-	colorname = buf;
+        // print name using RGB encoding.
+        char buf[50];
+        sprintf(buf, "#%02x%02x%02x", (int) r, (int) g, (int) b);
+        colorname = buf;
     }
 }
 
 Pad_Bool
-Pad_Color::Equals(const Pad_Color *otherColor) const
-{
+Pad_Color::Equals(const Pad_Color *otherColor) const {
     if (!otherColor) {
-	return FALSE;
+        return FALSE;
     } else {
-	return (r == otherColor->r && g == otherColor->g && b == otherColor->b 
-	    && name == otherColor->name);
+        return (r == otherColor->r && g == otherColor->g && b == otherColor->b
+                && name == otherColor->name);
     }
 }
 
@@ -111,15 +107,13 @@ Pad_Color::Equals(const Pad_Color *otherColor) const
 //
 
 void *
-Pad_Color::Alloc(Pad_Display *dpy)
-{
-    return (void*)dpy->Alloc_color(r, g, b);
+Pad_Color::Alloc(Pad_Display *dpy) {
+    return (void *) dpy->Alloc_color(r, g, b);
 }
 
 void
-Pad_Color::Free(Pad_Display *dpy, void *value)
-{
-    dpy->Free_color((XColor *)value);
+Pad_Color::Free(Pad_Display *dpy, void *value) {
+    dpy->Free_color((XColor *) value);
 }
 
 
@@ -137,86 +131,84 @@ static Pad_HashTable nametable;
 // the count reaches zero.
 //
 static void
-_Release(Pad_Color *color)
-{
+_Release(Pad_Color *color) {
     if (color && color->Deref()) {
-	if (color->Name()) {
-	    nametable.Remove((void*)color->Name());
-	} else {
-	    int red, green, blue;
-	    color->Get(red, green, blue);
-	    rgbtable.Remove((void*)CC_RGBA(red, green, blue, 0));
-	}
-	delete color;	    	    
+        if (color->Name()) {
+            nametable.Remove((void *) color->Name());
+        } else {
+            intptr_t red, green, blue;
+            color->Get(red, green, blue);
+            rgbtable.Remove((void *) CC_RGBA(red, green, blue, 0));
+        }
+        delete color;
     }
 }
 
 #define RELEASE() { _Release(color); color = NULL; }
 
-Pad_ColorRef::~Pad_ColorRef()
-{
+Pad_ColorRef::~Pad_ColorRef() {
     RELEASE();
 }
 
 void
-Pad_ColorRef::Set(int r, int g, int b)
-{
-    r = MIN(255, r);  r = MAX(0, r);
-    g = MIN(255, g);  g = MAX(0, g);
-    b = MIN(255, b);  b = MAX(0, b);
+Pad_ColorRef::Set(intptr_t r, intptr_t g, intptr_t b) {
+    r = MIN(255, r);
+    r = MAX(0, r);
+    g = MIN(255, g);
+    g = MAX(0, g);
+    b = MIN(255, b);
+    b = MAX(0, b);
 
-    void *key = (void*)CC_RGBA(r, g, b, 0);
+    void *key = (void *) CC_RGBA(r, g, b, 0);
 
     RELEASE();   // unreference old color
 
-    color = (Pad_Color *)rgbtable.Get(key);
+    color = (Pad_Color *) rgbtable.Get(key);
 
     if (!color) {
-	// need to allocate new color
-	color = new Pad_Color(r, g, b);
-	rgbtable.Set(key, color);
-    }    
+        // need to allocate new color
+        color = new Pad_Color(r, g, b);
+        rgbtable.Set(key, color);
+    }
 
     color->Addref();
 }
 
 void
-Pad_ColorRef::Set(const char *name)
-{
-    int red, green, blue;
+Pad_ColorRef::Set(const char *name) {
+    intptr_t red, green, blue;
 
     RELEASE();   // unreference old color
 
     if (_Pad_colorname_to_rgb(name, red, green, blue)) {     // yes, I recognize the name ...
-	if (name[0] == '#') {				     // its an #rrggbb style name.
-	    Set(red, green, blue);
-	} else {		                             // its an X color name
-	    void *key = (void*)Pad_GetUid(name);
-	    color = (Pad_Color *)nametable.Get(key);
-	    
-	    if (!color) {
-		// need to allocate new color
-		color = new Pad_Color(name);
-		rgbtable.Set(key, color);
-	    }    
-	    color->Addref();
-	}
+        if (name[0] == '#') {                     // its an #rrggbb style name.
+            Set(red, green, blue);
+        } else {                                     // its an X color name
+            void *key = (void *) Pad_GetUid(name);
+            color = (Pad_Color *) nametable.Get(key);
+
+            if (!color) {
+                // need to allocate new color
+                color = new Pad_Color(name);
+                rgbtable.Set(key, color);
+            }
+            color->Addref();
+        }
     }
 }
 
 void
-Pad_ColorRef::Set(const Pad_Color *otherColor)
-{
+Pad_ColorRef::Set(const Pad_Color *otherColor) {
     RELEASE();
 
-    if (otherColor) { 
-	if (otherColor->Name()) {
-	    Set(otherColor->Name());
-	} else {
-	    int red, green, blue;
-	    otherColor->Get(red, green, blue);
-	    Set(red, green, blue);
-	}
+    if (otherColor) {
+        if (otherColor->Name()) {
+            Set(otherColor->Name());
+        } else {
+            intptr_t red, green, blue;
+            otherColor->Get(red, green, blue);
+            Set(red, green, blue);
+        }
     }
 }
 
@@ -224,33 +216,30 @@ Pad_ColorRef::Set(const Pad_Color *otherColor)
 // Sets color to either black or white...
 // 
 void
-Pad_ColorRef::Set_contrasting(int red, int green, int blue)
-{
+Pad_ColorRef::Set_contrasting(int red, int green, int blue) {
     if ((.30 * red + .61 * green + .11 * blue) <= 127) {
-	// other color is dark - so use white
-	Set(255, 255, 255);
+        // other color is dark - so use white
+        Set(255, 255, 255);
     } else {
-	// use black
-	Set(0, 0, 0);
+        // use black
+        Set(0, 0, 0);
     }
 }
 
 void
-Pad_ColorRef::Get(int &red, int &green, int &blue) const
-{
-    if (color) 
-      color->Get(red, green, blue);
-    else 
-      red = green = blue = 0;
+Pad_ColorRef::Get(intptr_t &red, intptr_t &green, intptr_t &blue) const {
+    if (color)
+        color->Get(red, green, blue);
+    else
+        red = green = blue = 0;
 }
 
 void
-Pad_ColorRef::Get(Pad_String &name) const
-{
+Pad_ColorRef::Get(Pad_String &name) const {
     if (color) {
-	color->Get(name);
+        color->Get(name);
     } else {
-	name = "none";
+        name = "none";
     }
 }
 
@@ -260,43 +249,40 @@ Pad_ColorRef::Get(Pad_String &name) const
 
 
 Pad_Color *
-Pad_LookupColorByName(char *name)
-{    
+Pad_LookupColorByName(char *name) {
     if (name && name[0] == '#') {
-	// uses #rrggbb encoding - look up color in rgb table.
-	int red, green, blue;
-	_Pad_colorname_to_rgb(name, red, green, blue);
-	return (Pad_Color*)rgbtable.Get((void*)CC_RGBA(red, green, blue, 0));
+        // uses #rrggbb encoding - look up color in rgb table.
+        intptr_t red, green, blue;
+        _Pad_colorname_to_rgb(name, red, green, blue);
+        return (Pad_Color *) rgbtable.Get((void *) CC_RGBA(red, green, blue, 0));
     } else {
-	// an X color name - look it up in the name table.
-	return (Pad_Color*)nametable.Get((void*)Pad_GetUid(name));
+        // an X color name - look it up in the name table.
+        return (Pad_Color *) nametable.Get((void *) Pad_GetUid(name));
     }
 }
 
 Pad_Color *
-Pad_AllocColorByName(char *name)
-{
+Pad_AllocColorByName(char *name) {
     Pad_Color *color = Pad_LookupColorByName(name);
 
-    if (!color) {	// unknown color ...
-	color = new Pad_Color(name);
-	if (color->Name() == NULL) {
-	    // use rgb table
-	    int red, green, blue;
-	    color->Get(red, green, blue);
-	    rgbtable.Set((void*)CC_RGBA(red, green, blue, 0), (void*)color);
-	} else {
-	    // use name table
-	    nametable.Set((void*)Pad_GetUid(name), (void*)color);
-	}
-    }    
+    if (!color) {    // unknown color ...
+        color = new Pad_Color(name);
+        if (color->Name() == NULL) {
+            // use rgb table
+            intptr_t red, green, blue;
+            color->Get(red, green, blue);
+            rgbtable.Set((void *) CC_RGBA(red, green, blue, 0), (void *) color);
+        } else {
+            // use name table
+            nametable.Set((void *) Pad_GetUid(name), (void *) color);
+        }
+    }
     color->Addref();
     return color;
 }
 
 int
-Pad_FreeColorByName(char *name)
-{    
+Pad_FreeColorByName(char *name) {
     Pad_Color *color = Pad_LookupColorByName(name);
     _Release(color);
     return (color ? TRUE : FALSE);

@@ -101,8 +101,8 @@ Pad_ImageData::Pad_ImageData(Pad_Display *new_dpy, Pad_Uid newName)
 	Compute_pixel_data();
     }
 
-    Pad_imageNameTable.Set(name, this);
-    Pad_imageTokenTable.Set(token, this);
+    Pad_imageNameTable.Set((void *) name, this);
+    Pad_imageTokenTable.Set((void *) token, this);
 }
 
 //
@@ -120,8 +120,8 @@ Pad_ImageData::Pad_ImageData(Pad_Display *new_dpy, unsigned char *formattedData,
 	Compute_pixel_data();
     }
 
-    Pad_imageNameTable.Set(name, this);
-    Pad_imageTokenTable.Set(token, this);
+    Pad_imageNameTable.Set((void *) name, this);
+    Pad_imageTokenTable.Set((void *) token, this);
 }
 
 //
@@ -144,8 +144,8 @@ Pad_ImageData::Pad_ImageData(Pad_Display *new_dpy, unsigned char *rawData, int n
     rgb = FALSE;
     xpixels8 = rawData;
 
-    Pad_imageTokenTable.Set(token, this);
-    Pad_imageNameTable.Set(name, this);
+    Pad_imageTokenTable.Set((void *) token, this);
+    Pad_imageNameTable.Set((void *) name, this);
 }
 
 Pad_ImageData::Pad_ImageData(Pad_Display *new_dpy, unsigned long *rawData, int newWidth, int newHeight)
@@ -159,17 +159,17 @@ Pad_ImageData::Pad_ImageData(Pad_Display *new_dpy, unsigned long *rawData, int n
     rgbData = rawData;
     Compute_pixel_data();
 
-    Pad_imageTokenTable.Set(token, this);
-    Pad_imageNameTable.Set(name, this);
+    Pad_imageTokenTable.Set((void *) token, this);
+    Pad_imageNameTable.Set((void *) name, this);
 }
 
 Pad_ImageData::Pad_ImageData(Pad_Display *new_dpy)
 {
     Init(new_dpy);
-    Pad_imageTokenTable.Set(token, this);
+    Pad_imageTokenTable.Set((void *) token, this);
     // warning: update Pad_imageNameTable as soon as name is known
     name = token;
-    Pad_imageNameTable.Set(name, this);
+    Pad_imageNameTable.Set((void *) name, this);
 }
 
 void
@@ -287,7 +287,7 @@ Pad_ImageData::Cc_changed(void)
     }
 }
 
-char *
+const char *
 Pad_ImageData::Get_token(void)
 {
     return(token);

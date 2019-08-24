@@ -74,7 +74,7 @@ Pad_MenuItem::Pad_MenuItem(Pad *pad) :
 // a seperator.
 //
 void
-Pad_MenuItem::Set_label(char *label) {
+Pad_MenuItem::Set_label(const char *label) {
     Pad_Button::Set_label(label);
     if (strcmp(label, "-")) {
         _seperator = FALSE;
@@ -777,7 +777,7 @@ Pad_Menu::Add(Pad_MenuItem *item) {
 
     // Scale and fill item to that of the menu
     item->Set_abs_position_z(Get_abs_position_z());
-    int r, g, b;
+    intptr_t r, g, b;
     _fillColor.Get(r, g, b);
     item->Set_fill(r, g, b);
 
@@ -1077,7 +1077,7 @@ Pad_Menu::Display_items(void) {
     _itemsPanel->Set_events(TRUE);
     _itemsPanel->Raise();
 
-    int r, g, b;
+    intptr_t r, g, b;
     _fillColor.Get(r, g, b);
     _itemsPanel->Set_fill(r, g, b);
 

@@ -88,7 +88,7 @@ typedef struct {
 
 static Pad_HashTable *valueTable;
 typedef struct {
-    int red, green, blue;	/* Values for desired color. */
+    intptr_t red, green, blue;	/* Values for desired color. */
     Colormap colormap;		/* Colormap from which color will be
 				 * allocated. */
     Display *display;		/* Display for colormap. */

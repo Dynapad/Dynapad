@@ -451,7 +451,7 @@ Pad_GetUid(const char *string) {
         uidTable = new Pad_HashTable(PAD_STRING_TABLE);
         init++;
     }
-    if (value = (char *) uidTable->Get((void *) string))
+    if ((value = (char *) uidTable->Get((void *) string)))
         return value;
     value = strdup(string);
     uidTable->Set(value, value);

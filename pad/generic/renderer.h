@@ -113,7 +113,7 @@ class Pad_Renderer
     virtual unsigned char  Get_join_style(void) = 0;
     virtual const char *   Get_join_style_name(void) = 0;
     virtual float          Get_line_width(void) = 0;
-    virtual void           Get_string_bbox(char *string, Pad_BBox *bbox) = 0;
+    virtual void           Get_string_bbox(const char *string, Pad_BBox *bbox) = 0;
     virtual float          Get_mag(void) = 0;
     virtual void           Get_transform(Pad_Transform &transform) = 0;
     virtual float          Get_transparency(void) = 0;
@@ -215,7 +215,7 @@ class Pad_XRenderer : public Pad_Renderer
     virtual unsigned char  Get_join_style(void);
     virtual const char *   Get_join_style_name(void);
     virtual float          Get_line_width(void);
-    virtual void           Get_string_bbox(char *string, Pad_BBox *bbox);
+    virtual void           Get_string_bbox(const char *string, Pad_BBox *bbox);
     virtual float          Get_transparency(void);
     virtual float          Get_mag(void);
     virtual void           Get_transform(Pad_Transform &transform);

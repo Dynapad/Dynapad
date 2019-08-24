@@ -2010,7 +2010,7 @@ Pad_Object::Set_rel_position_z(float z) {
 }
 
 //
-// Set the position of the object so that it is 
+// Set the position of the object so that it is
 // centered in the current view, and scaled so it
 // fills up 75% of the screen.
 //
@@ -2280,7 +2280,7 @@ Pad_Object::Generate_event(int type, Pad_List *portals, const char *info) {
 // Return FALSE if invalid type specified.
 //
 Pad_Bool
-Pad_Object::Set_event_order(char *type) {
+Pad_Object::Set_event_order(const char *type) {
     Pad_Bool rc;
 
     if (!strcmp(type, "general")) {

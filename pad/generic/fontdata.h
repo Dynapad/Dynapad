@@ -73,7 +73,7 @@ class Pad_FontData {
     // Methods for querying the underlying font geometry (once its loaded)
     float Char_height(char c = 'A');
     float Char_width(char c = 'A');
-    void String_extents(char *string, float &width, float &height);
+    void String_extents(const char *string, float &width, float &height);
     void Load();
 
     // Font Data Manager API

@@ -2006,7 +2006,7 @@ Pad_XRenderer::Get_font_descender(void)
 //   Return bounding box of specified string.
 //
 void
-Pad_XRenderer::Get_string_bbox(char *string, Pad_BBox *bbox)
+Pad_XRenderer::Get_string_bbox(const char *string, Pad_BBox *bbox)
 {
     float width, height;
 

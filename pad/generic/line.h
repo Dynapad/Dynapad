@@ -86,7 +86,7 @@ class Pad_Line : public Pad_Object
     virtual void       Compute_bounding_box(void);
     virtual int        Configure_arrows(int arrow);
     virtual int        Create_obj_args(int argc, char **argv);   // Called when an item is created with string args
-    virtual char *     Get_capstyle(void);
+    virtual const char * Get_capstyle(void);
     virtual int        Get_arrow(void);
     virtual char *     Get_arrowshape(void);
     virtual void       Get_coords(Pad_PList &pts, Pad_Bool object_coords);
