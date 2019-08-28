@@ -73,7 +73,7 @@ Pad_Component(pad)
     _pageDownCommand = NULL;
     _positionCommand = NULL;
     _value = 0;
-				// Set things here because default functions 
+				// Set things here because default functions
 				// do error checking on _from and _to assuming
 				// they are already set.
     _from = SCROLLBAR_DEFAULT_FROM;
@@ -352,7 +352,7 @@ static void
 _Eval_callback(Pad_Scrollbar *scrollbar, Pad_Callback *callback, Pad_Event *event)
 {
     Pad_String str;
-    Pad_Callback *newCallback;
+    Pad_Callback *newCallback = nullptr;
 
 				// First fire specific callback
     if (callback) {
@@ -514,16 +514,16 @@ Pad_Scrollbar::Set_width(float width)
 void
 Pad_Scrollbar::Fill_changed(void)
 {
-    int red, green, blue;
+    intptr_t red, green, blue;
 
     Pad_Component::Fill_changed();
 
     _fillColor.Get(red, green, blue);
     _border.Set(red, green, blue);
 
-    red   = (int)(LERP(0.85, 0, red));
-    green = (int)(LERP(0.85, 0, green));
-    blue  = (int)(LERP(0.85, 0, blue));
+    red   = (intptr_t)(LERP(0.85, 0, red));
+    green = (intptr_t)(LERP(0.85, 0, green));
+    blue  = (intptr_t)(LERP(0.85, 0, blue));
     _bgBorder.Set(red, green, blue);
 }
 

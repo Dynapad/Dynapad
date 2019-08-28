@@ -35,12 +35,15 @@ software in general.
 //
 class Pad_Color : public Pad_Resource {
 
-  public:
+public:
     // constructors, in various forms
-    Pad_Color() : r(0), g(0), b(0), name(0) { } ;
-    Pad_Color(const int red, const int green, const int blue) : r(red), g(green), b(blue), name(0) { };
+    Pad_Color() : r(0), g(0), b(0), name(0) {};
+
+    Pad_Color(const int red, const int green, const int blue) : r(red), g(green), b(blue), name(0) {};
+
     Pad_Color(const char *name);
-    Pad_Color(const Pad_Color *copy) : r(copy->r), g(copy->g), b(copy->b), name(copy->name) { };
+
+    Pad_Color(const Pad_Color *copy) : r(copy->r), g(copy->g), b(copy->b), name(copy->name) {};
 
     virtual ~Pad_Color();
 
@@ -49,27 +52,30 @@ class Pad_Color : public Pad_Resource {
     // Pad_Color. Note that colors are immutable - if you
     // want to change a color, delete the old color and make a new one.
     //
-    inline void Get(int &red, int &green, int &blue) const {
-	red = r; green = g; blue = b;
+    inline void Get(intptr_t &red, intptr_t &green, intptr_t &blue) const {
+        red = r;
+        green = g;
+        blue = b;
     };
-    
+
     void Get(Pad_String &string) const;
 
     // returns the internal color name, or NULL if the color has no name.
     char *Name() const { return name; }
-    
+
     Pad_Bool Equals(const Pad_Color *otherColor) const; // true if two colors are equal
-    
-    
+
+
     // methods for allocating or freeing a color for a specific display device.
     virtual void *Alloc(Pad_Display *dpy);
+
     virtual void Free(Pad_Display *dpy, void *value);
 
     // standard colors
     static Pad_Color black, white, gray;
 
-  protected:
-    unsigned char r, g, b;	// color data (kept in rgb form)
+protected:
+    unsigned char r, g, b;    // color data (kept in rgb form)
     char *name;                 // color name (or NULL, if none is given)
 };
 
@@ -83,36 +89,43 @@ class Pad_Color : public Pad_Resource {
 // it is legal to directly use Pad_Color - this wrapper is primarily cosmetic.
 //
 
-class Pad_ColorRef
-{
-friend class Pad_Renderer;
-friend class Pad_BorderRef;
-    
-  public:
-    Pad_ColorRef() : color(NULL) { };
+class Pad_ColorRef {
+    friend class Pad_Renderer;
+
+    friend class Pad_BorderRef;
+
+public:
+    Pad_ColorRef() : color(NULL) {};
+
     ~Pad_ColorRef();
-    
-    inline Pad_Bool Is_set() const { return color ? TRUE : FALSE ; }
+
+    inline Pad_Bool Is_set() const { return color ? TRUE : FALSE; }
 
     // Set the current color
-    void Set(int r, int g, int b);
+    void Set(intptr_t r, intptr_t g, intptr_t b);
+
     void Set(const char *name);
+
     void Set(const Pad_Color *color);
+
     void Set(const Pad_ColorRef &colorref) { Set(colorref.color); }
+
     void Set_contrasting(int r, int g, int b);
 
     // Compare with other colors
     Pad_Bool Equals(const Pad_Color *otherColor) const {
-	return (color == otherColor) || 
-	       (color && color->Equals(otherColor)); 
+        return (color == otherColor) ||
+               (color && color->Equals(otherColor));
     }
+
     Pad_Bool Equals(Pad_ColorRef &colorref) const { return Equals(colorref.color); }
 
     // Get the current color
-    void Get(int &r, int &g, int &b) const;
+    void Get(intptr_t &red, intptr_t &green, intptr_t &blue) const;
+
     void Get(Pad_String &string) const;
 
-  protected:
+protected:
     // pointer to the underlying color
     Pad_Color *color;
 };
@@ -121,13 +134,15 @@ friend class Pad_BorderRef;
 // used by Tcl API (for Pad commands like alloccolor, freecolor, setcolor etc.)
 //
 extern Pad_Color *Pad_LookupColorByName(char *name);
+
 extern Pad_Color *Pad_AllocColorByName(char *name);
-extern int        Pad_FreeColorByName(char *name);
+
+extern int Pad_FreeColorByName(char *name);
 
 //
 // Used by color.cpp and border.cpp to map X color names to their
 // RGB values and visa-versa. See colordb.cpp
 //
-extern int        _Pad_colorname_to_rgb(const char *name, int &r, int &g, int &b);
+extern int _Pad_colorname_to_rgb(const char *name, intptr_t &r, intptr_t &g, intptr_t &b);
 
 #endif /* _PAD_COLOR_H */

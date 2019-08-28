@@ -68,12 +68,12 @@ class Pad_BorderRef
     inline Pad_Bool Is_set() const { return border ? TRUE : FALSE ; }
 
     // Set the current border
-    void Set(int r, int g, int b);
+    void Set(intptr_t r, intptr_t g, intptr_t b);
     void Set(const char *name);
     void Set(const Pad_Color *color);
     void Set(const Pad_BorderRef &borderref) { Set(borderref.border); }
     void Set(const Pad_ColorRef &colorref) { Set(colorref.color); }
-    void Set_contrasting(int red, int green, int blue);
+    void Set_contrasting(intptr_t red, intptr_t green, intptr_t blue);
 
     // Compare with other borders
     Pad_Bool Equals(const Pad_Border *otherBorder) const { 
@@ -85,7 +85,7 @@ class Pad_BorderRef
     }
 
     // Get the current border
-    void Get(int &r, int &g, int &b) const;
+    void Get(intptr_t &red, intptr_t &green, intptr_t &blue) const;
     void Get(Pad_String &string) const;
 
   protected:

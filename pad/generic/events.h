@@ -37,12 +37,12 @@ class Pad_Object;
 //
 // Special Pad++ events (and their masks)
 //
-#define Pad_PortalInterceptNotify       myTK_LASTEVENT
-#define Pad_CreateNotify                (myTK_LASTEVENT + 1)
-#define Pad_ModifyNotify                (myTK_LASTEVENT + 2)
-#define Pad_DeleteNotify                (myTK_LASTEVENT + 3)
-#define Pad_WriteNotify                 (myTK_LASTEVENT + 4)
-#define PAD_LASTEVENT                   (myTK_LASTEVENT + 5)
+#define Pad_PortalInterceptNotify       TK_LASTEVENT
+#define Pad_CreateNotify                (TK_LASTEVENT + 1)
+#define Pad_ModifyNotify                (TK_LASTEVENT + 2)
+#define Pad_DeleteNotify                (TK_LASTEVENT + 3)
+#define Pad_WriteNotify                 (TK_LASTEVENT + 4)
+#define PAD_LASTEVENT                   (TK_LASTEVENT + 5)
 
 #define Pad_PortalInterceptMask   (1L<<25)
 #define Pad_CreateMask            (1L<<26)

@@ -62,7 +62,7 @@ class Pad_ImageData
     void  Compute_pixel_data(void);
     void  Compute_pixel_data(int row, int col);
     void  Free_rgb(void);
-    char *Get_token(void);
+    const char * Get_token(void);
     void  Init(Pad_Display *dpy);
     void  Remove_object(Pad_Object *obj);
     void  Set_dimensions(int width, int height, float red, float green, float blue);

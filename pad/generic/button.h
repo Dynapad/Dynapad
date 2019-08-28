@@ -51,7 +51,7 @@ class Pad_Label : public Pad_Component {
 				// (COMPONENT_ALIGN_LEFT, ..._CENTER, or ..._RIGHT)
             void     Set_alignment(int a);
 				// Get and set label
-    virtual void     Set_label(char *label);
+    virtual void     Set_label(const char *label);
             void     Set_label_default(void);
             char *   Get_label(void);
 				// Get and set options

@@ -202,7 +202,7 @@ Pad_View::Apply_view(float *bb)
 // layers are visible except layers preceeded with a '-'.
 //
 void 
-Pad_View::Set_visiblelayers(char *layerstring)
+Pad_View::Set_visiblelayers(const char *layerstring)
 {
     int i;
     char *token;

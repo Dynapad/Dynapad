@@ -59,7 +59,7 @@ class Pad_Image : public Pad_Object
     virtual void     Compute_bounding_box(void);
     virtual float    Compute_scale_within_frame(float *frame);
     virtual Pad_Bool Continue_refinement(void);
-    virtual char *   Get_dither(void);
+    virtual const char * Get_dither(void);
     Pad_ImageData *  Get_imagedata(void);
     virtual Pad_Bool Get_name(Pad_String &string);
     virtual int      Get_writeformat(void);
@@ -73,7 +73,7 @@ class Pad_Image : public Pad_Object
 				  int start_col, int end_col, int step);
     virtual Pad_Bool Rotate(float theta);
     virtual Pad_Bool Rotate(float theta, Pad_Point &center);
-    virtual Pad_Bool Set_dither(char *dither);
+    virtual Pad_Bool Set_dither(const char *new_dither);
     virtual void     Set_dither_default(void);
             void     Set_imagedata(Pad_ImageData *new_image);
             void     Set_imagedata_default(void);

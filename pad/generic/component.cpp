@@ -365,7 +365,7 @@ Pad_Component::Get_active_area(void)
 // Specify this component's pen color
 //
 Pad_Bool
-Pad_Component::Set_pen(char *name)
+Pad_Component::Set_pen(const char *name)
 {
     _penColor.Set(name);
     Pen_changed();
@@ -400,7 +400,7 @@ Pad_Component::Set_pen_default(void)
 // Specify this component's pen color
 //
 Pad_Bool
-Pad_Component::Set_fill(char *name)
+Pad_Component::Set_fill(const char *name)
 {
     _fillColor.Set(name);
     Fill_changed();
@@ -446,7 +446,7 @@ Pad_Component::Fill_changed(void)
 // Specify this component's font
 //
 void
-Pad_Component::Set_font(char *fullname)
+Pad_Component::Set_font(const char *fullname)
 {
     _componentFlags |= COMPONENT_FONT_SET;
     _font.Set(fullname);

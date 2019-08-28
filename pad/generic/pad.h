@@ -215,7 +215,7 @@ class Pad : public Pad_Object
    Pad_Object *last;		     // Last object of drawing order
    Pad_View *  view;		     // Pointer back up to view
    int         level;                // Current refinement render level
-   int         objid;		     // Id counter for objects
+   intptr_t    objid;		     // Id counter for objects
 Pad_HashTable *idTable;		     // Hash table for object id's
 Pad_HashTable *tagTable;	     // Hash table for object tag's
 Pad_HashTable *typeTable;            // List of all types
@@ -249,7 +249,7 @@ Pad_TreeNode  *treeroot;             // root of all Pad_TreeNodes on the pad
             void         Create_treeroot(void);
     virtual void         Damage(void);                          // Mark the pad surface as changed
             void         Delete_layer(Pad_Layer *layer);
-            Pad_Bool     Delete_obj(int id);	                // Delete object by id
+            Pad_Bool     Delete_obj(intptr_t id);	                // Delete object by id
             Pad_Bool     Distribute(Pad_List &objs, int type);
             Pad_Bool     Distribute(Pad_List &objs, int type, float space);
             Pad_Bool     Distribute(Pad_List &objs, Pad_PList &coords);
@@ -274,14 +274,14 @@ Pad_TreeNode  *treeroot;             // root of all Pad_TreeNodes on the pad
             void         Find_with_sticky(int stickyType, Pad_List &items, Pad_Bool groups);
             void         Find_with_tagorid(char *tagorid, Pad_List &items, Pad_Bool groups, Pad_Bool append=FALSE);
             void         Find_with_text(char *text, Pad_List &items, Pad_Bool groups);
-            void         Find_with_type(char *type, Pad_List &items, Pad_Bool groups);
+            void         Find_with_type(const char *type_name, Pad_List &items, Pad_Bool groups);
             Pad_Object * First();
             Pad_Bool     Get_active(void);
             void         Get_ids_from_tag(char *tag, Pad_IList &ids);
             Pad_Layer *  Get_layer_from_name(const char *name);
             Pad_Layer *  Get_layer_from_id(int layerId);
             const char * Get_modifier(void);
-            Pad_Object * Get_object_from_id(int id);
+            Pad_Object * Get_object_from_id(intptr_t id);
             void         Get_objects_from_tag(char *tag, Pad_List &objs);
             Pad_Win *    Get_win(void);
             void         Init_events(Pad_Bool status);

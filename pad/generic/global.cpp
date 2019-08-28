@@ -74,7 +74,7 @@ Pad_Uid Pad_windowUid =     NULL;
 //
 // Version string
 //
-char *Pad_version = PAD_VERSION;
+const char *Pad_version = PAD_VERSION;
 
 //
 // Pad_tk flag indicating if we are running under Tk or Java+X

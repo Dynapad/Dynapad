@@ -59,7 +59,7 @@ public:
   static  void  DrawString_2(char *string, float xoff, float yoff, float theta);
   static  void  InitLineFonts(void);
   static  float LineHeight(void);
-  static  float StringWidth(char *string);
+  static  float StringWidth(const char *string);
 
   static Pad_LineFontChar *letters[256];
 };

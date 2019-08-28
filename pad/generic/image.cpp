@@ -38,6 +38,7 @@ software in general.
 #include <math.h>
 #include <string.h>
 #include <fstream>
+
 using namespace std;
 
 #define IMAGE_DEFAULT_DITHER        "refinedither"
@@ -48,26 +49,23 @@ using namespace std;
 //              Image definitions
 //////////////////////////////////////////////  
 
-    
-Pad_Image::~Pad_Image()
-{
+
+Pad_Image::~Pad_Image() {
     Generate_delete();
 
     if (image) {
-	image->Remove_object(this);
-	image = NULL;
+        image->Remove_object(this);
+        image = NULL;
     }
 }
 
 Pad_Image::Pad_Image(Pad *pad) :
-Pad_Object(pad)
-{
+    Pad_Object(pad) {
     Init();
 }
 
-void 
-Pad_Image::Init(void)
-{
+void
+Pad_Image::Init(void) {
     _type = PAD_IMAGE;
     imageFlags = PAD_NO_MASK;
     image = NULL;
@@ -81,13 +79,12 @@ Pad_Image::Init(void)
 // Image data has been deleted, so don't access it any more.
 //
 void
-Pad_Image::Remove_image_data(void)
-{
+Pad_Image::Remove_image_data(void) {
     Damage();
     image = NULL;
     if (rotImage) {
-	delete rotImage;
-	rotImage = NULL;
+        delete rotImage;
+        rotImage = NULL;
         _Set_angle_data(0.0);
     }
 }
@@ -96,18 +93,17 @@ Pad_Image::Remove_image_data(void)
 // Setters and Getters for the writeformat option
 //
 Pad_Bool
-Pad_Image::Set_writeformat(int new_format)
-{
+Pad_Image::Set_writeformat(int new_format) {
     int rc = TRUE;
     imageFlags |= IMAGE_WRITEFORMAT_SET;
     switch (new_format) {
-      case PAD_WRITE_COPY:
-      case PAD_WRITE_REFERENCE:
-        writeFormat = new_format;
-	break;
-      default:
-        rc = FALSE;
-	Pad_errorString = "invalid writeformat. Try \"PAD_WRITE_COPY\" or \"PAD_WRITE_REFERENCE\"";
+        case PAD_WRITE_COPY:
+        case PAD_WRITE_REFERENCE:
+            writeFormat = new_format;
+            break;
+        default:
+            rc = FALSE;
+            Pad_errorString = "invalid writeformat. Try \"PAD_WRITE_COPY\" or \"PAD_WRITE_REFERENCE\"";
     }
 
     return rc;
@@ -115,15 +111,13 @@ Pad_Image::Set_writeformat(int new_format)
 
 
 void
-Pad_Image::Set_writeformat_default(void)
-{
+Pad_Image::Set_writeformat_default(void) {
     Set_writeformat(IMAGE_DEFAULT_WRITEFORMAT);
     imageFlags &= ~IMAGE_WRITEFORMAT_SET;
 }
 
 int
-Pad_Image::Get_writeformat(void)
-{
+Pad_Image::Get_writeformat(void) {
     return writeFormat;
 }
 
@@ -132,62 +126,58 @@ Pad_Image::Get_writeformat(void)
 // Setters and Getters for the dither flag
 //
 Pad_Bool
-Pad_Image::Set_dither(char *new_dither)
-{
+Pad_Image::Set_dither(const char *new_dither) {
     int rc = TRUE;
 
     imageFlags |= IMAGE_DITHER_SET;
     if (image && (image->rgb == FALSE)) {
-	dither = NO_DITHER;
+        dither = NO_DITHER;
     } else {
-	if (!strcmp(new_dither, "nodither")) {
-	    dither = NO_DITHER;
-	} else if (!strcmp(new_dither, "refinedither")) {
-	    dither = REFINE_DITHER;
-	} else if (!strcmp(new_dither, "dither")) {
-	    dither = DITHER;
-	} else {
-	    rc = FALSE;
-	    Pad_errorString = "invalid dither.  Try \"dither\", \"refinedither\", or \"nodither\"";
-	}
+        if (!strcmp(new_dither, "nodither")) {
+            dither = NO_DITHER;
+        } else if (!strcmp(new_dither, "refinedither")) {
+            dither = REFINE_DITHER;
+        } else if (!strcmp(new_dither, "dither")) {
+            dither = DITHER;
+        } else {
+            rc = FALSE;
+            Pad_errorString = "invalid dither.  Try \"dither\", \"refinedither\", or \"nodither\"";
+        }
     }
     Damage();
 
-    return(rc);
+    return (rc);
 }
 
 void
-Pad_Image::Set_dither_default(void)
-{
+Pad_Image::Set_dither_default(void) {
     Set_dither(IMAGE_DEFAULT_DITHER);
     imageFlags &= ~IMAGE_DITHER_SET;
 }
 
-char *
-Pad_Image::Get_dither(void)
-{
-    char *result;
+const char *
+Pad_Image::Get_dither(void) {
+    const char *result;
 
     if (image && (image->rgb == FALSE)) {
-	result = "nodither";
+        result = "nodither";
     } else {
-	switch (dither) 
-	    {
-	    case NO_DITHER:
-		result = "nodither";
-		break;
-	    case REFINE_DITHER:
-		result = "refinedither";
-		break;
-	    case DITHER:
-		result = "dither";
-		break;
-	    default:
-		result = "??";
-	    }
+        switch (dither) {
+            case NO_DITHER:
+                result = "nodither";
+                break;
+            case REFINE_DITHER:
+                result = "refinedither";
+                break;
+            case DITHER:
+                result = "dither";
+                break;
+            default:
+                result = "??";
+        }
     }
 
-    return(result);
+    return (result);
 }
 
 //
@@ -195,53 +185,51 @@ Pad_Image::Get_dither(void)
 // fits within height of frame.
 //
 float
-Pad_Image::Compute_scale_within_frame(float *frame)
-{
+Pad_Image::Compute_scale_within_frame(float *frame) {
     float s;
     Pad_ImageData *imageData;
 
     imageData = Get_imagedata();
     if (imageData) {
-	s = (frame[YMAX] - frame[YMIN]) / imageData->height;
+        s = (frame[YMAX] - frame[YMIN]) / imageData->height;
     } else {
-	s = 1.0;
+        s = 1.0;
     }
 
-    return(s);
+    return (s);
 }
 
-void 
-Pad_Image::Compute_bounding_box(void)
-{
+void
+Pad_Image::Compute_bounding_box(void) {
     Pad_ImageData *imageData;
 
     imageData = Get_imagedata();
 
     if (!(optionFlags & PAD_WIDTH_SET)) {
-	if (imageData) {
-	    Set_bbox_xmin(0.0);
-	    Set_bbox_xmax(imageData->width);
-	} else {
-	    Set_bbox_xmin(0.0);
-	    Set_bbox_xmax(0.0);
-	}
+        if (imageData) {
+            Set_bbox_xmin(0.0);
+            Set_bbox_xmax(imageData->width);
+        } else {
+            Set_bbox_xmin(0.0);
+            Set_bbox_xmax(0.0);
+        }
     }
     if (!(optionFlags & PAD_HEIGHT_SET)) {
-	
-	if (imageData) {
-	    Set_bbox_ymin(0.0);
-	    Set_bbox_ymax(imageData->height);
-	} else {
-	    Set_bbox_ymin(0.0);
-	    Set_bbox_ymax(0.0);
-	}
+
+        if (imageData) {
+            Set_bbox_ymin(0.0);
+            Set_bbox_ymax(imageData->height);
+        } else {
+            Set_bbox_ymin(0.0);
+            Set_bbox_ymax(0.0);
+        }
     }
 
-				// Need to update this now because otherwise when rotating
-				// an image that is a member of a group, the position will
-				// be incorrect when computing the groups bbox...
+    // Need to update this now because otherwise when rotating
+    // an image that is a member of a group, the position will
+    // be incorrect when computing the groups bbox...
     if (group) {
-	Set_position_from_anchor();
+        Set_position_from_anchor();
     }
 
     Pad_Object::Compute_bounding_box();
@@ -252,8 +240,7 @@ Pad_Image::Compute_bounding_box(void)
 // was interrupted.
 //
 Pad_Bool
-Pad_Image::Render(void)
-{
+Pad_Image::Render(void) {
     Pad_Bool rc = TRUE;
     float bb[4];
     Pad_Bool dither_flag;
@@ -261,30 +248,30 @@ Pad_Image::Render(void)
 
     imageData = Get_imagedata();
     if (imageData) {
-	if (dither == NO_DITHER || imageData->dpy->truecolor) {
-	    dither_flag = FALSE;
-	} else if (dither == REFINE_DITHER) {
-	    dither_flag = (pad->level == 0) ? FALSE : TRUE;
-	} else {
-	    dither_flag = TRUE;
-	}
+        if (dither == NO_DITHER || imageData->dpy->truecolor) {
+            dither_flag = FALSE;
+        } else if (dither == REFINE_DITHER) {
+            dither_flag = (pad->level == 0) ? FALSE : TRUE;
+        } else {
+            dither_flag = TRUE;
+        }
 
-	Get_bbox(bb);
+        Get_bbox(bb);
 
-	// If image is not cached out then do the normal rendering.
-	// Otherwise, just render a filled rectangle (the real rendering 
+        // If image is not cached out then do the normal rendering.
+        // Otherwise, just render a filled rectangle (the real rendering
         // will be done when the scene is more stable).
 
-	if (!(flags & PAD_MASK_CACHEDOUT)) {
-	  Pad_renderer->Draw_image(imageData, bb[XMIN], bb[YMIN], bb[XMAX], 
-				   bb[YMAX], dither_flag);
-	} else {
-	  Pad_renderer->Set_color(&Pad_Color::gray);
-	  Pad_renderer->Draw_filled_box(bb[XMIN], bb[YMIN], bb[XMAX],bb[YMAX]);
-	}
+        if (!(flags & PAD_MASK_CACHEDOUT)) {
+            Pad_renderer->Draw_image(imageData, bb[XMIN], bb[YMIN], bb[XMAX],
+                                     bb[YMAX], dither_flag);
+        } else {
+            Pad_renderer->Set_color(&Pad_Color::gray);
+            Pad_renderer->Draw_filled_box(bb[XMIN], bb[YMIN], bb[XMAX], bb[YMAX]);
+        }
     }
 
-    return(rc);
+    return (rc);
 }
 
 //
@@ -292,15 +279,14 @@ Pad_Image::Render(void)
 // should render itself extra fast - even if that makes it ugly.
 //
 Pad_Bool
-Pad_Image::Render_fast(void)
-{
+Pad_Image::Render_fast(void) {
     float bb[4];
 
     Get_bbox(bb);
     Pad_renderer->Set_color(&Pad_Color::gray);
-    Pad_renderer->Draw_filled_box(bb[XMIN], bb[YMIN], bb[XMAX],bb[YMAX]);
+    Pad_renderer->Draw_filled_box(bb[XMIN], bb[YMIN], bb[XMAX], bb[YMAX]);
 
-    return(TRUE);
+    return (TRUE);
 }
 
 //
@@ -310,11 +296,10 @@ Pad_Image::Render_fast(void)
 // changing the view).
 //
 Pad_Bool
-Pad_Image::Check_for_render(void)
-{
-  Pad_Bool rc = Pad_Object::Check_for_render();
+Pad_Image::Check_for_render(void) {
+    Pad_Bool rc = Pad_Object::Check_for_render();
 
-  return rc;
+    return rc;
 }
 
 ///////////////////////////////////////
@@ -334,58 +319,55 @@ Pad_Image::Check_for_render(void)
 // pixels. The actual size of the final image is the size of its bounding box.
 //
 Pad_Bool
-Pad_Image::Is_rotatable(void)
-{
-    return(TRUE);
+Pad_Image::Is_rotatable(void) {
+    return (TRUE);
 }
 
 Pad_Bool
-Pad_Image::Rotate(float dtheta)
-{
-				// center point must be in global coordinates,
-				// so convert anchorpt from local*transform to global
+Pad_Image::Rotate(float dtheta) {
+    // center point must be in global coordinates,
+    // so convert anchorpt from local*transform to global
     Pad_Point center;
     center = anchorpt;
     transform.Invert(center);
     Local_to_screen(center);
 
-    return(Rotate(dtheta, center));
+    return (Rotate(dtheta, center));
 }
 
 Pad_Bool
-Pad_Image::Rotate(float dtheta, Pad_Point &center)
-{
-    unsigned long *  newRGBData;          // Holds the new RGB data
-    unsigned char *  newMask;             // Holds the new bitmask
-    Pixel           *newXpixels;          // holds the 8bit rotated image
-    unsigned char   *newXpixels8;         // holds the > 8bit rotated image
-    int              newlen;              // length of array of rotated image data (newheitht*newwidth)
-    int              row,col;             // loop variables
-    int              width, height, newwidth, newheight; // dimensions of the former and rotated images (in pixels)
-    float            sinTheta, cosTheta ; // used to avoid recalculating sin and cos of the angle
-    float            leftTopRow, leftTopCol; // position of the leftTop corner, of the original figure, in the new image
-    double           row2, col2;          // used in rotation loop
-    int              mappedRow, mappedCol; // where a pixel in the new image transforms to in the reverse rotation process.
-                                           // Used to decide if a pixel in the new image has a pixel from the original image
-                                           // mappped to it, and if yes, which one.
+Pad_Image::Rotate(float dtheta, Pad_Point &center) {
+    unsigned long *newRGBData;          // Holds the new RGB data
+    unsigned char *newMask;             // Holds the new bitmask
+    Pixel *newXpixels;          // holds the 8bit rotated image
+    unsigned char *newXpixels8;         // holds the > 8bit rotated image
+    int newlen;              // length of array of rotated image data (newheitht*newwidth)
+    int row, col;             // loop variables
+    int width, height, newwidth, newheight; // dimensions of the former and rotated images (in pixels)
+    float sinTheta, cosTheta; // used to avoid recalculating sin and cos of the angle
+    float leftTopRow, leftTopCol; // position of the leftTop corner, of the original figure, in the new image
+    double row2, col2;          // used in rotation loop
+    int mappedRow, mappedCol; // where a pixel in the new image transforms to in the reverse rotation process.
+    // Used to decide if a pixel in the new image has a pixel from the original image
+    // mappped to it, and if yes, which one.
 
     _Set_angle_data(Get_angle() + dtheta);              // Causes theta to be added to the present image angle theta
     _Set_angle_data(fmod(Get_angle(), 360.0f));   // Make it so:  0 < imageAngle < 360
     optionFlags |= PAD_ANGLE_SET; // Set bit specifying that angle has been set
 
-				// If no image data, then can't rotate
+    // If no image data, then can't rotate
     if (!image) {
-	return(TRUE);
+        return (TRUE);
     }
 
     if (rotImage) {
-	delete rotImage;
-	rotImage = NULL;
+        delete rotImage;
+        rotImage = NULL;
     }
-                                         
+
     if (Get_angle() == 0) {
-	Update();
-	return(TRUE);
+        Update();
+        return (TRUE);
     }
 
     sinTheta = sin(DEG2RAD(Get_angle()));
@@ -398,110 +380,110 @@ Pad_Image::Rotate(float dtheta, Pad_Point &center)
     // image when placed into the new grid (newRGBData), and calculate
     // the height and width of the new image (newwidth, newheight)
     if (sinTheta >= 0 && cosTheta >= 0) { // If first quadrant rotation
-	leftTopRow = (width-1) * sinTheta;
-	leftTopCol = 0.0;
-	newwidth   = (int)(floor((height * sinTheta) + (width  * cosTheta)));
-	newheight  = (int)(floor((width  * sinTheta) + (height * cosTheta)));
+        leftTopRow = (width - 1) * sinTheta;
+        leftTopCol = 0.0;
+        newwidth = (int) (floor((height * sinTheta) + (width * cosTheta)));
+        newheight = (int) (floor((width * sinTheta) + (height * cosTheta)));
 
     } else if (sinTheta >= 0.0 && cosTheta < 0.0) { // Second quadrant
-	newheight  = (int)(floor((width  * sinTheta) + (height * (-cosTheta))));
-	newwidth   = (int)(floor((height * sinTheta) + (width  * (-cosTheta))));
-	leftTopRow = (newheight-1);
-	leftTopCol = (width-1) * (-cosTheta);
+        newheight = (int) (floor((width * sinTheta) + (height * (-cosTheta))));
+        newwidth = (int) (floor((height * sinTheta) + (width * (-cosTheta))));
+        leftTopRow = (newheight - 1);
+        leftTopCol = (width - 1) * (-cosTheta);
 
     } else if (sinTheta < 0.0 && cosTheta < 0.0) { // Third quadrant
-	newheight  = (int)(floor((width * (-sinTheta)) + (height * (-cosTheta))));
-	newwidth   = (int)(floor((height  * (-sinTheta)) + (width  * (-cosTheta))));
-	leftTopRow = ((height-1) * -cosTheta);
- 	leftTopCol = (newwidth-1);
+        newheight = (int) (floor((width * (-sinTheta)) + (height * (-cosTheta))));
+        newwidth = (int) (floor((height * (-sinTheta)) + (width * (-cosTheta))));
+        leftTopRow = ((height - 1) * -cosTheta);
+        leftTopCol = (newwidth - 1);
 
     } else if (sinTheta < 0.0 && cosTheta >= 0.0) { // Forth quadrant
-	leftTopRow = 0.0;
-	leftTopCol = (height - 1) * -sinTheta;
-	newwidth  = (int)(floor((height * (-sinTheta)) + (width  * cosTheta)));
-	newheight = (int)(floor((width  * (-sinTheta)) + (height * cosTheta)));
+        leftTopRow = 0.0;
+        leftTopCol = (height - 1) * -sinTheta;
+        newwidth = (int) (floor((height * (-sinTheta)) + (width * cosTheta)));
+        newheight = (int) (floor((width * (-sinTheta)) + (height * cosTheta)));
     }
 
     newlen = newwidth * newheight;// Size, in pixels, of new arrays
-    
-				// Allocate new data
+
+    // Allocate new data
     if (image->rgbData != NULL) {
-	newRGBData = new unsigned long [newlen];
+        newRGBData = new unsigned long[newlen];
     } else {
-	newRGBData = NULL;
+        newRGBData = NULL;
     }
     if (image->xpixels8 != NULL) {
-	newXpixels8 = new unsigned char [newwidth * newheight];
+        newXpixels8 = new unsigned char[newwidth * newheight];
     } else {
-	newXpixels8 = NULL;
+        newXpixels8 = NULL;
     }
     if (image->xpixels != NULL) {
-	newXpixels = new Pixel [newwidth * newheight];
+        newXpixels = new Pixel[newwidth * newheight];
     } else {
-	newXpixels = NULL;
+        newXpixels = NULL;
     }
-    newMask = new unsigned char [newlen];
-    
+    newMask = new unsigned char[newlen];
+
     // Reverse-Transform each pixel of the new image to see if it  
     // falls within the pixel space of the original. If yes, map the proper
     // pixel from the original to the new image
     for (row = 0; row < newheight; row++) {
-	for (col = 0; col <newwidth; col++) {
-	   
-	    row2 = row - leftTopRow;
-	    col2 = col - leftTopCol;
-	    
-	    mappedRow = (int)((row2 * cosTheta) + (col2 * sinTheta));
-	    mappedCol = (int)((col2 * cosTheta) - (row2 * sinTheta));
+        for (col = 0; col < newwidth; col++) {
 
-	    if ((0 <= mappedRow) && (mappedRow <= height - 1) &&
-		(0 <= mappedCol) && (mappedCol <= width  - 1)) {
+            row2 = row - leftTopRow;
+            col2 = col - leftTopCol;
 
-		if (image->mask != NULL && image->mask[mappedRow * width + mappedCol] != 0) {
-		    newMask[row * newwidth + col] = image->mask[mappedRow * width + mappedCol];
-		} else {
-		    newMask[row * newwidth + col] = 0;
-		}
-		
-		if (newRGBData != NULL) { // Map original data to new image data if "data" exists
-		    newRGBData[row * newwidth + col] = image->rgbData[mappedRow * width + mappedCol];
-		}
-		if (newXpixels != NULL) {// Map original inage_pixels to new xpixels if "xpixels" exist
-		    newXpixels[row * newwidth + col] = 
-			             image->xpixels[mappedRow * width + mappedCol];
-		}
-		if (newXpixels8 != NULL) {// Map original inage_pixels8 to new xpixels8 if "xpixels8" exist
-		    newXpixels8[row * newwidth + col] = 
-			             image->xpixels8[mappedRow * width + mappedCol];
-		} 
-	    } else {
-				// Set background mask
-		newMask[row * newwidth + col] = 255;
-				// Set background pixels to black
-		if (newRGBData != NULL) {
-		    newRGBData[row * newwidth + col] = 0;
-		}
-		if (newXpixels != NULL) {
-		    newXpixels[row * newwidth + col] = 0;
-		}
-		if (newXpixels8 != NULL) {
-		    newXpixels8[row * newwidth + col] = 0;
-		} 
-	    }
-      }
+            mappedRow = (int) ((row2 * cosTheta) + (col2 * sinTheta));
+            mappedCol = (int) ((col2 * cosTheta) - (row2 * sinTheta));
+
+            if ((0 <= mappedRow) && (mappedRow <= height - 1) &&
+                (0 <= mappedCol) && (mappedCol <= width - 1)) {
+
+                if (image->mask != NULL && image->mask[mappedRow * width + mappedCol] != 0) {
+                    newMask[row * newwidth + col] = image->mask[mappedRow * width + mappedCol];
+                } else {
+                    newMask[row * newwidth + col] = 0;
+                }
+
+                if (newRGBData != NULL) { // Map original data to new image data if "data" exists
+                    newRGBData[row * newwidth + col] = image->rgbData[mappedRow * width + mappedCol];
+                }
+                if (newXpixels != NULL) {// Map original inage_pixels to new xpixels if "xpixels" exist
+                    newXpixels[row * newwidth + col] =
+                        image->xpixels[mappedRow * width + mappedCol];
+                }
+                if (newXpixels8 != NULL) {// Map original inage_pixels8 to new xpixels8 if "xpixels8" exist
+                    newXpixels8[row * newwidth + col] =
+                        image->xpixels8[mappedRow * width + mappedCol];
+                }
+            } else {
+                // Set background mask
+                newMask[row * newwidth + col] = 255;
+                // Set background pixels to black
+                if (newRGBData != NULL) {
+                    newRGBData[row * newwidth + col] = 0;
+                }
+                if (newXpixels != NULL) {
+                    newXpixels[row * newwidth + col] = 0;
+                }
+                if (newXpixels8 != NULL) {
+                    newXpixels8[row * newwidth + col] = 0;
+                }
+            }
+        }
     }
 
-				// Create rotated image data, filling in data slots
+    // Create rotated image data, filling in data slots
     rotImage = new Pad_ImageData(pad->view->win->dpy);
-    rotImage->width  = newwidth; 
+    rotImage->width = newwidth;
     rotImage->height = newheight;
     rotImage->rgbData = newRGBData;
     rotImage->xpixels = newXpixels;
     rotImage->xpixels8 = newXpixels8;
     rotImage->mask = newMask;
 
-				// Move center point to same coord system as anchorpt.
-				// This is local * transform.
+    // Move center point to same coord system as anchorpt.
+    // This is local * transform.
     Pad_Point centerCopy = center;
     Screen_to_local(centerCopy);
     transform.Apply(centerCopy);
@@ -509,75 +491,71 @@ Pad_Image::Rotate(float dtheta, Pad_Point &center)
 
     Update();
 
-    return(TRUE);
+    return (TRUE);
 }
 // End Rotation Code
 
 //
 // Returns true if object needs more refinement
 //
-Pad_Bool 
-Pad_Image::Continue_refinement(void)
-{
+Pad_Bool
+Pad_Image::Continue_refinement(void) {
     Pad_ImageData *imageData;
 
     if ((flags & PAD_MASK_CACHEDOUT) && (pad->level == 0)) {
-      return (TRUE);
+        return (TRUE);
     }
 
     imageData = Get_imagedata();
 
-	// Carry on refining if image requested to dither on refinement
+    // Carry on refining if image requested to dither on refinement
     if ((dither == REFINE_DITHER) && imageData && imageData->rgb && !imageData->dpy->truecolor) {
-	return (pad->level == 0);
+        return (pad->level == 0);
     } else {
-	return (FALSE);
+        return (FALSE);
     }
 }
 
 void
-Pad_Image::Set_imagedata(Pad_ImageData *new_image)
-{
+Pad_Image::Set_imagedata(Pad_ImageData *new_image) {
     imageFlags |= IMAGE_IMAGEDATA_SET;
     if (image) {
-	image->Remove_object(this);
-	image = NULL;
+        image->Remove_object(this);
+        image = NULL;
         name = NULL;
     }
     if (rotImage) {
-	delete rotImage;
-	rotImage = NULL;
+        delete rotImage;
+        rotImage = NULL;
     }
     image = new_image;
     if (image) {
-	image->Add_object(this);
-	if (!(optionFlags & PAD_MAXSIZE_SET)) {
-	    maxSize = (int)(500 * MAX(image->width, image->height));
-	}
+        image->Add_object(this);
+        if (!(optionFlags & PAD_MAXSIZE_SET)) {
+            maxSize = (int) (500 * MAX(image->width, image->height));
+        }
         name = image->name;
     }
 
     Update();
 
     if (Get_angle() != 0) {
-	Rotate(0);
+        Rotate(0);
     }
 }
 
 void
-Pad_Image::Set_imagedata_default(void)
-{
+Pad_Image::Set_imagedata_default(void) {
     Set_imagedata(IMAGE_DEFAULT_IMAGEDATA);
     imageFlags &= ~IMAGE_IMAGEDATA_SET;
 }
 
 Pad_ImageData *
-Pad_Image::Get_imagedata(void)
-{
+Pad_Image::Get_imagedata(void) {
     if (Get_angle() == 0) {
-	return(image);
+        return (image);
     } else {
-	return(rotImage);
+        return (rotImage);
     }
 }
 
@@ -586,12 +564,11 @@ Pad_Image::Get_imagedata(void)
 //
 
 Pad_Bool
-Pad_Image::Get_name(Pad_String &result) 
-{
+Pad_Image::Get_name(Pad_String &result) {
 
     result = "";
     result = name;
-    return(TRUE);
+    return (TRUE);
 
 }
 
@@ -601,8 +578,7 @@ Pad_Image::Get_name(Pad_String &result)
 // If masked, no picking. If mask for that pixel is zero pick.
 //
 Pad_Bool
-Pad_Image::Pick(Pad_Event *event, float halo)
-{
+Pad_Image::Pick(Pad_Event *event, float halo) {
     float nearDist;
     float dx1, dy1, dx2, dy2;
     float bb[4];
@@ -618,40 +594,40 @@ Pad_Image::Pick(Pad_Event *event, float halo)
     dy2 = event->pt.y - (bb[YMAX] + nearDist);
 
     if ((dx1 < 0) && (dy1 < 0) && (dx2 < 0) && (dy2 < 0)) {
-	if (Get_angle() != 0) { // If rotated, look at "rotImage" for data to make picking decision
-	    pixCol = int(event->pt.x - bb[XMIN]);
-	    pixCol = MAX(0, pixCol);
-	    pixCol = MIN(rotImage->height - 1, pixCol);
-	    pixRow = int(rotImage->height - (event->pt.y - bb[YMIN]));
-	    pixRow = MAX(0, pixRow);
-	    pixRow = MIN(rotImage->width - 1, pixRow);
-	    
-	    if (rotImage->mask == NULL) {
-	        return TRUE;
-	    } else if (rotImage->mask[pixRow * rotImage->width + pixCol] != 0) {
-		rc = FALSE;
-	    } else {
-		rc = TRUE;
-	    }
-	} else { // If not rotated look to at "image" for data to make picking decision
-	    pixCol = int(event->pt.x - bb[XMIN]);
-	    pixCol = MAX(0, pixCol);
-	    pixCol = MIN(image->height - 1, pixCol);
-	    pixRow = int(image->height - (event->pt.y - bb[YMIN]));
-	    pixRow = MAX(0, pixRow);
-	    pixRow = MIN(image->width - 1, pixRow);
-	    
-	    if (image->mask == NULL) {
-		rc = TRUE;
-	    } else if (image->mask[pixRow * image->width + pixCol] != 0) {
-		rc = FALSE;
-	    } else {
-		rc = TRUE;
-	    }
-	}
+        if (Get_angle() != 0) { // If rotated, look at "rotImage" for data to make picking decision
+            pixCol = int(event->pt.x - bb[XMIN]);
+            pixCol = MAX(0, pixCol);
+            pixCol = MIN(rotImage->height - 1, pixCol);
+            pixRow = int(rotImage->height - (event->pt.y - bb[YMIN]));
+            pixRow = MAX(0, pixRow);
+            pixRow = MIN(rotImage->width - 1, pixRow);
+
+            if (rotImage->mask == NULL) {
+                return TRUE;
+            } else if (rotImage->mask[pixRow * rotImage->width + pixCol] != 0) {
+                rc = FALSE;
+            } else {
+                rc = TRUE;
+            }
+        } else { // If not rotated look to at "image" for data to make picking decision
+            pixCol = int(event->pt.x - bb[XMIN]);
+            pixCol = MAX(0, pixCol);
+            pixCol = MIN(image->height - 1, pixCol);
+            pixRow = int(image->height - (event->pt.y - bb[YMIN]));
+            pixRow = MAX(0, pixRow);
+            pixRow = MIN(image->width - 1, pixRow);
+
+            if (image->mask == NULL) {
+                rc = TRUE;
+            } else if (image->mask[pixRow * image->width + pixCol] != 0) {
+                rc = FALSE;
+            } else {
+                rc = TRUE;
+            }
+        }
     } else {
-	rc = FALSE;
+        rc = FALSE;
     }
 
-    return(rc);
+    return (rc);
 }

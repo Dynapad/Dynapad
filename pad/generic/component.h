@@ -126,14 +126,14 @@ class Pad_Component : public Pad_Object {
     virtual float      Get_hilite_width(void);
 
 				// Change the fg, bg and font
-    virtual Pad_Bool   Set_pen(char *colorName);
+    virtual Pad_Bool   Set_pen(const char *colorName);
     virtual Pad_Bool   Set_pen(int r, int g, int b);
     virtual void       Get_pen_name(Pad_String &penname);
-    virtual Pad_Bool   Set_fill(char *colorName);
+    virtual Pad_Bool   Set_fill(const char *colorName);
     virtual Pad_Bool   Set_fill(int r, int g, int b);
     virtual void       Pen_changed(void);   // This gets called when the pen changed, can be overridden
     virtual void       Fill_changed(void);  // This gets called when the fill changed, can be overridden
-    virtual void       Set_font(char *fullname);
+    virtual void       Set_font(const char *fullname);
 				// Change the fg, bg and font to default values
     virtual void       Set_pen_default(void);
     virtual void       Set_fill_default(void);

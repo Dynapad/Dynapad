@@ -178,7 +178,7 @@ Pad_Label::Set_alignment(int alignment)
 // Set and get label
 //
 void
-Pad_Label::Set_label(char *newLabel)
+Pad_Label::Set_label(const char *newLabel)
 {
     _labelFlags |= LABEL_TEXT_SET;
     _label = newLabel;
@@ -362,7 +362,7 @@ Pad_Button::Render(void)
 void
 Pad_Button::Fill_changed(void)
 {
-    int red, green, blue;
+    intptr_t red, green, blue;
 
     Pad_Component::Fill_changed();
 
