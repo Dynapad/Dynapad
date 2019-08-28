@@ -291,7 +291,7 @@ Pad_Group::Pick_group(Pad_Event *)
 // Add <this> and all the members to the specified layer.
 // 
 void
-Pad_Group::Add_to_layer(char *name)
+Pad_Group::Add_to_layer(const char *name)
 {
     Pad_Object *obj;
     Pad_Iterator oi;

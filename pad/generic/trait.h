@@ -93,6 +93,9 @@ protected:
 //
 class Pad_StringTrait : public Pad_Trait {
 public:
+    using Pad_Trait::Get_value;
+    using Pad_Trait::Set_value;
+
     Pad_Bool Get_value(char*&);
     Pad_Bool Get_value(Pad_String*&);
 
@@ -117,6 +120,9 @@ private:
 //
 class Pad_CallbackTrait : public Pad_Trait {
 public:
+    using Pad_Trait::Get_value;
+    using Pad_Trait::Set_value;
+
     Pad_Bool Get_value(Pad_Callback*&);
     Pad_Bool Set_value(Pad_Callback*);
 
@@ -133,6 +139,9 @@ private:
 //
 class Pad_NoiseTrait : public Pad_Trait {
 public:
+    using Pad_Trait::Get_value;
+    using Pad_Trait::Set_value;
+
     Pad_Bool Get_value(Pad_NoiseData*&);
     Pad_Bool Set_value(Pad_NoiseData*);
 
@@ -148,6 +157,9 @@ private:
 //
 class Pad_ListTrait : public Pad_Trait {
 public:
+    using Pad_Trait::Get_value;
+    using Pad_Trait::Set_value;
+
     virtual Pad_Bool Get_value(Pad_List*&);
     virtual Pad_Bool Set_value(Pad_List*);
 
@@ -179,6 +191,9 @@ private:
 //
 class Pad_StickyTrait : public Pad_Trait {
 public:
+    using Pad_Trait::Get_value;
+    using Pad_Trait::Set_value;
+
     Pad_Bool Get_value(Pad_Sticky*&);
     Pad_Bool Set_value(Pad_Sticky*);
 
@@ -194,6 +209,9 @@ private:
 //
 class Pad_TreeNodeTrait : public Pad_Trait {
 public:
+    using Pad_Trait::Get_value;
+    using Pad_Trait::Set_value;
+
     Pad_Bool Get_value(Pad_TreeNode*&);
     Pad_Bool Set_value(Pad_TreeNode*);
 
@@ -210,6 +228,9 @@ private:
 //
 class Pad_TreeLayoutTrait : public Pad_Trait {
 public:
+    using Pad_Trait::Get_value;
+    using Pad_Trait::Set_value;
+
     Pad_Bool Get_value(Pad_TreeLayout*&);
     Pad_Bool Set_value(Pad_TreeLayout*);
 
@@ -225,6 +246,9 @@ private:
 //
 class Pad_UCharTrait : public Pad_Trait {
 public:
+    using Pad_Trait::Get_value;
+    using Pad_Trait::Set_value;
+
     Pad_Bool Get_value(unsigned char*&);
     Pad_Bool Set_value(unsigned char*);
 
@@ -240,6 +264,9 @@ private:
 //
 class Pad_FloatTrait : public Pad_Trait {
 public:
+    using Pad_Trait::Get_value;
+    using Pad_Trait::Set_value;
+
     Pad_Bool Get_value(float*&);
     Pad_Bool Set_value(float*);
 

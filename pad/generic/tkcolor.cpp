@@ -88,7 +88,7 @@ typedef struct {
 
 static Pad_HashTable *valueTable;
 typedef struct {
-    int red, green, blue;	/* Values for desired color. */
+    intptr_t red, green, blue;	/* Values for desired color. */
     Colormap colormap;		/* Colormap from which color will be
 				 * allocated. */
     Display *display;		/* Display for colormap. */
@@ -165,7 +165,7 @@ XColor *
 Pad_AllocXColor(Pad_Display *dpy, XColor *colorPtr)
 {
     ValueKey valueKey;
-    int newc;
+    // [unused]: int newc;
     TkColor *tkColPtr;
     Display *display = dpy->display;
 
@@ -183,7 +183,7 @@ Pad_AllocXColor(Pad_Display *dpy, XColor *colorPtr)
     valueKey.blue = colorPtr->blue;
     valueKey.colormap = dpy->colormap;
     valueKey.display = display;
-    if (tkColPtr = (TkColor *)valueTable->Get((void *)&valueKey)) {
+    if ((tkColPtr = (TkColor *)valueTable->Get((void *)&valueKey))) {
 	tkColPtr->refCount++;
 	return &tkColPtr->color;
     }
@@ -236,7 +236,7 @@ Pad_AllocXColor(Pad_Display *dpy, XColor *colorPtr)
 void
 Pad_FreeXColor(Pad_Display *dpy, XColor *colorPtr)
 {
-    register TkColor *tkColPtr = (TkColor *) colorPtr;
+    TkColor *tkColPtr = (TkColor *) colorPtr;
     Visual *visual;
     Screen *screen = tkColPtr->screen;
 

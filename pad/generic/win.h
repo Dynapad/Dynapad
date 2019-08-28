@@ -191,7 +191,7 @@ class Pad_Win
     virtual Pad *     Create_pad(void);           // Factory function to create new pads
     virtual void      Expose_win();               // Window exposed - redraw
             void      Free_shared_ximage(void);   // Free shared ximage
-            char *    Get_name(void);   	  // Get window name
+            const char * Get_name(void);   	  // Get window name
     virtual Window    Get_toplevel_window_id();   // Returns XID of toplevel window frame 
 
             Pad_Bool  Is_mapped(void);            // Return TRUE if window is mapped
@@ -199,7 +199,7 @@ class Pad_Win
             void      Make_window_restorer(void); // Make a restorer the size of this window
     virtual void      Map(void);                  // Window has appeared on screen
             void      Set_cursor(int padCursor);  // Set the cursor to a predefined cursor type
-            void      Set_name(char *name);	  // Return window name
+            void      Set_name(const char *name);	  // Return window name
             void      Set_sync(Pad_Bool newSync); // Set window synchronization
     virtual void      Unmap(void);                // Window has been removed from screen
             void      Warp(int x,int y);          // Warp the Xpointer by x and y

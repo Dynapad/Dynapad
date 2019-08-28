@@ -274,12 +274,12 @@ Pad_LookupFontByName(char *name) {
     Pad_Uid nameKey = Pad_GetUid(name);
     Pad_Font *font;
 
-    if ((font = (Pad_Font*)nameTable.Get(nameKey))) {
+    if ((font = (Pad_Font*)nameTable.Get((void *) nameKey))) {
 	return font;
     }
 
     font = new Pad_Font(name);
-    nameTable.Set(nameKey, font);
+    nameTable.Set((void *) nameKey, font);
     return font;
 }
 

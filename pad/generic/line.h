@@ -86,11 +86,11 @@ class Pad_Line : public Pad_Object
     virtual void       Compute_bounding_box(void);
     virtual int        Configure_arrows(int arrow);
     virtual int        Create_obj_args(int argc, char **argv);   // Called when an item is created with string args
-    virtual char *     Get_capstyle(void);
+    virtual const char * Get_capstyle(void);
     virtual int        Get_arrow(void);
     virtual char *     Get_arrowshape(void);
     virtual void       Get_coords(Pad_PList &pts, Pad_Bool object_coords);
-    virtual char *     Get_joinstyle(void);
+    virtual const char * Get_joinstyle(void);
             void       Get_pen_name(Pad_String &penname);
             float      Get_penwidth(void);
             Pad_Bool   Get_abslinestyle(void);
@@ -105,13 +105,13 @@ class Pad_Line : public Pad_Object
     virtual void       Set_arrow_default(void);
     virtual void       Set_arrowshape(float a, float b, float c);
     virtual void       Set_arrowshape_default(void);
-    virtual Pad_Bool   Set_capstyle(char *capstyle);
+    virtual Pad_Bool   Set_capstyle(const char *capstyle);
     virtual void       Set_capstyle_default(void);
     virtual Pad_Bool   Set_coords(Pad_PList &pts, Pad_Bool object_coords);
     virtual Pad_Bool   Set_height(float height);
-    virtual Pad_Bool   Set_joinstyle(char *joinstyle);
+    virtual Pad_Bool   Set_joinstyle(const char *joinstyle);
     virtual void       Set_joinstyle_default(void);
-            Pad_Bool   Set_pen(char *colorname);
+            Pad_Bool   Set_pen(const char *colorname);
             Pad_Bool   Set_pen(int red, int green, int blue);
             void       Set_pen_default(void);
             Pad_Bool   Set_penwidth(float penwidth, Pad_Bool abslinestyle = FALSE);
@@ -153,7 +153,7 @@ class Pad_Polygon : public Pad_Line
     virtual void       Get_fillname(Pad_String &fillname);
     virtual Pad_Bool   Pick(Pad_Event *event, float halo);
     virtual Pad_Bool   Render(void);
-    virtual Pad_Bool   Set_fill(char *colorname);
+    virtual Pad_Bool   Set_fill(const char *colorname);
     virtual Pad_Bool   Set_fill(int red, int green, int blue);
     virtual void       Set_fill_default(void);
 

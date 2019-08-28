@@ -405,7 +405,7 @@ Pad_LineFont::CharWidth(unsigned char c)
 // Find the length of this string, expanding tabs.
 //
 float
-Pad_LineFont::StringWidth(char *string)
+Pad_LineFont::StringWidth(const char *string)
 {
     int tabpos = 0;
     unsigned char c;

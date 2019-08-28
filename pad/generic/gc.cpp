@@ -52,10 +52,10 @@ software in general.
 
 static Pad_HashTable *valueTable;
 typedef struct {
-    XGCValues values;		/* Desired values for GC. */
-    Display *display;		/* Display for which GC is valid. */
-    int screenNum;		/* screen number of display */
-    int depth;			/* and depth for which GC is valid. */
+    XGCValues values;        /* Desired values for GC. */
+    Display *display;        /* Display for which GC is valid. */
+    int screenNum;        /* screen number of display */
+    int depth;            /* and depth for which GC is valid. */
 } ValueKey;
 
 /*
@@ -65,8 +65,8 @@ typedef struct {
 
 static Pad_HashTable *idTable;
 typedef struct {
-    Display *display;		/* Display for which GC was allocated. */
-    GC gc;			/* X's identifier for GC. */
+    Display *display;        /* Display for which GC was allocated. */
+    GC gc;            /* X's identifier for GC. */
 } IdKey;
 
 /*
@@ -77,22 +77,22 @@ typedef struct {
  */
 
 typedef struct {
-    GC gc;			/* Graphics context. */
-    Display *display;		/* Display to which gc belongs. */
-    int refCount;		/* Number of active uses of gc. */
-    ValueKey key;		/* Hash table key in valueTable
+    GC gc;            /* Graphics context. */
+    Display *display;        /* Display to which gc belongs. */
+    int refCount;        /* Number of active uses of gc. */
+    ValueKey key;        /* Hash table key in valueTable
 				 * (needed when deleting
 				 * this structure). */
 } PadGC;
 
-static int initialized = 0;	/* 0 means static structures haven't been
+static int initialized = 0;    /* 0 means static structures haven't been
 				 * initialized yet. */
 
 /*
  * Forward declarations for procedures defined in this file:
  */
 
-static void		GCInit (void);
+static void GCInit(void);
 
 /*
  *----------------------------------------------------------------------
@@ -117,15 +117,14 @@ static void		GCInit (void);
  */
 
 GC
-Pad_GetGC(Pad_Display *dpy, unsigned long valueMask, XGCValues *valuePtr)
-{
+Pad_GetGC(Pad_Display *dpy, unsigned long valueMask, XGCValues *valuePtr) {
     ValueKey valueKey;
     IdKey idKey;
-    register PadGC *gcPtr;
+    PadGC *gcPtr;
     int newc;
 
     if (!initialized) {
-	GCInit();
+        GCInit();
     }
 
     /*
@@ -141,126 +140,126 @@ Pad_GetGC(Pad_Display *dpy, unsigned long valueMask, XGCValues *valuePtr)
      */
 
     if (valueMask & GCFunction) {
-	valueKey.values.function = valuePtr->function;
+        valueKey.values.function = valuePtr->function;
     } else {
-	valueKey.values.function = GXcopy;
+        valueKey.values.function = GXcopy;
     }
     if (valueMask & GCPlaneMask) {
-	valueKey.values.plane_mask = valuePtr->plane_mask;
+        valueKey.values.plane_mask = valuePtr->plane_mask;
     } else {
-	valueKey.values.plane_mask = (unsigned) ~0;
+        valueKey.values.plane_mask = (unsigned) ~0;
     }
     if (valueMask & GCForeground) {
-	valueKey.values.foreground = valuePtr->foreground;
+        valueKey.values.foreground = valuePtr->foreground;
     } else {
-	valueKey.values.foreground = 0;
+        valueKey.values.foreground = 0;
     }
     if (valueMask & GCBackground) {
-	valueKey.values.background = valuePtr->background;
+        valueKey.values.background = valuePtr->background;
     } else {
-	valueKey.values.background = 1;
+        valueKey.values.background = 1;
     }
     if (valueMask & GCLineWidth) {
-	valueKey.values.line_width = valuePtr->line_width;
+        valueKey.values.line_width = valuePtr->line_width;
     } else {
-	valueKey.values.line_width = 0;
+        valueKey.values.line_width = 0;
     }
     if (valueMask & GCLineStyle) {
-	valueKey.values.line_style = valuePtr->line_style;
+        valueKey.values.line_style = valuePtr->line_style;
     } else {
-	valueKey.values.line_style = LineSolid;
+        valueKey.values.line_style = LineSolid;
     }
     if (valueMask & GCCapStyle) {
-	valueKey.values.cap_style = valuePtr->cap_style;
+        valueKey.values.cap_style = valuePtr->cap_style;
     } else {
-	valueKey.values.cap_style = CapButt;
+        valueKey.values.cap_style = CapButt;
     }
     if (valueMask & GCJoinStyle) {
-	valueKey.values.join_style = valuePtr->join_style;
+        valueKey.values.join_style = valuePtr->join_style;
     } else {
-	valueKey.values.join_style = JoinMiter;
+        valueKey.values.join_style = JoinMiter;
     }
     if (valueMask & GCFillStyle) {
-	valueKey.values.fill_style = valuePtr->fill_style;
+        valueKey.values.fill_style = valuePtr->fill_style;
     } else {
-	valueKey.values.fill_style = FillSolid;
+        valueKey.values.fill_style = FillSolid;
     }
     if (valueMask & GCFillRule) {
-	valueKey.values.fill_rule = valuePtr->fill_rule;
+        valueKey.values.fill_rule = valuePtr->fill_rule;
     } else {
-	valueKey.values.fill_rule = EvenOddRule;
+        valueKey.values.fill_rule = EvenOddRule;
     }
     if (valueMask & GCArcMode) {
-	valueKey.values.arc_mode = valuePtr->arc_mode;
+        valueKey.values.arc_mode = valuePtr->arc_mode;
     } else {
-	valueKey.values.arc_mode = ArcPieSlice;
+        valueKey.values.arc_mode = ArcPieSlice;
     }
     if (valueMask & GCTile) {
-	valueKey.values.tile = valuePtr->tile;
+        valueKey.values.tile = valuePtr->tile;
     } else {
-	valueKey.values.tile = None;
+        valueKey.values.tile = None;
     }
     if (valueMask & GCStipple) {
-	valueKey.values.stipple = valuePtr->stipple;
+        valueKey.values.stipple = valuePtr->stipple;
     } else {
-	valueKey.values.stipple = None;
+        valueKey.values.stipple = None;
     }
     if (valueMask & GCTileStipXOrigin) {
-	valueKey.values.ts_x_origin = valuePtr->ts_x_origin;
+        valueKey.values.ts_x_origin = valuePtr->ts_x_origin;
     } else {
-	valueKey.values.ts_x_origin = 0;
+        valueKey.values.ts_x_origin = 0;
     }
     if (valueMask & GCTileStipYOrigin) {
-	valueKey.values.ts_y_origin = valuePtr->ts_y_origin;
+        valueKey.values.ts_y_origin = valuePtr->ts_y_origin;
     } else {
-	valueKey.values.ts_y_origin = 0;
+        valueKey.values.ts_y_origin = 0;
     }
     if (valueMask & GCFont) {
-	valueKey.values.font = valuePtr->font;
+        valueKey.values.font = valuePtr->font;
     } else {
-	valueKey.values.font = None;
+        valueKey.values.font = None;
     }
     if (valueMask & GCSubwindowMode) {
-	valueKey.values.subwindow_mode = valuePtr->subwindow_mode;
+        valueKey.values.subwindow_mode = valuePtr->subwindow_mode;
     } else {
-	valueKey.values.subwindow_mode = ClipByChildren;
+        valueKey.values.subwindow_mode = ClipByChildren;
     }
     if (valueMask & GCGraphicsExposures) {
-	valueKey.values.graphics_exposures = valuePtr->graphics_exposures;
+        valueKey.values.graphics_exposures = valuePtr->graphics_exposures;
     } else {
-	valueKey.values.graphics_exposures = True;
+        valueKey.values.graphics_exposures = True;
     }
     if (valueMask & GCClipXOrigin) {
-	valueKey.values.clip_x_origin = valuePtr->clip_x_origin;
+        valueKey.values.clip_x_origin = valuePtr->clip_x_origin;
     } else {
-	valueKey.values.clip_x_origin = 0;
+        valueKey.values.clip_x_origin = 0;
     }
     if (valueMask & GCClipYOrigin) {
-	valueKey.values.clip_y_origin = valuePtr->clip_y_origin;
+        valueKey.values.clip_y_origin = valuePtr->clip_y_origin;
     } else {
-	valueKey.values.clip_y_origin = 0;
+        valueKey.values.clip_y_origin = 0;
     }
     if (valueMask & GCClipMask) {
-	valueKey.values.clip_mask = valuePtr->clip_mask;
+        valueKey.values.clip_mask = valuePtr->clip_mask;
     } else {
-	valueKey.values.clip_mask = None;
+        valueKey.values.clip_mask = None;
     }
     if (valueMask & GCDashOffset) {
-	valueKey.values.dash_offset = valuePtr->dash_offset;
+        valueKey.values.dash_offset = valuePtr->dash_offset;
     } else {
-	valueKey.values.dash_offset = 0;
+        valueKey.values.dash_offset = 0;
     }
     if (valueMask & GCDashList) {
-	valueKey.values.dashes = valuePtr->dashes;
+        valueKey.values.dashes = valuePtr->dashes;
     } else {
-	valueKey.values.dashes = 4;
+        valueKey.values.dashes = 4;
     }
     valueKey.display = dpy->display;
     valueKey.screenNum = dpy->Screen_number();
     valueKey.depth = dpy->depth;
-    if (gcPtr = (PadGC *)valueTable->Get((void *)&valueKey)) {
-	gcPtr->refCount++;
-	return gcPtr->gc;
+    if ((gcPtr = (PadGC *) valueTable->Get((void *) &valueKey))) {
+        gcPtr->refCount++;
+        return gcPtr->gc;
     }
 
     /*
@@ -270,19 +269,19 @@ Pad_GetGC(Pad_Display *dpy, unsigned long valueMask, XGCValues *valuePtr)
 
     gcPtr = new PadGC;
 
-    gcPtr->gc = XCreateGC(valueKey.display, dpy->rootDrawable, 
-			  valueMask, &valueKey.values);
+    gcPtr->gc = XCreateGC(valueKey.display, dpy->rootDrawable,
+                          valueMask, &valueKey.values);
     gcPtr->display = valueKey.display;
     gcPtr->refCount = 1;
-    memcpy((void *)&gcPtr->key, (void *)&valueKey, sizeof(ValueKey));
+    memcpy((void *) &gcPtr->key, (void *) &valueKey, sizeof(ValueKey));
     idKey.display = valueKey.display;
     idKey.gc = gcPtr->gc;
-    if (idTable->Get((void *)&idKey)) {
-	cerr << "GC already registered in Pad_GetGC" << endl;
-	exit(1);
+    if (idTable->Get((void *) &idKey)) {
+        cerr << "GC already registered in Pad_GetGC" << endl;
+        exit(1);
     }
-    valueTable->Set((void *)&valueKey, (void *)gcPtr);
-    idTable->Set((void *)&idKey, (void *)gcPtr);
+    valueTable->Set((void *) &valueKey, (void *) gcPtr);
+    idTable->Set((void *) &idKey, (void *) gcPtr);
 
     return gcPtr->gc;
 }
@@ -306,28 +305,27 @@ Pad_GetGC(Pad_Display *dpy, unsigned long valueMask, XGCValues *valuePtr)
  */
 
 void
-Pad_FreeGC(Pad_Display *dpy, GC gc)
-{
+Pad_FreeGC(Pad_Display *dpy, GC gc) {
     IdKey idKey;
-    register PadGC *gcPtr;
+    PadGC *gcPtr;
 
     if (!initialized) {
-	cerr << "Pad_FreeGC called before Pad_GetGC" << endl;
-	exit(1);
+        cerr << "Pad_FreeGC called before Pad_GetGC" << endl;
+        exit(1);
     }
 
     idKey.display = dpy->display;
     idKey.gc = gc;
-    if (!(gcPtr = (PadGC *)idTable->Get((void *)&idKey))) {
-	cerr << "Pad_FreeGC received unknown gc argument" << endl;
-	exit(1);
+    if (!(gcPtr = (PadGC *) idTable->Get((void *) &idKey))) {
+        cerr << "Pad_FreeGC received unknown gc argument" << endl;
+        exit(1);
     }
     gcPtr->refCount--;
     if (gcPtr->refCount == 0) {
-	XFreeGC(gcPtr->display, gcPtr->gc);
-	valueTable->Remove((void *)&gcPtr->key);
-	idTable->Remove((void *)&idKey);
-	delete gcPtr;
+        XFreeGC(gcPtr->display, gcPtr->gc);
+        valueTable->Remove((void *) &gcPtr->key);
+        idTable->Remove((void *) &idKey);
+        delete gcPtr;
     }
 }
 
@@ -348,9 +346,8 @@ Pad_FreeGC(Pad_Display *dpy, GC gc)
  */
 
 static void
-GCInit()
-{
+GCInit() {
     initialized = 1;
-    valueTable = new Pad_HashTable(sizeof(ValueKey)/sizeof(int));
-    idTable = new Pad_HashTable(sizeof(IdKey)/sizeof(int));
+    valueTable = new Pad_HashTable(sizeof(ValueKey) / sizeof(int));
+    idTable = new Pad_HashTable(sizeof(IdKey) / sizeof(int));
 }

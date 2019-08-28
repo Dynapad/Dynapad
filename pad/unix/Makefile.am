@@ -1,9 +1,8 @@
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
 
-CXXFLAGS = -fPIC
-CFLAGS = --pedantic -Wall -Werror -std=c99 -O2
-# LDFLAGS = 
+CXXFLAGS = -fPIC -std=c++17 -Wall -Werror
+CFLAGS = --pedantic -Wall -Werror -std=c11 -O2
 
 noinst_LIBRARIES = libpad.a
 libpad_a_SOURCES = x-win-shape.cpp \

@@ -28,7 +28,7 @@ class Pad_String {
     void  Erase(int index);	         // Delete character at index
     void  Erase(int index, int len);     // Delete len character at index
     char *Get(void) const;	         // Return string
-    char *Get(int index) const;	         // Return string starting at index
+    const char * Get(int index) const;	         // Return string starting at index
     char  Get_char(int index) const;     // Return character at index
     void  Insert(char c, int index);     // Insert char at index
     void  Insert(const char *d, int index); // Insert string at index
@@ -40,7 +40,7 @@ class Pad_String {
     int   Strchr(char c, int index=0) const; // Return index of first instance of c, or -1 if none
     int   Strrchr(char c, int index=0) const;	// Return index of last instance of c, or -1 if none
     int   Strncmp(const Pad_String &ps, int n) const;  // Do a length-limited string comparison like strncmp
-  
+
   Pad_String& Printf(const char *format, ...); // Build up a complex string
 
   Pad_Bool operator==(const char *string) const;
@@ -72,7 +72,7 @@ class Pad_String {
   Pad_String& operator<<(char c);
   Pad_String& operator<<(const char *string);
   Pad_String& operator<<(const Pad_String *string);
-  Pad_String& operator<<(const Pad_String &string);  
+  Pad_String& operator<<(const Pad_String &string);
 
   Pad_String& operator+(int i) const;
   Pad_String& operator+(double d) const;

@@ -37,8 +37,8 @@ software in general.
 
 #include <X11/extensions/XInput.h>
 
-				// List of portals and objects the currently grabbed
-				// event passed through.  Necessary for grabbing.
+// List of portals and objects the currently grabbed
+// event passed through.  Necessary for grabbing.
 static Pad_List savePortals, saveObjects;
 static Pad_Win *saveWin = NULL; // Event that ButtonPress landed on to be reused for motions and releases
 static Pad_Bool deleted = FALSE;
@@ -46,37 +46,33 @@ static unsigned long staticSerial = 1;
 
 static Pad_ObjHandle current;     // Current item under pointer
 
-static XEvent pickEvent;	// The event upon which the current choice of 'current' is based.  
-				// Must be saved so that if the current item is deleted, we
-				// can pick another.
+static XEvent pickEvent;    // The event upon which the current choice of 'current' is based.
+// Must be saved so that if the current item is deleted, we
+// can pick another.
 static Pad_Bool buttonDown = FALSE;  // True when mouse button is pressed
 
 //
 // Return current object under pointer, or NULL if there is none.
 //
 Pad_Object *
-Pad_Event::Get_current(void)
-{
-    return(current._Get_object());
+Pad_Event::Get_current(void) {
+    return (current._Get_object());
 }
 
 //
 // Set the current object under pointer.
 //
 void
-Pad_Event::Set_current(Pad_Object *obj)
-{
+Pad_Event::Set_current(Pad_Object *obj) {
     current.Attach(obj);
 }
 
-Pad_Event::~Pad_Event()
-{
-				// <result> gets deleted by creator
+Pad_Event::~Pad_Event() {
+    // <result> gets deleted by creator
     Pad_events.Remove(this);
 }
 
-Pad_Event::Pad_Event(Pad_Win *w)
-{
+Pad_Event::Pad_Event(Pad_Win *w) {
     serial = staticSerial++;
     sourceWin = w;
     win = w;
@@ -97,10 +93,10 @@ Pad_Event::Pad_Event(Pad_Win *w)
 }
 
 extern unsigned int Pad_Get_x(XEvent *, Pad_Event *);
+
 extern unsigned int Pad_Get_y(XEvent *, Pad_Event *);
 
-Pad_Event::Pad_Event(Pad_Win *w, XEvent *e) 
-{
+Pad_Event::Pad_Event(Pad_Win *w, XEvent *e) {
     serial = staticSerial++;
     sourceWin = w;
     win = w;
@@ -113,8 +109,7 @@ Pad_Event::Pad_Event(Pad_Win *w, XEvent *e)
     extension = FALSE;
 }
 
-Pad_Event::Pad_Event(Pad_Win *w, int x, int y)
-{
+Pad_Event::Pad_Event(Pad_Win *w, int x, int y) {
     serial = staticSerial++;
     sourceWin = w;
     win = w;
@@ -127,8 +122,7 @@ Pad_Event::Pad_Event(Pad_Win *w, int x, int y)
     extension = FALSE;
 }
 
-Pad_Event::Pad_Event(Pad_Event &event)
-{
+Pad_Event::Pad_Event(Pad_Event &event) {
     Pad_Object *obj;
     Pad_Portal *portal;
     Pad_Iterator oi;
@@ -142,17 +136,17 @@ Pad_Event::Pad_Event(Pad_Event &event)
     win = event.win;
     _divisible = event._divisible;
     DOLIST(oi, event.portals, Pad_Portal, portal) {
-	portals.Push_last(portal);
+        portals.Push_last(portal);
     }
     DOLIST(oi, event.objects, Pad_Portal, obj) {
-	objects.Push_last(obj);
+        objects.Push_last(obj);
     }
     serial = staticSerial++;
     eventPtr = event.eventPtr;
     if (event.result) {
-	result = new Pad_String(event.result);
+        result = new Pad_String(event.result);
     } else {
-	result = NULL;
+        result = NULL;
     }
     resultCode = event.resultCode;
     Pad_events.Push(this);
@@ -162,9 +156,8 @@ Pad_Event::Pad_Event(Pad_Event &event)
 //
 // Given X coords (x, y), update pad coordinates
 //
-void 
-Pad_Event::Update_coords(int x, int y)
-{
+void
+Pad_Event::Update_coords(int x, int y) {
     stickyPt.x = x - (win->width * 0.5);
     stickyPt.y = (win->height - y) - (win->height * 0.5);
     pt.x = (stickyPt.x / win->view->zoom) + win->view->xview;
@@ -177,9 +170,8 @@ Pad_Event::Update_coords(int x, int y)
 //
 // Given pad coords (x, y), update event coordinates
 //
-void 
-Pad_Event::Update_pad_coords(float x, float y)
-{
+void
+Pad_Event::Update_pad_coords(float x, float y) {
     stickyPt.x = (x - win->view->xview) * win->view->zoom;
     stickyPt.y = (y - win->view->yview) * win->view->zoom;
     pt.x = x;
@@ -194,16 +186,14 @@ Pad_Event::Update_pad_coords(float x, float y)
 // Divisible specifies whether to descend into groups.
 // Automatic means to use the groups definition.
 //
-void 
-Pad_Event::Set_divisible(int divisible)
-{
+void
+Pad_Event::Set_divisible(int divisible) {
     _divisible = divisible;
 }
 
 int
-Pad_Event::Get_divisible(void)
-{
-    return(_divisible);
+Pad_Event::Get_divisible(void) {
+    return (_divisible);
 }
 
 //
@@ -213,12 +203,11 @@ Pad_Event::Get_divisible(void)
 // is a group or portal).
 //
 void
-Pad_EventObjectDeleted(Pad_Object *obj)
-{
+Pad_EventObjectDeleted(Pad_Object *obj) {
     saveObjects.Remove(obj);
     if (savePortals.Remove(obj)) {
-				// Kill grabbed events going through deleted portal
-	deleted = TRUE;
+        // Kill grabbed events going through deleted portal
+        deleted = TRUE;
     }
 }
 
@@ -241,8 +230,7 @@ Pad_EventObjectDeleted(Pad_Object *obj)
  */
 
 void
-Pad_Bind_proc(ClientData clientData, XEvent *eventPtr)
-{
+Pad_Bind_proc(ClientData clientData, XEvent *eventPtr) {
     int mask, state;
     Pad_Win *win = (Pad_Win *) clientData;
     Pad_Event *padEvent;
@@ -258,124 +246,125 @@ Pad_Bind_proc(ClientData clientData, XEvent *eventPtr)
      */
 
     if ((eventPtr->type == ButtonPress) || (eventPtr->type == ButtonRelease)) {
-	switch (eventPtr->xbutton.button) {
-	    case Button1:
-		mask = Button1Mask;
-		break;
-	    case Button2:
-		mask = Button2Mask;
-		break;
-	    case Button3:
-		mask = Button3Mask;
-		break;
-	    case Button4:
-		mask = Button4Mask;
-		break;
-	    case Button5:
-		mask = Button5Mask;
-		break;
-	    default:
-		mask = 0;
-		break;
-	}
+        switch (eventPtr->xbutton.button) {
+            case Button1:
+                mask = Button1Mask;
+                break;
+            case Button2:
+                mask = Button2Mask;
+                break;
+            case Button3:
+                mask = Button3Mask;
+                break;
+            case Button4:
+                mask = Button4Mask;
+                break;
+            case Button5:
+                mask = Button5Mask;
+                break;
+            default:
+                mask = 0;
+                break;
+        }
 
-	/*
-	 * For button press events, repick the current item using the
-	 * button state before the event, then process the event.  For
-	 * button release events, first process the event, then repick
-	 * the current item using the button state *after* the event
-	 * (the button has logically gone up before we change the
-	 * current item).
-	 */
+        /*
+         * For button press events, repick the current item using the
+         * button state before the event, then process the event.  For
+         * button release events, first process the event, then repick
+         * the current item using the button state *after* the event
+         * (the button has logically gone up before we change the
+         * current item).
+         */
 
-	if (eventPtr->type == ButtonPress) {
-	    /*
-	     * On a button press, first repick the current item using
-	     * the button state before the event, the process the event.
-	     */
-	    padEvent->Pick_enter_leave();
-	    saveWin = padEvent->win;    // Event might hit another surface, and need to remember that
-	    state = eventPtr->xbutton.state & ~mask;
-	    buttonDown = (state & (Button1Mask | Button2Mask | Button3Mask | Button4Mask | Button5Mask)) ? TRUE : FALSE;
-	    padEvent->Do();
-	} else {
-	    /*
-	     * Button release: first process the event, with the button
-	     * still considered to be down.  Then repick the current
-	     * item under the assumption that the button is no longer down.
-	     */
-				// Check to make sure object hasn't been deleted
-	    if (Pad_Event::Get_current() && (!deleted)) {
-				// Need to recalculate coordinates for the portal and object lists
-		padEvent->portals = savePortals;
-		padEvent->objects = saveObjects;
-		if (saveWin) {
-		    padEvent->win = saveWin;
-		    win->view->pad->Find_pick(padEvent, savePortals, saveObjects);
-		    padEvent->Do();
-		}
-	    }
-	    eventPtr->xbutton.state ^= mask;
-	    buttonDown = (eventPtr->xbutton.state & 
-			  (Button1Mask | Button2Mask | Button3Mask | Button4Mask | Button5Mask)) ? TRUE : FALSE;
-	    delete padEvent;
-	    padEvent = new Pad_Event(win, eventPtr);   // Create a new event to pick from scratch
-	    padEvent->Pick_enter_leave();
-	    eventPtr->xbutton.state ^= mask;
-	    deleted = FALSE;
-	}
+        if (eventPtr->type == ButtonPress) {
+            /*
+             * On a button press, first repick the current item using
+             * the button state before the event, the process the event.
+             */
+            padEvent->Pick_enter_leave();
+            saveWin = padEvent->win;    // Event might hit another surface, and need to remember that
+            state = eventPtr->xbutton.state & ~mask;
+            buttonDown = (state & (Button1Mask | Button2Mask | Button3Mask | Button4Mask | Button5Mask)) ? TRUE : FALSE;
+            padEvent->Do();
+        } else {
+            /*
+             * Button release: first process the event, with the button
+             * still considered to be down.  Then repick the current
+             * item under the assumption that the button is no longer down.
+             */
+            // Check to make sure object hasn't been deleted
+            if (Pad_Event::Get_current() && (!deleted)) {
+                // Need to recalculate coordinates for the portal and object lists
+                padEvent->portals = savePortals;
+                padEvent->objects = saveObjects;
+                if (saveWin) {
+                    padEvent->win = saveWin;
+                    win->view->pad->Find_pick(padEvent, savePortals, saveObjects);
+                    padEvent->Do();
+                }
+            }
+            eventPtr->xbutton.state ^= mask;
+            buttonDown = (eventPtr->xbutton.state &
+                          (Button1Mask | Button2Mask | Button3Mask | Button4Mask | Button5Mask)) ? TRUE : FALSE;
+            delete padEvent;
+            padEvent = new Pad_Event(win, eventPtr);   // Create a new event to pick from scratch
+            padEvent->Pick_enter_leave();
+            eventPtr->xbutton.state ^= mask;
+            deleted = FALSE;
+        }
     } else if ((eventPtr->type == EnterNotify)
-	    || (eventPtr->type == LeaveNotify)) {
-				// Turn off pad "active" when window loses focus,
-				// and then restore it when window re-entered
-	if (eventPtr->type == EnterNotify) {
-	    win->view->pad->Set_active(TRUE);
-	} else {
-	    win->view->pad->Set_active(FALSE);
-	}
-	if (Pad_focus && (Pad_focus != win->view->pad)) {
-	    Pad_focus->Damage();
-	}
-	padEvent->portals = savePortals;
-	padEvent->objects = saveObjects;
-	padEvent->Pick_enter_leave();
+               || (eventPtr->type == LeaveNotify)) {
+        // Turn off pad "active" when window loses focus,
+        // and then restore it when window re-entered
+        if (eventPtr->type == EnterNotify) {
+            win->view->pad->Set_active(TRUE);
+        } else {
+            win->view->pad->Set_active(FALSE);
+        }
+        if (Pad_focus && (Pad_focus != win->view->pad)) {
+            Pad_focus->Damage();
+        }
+        padEvent->portals = savePortals;
+        padEvent->objects = saveObjects;
+        padEvent->Pick_enter_leave();
     } else if (eventPtr->type == MotionNotify) {
-	if (!deleted) {
-	    buttonDown = (eventPtr->xmotion.state & (Button1Mask | Button2Mask | Button3Mask | Button4Mask | Button5Mask)) ? TRUE : FALSE;
-	    if (buttonDown) {
-		padEvent->portals = savePortals;
-		padEvent->objects = saveObjects;
-		if (saveWin) {
-		    padEvent->win = saveWin;
-		}
-	    }
-	    padEvent->Pick_enter_leave();
-	    padEvent->Do();
-	}
+        if (!deleted) {
+            buttonDown = (eventPtr->xmotion.state &
+                          (Button1Mask | Button2Mask | Button3Mask | Button4Mask | Button5Mask)) ? TRUE : FALSE;
+            if (buttonDown) {
+                padEvent->portals = savePortals;
+                padEvent->objects = saveObjects;
+                if (saveWin) {
+                    padEvent->win = saveWin;
+                }
+            }
+            padEvent->Pick_enter_leave();
+            padEvent->Do();
+        }
     } else if (eventPtr->type == MotionType) {
-	XDeviceMotionEvent *e = (XDeviceMotionEvent *)eventPtr;
-	padEvent->extension = TRUE;
-	padEvent->portals = savePortals;
-	padEvent->objects = saveObjects;
-	padEvent->Do();
+        XDeviceMotionEvent *e = (XDeviceMotionEvent *) eventPtr;
+        padEvent->extension = TRUE;
+        padEvent->portals = savePortals;
+        padEvent->objects = saveObjects;
+        padEvent->Do();
     } else if (eventPtr->type == ButtonPressType ||
                eventPtr->type == ButtonReleaseType) {
-	XDeviceButtonEvent *e = (XDeviceButtonEvent *)eventPtr;
-	padEvent->extension = TRUE;
-	padEvent->portals = savePortals;
-	padEvent->objects = saveObjects;
-	padEvent->Do();
+        XDeviceButtonEvent *e = (XDeviceButtonEvent *) eventPtr;
+        padEvent->extension = TRUE;
+        padEvent->portals = savePortals;
+        padEvent->objects = saveObjects;
+        padEvent->Do();
     } else if (eventPtr->type == ProximityInType ||
                eventPtr->type == ProximityOutType) {
-	XProximityNotifyEvent *e = (XProximityNotifyEvent *)eventPtr;
-	padEvent->extension = TRUE;
-	padEvent->portals = savePortals;
-	padEvent->objects = saveObjects;
-	padEvent->Do();
+        XProximityNotifyEvent *e = (XProximityNotifyEvent *) eventPtr;
+        padEvent->extension = TRUE;
+        padEvent->portals = savePortals;
+        padEvent->objects = saveObjects;
+        padEvent->Do();
     } else {
-	padEvent->portals = savePortals;
-	padEvent->objects = saveObjects;
-	padEvent->Do();
+        padEvent->portals = savePortals;
+        padEvent->objects = saveObjects;
+        padEvent->Do();
     }
     delete padEvent;
 
@@ -404,15 +393,14 @@ Pad_Bind_proc(ClientData clientData, XEvent *eventPtr)
  */
 
 static void
-DoItem(Pad_Object *itemPtr, Pad_Uid tag)
-{
+DoItem(Pad_Object *itemPtr, Pad_Uid tag) {
     Pad_Uid t;
     Pad_Iterator oi;
 
     DOLISTI(oi, itemPtr->tags, Pad_Uid, t) {
-	if (tag == t) {
-	    return;
-	}
+        if (tag == t) {
+            return;
+        }
     }
 
     /*
@@ -445,8 +433,7 @@ DoItem(Pad_Object *itemPtr, Pad_Uid tag)
  */
 
 void
-Pad_Event::Pick_enter_leave(void)
-{
+Pad_Event::Pick_enter_leave(void) {
     Pad_ObjHandle closest;
     Pad_List origPortals, origObjects;
     Pad_List origSavePortals, origSaveObjects;
@@ -462,7 +449,7 @@ Pad_Event::Pick_enter_leave(void)
      */
 
     if (!buttonDown) {
-	sourceWin->flags &= ~WIN_LEFT_GRABBED_ITEM;
+        sourceWin->flags &= ~WIN_LEFT_GRABBED_ITEM;
     }
 
     /*
@@ -476,27 +463,27 @@ Pad_Event::Pick_enter_leave(void)
      */
 
     if (eventPtr != &pickEvent) {
-	if ((eventPtr->type == MotionNotify) || (eventPtr->type == ButtonRelease)) {
-	    pickEvent.xcrossing.type = EnterNotify;
-	    pickEvent.xcrossing.serial = eventPtr->xmotion.serial;
-	    pickEvent.xcrossing.send_event = eventPtr->xmotion.send_event;
-	    pickEvent.xcrossing.display = eventPtr->xmotion.display;
-	    pickEvent.xcrossing.window = eventPtr->xmotion.window;
-	    pickEvent.xcrossing.root = eventPtr->xmotion.root;
-	    pickEvent.xcrossing.subwindow = None;
-	    pickEvent.xcrossing.time = eventPtr->xmotion.time;
-	    pickEvent.xcrossing.x = eventPtr->xmotion.x;
-	    pickEvent.xcrossing.y = eventPtr->xmotion.y;
-	    pickEvent.xcrossing.x_root = eventPtr->xmotion.x_root;
-	    pickEvent.xcrossing.y_root = eventPtr->xmotion.y_root;
-	    pickEvent.xcrossing.mode = NotifyNormal;
-	    pickEvent.xcrossing.detail = NotifyNonlinear;
-	    pickEvent.xcrossing.same_screen = eventPtr->xmotion.same_screen;
-	    pickEvent.xcrossing.focus = False;
-	    pickEvent.xcrossing.state = eventPtr->xmotion.state;
-	} else  {
-	    pickEvent = *eventPtr;
-	}
+        if ((eventPtr->type == MotionNotify) || (eventPtr->type == ButtonRelease)) {
+            pickEvent.xcrossing.type = EnterNotify;
+            pickEvent.xcrossing.serial = eventPtr->xmotion.serial;
+            pickEvent.xcrossing.send_event = eventPtr->xmotion.send_event;
+            pickEvent.xcrossing.display = eventPtr->xmotion.display;
+            pickEvent.xcrossing.window = eventPtr->xmotion.window;
+            pickEvent.xcrossing.root = eventPtr->xmotion.root;
+            pickEvent.xcrossing.subwindow = None;
+            pickEvent.xcrossing.time = eventPtr->xmotion.time;
+            pickEvent.xcrossing.x = eventPtr->xmotion.x;
+            pickEvent.xcrossing.y = eventPtr->xmotion.y;
+            pickEvent.xcrossing.x_root = eventPtr->xmotion.x_root;
+            pickEvent.xcrossing.y_root = eventPtr->xmotion.y_root;
+            pickEvent.xcrossing.mode = NotifyNormal;
+            pickEvent.xcrossing.detail = NotifyNonlinear;
+            pickEvent.xcrossing.same_screen = eventPtr->xmotion.same_screen;
+            pickEvent.xcrossing.focus = False;
+            pickEvent.xcrossing.state = eventPtr->xmotion.state;
+        } else {
+            pickEvent = *eventPtr;
+        }
     }
 
     /*
@@ -507,12 +494,12 @@ Pad_Event::Pick_enter_leave(void)
      */
 
     if (sourceWin->flags & WIN_REPICK_IN_PROGRESS) {
-	return;
+        return;
     }
 
-				// Use serial # to avoid following portal cycles
-				// Need to use our own serial #. X serial doesn't
-				// change for pure motion events.
+    // Use serial # to avoid following portal cycles
+    // Need to use our own serial #. X serial doesn't
+    // change for pure motion events.
     serial = staticSerial++;
 
     /*
@@ -520,8 +507,8 @@ Pad_Event::Pick_enter_leave(void)
      * object, so the check for closest item can be skipped.
      */
 
-				// Need to make sure portal list doesn't change if
-				// button is down.  Necessary for proper grabbing.
+    // Need to make sure portal list doesn't change if
+    // button is down.  Necessary for proper grabbing.
     origPortals = portals;
     origObjects = objects;
     origSavePortals = savePortals;
@@ -529,19 +516,19 @@ Pad_Event::Pick_enter_leave(void)
     origPt = pt;
     origMag = mag;
     if (pickEvent.type != LeaveNotify) {
-	serial = staticSerial++;
-	if (buttonDown) {
-				// Check to see if object has been deleted
-	    if (Get_current() == NULL) {
-		closest.Attach(NULL);
-	    } else {
-		closest.Attach(sourceWin->view->pad->Find_pick(this, portals, objects));
-	    }
-	} else {
-	    closest.Attach(sourceWin->view->pad->Find_pick(this));
-	    savePortals = portals;     // Save portal list for proper grabbing
-	    saveObjects = objects;     // Save object list for proper grabbing
-	}
+        serial = staticSerial++;
+        if (buttonDown) {
+            // Check to see if object has been deleted
+            if (Get_current() == NULL) {
+                closest.Attach(NULL);
+            } else {
+                closest.Attach(sourceWin->view->pad->Find_pick(this, portals, objects));
+            }
+        } else {
+            closest.Attach(sourceWin->view->pad->Find_pick(this));
+            savePortals = portals;     // Save portal list for proper grabbing
+            saveObjects = objects;     // Save object list for proper grabbing
+        }
     }
 
     /*
@@ -552,102 +539,102 @@ Pad_Event::Pick_enter_leave(void)
      */
 
     if ((closest != current)
-	    && (Get_current() != NULL)
-	    && !(sourceWin->flags & WIN_LEFT_GRABBED_ITEM)) {
-	XEvent event;
-	Pad_Event *padEvent;
-	Pad_Object *itemPtr = Get_current();
+        && (Get_current() != NULL)
+        && !(sourceWin->flags & WIN_LEFT_GRABBED_ITEM)) {
+        XEvent event;
+        Pad_Event *padEvent;
+        Pad_Object *itemPtr = Get_current();
 
-	event = pickEvent;
-	event.type = LeaveNotify;
+        event = pickEvent;
+        event.type = LeaveNotify;
 
-	/*
-	 * If the event's detail happens to be NotifyInferior the
-	 * binding mechanism will discard the event.  To be consistent,
-	 * always use NotifyAncestor.
-	 */
+        /*
+         * If the event's detail happens to be NotifyInferior the
+         * binding mechanism will discard the event.  To be consistent,
+         * always use NotifyAncestor.
+         */
 
-	event.xcrossing.detail = NotifyAncestor;
-	sourceWin->flags |= WIN_REPICK_IN_PROGRESS;
-	padEvent = new Pad_Event(win, &event);
+        event.xcrossing.detail = NotifyAncestor;
+        sourceWin->flags |= WIN_REPICK_IN_PROGRESS;
+        padEvent = new Pad_Event(win, &event);
 
-	if (itemPtr) {			
-	    itemPtr->Pointer_out(padEvent); // Let the item that is about to get <Leave> event know about it.
-	}
+        if (itemPtr) {
+            itemPtr->Pointer_out(padEvent); // Let the item that is about to get <Leave> event know about it.
+        }
 
-	padEvent->portals = origPortals;
-	padEvent->objects = origObjects;
-	padEvent->Do();		            // Generate LEAVE Event
-	sourceWin->flags &= ~WIN_REPICK_IN_PROGRESS;
-	delete padEvent;
+        padEvent->portals = origPortals;
+        padEvent->objects = origObjects;
+        padEvent->Do();                    // Generate LEAVE Event
+        sourceWin->flags &= ~WIN_REPICK_IN_PROGRESS;
+        delete padEvent;
 
-	/*
-	 * The check below is needed because there could be an event
-	 * handler for <LeaveNotify> that deletes the current item.
-	 */
+        /*
+         * The check below is needed because there could be an event
+         * handler for <LeaveNotify> that deletes the current item.
+         */
 
-	obj = Get_current();
-	if (itemPtr && (itemPtr == obj) && !buttonDown) {
-	    itemPtr->Delete_tag(Pad_currentUid);
-	}
-    
-	if (pickEvent.type != LeaveNotify) {
-	    serial = staticSerial++;
-				// Need to make sure portal list doesn't change if
-				// button is down.  Necessary for proper grabbing.
-	    pt = origPt;
-	    mag = origMag;
-	    if (buttonDown) {
-				// Check to see if object has been deleted
-		if (Get_current() == NULL) {
-		    closest.Attach(NULL);
-		} else {
-		    portals = origPortals;
-		    objects = origObjects;
-		    closest.Attach(sourceWin->view->pad->Find_pick(this, portals, objects));
-		}
-	    } else {
-		portals = origPortals;
-		objects = origObjects;
-		closest.Attach(sourceWin->view->pad->Find_pick(this));
-		savePortals = portals;     // Save portal list for proper grabbing
-		saveObjects = objects;     // Save object list for proper grabbing
-	    }
-	}
+        obj = Get_current();
+        if (itemPtr && (itemPtr == obj) && !buttonDown) {
+            itemPtr->Delete_tag(Pad_currentUid);
+        }
+
+        if (pickEvent.type != LeaveNotify) {
+            serial = staticSerial++;
+            // Need to make sure portal list doesn't change if
+            // button is down.  Necessary for proper grabbing.
+            pt = origPt;
+            mag = origMag;
+            if (buttonDown) {
+                // Check to see if object has been deleted
+                if (Get_current() == NULL) {
+                    closest.Attach(NULL);
+                } else {
+                    portals = origPortals;
+                    objects = origObjects;
+                    closest.Attach(sourceWin->view->pad->Find_pick(this, portals, objects));
+                }
+            } else {
+                portals = origPortals;
+                objects = origObjects;
+                closest.Attach(sourceWin->view->pad->Find_pick(this));
+                savePortals = portals;     // Save portal list for proper grabbing
+                saveObjects = objects;     // Save object list for proper grabbing
+            }
+        }
     }
-				// Restore objects and portals
+    // Restore objects and portals
     portals = origSavePortals;
     objects = origSaveObjects;
-    
+
     if ((closest != current) && buttonDown) {
-	sourceWin->flags |= WIN_LEFT_GRABBED_ITEM;
-	return;
+        sourceWin->flags |= WIN_LEFT_GRABBED_ITEM;
+        return;
     }
     if ((closest == current)
-	    && !(sourceWin->flags & WIN_LEFT_GRABBED_ITEM)) {
-	return;
+        && !(sourceWin->flags & WIN_LEFT_GRABBED_ITEM)) {
+        return;
     }
     sourceWin->flags &= ~WIN_LEFT_GRABBED_ITEM;
     current.Attach(closest);
     if (Get_current()) {
-	XEvent event;
-	Pad_Event *padEvent;
+        XEvent event;
+        Pad_Event *padEvent;
 
-	DoItem(closest._Get_object(), Pad_currentUid);
-	event = pickEvent;
-	event.type = EnterNotify;
-	event.xcrossing.detail = NotifyAncestor;
-	sourceWin->flags |= WIN_REPICK_IN_PROGRESS;
-	padEvent = new Pad_Event(win, &event);
-	closest._Get_object()->Pointer_in(padEvent); // Let the item that is about to get <Enter> event know about it.
-	padEvent->portals = portals;
-	padEvent->objects = objects;
-	padEvent->Do();		          // Generate ENTER Event
-	sourceWin->flags &= ~WIN_REPICK_IN_PROGRESS;
-	delete padEvent;
+        DoItem(closest._Get_object(), Pad_currentUid);
+        event = pickEvent;
+        event.type = EnterNotify;
+        event.xcrossing.detail = NotifyAncestor;
+        sourceWin->flags |= WIN_REPICK_IN_PROGRESS;
+        padEvent = new Pad_Event(win, &event);
+        closest._Get_object()->Pointer_in(padEvent); // Let the item that is about to get <Enter> event know about it.
+        padEvent->portals = portals;
+        padEvent->objects = objects;
+        padEvent->Do();                  // Generate ENTER Event
+        sourceWin->flags &= ~WIN_REPICK_IN_PROGRESS;
+        delete padEvent;
     }
 
-				// Restore objects and portals
+    // Restore objects and portals
     portals = origPortals;
     objects = origObjects;
 }
@@ -658,8 +645,7 @@ Pad_Event::Pick_enter_leave(void)
 // and return the return code of the event.
 //
 int
-Pad_GenerateEvent(Pad_Win *win, int type, char *tag, Pad_String &result)
-{
+Pad_GenerateEvent(Pad_Win *win, int type, char *tag, Pad_String &result) {
     int rc;
     XEvent event;
     Pad_Event *padEvent;
@@ -667,7 +653,7 @@ Pad_GenerateEvent(Pad_Win *win, int type, char *tag, Pad_String &result)
     Pad_ObjHandle saveCurrent;
 
     if (win->bindingTable == NULL) {
-	return(PAD_ERROR);
+        return (PAD_ERROR);
     }
 
     event.type = type;
@@ -685,22 +671,21 @@ Pad_GenerateEvent(Pad_Win *win, int type, char *tag, Pad_String &result)
 
     current = saveCurrent;
 
-    return(rc);
+    return (rc);
 }
 
 //
 // Fire event on the specified Pad_Object.
 //
 void
-Pad_Event::Do(Pad_Object *obj)
-{
+Pad_Event::Do(Pad_Object *obj) {
     Pad_ObjHandle saveCurrent;
 
     saveCurrent = current;
     if (obj) {
-	current.Attach(obj);
+        current.Attach(obj);
     } else {
-	current.Attach(NULL);
+        current.Attach(NULL);
     }
 
     Do();
@@ -727,8 +712,7 @@ Pad_Event::Do(Pad_Object *obj)
  */
 
 void
-Pad_Event::Do(void)
-{
+Pad_Event::Do(void) {
 #define NUM_STATIC 3
     ClientData staticObjects[NUM_STATIC];
     ClientData *objectPtr;
@@ -739,16 +723,16 @@ Pad_Event::Do(void)
     int numTags;
 
     if (win->bindingTable == NULL) {
-	return;
+        return;
     }
 
     if ((eventPtr->type == KeyPress) || (eventPtr->type == KeyRelease)) {
-	itemPtr = Pad_focus;
+        itemPtr = Pad_focus;
     } else {
-	itemPtr = Get_current();
+        itemPtr = Get_current();
     }
     if (itemPtr == NULL) {
-	return;
+        return;
     }
 
     /*
@@ -762,22 +746,22 @@ Pad_Event::Do(void)
     numTags = itemPtr->tags.Length();
     numObjects = numTags + 2;
     if (numObjects <= NUM_STATIC) {
-	objectPtr = staticObjects;
+        objectPtr = staticObjects;
     } else {
-	objectPtr = new ClientData[numObjects];
+        objectPtr = new ClientData[numObjects];
     }
 
-				// Determine the order of event firings
-				// (most general or specific first) by the
-				// PAD_MASK_ID_EVENT_FIRST bit.
-    objectPtr[0] = ((itemPtr->flags & PAD_MASK_ID_EVENT_FIRST) ? (ClientData)itemPtr : (ClientData)Pad_allUid);
+    // Determine the order of event firings
+    // (most general or specific first) by the
+    // PAD_MASK_ID_EVENT_FIRST bit.
+    objectPtr[0] = ((itemPtr->flags & PAD_MASK_ID_EVENT_FIRST) ? (ClientData) itemPtr : (ClientData) Pad_allUid);
     i = 1;
     DOLISTI(oi, itemPtr->tags, Pad_Uid, tag) {
-	objectPtr[i] = tag;
-	i++;
+        objectPtr[i] = (void *)tag;
+        i++;
     }
     objectPtr[numTags + 1] =
-	((itemPtr->flags & PAD_MASK_ID_EVENT_FIRST) ? (ClientData)Pad_allUid : (ClientData)itemPtr);
+        ((itemPtr->flags & PAD_MASK_ID_EVENT_FIRST) ? (ClientData) Pad_allUid : (ClientData) itemPtr);
 
     /*
      * Invoke the binding system, then free up the object array if
@@ -786,6 +770,6 @@ Pad_Event::Do(void)
 
     Pad_BindEvent(itemPtr->pad->view->win->bindingTable, eventPtr, this, numObjects, objectPtr, itemPtr);
     if (objectPtr != staticObjects) {
-	delete [] objectPtr;
+        delete[] objectPtr;
     }
 }

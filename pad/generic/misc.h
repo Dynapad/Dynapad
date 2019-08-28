@@ -57,7 +57,7 @@ void     Pad_Background_error(const char *err);
 void     Pad_Debug_output(Pad_Win *win, char *msg);
 Pad_Bool Pad_Expand_pathname(char *name, Pad_String &fullName);
 Pad_Bool Pad_Get_relative_pathname(char *currentName, char *newName,    
-				   Pad_String &relativeName);
+                                   Pad_String &relativeName);
 float    Pad_Miter_length(float lineWidth, float x1, float y1, float x2, float y2, float x3, float y3);
 void     Pad_Swap(float &a, float &b);
 float    Pad_Siso_lerp(float t);
@@ -66,18 +66,18 @@ typedef void *CallbackData;
 typedef void (Pad_TimerCallback)(CallbackData callbackData);
 typedef void *Pad_TimerToken;
 extern "C" Pad_TimerToken Pad_CreateTimerHandler(int delay_in_milliseconds,
-				      Pad_TimerCallback *timerCallback,
-				      CallbackData callbackData);
+                                      Pad_TimerCallback *timerCallback,
+                                      CallbackData callbackData);
 extern "C" void     Pad_DeleteTimerHandler(Pad_TimerToken token);
 #define PAD_READABLE  1
 #define PAD_WRITABLE  2
 #define PAD_EXCEPTION 4
 typedef void (Pad_FileCallback)(CallbackData callbackData, int mask);
 extern "C" void     Pad_CreateFileHandler(int fd,
-			       Display *display,
-			       int mask,
-			       Pad_FileCallback *fileCallback,
-			       CallbackData callbackData);
+                               Display *display,
+                               int mask,
+                               Pad_FileCallback *fileCallback,
+                               CallbackData callbackData);
 void     Pad_DeleteFileHandler(int fd);
 
 extern "C" void Pad_MainLoop(void);
@@ -108,11 +108,11 @@ void Pad_Rotate(Pad_PList &coords_plist,
 //
 inline short Pad_F2s(float x) 
 {
-				// Important to round properly
+                                // Important to round properly
     if (x > 0) {
-	x += 0.5;
+        x += 0.5;
     } else {
-	x -= 0.5;
+        x -= 0.5;
     }       
     if (x < -32768) x = -32768;
     if (x > 32767) x = 32767;
@@ -131,11 +131,11 @@ inline short Pad_F2rs(float x, int width)
     int offset;
 
     offset = width + 10000;
-				// Important to round properly
+                                // Important to round properly
     if (x > 0) {
-	x += 0.5;
+        x += 0.5;
     } else {
-	x -= 0.5;
+        x -= 0.5;
     }       
     if ((x - offset) < -32768) x = -32768 + offset;
     if ((x + offset) > 32767) x = 32767 - offset;
@@ -157,15 +157,16 @@ typedef enum {
 #define PAD_RESULT_SIZE 200
 
 int Pad_GetAnchor(char *string, Pad_Anchor *anchorPtr);
-char *Pad_NameOfAnchor(Pad_Anchor anchor);
+const char *Pad_NameOfAnchor(Pad_Anchor anchor);
 
+const char *casestrstr(const char *s1, const char *s2);
 char *casestrstr(char *s1, char *s2);
 
-int Pad_StringMatch(char *string, char *pattern);
+int Pad_StringMatch(const char *string, const char *pattern);
 
 typedef regex_t* Pad_RegExp;
 Pad_RegExp Pad_RegExpCompile(char *pattern);
-int Pad_RegExpExec(Pad_RegExp regexp, char *string);
+int Pad_RegExpExec(Pad_RegExp regexp, const char *string);
 void Pad_RegExpFree(Pad_RegExp regexp);
 
 #endif

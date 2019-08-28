@@ -35,7 +35,7 @@ software in general.
 // Function prototypes
 //
 extern "C" int Pad_Init(Tcl_Interp *interp);
-int            Pad_Configure_widget(ClientData clientData, int argc, char *argv[]);
+int            Pad_Configure_widget(ClientData clientData, int argc, const char *argv[]);
 Pad_Bool       Pad_Create_win(char *padName);
 
 #define Pad_TkWin Pad_Win

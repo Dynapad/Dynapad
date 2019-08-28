@@ -26,9 +26,10 @@ software in general.
 #ifndef COLORCUBE_H
 #define COLORCUBE_H 1
 
+#include <stdint.h>
 #include "defs.h"
 
-typedef unsigned long Pixel;
+typedef uint32_t Pixel;
 
 class Pad_Display;
 class Pad_Color;

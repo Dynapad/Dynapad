@@ -147,7 +147,7 @@ class Pad_Frame : public Pad_Window {
     virtual void       Pointer_in(Pad_Event *padEvent);
     virtual void       Pointer_out(Pad_Event *padEvent);
 				// Sets the title of this frame to the specified title.
-            void       Set_title(char *title);
+            void       Set_title(const char *title);
 
 				// Keep track of user pressing of titlebar
             void       Set_titlebar_press(Pad_Bool pressed);

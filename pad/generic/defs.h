@@ -27,7 +27,8 @@ software in general.
 #define DEFS_H 1
 
 
-#  include "../unix/config.h"
+// Wasn't used for anything – Dylan
+// #include "../unix/config.h"
 
 #include "list.h"
 
@@ -46,7 +47,7 @@ extern "C" {	// for X11/Xlib.h in win95
 #define XMAX 2
 #define YMAX 3
 
-#define DOTIMES(j, cnt) for(j = 0; j<cnt; j++)
+#define DOTIMES(j, cnt) for(j = 0; j < cnt; j++)
 
 #define PAD_RELIEF_FLAT          0
 #define PAD_RELIEF_GROOVE        1
@@ -59,22 +60,23 @@ extern "C" {	// for X11/Xlib.h in win95
 #define PAD_3D_LIGHT_GC          2
 #define PAD_3D_DARK_GC           3
 
-#define VirtualEvent        (LASTEvent)
-#define ActivateNotify      (LASTEvent + 1)
-#define DeactivateNotify    (LASTEvent + 2)
-#define MouseWheelEvent     (LASTEvent + 3)
-#define myTK_LASTEVENT      (LASTEvent + 4)
+// Commented out, already defined by Tk (almost).
+// see https://github.com/DylanLukes/Dynapad/issues/11
+//#define VirtualEvent        (LASTEvent)
+//#define ActivateNotify      (LASTEvent + 1)
+//#define DeactivateNotify    (LASTEvent + 2)
+//#define MouseWheelEvent     (LASTEvent + 3)
+//#define myTK_LASTEVENT      (LASTEvent + 4)
 
-#define MouseWheelMask      (1L << 28)
-
-#define ActivateMask        (1L << 29)
-#define VirtualEventMask    (1L << 30)
+//#define MouseWheelMask      (1L << 28)
+//#define ActivateMask        (1L << 29)
+//#define VirtualEventMask    (1L << 30)
 
 #ifndef NULL
 #define NULL    0
 #endif
 
-typedef char *Pad_Uid;
+typedef const char *Pad_Uid;
 typedef unsigned char Pad_Bool;  // Booleans
 typedef void *voidPtr;           // Makes casting easier
 typedef void *ClientData;        // Makes casting easier

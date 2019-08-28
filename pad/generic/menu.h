@@ -54,7 +54,7 @@ public:
     Pad_MenuBar* Get_MenuBar(void);
 
                               // Override button label and render methods
-    virtual void     Set_label(char*);
+    virtual void     Set_label(const char *label);
     virtual Pad_Bool Render(void);
 
                               // Callbacks for mouse events
@@ -76,7 +76,7 @@ protected:
     Pad_Menu    *_menu;         // items's menu
     Pad_MenuBar *_menuBar;      // items's menubar
 
-    static void     _Initialize_events(Pad_Win *win, char*);
+    static void     _Initialize_events(Pad_Win *win, const char *type);
     static Pad_List initializedWindows;
 
 public:
@@ -112,7 +112,7 @@ public:
 private:
     static Pad_Bool _dragedOut;   // for dealing with mouse drags after button press
     static Pad_List initializedWindows;
-    static void     _Initialize_events(Pad_Win *win, char*);
+    static void     _Initialize_events(Pad_Win *win, const char *);
 };
 
 
@@ -152,7 +152,7 @@ public:
     
 protected:
     Pad_List&        Get_items(void);
-    static void     _Initialize_events(Pad_Win *win, char*);
+    static void     _Initialize_events(Pad_Win *win, const char *);
     static Pad_List initializedWindows;
 
 public:
@@ -211,7 +211,7 @@ protected:
     void     Display_items(void);
     void     Hilite_item(Pad_MenuItem *curItem, ClientData, Pad_Event *);
     Pad_MenuItem *_selectedItem;
-    static void _Initialize_events(Pad_Win *win, char*);
+    static void _Initialize_events(Pad_Win *win, const char *);
     static Pad_List initializedWindows;
 };
 

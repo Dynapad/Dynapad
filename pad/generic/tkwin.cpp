@@ -45,10 +45,10 @@ software in general.
 //
 // Forward reference static procedures
 //
-static void Destroy_window(char *clientData);
+// [unused]: static void Destroy_window(char *clientData);
 static int  New_tcl_pad(ClientData clientData, int argc, char **argv);
 static void Event_proc(ClientData clientData, XEvent *eventPtr);
-static void Initialize_unit_factors(Pad_TkWin *tkwin);
+// [unused]: static void Initialize_unit_factors(Pad_TkWin *tkwin);
 
 int         motion_type = -1;
 int         button_press_type = -1;
@@ -78,7 +78,7 @@ Pad_Create_win(char *padName)
 
     Pad_InitIM();
     
-    args[0] = "pad";
+    args[0] = (char *)"pad";
     args[1] = padName;
     rc = New_tcl_pad((ClientData)NULL, 2, args);
 
@@ -94,7 +94,7 @@ proc(ClientData clientdata, int mask)
     int n;
     XEvent event;
     static int m = 0;
-    int o = 0;
+    // [unused]: int o = 0;
     XEvent nextevent;
 
     win = (Pad_Win *)clientdata;
@@ -241,8 +241,8 @@ CreateWindow(Pad_Win *parent, char *name)
 		       0, depth, InputOutput, visual, 0, NULL);
 
     {
-        char *windowname = "Dynapad";
-	char *iconname = "dynapad";
+        char *windowname = (char *)"Dynapad";
+	char *iconname = (char *)"dynapad";
 	XTextProperty xwindowName, xiconName;
 	XClassHint *xclasshint;
 	/* without XSizeHints some window managers don't provide a border
@@ -253,8 +253,8 @@ CreateWindow(Pad_Win *parent, char *name)
 	XStringListToTextProperty(&windowname, 1, &xwindowName);
 	XStringListToTextProperty(&iconname, 1, &xiconName);
 	xclasshint = XAllocClassHint();
-	xclasshint->res_name = "Dynapad";
-	xclasshint->res_class = "Dynapad";
+	xclasshint->res_name = (char *)"Dynapad";
+	xclasshint->res_class = (char *)"Dynapad";
 	xsizehints = XAllocSizeHints();
 	xsizehints->flags = PPosition | PSize;
 	XSetWMProperties(display, id, &xwindowName, &xiconName, 0, 0,
@@ -304,7 +304,7 @@ New_tcl_pad(ClientData clientData, int argc, char **argv)
     Pad_String newName;
     Pad_Win *main = (Pad_Win *)clientData;
     Pad_HashTableIterator hi;
-    Pad_Language *language;
+    // unused Pad_Language *language;
     Display *display;
     int fd;
     Pad_Win *win;
@@ -342,10 +342,11 @@ New_tcl_pad(ClientData clientData, int argc, char **argv)
 //
 ////////////////////////////////////////////////////////////////////////////
 
-				// True when window needs to be reconfigured
-static Pad_Bool configurationNeeded = FALSE;
-				// True when window needs to be redrawn
-static Pad_Bool damageNeeded = FALSE;
+// True when window needs to be reconfigured
+// [unused]: static Pad_Bool configurationNeeded = FALSE;
+
+// True when window needs to be redrawn
+// [unused]: static Pad_Bool damageNeeded = FALSE;
 
 //		
 // This gets called to handle Pad window configuration events
@@ -377,59 +378,62 @@ Event_proc(ClientData clientData, XEvent *eventPtr)
       }
 }
 
+// [unused]:
 //
 // Call when Pad_TkWin is destroyed
 //
-static void 
-Destroy_window(char *clientData)
-{
-    Pad_TkWin *tkwin = (Pad_TkWin *)clientData;
+// static void 
+// Destroy_window(char *clientData)
+// {
+//     Pad_TkWin *tkwin = (Pad_TkWin *)clientData;
     
-    delete tkwin;
-}
+//     delete tkwin;
+// }
 
 //
 // Set up conversion factors between input and world units
 //
-static void 
-Initialize_unit_factors(Pad_TkWin *tkwin)
-{
-    int widthmm, heightmm;
-    float ppmx, ppmy;		// pixels/mm
 
-				// If user doesn't set screen size, then use X Server values.
-    if (tkwin->dpy->widthmmofscreen == 0) {
-	widthmm = WidthMMOfScreen(tkwin->dpy->screen);
-    } else {
-	widthmm = tkwin->dpy->widthmmofscreen;
-    }
-    if (tkwin->dpy->heightmmofscreen == 0) {
-	heightmm = HeightMMOfScreen(tkwin->dpy->screen);
-    } else {
-	heightmm = tkwin->dpy->heightmmofscreen;
-    }
+// [unused]:
+// static void 
+// Initialize_unit_factors(Pad_TkWin *tkwin)
+// {
+//     int widthmm, heightmm;
+//     float ppmx, ppmy;		// pixels/mm
 
-    ppmx = (float)WidthOfScreen(tkwin->dpy->screen) / widthmm;
-    ppmy = (float)HeightOfScreen(tkwin->dpy->screen) / heightmm;
-    switch (tkwin->units) {
-      case MM:
-	tkwin->xfac = ppmx;
-	tkwin->yfac = ppmy;
-	break;
-      case POINTS:
-	tkwin->xfac = ppmx * 25.4 / 72.0;
-	tkwin->yfac = ppmy * 25.4 / 72.0;
-	break;
-      case INCHES:
-	tkwin->xfac = ppmx * 25.4;
-	tkwin->yfac = ppmy * 25.4;
-	break;
-      case PIXELS:
-	tkwin->xfac = 1.0;
-	tkwin->yfac = 1.0;
-	break;
-    }
-}
+// 				// If user doesn't set screen size, then use X Server values.
+//     if (tkwin->dpy->widthmmofscreen == 0) {
+// 	widthmm = WidthMMOfScreen(tkwin->dpy->screen);
+//     } else {
+// 	widthmm = tkwin->dpy->widthmmofscreen;
+//     }
+//     if (tkwin->dpy->heightmmofscreen == 0) {
+// 	heightmm = HeightMMOfScreen(tkwin->dpy->screen);
+//     } else {
+// 	heightmm = tkwin->dpy->heightmmofscreen;
+//     }
+
+//     ppmx = (float)WidthOfScreen(tkwin->dpy->screen) / widthmm;
+//     ppmy = (float)HeightOfScreen(tkwin->dpy->screen) / heightmm;
+//     switch (tkwin->units) {
+//       case MM:
+// 	tkwin->xfac = ppmx;
+// 	tkwin->yfac = ppmy;
+// 	break;
+//       case POINTS:
+// 	tkwin->xfac = ppmx * 25.4 / 72.0;
+// 	tkwin->yfac = ppmy * 25.4 / 72.0;
+// 	break;
+//       case INCHES:
+// 	tkwin->xfac = ppmx * 25.4;
+// 	tkwin->yfac = ppmy * 25.4;
+// 	break;
+//       case PIXELS:
+// 	tkwin->xfac = 1.0;
+// 	tkwin->yfac = 1.0;
+// 	break;
+//     }
+// }
 
 //
 // Tk Pad widget configuration stuff here

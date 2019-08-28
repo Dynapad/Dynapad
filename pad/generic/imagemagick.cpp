@@ -67,14 +67,14 @@ Pad_ReadIM(FILE *fp, int* ret_width, int* ret_height)
 }
 
 unsigned long *
-Pad_LoadIM(unsigned char *formattedData, int len)
+Pad_LoadIM(const unsigned char *formattedData, int len)
 {
   fprintf(stderr, "NOT IMPLEMENTED Pad_LoadIM(unsigned char *formattedData, int len)\n");
   return NULL;
 }
 
 unsigned long *
-Pad_LoadIM(char *filename, int* ret_width, int* ret_height)
+Pad_LoadIM(const char *filename, int *ret_width, int *ret_height)
 {
   FILE *fp = fopen(filename, "rb");
   unsigned long *data = Pad_ReadIM(fp, ret_width, ret_height);

@@ -372,7 +372,7 @@ class Pad_Object
     Pad *         pad;		// Pad this object is on
     int           drawingOrder; // Number in drawing order list
 
-    int           id;		// Id of object
+    intptr_t      id;		// Id of object
     Pad_List      tags;		// List of tags (Pad_Uid's)
     Pad_Anchor    anchor;	// Anchor type (n, s, sw, etc.)
     Pad_Point     anchorpt;	// Anchor point (The point this object is positioned by
@@ -408,21 +408,21 @@ public:
     virtual float    Compute_dimensions(Pad_List &views, float &global_width, float &global_height);
     virtual float    Compute_fade(void);
     virtual float    Compute_scale_within_frame(float *frame);
-    virtual Pad_Bool Contains_text(char *text);
+    virtual Pad_Bool Contains_text(const char *text);
     virtual Pad_Bool Continue_refinement(void);         // True if object wants more refinement
     virtual int      Create_obj_args(int argc, char **argv);   // Called when an item is created with string args
     virtual void     Create_obj_error(void);            // Called if there is an error configuring obj during create
     virtual void     Damage(void);                      // Mark an object as changed
             Pad_Bool Delete_all_tags(void);
             Pad_Bool Delete_id(void);
-            Pad_Bool Delete_tag(char *tag);
+            Pad_Bool Delete_tag(const char *tag);
             Pad_Bool Enclosed(Pad_Object *pad_object);
             Pad_Bool Enclosed_or_same(Pad_Object *pad_object);
             Pad_Bool Fire_render_script(Pad_Bool &refine);
             int      Generate_delete(void);
             int      Generate_event(int type, Pad_String &result);
             int      Generate_event(int type, Pad_List *portals);
-            int      Generate_event(int type, Pad_List *portals, char *info);
+            int      Generate_event(int type, Pad_List *portals, const char *info);
             void     Get_aliases(Pad_List&);
             Pad_List* Get_aliases(void);
             Pad_Bool  Get_alwaysrender(void);
@@ -437,7 +437,7 @@ public:
             Clipping Get_clipping(void);
 
     virtual void     Get_coords(Pad_PList &pts, Pad_Bool object_coords);
-            char *   Get_event_order(void);
+            const char * Get_event_order(void);
             Pad_Bool Get_events(void);
             float    Get_faderange(void);
     virtual void     Get_fillname(Pad_String &fillname);
@@ -446,8 +446,8 @@ public:
             void     Get_global_bbox(Pad_BBox &bb);
             float    Get_global_size(void);
             float    Get_height(void);
-    virtual char *   Get_info(void);
-            char *   Get_layer(void);
+    virtual const char * Get_info(void);
+            const char * Get_layer(void);
             Pad_Bool Get_lock(void);
             void     Get_minsize(Pad_String &minsize);
             float    Get_minsize(void);
@@ -543,22 +543,22 @@ public:
             void     Set_clipping(Clipping clipping);
             void     Set_clipping_default(void);
     virtual Pad_Bool Set_coords(Pad_PList &pts, Pad_Bool object_coords);
-            Pad_Bool Set_event_order(char *type);
+            Pad_Bool Set_event_order(const char *type);
             Pad_Bool Set_events(Pad_Bool events);
             void     Set_events_default(void);
             Pad_Bool Set_faderange(float faderange);
             void     Set_faderange_default(void);
     virtual Pad_Bool Set_fill(int red, int green, int blue);
-    virtual Pad_Bool Set_fill(char *colorName);
+    virtual Pad_Bool Set_fill(const char *colorName);
             void     Set_findable(Pad_Bool findable);
     virtual void     Set_focus(void);                  // This object is now the focus object
     virtual Pad_Bool Set_height(float height);
     virtual void     Set_height_default(void);
             Pad_Bool Set_id(void);
-            Pad_Bool Set_id(int new_id);
+            Pad_Bool Set_id(intptr_t new_id);
             Pad_Bool Set_info(char *info);
             void     Set_info_default(void);
-            Pad_Bool Set_layer(char *l);
+            Pad_Bool Set_layer(const char *l);
             void     Set_layer_default(void);
             Pad_Bool Set_lock(Pad_Bool visible);
             void     Set_lock_default(void);
@@ -585,14 +585,14 @@ public:
             Pad_Bool Set_rel_position_z(float z);
             void     Set_rel_position_center(void);
     virtual Pad_Bool Set_pen(int red, int green, int blue);
-    virtual Pad_Bool Set_pen(char *colorName);
+    virtual Pad_Bool Set_pen(const char *colorName);
     virtual Pad_Bool Set_penwidth(float penwidth, Pad_Bool absLineStyle = FALSE);
             void     Set_position_from_anchor(void);
     virtual Pad_Bool Set_renderscript(Pad_Callback *callback);
     virtual void     Set_renderscript_default(void);
             Pad_Bool Set_sticky(int sticky);
             void     Set_sticky_default(void);
-    virtual Pad_Bool Set_text(char *new_text);
+    virtual Pad_Bool Set_text(const char *new_text);
     virtual Pad_Bool Set_text_default(void);
             Pad_Bool Set_transparency(float trans);
             void     Set_transparency_default(void);
@@ -631,7 +631,7 @@ public:
     int      _traitFlags;  // Bit field of used traits         
     virtual Pad_Trait *_Get_trait(int);  // To get a trait for an option
 
-    virtual Pad_Trait *_Get_trait(int, char*&);     // Convinient routines for 
+    virtual Pad_Trait *_Get_trait(int, char*&);     // Convinient routines for
     virtual Pad_Trait *_Get_trait(int, Pad_String*&); // setting trait values.
     virtual Pad_Trait *_Get_trait(int, Pad_Callback*&);
     virtual Pad_Trait *_Get_trait(int, Pad_List*&);
