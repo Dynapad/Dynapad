@@ -26,13 +26,14 @@ software in general.
 #ifndef IMAGEDATA_H
 #define IMAGEDATA_H 1
 
+#include <stdint.h>
 #include "defs.h"
 
 class Pad;
 class Pad_Object;
 class Pad_Display;
 
-typedef unsigned long Pixel;
+typedef uint32_t Pixel;
 
 //
 // Pad_ImageData
