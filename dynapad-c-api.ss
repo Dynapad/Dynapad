@@ -12,7 +12,7 @@
 (load-relative "src/utils/hilights.ss")
 
 ;;; (load-relative-extension (path-replace-suffix "build/libdynapad" (system-type 'so-suffix)))
-(load-relative-extension "build/libdynapad.so")
+(load-relative-extension "cmake-build-debug/libdynapad.so")
 
 (define padthread
   (let

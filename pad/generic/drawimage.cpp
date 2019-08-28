@@ -64,7 +64,7 @@ static unsigned long *pixel_map;
 
 // Drawing modes
 
-                     // bit masks for drawing modes:
+// bit masks for drawing modes:
 #define B8 0         // 8-bit
 #define B32 1        // 32-bit
 #define BANY 2       // other bit sizes
@@ -160,8 +160,8 @@ static unsigned long *pixel_map;
           } \
 
 
-        // win32 version, don't keep the pixel_map[b], which in win32, it is
-        // 32 bit RGBA value, but instead, keep the index which is b.
+// win32 version, don't keep the pixel_map[b], which in win32, it is
+// 32 bit RGBA value, but instead, keep the index which is b.
 
 
 
@@ -169,14 +169,14 @@ static unsigned long *pixel_map;
 int dither[DITHER_LENGTH];
 unsigned char lookup[DITHER_LENGTH][3][256];
 int dither_pattern[DITHER_LENGTH] = {
-                         12,
-                29, 13, 30,  1,
-            18,  5, 22, 15, 32,
-         8, 25, 16, 33,  3, 20,  4,
-            21, 14, 31,  6, 23,  2, 19,
-             9, 26, 11, 28, 10, 27,
-                 7, 24,  0,
-                    17
+    12,
+    29, 13, 30, 1,
+    18, 5, 22, 15, 32,
+    8, 25, 16, 33, 3, 20, 4,
+    21, 14, 31, 6, 23, 2, 19,
+    9, 26, 11, 28, 10, 27,
+    7, 24, 0,
+    17
 };
 
 //
@@ -186,8 +186,7 @@ int dither_pattern[DITHER_LENGTH] = {
 //   number of reds, greens, and blues.
 //
 static void
-Init_dither(Pad_ColorCube *colorcube)
-{
+Init_dither(Pad_ColorCube *colorcube) {
     int i;
     int reds, greens, blues;
     static unsigned long *old_pixel_map = NULL;
@@ -196,13 +195,13 @@ Init_dither(Pad_ColorCube *colorcube)
     pixel_map = colorcube->Get_device_pixel_map(reds, greens, blues);
 
     if (pixel_map == old_pixel_map && reds == old_reds)
-      return;
+        return;
 
     if (!pixel_map) {      // Sanity check
         cerr << "Init_dither: Attempt to use dithering on TrueColor visual" << endl;
         exit(1);
     }
-                                // Scale the values in DITHER up to range from 0 to 255.
+    // Scale the values in DITHER up to range from 0 to 255.
     for (i = 0; i < DITHER_LENGTH; i++) {
         dither[i] = dither_pattern[i] * 255 / (DITHER_LENGTH - 1);
     }
@@ -210,7 +209,7 @@ Init_dither(Pad_ColorCube *colorcube)
     for (i = 0; i < 256; i++) {
         for (int j = 0; j < DITHER_LENGTH; j++) {
             lookup[j][2][i] = blues * greens * ((i * (reds - 1) + dither[j]) >> 8);
-                                // Anti correlate green to smooth luminance
+            // Anti correlate green to smooth luminance
             lookup[j][1][i] = blues * ((i * (greens - 1) + dither[DITHER_LENGTH - j - 1]) >> 8);
             lookup[j][0][i] = ((i * (blues - 1) + dither[j]) >> 8);
         }
@@ -244,8 +243,7 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
               int img_width, int img_height,
               int src_left, int src_top, int src_right, int src_bot,
               int dst_left, int dst_top, int dst_right, int dst_bot,
-              Pad_Bool dither, float transparency)
-{
+              Pad_Bool dither, float transparency) {
     int x, y;
     int rc = 1;
     int src_width, src_height;
@@ -269,62 +267,62 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
     xpixelmap = NULL;
     padncolors = 0;
 
-                                // Compute source and destination image dimensions
+    // Compute source and destination image dimensions
     src_width = src_right - src_left + 1;
     src_height = src_bot - src_top + 1;
     dst_width = dst_right - dst_left;
     dst_height = dst_bot - dst_top;
-                                // Compute image's parameters limited by destination's region
-                                // I.e., don't render outside of region, but allow partial
-                                // rendering of large pixels
-    lmt_dst_left  = MAX(dst_left, 0);
-    lmt_dst_top   = MAX(dst_top, 0);
+    // Compute image's parameters limited by destination's region
+    // I.e., don't render outside of region, but allow partial
+    // rendering of large pixels
+    lmt_dst_left = MAX(dst_left, 0);
+    lmt_dst_top = MAX(dst_top, 0);
     lmt_dst_right = MIN(dst_right, win->width);
-    lmt_dst_bot   = MIN(dst_bot, win->height);
+    lmt_dst_bot = MIN(dst_bot, win->height);
     lmt_dst_width = MAX(MIN(lmt_dst_right - lmt_dst_left, win->width), 0);
     lmt_dst_height = MAX(MIN(lmt_dst_bot - lmt_dst_top, win->height), 0);
 
-                                // Used to read input image
+    // Used to read input image
     unsigned char *srclineptr8;
     unsigned char *srcstartptr8;
     Pixel *srclineptr;
     Pixel *srcstartptr;
 
     if ((depth == 8) && !dither) {
-        srcstartptr8 = (unsigned char *)img_data + (src_top * img_width);
+        srcstartptr8 = (unsigned char *) img_data + (src_top * img_width);
     } else {
-        srcstartptr = (Pixel *)img_data + (src_top * img_width);
+        srcstartptr = (Pixel *) img_data + (src_top * img_width);
     }
 
-                                // Check for empty destination region
+    // Check for empty destination region
     if (dst_width <= 0 || dst_height <= 0) {
-        return(1);
+        return (1);
     }
-                                // Check for illegal image src values
+    // Check for illegal image src values
     if ((src_right - src_left + 1 > img_width) ||
         (src_bot - src_top + 1 > img_height)) {
-        return(1);
+        return (1);
     }
 
-                                // Compute magnification factors
-    xfac = (float)src_width / dst_width;
-    yfac = (float)src_height / dst_height;
+    // Compute magnification factors
+    xfac = (float) src_width / dst_width;
+    yfac = (float) src_height / dst_height;
 
-                                // Data for x-coord of src image indices
+    // Data for x-coord of src image indices
     offsets = new int[lmt_dst_width];
 
-                                // Pre-compute x-coord of src image indices
+    // Pre-compute x-coord of src image indices
     int dx = lmt_dst_left - dst_left;
     for (x = 0; x < lmt_dst_width; x++) {
-        offsets[x] = ((int)((x + dx) * xfac) + src_left);
+        offsets[x] = ((int) ((x + dx) * xfac) + src_left);
         if (offsets[x] > img_widthm1) {
             offsets[x] = img_widthm1;
         }
     }
 
-                                // Fill in image.
-                                // For each destination pixel, find the source pixel
-                                // that matches most closely.
+    // Fill in image.
+    // For each destination pixel, find the source pixel
+    // that matches most closely.
     int rolled_dst_width = MAX(0, lmt_dst_width - 7);
     int dy = lmt_dst_top - dst_top;
     Pixel p;
@@ -336,7 +334,7 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
     int stippat[STIP_SIZE][STIP_SIZE];
 
     if (transparency != 1.0) {
-        int index = (int)(transparency * 16);
+        int index = (int) (transparency * 16);
         stipple = &pad_stipples[index];
         x_stipple = Pad_prc->dpy->ditherStipples[index];
     }
@@ -347,15 +345,15 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
     int mode = 0;
 
     switch (xim->bits_per_pixel) {
-      case 8:
-        mode |= B8;
-        break;
-      case 32:
-        mode |= B32;
-        break;
-      default:
-        mode |= BANY; // unknown depth
-        break;
+        case 8:
+            mode |= B8;
+            break;
+        case 32:
+            mode |= B32;
+            break;
+        default:
+            mode |= BANY; // unknown depth
+            break;
     }
 
     if (dither) {
@@ -375,7 +373,7 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
     if (stipple) {
         // Store the stipple in stippat rotated so that the rows are
         // aligned correctly
-        for (y = 0 ; y < STIP_SIZE; y++) {
+        for (y = 0; y < STIP_SIZE; y++) {
             char *srcrow = stipple->pattern[y];
             int *dstrow = stippat[y];
             for (x = 0; x < STIP_SIZE; x++) {
@@ -387,7 +385,7 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
             XSetStipple(display, gc, x_stipple);
             XSetForeground(display, gc, 0);
             XFillRectangle(display, dbl, gc, lmt_dst_left, lmt_dst_top,
-                       lmt_dst_width, lmt_dst_height);
+                           lmt_dst_width, lmt_dst_height);
             XSetFunction(display, gc, GXor);
         }
     }
@@ -402,51 +400,51 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
         for (y = 0; y < lmt_dst_height; y++) {
             int *stiprow, *pat;
             dstptr = xim->data + (y * xim->bytes_per_line);
-            masklineptr = maskstartptr + ((int)((y + dy) * yfac)) * img_width;
+            masklineptr = maskstartptr + ((int) ((y + dy) * yfac)) * img_width;
             tmp_offsets = offsets;
             if (stipple) {
                 stiprow = stippat[(y + lmt_dst_top) & STIP_MASK];
             }
             switch (mode) {
 
-              //
-              // Scaling a mask (no stippling)
-              //
+                //
+                // Scaling a mask (no stippling)
+                //
 
-              case MASK_ANY:                // generic scaling
-                for (x = 0; x < lmt_dst_width; x++) {
-                    XPutPixel(xim, x, y, masklineptr[offsets[x]] ? 0xffffffff : 0);
-                }
-                break;
+                case MASK_ANY:                // generic scaling
+                    for (x = 0; x < lmt_dst_width; x++) {
+                        XPutPixel(xim, x, y, masklineptr[offsets[x]] ? 0xffffffff : 0);
+                    }
+                    break;
 
 
-              case MASK_8:
-              case DITHER_MASK_8:       // scaling an 8-bit image
-                // Unroll loop
-                for (x = 0; x < rolled_dst_width; x+=8) {
-                    dstptr[0] = (char)masklineptr[tmp_offsets[0]];
-                    dstptr[1] = (char)masklineptr[tmp_offsets[1]];
-                    dstptr[2] = (char)masklineptr[tmp_offsets[2]];
-                    dstptr[3] = (char)masklineptr[tmp_offsets[3]];
-                    dstptr[4] = (char)masklineptr[tmp_offsets[4]];
-                    dstptr[5] = (char)masklineptr[tmp_offsets[5]];
-                    dstptr[6] = (char)masklineptr[tmp_offsets[6]];
-                    dstptr[7] = (char)masklineptr[tmp_offsets[7]];
-                    dstptr += 8;
-                    tmp_offsets += 8;
-                }
-
-                // Do bits of unrolled loop that didn't fit
-                for (; x < lmt_dst_width; x++) {
-                    *dstptr++ = (char)masklineptr[offsets[x]];
-                }
-                break;
-
-              case MASK_32:             // scaling a mask on a 32-bit visual
-                {
-                    Pixel *dlongptr = (Pixel*)dstptr;
+                case MASK_8:
+                case DITHER_MASK_8:       // scaling an 8-bit image
                     // Unroll loop
-                    for (x = 0; x < rolled_dst_width; x+=8) {
+                    for (x = 0; x < rolled_dst_width; x += 8) {
+                        dstptr[0] = (char) masklineptr[tmp_offsets[0]];
+                        dstptr[1] = (char) masklineptr[tmp_offsets[1]];
+                        dstptr[2] = (char) masklineptr[tmp_offsets[2]];
+                        dstptr[3] = (char) masklineptr[tmp_offsets[3]];
+                        dstptr[4] = (char) masklineptr[tmp_offsets[4]];
+                        dstptr[5] = (char) masklineptr[tmp_offsets[5]];
+                        dstptr[6] = (char) masklineptr[tmp_offsets[6]];
+                        dstptr[7] = (char) masklineptr[tmp_offsets[7]];
+                        dstptr += 8;
+                        tmp_offsets += 8;
+                    }
+
+                    // Do bits of unrolled loop that didn't fit
+                    for (; x < lmt_dst_width; x++) {
+                        *dstptr++ = (char) masklineptr[offsets[x]];
+                    }
+                    break;
+
+                case MASK_32:             // scaling a mask on a 32-bit visual
+                {
+                    Pixel *dlongptr = (Pixel *) dstptr;
+                    // Unroll loop
+                    for (x = 0; x < rolled_dst_width; x += 8) {
                         dlongptr[0] = masklineptr[tmp_offsets[0]] ? 0xffffffff : 0;
                         dlongptr[1] = masklineptr[tmp_offsets[1]] ? 0xffffffff : 0;
                         dlongptr[2] = masklineptr[tmp_offsets[2]] ? 0xffffffff : 0;
@@ -466,56 +464,56 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
                     break;
                 }
 
-              //
-              // Scaling a mask (with stippling)
-              //
+                    //
+                    // Scaling a mask (with stippling)
+                    //
 
-              case MASK_STIPPLE_ANY:         // generic case with stippling
-                pat = stiprow;
-                for (x = 0; x < lmt_dst_width; x++) {
-                    XPutPixel(xim, x, y, (pat[x&7] ?
-                                          (masklineptr[offsets[x]] ? 0xffffffff : 0)
-                                          : 0xffffffff));
-                }
-                break;
+                case MASK_STIPPLE_ANY:         // generic case with stippling
+                    pat = stiprow;
+                    for (x = 0; x < lmt_dst_width; x++) {
+                        XPutPixel(xim, x, y, (pat[x & 7] ?
+                                              (masklineptr[offsets[x]] ? 0xffffffff : 0)
+                                                         : 0xffffffff));
+                    }
+                    break;
 
 
-              case MASK_STIPPLE_8:
-              case DITHER_MASK_STIPPLE_8:      // scaling an 8-bit mask with stippling
+                case MASK_STIPPLE_8:
+                case DITHER_MASK_STIPPLE_8:      // scaling an 8-bit mask with stippling
 
 #define DO_PIX(i) dstptr[i] = (pat[i] ? masklineptr[tmp_offsets[i]] : 0xff);
 
-                pat = stiprow;
-                for (x = 0; x < rolled_dst_width; x+=8) {
-                    DO_PIX(0);
-                    DO_PIX(1);
-                    DO_PIX(2);
-                    DO_PIX(3);
-                    DO_PIX(4);
-                    DO_PIX(5);
-                    DO_PIX(6);
-                    DO_PIX(7);
-                    dstptr += 8;
-                    tmp_offsets += 8;
-                }
-                // Do bits of unrolled loop that didn't fit
-                pat = stiprow;
-                for (; x < lmt_dst_width; x++) {
-                    *dstptr++ = (*pat++ ? masklineptr[offsets[x]] : 0xff);
-                }
-                break;
+                    pat = stiprow;
+                    for (x = 0; x < rolled_dst_width; x += 8) {
+                        DO_PIX(0);
+                        DO_PIX(1);
+                        DO_PIX(2);
+                        DO_PIX(3);
+                        DO_PIX(4);
+                        DO_PIX(5);
+                        DO_PIX(6);
+                        DO_PIX(7);
+                        dstptr += 8;
+                        tmp_offsets += 8;
+                    }
+                    // Do bits of unrolled loop that didn't fit
+                    pat = stiprow;
+                    for (; x < lmt_dst_width; x++) {
+                        *dstptr++ = (*pat++ ? masklineptr[offsets[x]] : 0xff);
+                    }
+                    break;
 
 #undef DO_PIX
 
-              case MASK_STIPPLE_32:    // Scaling a 32 bit mask with stippling
+                case MASK_STIPPLE_32:    // Scaling a 32 bit mask with stippling
                 {
 
 #define DO_PIX(i) dlongptr[i] = (!pat[i] || masklineptr[tmp_offsets[i]] ? 0xffffffff : 0);
 
-                    Pixel *dlongptr = (Pixel*)dstptr;
+                    Pixel *dlongptr = (Pixel *) dstptr;
                     pat = stiprow;
 
-                    for (x = 0; x < rolled_dst_width; x+=8) {
+                    for (x = 0; x < rolled_dst_width; x += 8) {
                         DO_PIX(0);
                         DO_PIX(1);
                         DO_PIX(2);
@@ -541,7 +539,7 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
             }
         }
 
-            // Now render the mask
+        // Now render the mask
         XSetFunction(display, gc, GXand);
 
         if (win->sharedMemory) {
@@ -566,11 +564,11 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
     for (y = 0; y < lmt_dst_height; y++) {
         int *stiprow, *pat;
         dstptr = xim->data + (y * xim->bytes_per_line);
-        Pixel *dlongptr = (Pixel*)dstptr;
+        Pixel *dlongptr = (Pixel *) dstptr;
         if ((depth == 8) && !dither) {
-            srclineptr8 = srcstartptr8 + ((int)((y + dy) * yfac)) * img_width;
+            srclineptr8 = srcstartptr8 + ((int) ((y + dy) * yfac)) * img_width;
         } else {
-            srclineptr = srcstartptr + ((int)((y + dy) * yfac)) * img_width;
+            srclineptr = srcstartptr + ((int) ((y + dy) * yfac)) * img_width;
         }
         tmp_offsets = offsets;
         if (stipple) {
@@ -578,225 +576,225 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
         }
 
         switch (mode) {
-          case NORMAL_ANY:
-          case MASK_ANY:
-            // scale using generic XPutPixel approach
-            for (x = 0; x < lmt_dst_width; x++) {
-              XPutPixel(xim, x, y, srclineptr[offsets[x]]);
-            }
-            break;
+            case NORMAL_ANY:
+            case MASK_ANY:
+                // scale using generic XPutPixel approach
+                for (x = 0; x < lmt_dst_width; x++) {
+                    XPutPixel(xim, x, y, srclineptr[offsets[x]]);
+                }
+                break;
 
-          case NORMAL_8:
-          case MASK_8:
-            // fast version for 8-bit images
+            case NORMAL_8:
+            case MASK_8:
+                // fast version for 8-bit images
 
-            // Unroll loop
-            for (x = 0; x < rolled_dst_width; x+=8) {
-              dstptr[0] = (char)srclineptr8[tmp_offsets[0]];
-              dstptr[1] = (char)srclineptr8[tmp_offsets[1]];
-              dstptr[2] = (char)srclineptr8[tmp_offsets[2]];
-              dstptr[3] = (char)srclineptr8[tmp_offsets[3]];
-              dstptr[4] = (char)srclineptr8[tmp_offsets[4]];
-              dstptr[5] = (char)srclineptr8[tmp_offsets[5]];
-              dstptr[6] = (char)srclineptr8[tmp_offsets[6]];
-              dstptr[7] = (char)srclineptr8[tmp_offsets[7]];
-              dstptr += 8;
-              tmp_offsets += 8;
-            }
-            // Do bits of unrolled loop that didn't fit
-            for (; x < lmt_dst_width; x++) {
-              *dstptr++ = (char)srclineptr8[offsets[x]];
-            }
-            break;
+                // Unroll loop
+                for (x = 0; x < rolled_dst_width; x += 8) {
+                    dstptr[0] = (char) srclineptr8[tmp_offsets[0]];
+                    dstptr[1] = (char) srclineptr8[tmp_offsets[1]];
+                    dstptr[2] = (char) srclineptr8[tmp_offsets[2]];
+                    dstptr[3] = (char) srclineptr8[tmp_offsets[3]];
+                    dstptr[4] = (char) srclineptr8[tmp_offsets[4]];
+                    dstptr[5] = (char) srclineptr8[tmp_offsets[5]];
+                    dstptr[6] = (char) srclineptr8[tmp_offsets[6]];
+                    dstptr[7] = (char) srclineptr8[tmp_offsets[7]];
+                    dstptr += 8;
+                    tmp_offsets += 8;
+                }
+                // Do bits of unrolled loop that didn't fit
+                for (; x < lmt_dst_width; x++) {
+                    *dstptr++ = (char) srclineptr8[offsets[x]];
+                }
+                break;
 
-          case NORMAL_32:
-          case MASK_32:
-            // fast version for 32-bit images
-            for (x = 0; x < rolled_dst_width; x+=8) {
-                dlongptr[0] = srclineptr[tmp_offsets[0]];
-                dlongptr[1] = srclineptr[tmp_offsets[1]];
-                dlongptr[2] = srclineptr[tmp_offsets[2]];
-                dlongptr[3] = srclineptr[tmp_offsets[3]];
-                dlongptr[4] = srclineptr[tmp_offsets[4]];
-                dlongptr[5] = srclineptr[tmp_offsets[5]];
-                dlongptr[6] = srclineptr[tmp_offsets[6]];
-                dlongptr[7] = srclineptr[tmp_offsets[7]];
-                dlongptr += 8;
-                tmp_offsets += 8;
-            }
+            case NORMAL_32:
+            case MASK_32:
+                // fast version for 32-bit images
+                for (x = 0; x < rolled_dst_width; x += 8) {
+                    dlongptr[0] = srclineptr[tmp_offsets[0]];
+                    dlongptr[1] = srclineptr[tmp_offsets[1]];
+                    dlongptr[2] = srclineptr[tmp_offsets[2]];
+                    dlongptr[3] = srclineptr[tmp_offsets[3]];
+                    dlongptr[4] = srclineptr[tmp_offsets[4]];
+                    dlongptr[5] = srclineptr[tmp_offsets[5]];
+                    dlongptr[6] = srclineptr[tmp_offsets[6]];
+                    dlongptr[7] = srclineptr[tmp_offsets[7]];
+                    dlongptr += 8;
+                    tmp_offsets += 8;
+                }
 
-            // Do bits of unrolled loop that didn't fit
-            for (; x < lmt_dst_width; x++) {
-                *dlongptr++ = srclineptr[offsets[x]];
-            }
-            break;
+                // Do bits of unrolled loop that didn't fit
+                for (; x < lmt_dst_width; x++) {
+                    *dlongptr++ = srclineptr[offsets[x]];
+                }
+                break;
 
-          case STIPPLE_ANY:
-          case MASK_STIPPLE_ANY:
-            // Do bits of unrolled loop that didn't fit
-            pat = stiprow;
-            for (x = 0; x < lmt_dst_width; x++) {
-              XPutPixel(xim, x, y, pat[x&7] ? srclineptr[offsets[x]] : 0);
-            }
-            break;
+            case STIPPLE_ANY:
+            case MASK_STIPPLE_ANY:
+                // Do bits of unrolled loop that didn't fit
+                pat = stiprow;
+                for (x = 0; x < lmt_dst_width; x++) {
+                    XPutPixel(xim, x, y, pat[x & 7] ? srclineptr[offsets[x]] : 0);
+                }
+                break;
 
 
-          case STIPPLE_8:
-          case MASK_STIPPLE_8:
-            // Render stippled with (precomputed) closest available color
-            // Unroll loop
-            pat = stiprow;
-            for (x = 0; x < rolled_dst_width; x+=8) {
-              dstptr[0] = (pat[0] ? (char)srclineptr8[tmp_offsets[0]] : 0);
-              dstptr[1] = (pat[1] ? (char)srclineptr8[tmp_offsets[1]] : 0);
-              dstptr[2] = (pat[2] ? (char)srclineptr8[tmp_offsets[2]] : 0);
-              dstptr[3] = (pat[3] ? (char)srclineptr8[tmp_offsets[3]] : 0);
-              dstptr[4] = (pat[4] ? (char)srclineptr8[tmp_offsets[4]] : 0);
-              dstptr[5] = (pat[5] ? (char)srclineptr8[tmp_offsets[5]] : 0);
-              dstptr[6] = (pat[6] ? (char)srclineptr8[tmp_offsets[6]] : 0);
-              dstptr[7] = (pat[7] ? (char)srclineptr8[tmp_offsets[7]] : 0);
-              dstptr += 8;
-              tmp_offsets += 8;
-            }
-            // Do bits of unrolled loop that didn't fit
-            pat = stiprow;
-            for (; x < lmt_dst_width; x++) {
-              *dstptr++ = (*pat++ ? (char)srclineptr8[offsets[x]] : 0);
-            }
-            break;
+            case STIPPLE_8:
+            case MASK_STIPPLE_8:
+                // Render stippled with (precomputed) closest available color
+                // Unroll loop
+                pat = stiprow;
+                for (x = 0; x < rolled_dst_width; x += 8) {
+                    dstptr[0] = (pat[0] ? (char) srclineptr8[tmp_offsets[0]] : 0);
+                    dstptr[1] = (pat[1] ? (char) srclineptr8[tmp_offsets[1]] : 0);
+                    dstptr[2] = (pat[2] ? (char) srclineptr8[tmp_offsets[2]] : 0);
+                    dstptr[3] = (pat[3] ? (char) srclineptr8[tmp_offsets[3]] : 0);
+                    dstptr[4] = (pat[4] ? (char) srclineptr8[tmp_offsets[4]] : 0);
+                    dstptr[5] = (pat[5] ? (char) srclineptr8[tmp_offsets[5]] : 0);
+                    dstptr[6] = (pat[6] ? (char) srclineptr8[tmp_offsets[6]] : 0);
+                    dstptr[7] = (pat[7] ? (char) srclineptr8[tmp_offsets[7]] : 0);
+                    dstptr += 8;
+                    tmp_offsets += 8;
+                }
+                // Do bits of unrolled loop that didn't fit
+                pat = stiprow;
+                for (; x < lmt_dst_width; x++) {
+                    *dstptr++ = (*pat++ ? (char) srclineptr8[offsets[x]] : 0);
+                }
+                break;
 
-          case STIPPLE_32:
-          case MASK_STIPPLE_32:
-            // Unroll loop
-            pat = stiprow;
-            for (x = 0; x < rolled_dst_width; x+=8) {
-                dlongptr[0] = (pat[0] ? srclineptr[tmp_offsets[0]] : 0);
-                dlongptr[1] = (pat[1] ? srclineptr[tmp_offsets[1]] : 0);
-                dlongptr[2] = (pat[2] ? srclineptr[tmp_offsets[2]] : 0);
-                dlongptr[3] = (pat[3] ? srclineptr[tmp_offsets[3]] : 0);
-                dlongptr[4] = (pat[4] ? srclineptr[tmp_offsets[4]] : 0);
-                dlongptr[5] = (pat[5] ? srclineptr[tmp_offsets[5]] : 0);
-                dlongptr[6] = (pat[6] ? srclineptr[tmp_offsets[6]] : 0);
-                dlongptr[7] = (pat[7] ? srclineptr[tmp_offsets[7]] : 0);
-                dlongptr += 8;
-                tmp_offsets += 8;
-            }
-            // Do bits of unrolled loop that didn't fit
-            pat = stiprow;
-            for (; x < lmt_dst_width; x++) {
-                *dlongptr++ = (*pat++ ? srclineptr[offsets[x]] : 0);
-            }
-            break;
+            case STIPPLE_32:
+            case MASK_STIPPLE_32:
+                // Unroll loop
+                pat = stiprow;
+                for (x = 0; x < rolled_dst_width; x += 8) {
+                    dlongptr[0] = (pat[0] ? srclineptr[tmp_offsets[0]] : 0);
+                    dlongptr[1] = (pat[1] ? srclineptr[tmp_offsets[1]] : 0);
+                    dlongptr[2] = (pat[2] ? srclineptr[tmp_offsets[2]] : 0);
+                    dlongptr[3] = (pat[3] ? srclineptr[tmp_offsets[3]] : 0);
+                    dlongptr[4] = (pat[4] ? srclineptr[tmp_offsets[4]] : 0);
+                    dlongptr[5] = (pat[5] ? srclineptr[tmp_offsets[5]] : 0);
+                    dlongptr[6] = (pat[6] ? srclineptr[tmp_offsets[6]] : 0);
+                    dlongptr[7] = (pat[7] ? srclineptr[tmp_offsets[7]] : 0);
+                    dlongptr += 8;
+                    tmp_offsets += 8;
+                }
+                // Do bits of unrolled loop that didn't fit
+                pat = stiprow;
+                for (; x < lmt_dst_width; x++) {
+                    *dlongptr++ = (*pat++ ? srclineptr[offsets[x]] : 0);
+                }
+                break;
 
-          case DITHER_8:
-            // Render dithered - no mask or stipple
-            tabstart = lookup[0][0];
-            tabend = lookup[DITHER_LENGTH - 1][0];
-            tab = lookup[(y * DITHER_SHIFT) % DITHER_LENGTH][0];
-            orig_dstptr = dstptr;
+            case DITHER_8:
+                // Render dithered - no mask or stipple
+                tabstart = lookup[0][0];
+                tabend = lookup[DITHER_LENGTH - 1][0];
+                tab = lookup[(y * DITHER_SHIFT) % DITHER_LENGTH][0];
+                orig_dstptr = dstptr;
 
-            // Unroll loop
-            for (x = 0; x < rolled_dst_width; x+=8) {
-                DITHER_LOOP(0, p, b, tab, tabstart, tabend);
-                DITHER_LOOP(1, p, b, tab, tabstart, tabend);
-                DITHER_LOOP(2, p, b, tab, tabstart, tabend);
-                DITHER_LOOP(3, p, b, tab, tabstart, tabend);
-                DITHER_LOOP(4, p, b, tab, tabstart, tabend);
-                DITHER_LOOP(5, p, b, tab, tabstart, tabend);
-                DITHER_LOOP(6, p, b, tab, tabstart, tabend);
-                DITHER_LOOP(7, p, b, tab, tabstart, tabend);
-                dstptr += 8;
-                tmp_offsets += 8;
-            }
-            // Do bits of unrolled loop that didn't fit
-            dx = dstptr - orig_dstptr;
-            for (; x < lmt_dst_width; x++) {
-                DITHER_LOOP((x - dx), p, b, tab, tabstart, tabend);
-            }
-            break;
+                // Unroll loop
+                for (x = 0; x < rolled_dst_width; x += 8) {
+                    DITHER_LOOP(0, p, b, tab, tabstart, tabend);
+                    DITHER_LOOP(1, p, b, tab, tabstart, tabend);
+                    DITHER_LOOP(2, p, b, tab, tabstart, tabend);
+                    DITHER_LOOP(3, p, b, tab, tabstart, tabend);
+                    DITHER_LOOP(4, p, b, tab, tabstart, tabend);
+                    DITHER_LOOP(5, p, b, tab, tabstart, tabend);
+                    DITHER_LOOP(6, p, b, tab, tabstart, tabend);
+                    DITHER_LOOP(7, p, b, tab, tabstart, tabend);
+                    dstptr += 8;
+                    tmp_offsets += 8;
+                }
+                // Do bits of unrolled loop that didn't fit
+                dx = dstptr - orig_dstptr;
+                for (; x < lmt_dst_width; x++) {
+                    DITHER_LOOP((x - dx), p, b, tab, tabstart, tabend);
+                }
+                break;
 
-          case DITHER_STIPPLE_8:
-            // Render dithered through a stipple
-            tabstart = lookup[0][0];
-            tabend = lookup[DITHER_LENGTH - 1][0];
-            tab = lookup[(y * DITHER_SHIFT) % DITHER_LENGTH][0];
-            orig_dstptr = dstptr;
+            case DITHER_STIPPLE_8:
+                // Render dithered through a stipple
+                tabstart = lookup[0][0];
+                tabend = lookup[DITHER_LENGTH - 1][0];
+                tab = lookup[(y * DITHER_SHIFT) % DITHER_LENGTH][0];
+                orig_dstptr = dstptr;
 
-            // Unroll loop
-            pat = stiprow;
-            for (x = 0; x < rolled_dst_width; x+=8) {
-                STIP_DITHER_LOOP(0, p, b, tab, tabstart, tabend);
-                STIP_DITHER_LOOP(1, p, b, tab, tabstart, tabend);
-                STIP_DITHER_LOOP(2, p, b, tab, tabstart, tabend);
-                STIP_DITHER_LOOP(3, p, b, tab, tabstart, tabend);
-                STIP_DITHER_LOOP(4, p, b, tab, tabstart, tabend);
-                STIP_DITHER_LOOP(5, p, b, tab, tabstart, tabend);
-                STIP_DITHER_LOOP(6, p, b, tab, tabstart, tabend);
-                STIP_DITHER_LOOP(7, p, b, tab, tabstart, tabend);
-                dstptr += 8;
-                tmp_offsets += 8;
-            }
-            // Do bits of unrolled loop that didn't fit
-            dx = dstptr - orig_dstptr;
-            for (; x < lmt_dst_width; x++) {
-                STIP_DITHER_LOOP((x - dx), p, b, tab, tabstart, tabend);
-            }
-            break;
+                // Unroll loop
+                pat = stiprow;
+                for (x = 0; x < rolled_dst_width; x += 8) {
+                    STIP_DITHER_LOOP(0, p, b, tab, tabstart, tabend);
+                    STIP_DITHER_LOOP(1, p, b, tab, tabstart, tabend);
+                    STIP_DITHER_LOOP(2, p, b, tab, tabstart, tabend);
+                    STIP_DITHER_LOOP(3, p, b, tab, tabstart, tabend);
+                    STIP_DITHER_LOOP(4, p, b, tab, tabstart, tabend);
+                    STIP_DITHER_LOOP(5, p, b, tab, tabstart, tabend);
+                    STIP_DITHER_LOOP(6, p, b, tab, tabstart, tabend);
+                    STIP_DITHER_LOOP(7, p, b, tab, tabstart, tabend);
+                    dstptr += 8;
+                    tmp_offsets += 8;
+                }
+                // Do bits of unrolled loop that didn't fit
+                dx = dstptr - orig_dstptr;
+                for (; x < lmt_dst_width; x++) {
+                    STIP_DITHER_LOOP((x - dx), p, b, tab, tabstart, tabend);
+                }
+                break;
 
-          case DITHER_MASK_8:
-            // Render dithered through a mask
-            tabstart = lookup[0][0];
-            tabend = lookup[DITHER_LENGTH - 1][0];
-            tab = lookup[(y * DITHER_SHIFT) % DITHER_LENGTH][0];
-            orig_dstptr = dstptr;
+            case DITHER_MASK_8:
+                // Render dithered through a mask
+                tabstart = lookup[0][0];
+                tabend = lookup[DITHER_LENGTH - 1][0];
+                tab = lookup[(y * DITHER_SHIFT) % DITHER_LENGTH][0];
+                orig_dstptr = dstptr;
 
-            // Unroll loop
-            for (x = 0; x < rolled_dst_width; x+=8) {
-                MASK_DITHER_LOOP(0, p, b, tab, tabstart, tabend);
-                MASK_DITHER_LOOP(1, p, b, tab, tabstart, tabend);
-                MASK_DITHER_LOOP(2, p, b, tab, tabstart, tabend);
-                MASK_DITHER_LOOP(3, p, b, tab, tabstart, tabend);
-                MASK_DITHER_LOOP(4, p, b, tab, tabstart, tabend);
-                MASK_DITHER_LOOP(5, p, b, tab, tabstart, tabend);
-                MASK_DITHER_LOOP(6, p, b, tab, tabstart, tabend);
-                MASK_DITHER_LOOP(7, p, b, tab, tabstart, tabend);
-                dstptr += 8;
-                tmp_offsets += 8;
-            }
-            // Do bits of unrolled loop that didn't fit
-            dx = dstptr - orig_dstptr;
-            for (; x < lmt_dst_width; x++) {
-                MASK_DITHER_LOOP((x - dx), p, b, tab, tabstart, tabend);
-            }
-            break;
+                // Unroll loop
+                for (x = 0; x < rolled_dst_width; x += 8) {
+                    MASK_DITHER_LOOP(0, p, b, tab, tabstart, tabend);
+                    MASK_DITHER_LOOP(1, p, b, tab, tabstart, tabend);
+                    MASK_DITHER_LOOP(2, p, b, tab, tabstart, tabend);
+                    MASK_DITHER_LOOP(3, p, b, tab, tabstart, tabend);
+                    MASK_DITHER_LOOP(4, p, b, tab, tabstart, tabend);
+                    MASK_DITHER_LOOP(5, p, b, tab, tabstart, tabend);
+                    MASK_DITHER_LOOP(6, p, b, tab, tabstart, tabend);
+                    MASK_DITHER_LOOP(7, p, b, tab, tabstart, tabend);
+                    dstptr += 8;
+                    tmp_offsets += 8;
+                }
+                // Do bits of unrolled loop that didn't fit
+                dx = dstptr - orig_dstptr;
+                for (; x < lmt_dst_width; x++) {
+                    MASK_DITHER_LOOP((x - dx), p, b, tab, tabstart, tabend);
+                }
+                break;
 
-          case DITHER_MASK_STIPPLE_8:
-            // Render dithered through a mask and a stipple
-            tabstart = lookup[0][0];
-            tabend = lookup[DITHER_LENGTH - 1][0];
-            tab = lookup[(y * DITHER_SHIFT) % DITHER_LENGTH][0];
-            orig_dstptr = dstptr;
+            case DITHER_MASK_STIPPLE_8:
+                // Render dithered through a mask and a stipple
+                tabstart = lookup[0][0];
+                tabend = lookup[DITHER_LENGTH - 1][0];
+                tab = lookup[(y * DITHER_SHIFT) % DITHER_LENGTH][0];
+                orig_dstptr = dstptr;
 
-            // Unroll loop
-            pat = stiprow;
-            for (x = 0; x < rolled_dst_width; x+=8) {
-                MASK_STIP_DITHER_LOOP(0, p, b, tab, tabstart, tabend);
-                MASK_STIP_DITHER_LOOP(1, p, b, tab, tabstart, tabend);
-                MASK_STIP_DITHER_LOOP(2, p, b, tab, tabstart, tabend);
-                MASK_STIP_DITHER_LOOP(3, p, b, tab, tabstart, tabend);
-                MASK_STIP_DITHER_LOOP(4, p, b, tab, tabstart, tabend);
-                MASK_STIP_DITHER_LOOP(5, p, b, tab, tabstart, tabend);
-                MASK_STIP_DITHER_LOOP(6, p, b, tab, tabstart, tabend);
-                MASK_STIP_DITHER_LOOP(7, p, b, tab, tabstart, tabend);
-                dstptr += 8;
-                tmp_offsets += 8;
-            }
-            // Do bits of unrolled loop that didn't fit
-            dx = dstptr - orig_dstptr;
-            for (; x < lmt_dst_width; x++) {
-                MASK_STIP_DITHER_LOOP((x - dx), p, b, tab, tabstart, tabend);
-            }
-            break;
+                // Unroll loop
+                pat = stiprow;
+                for (x = 0; x < rolled_dst_width; x += 8) {
+                    MASK_STIP_DITHER_LOOP(0, p, b, tab, tabstart, tabend);
+                    MASK_STIP_DITHER_LOOP(1, p, b, tab, tabstart, tabend);
+                    MASK_STIP_DITHER_LOOP(2, p, b, tab, tabstart, tabend);
+                    MASK_STIP_DITHER_LOOP(3, p, b, tab, tabstart, tabend);
+                    MASK_STIP_DITHER_LOOP(4, p, b, tab, tabstart, tabend);
+                    MASK_STIP_DITHER_LOOP(5, p, b, tab, tabstart, tabend);
+                    MASK_STIP_DITHER_LOOP(6, p, b, tab, tabstart, tabend);
+                    MASK_STIP_DITHER_LOOP(7, p, b, tab, tabstart, tabend);
+                    dstptr += 8;
+                    tmp_offsets += 8;
+                }
+                // Do bits of unrolled loop that didn't fit
+                dx = dstptr - orig_dstptr;
+                for (; x < lmt_dst_width; x++) {
+                    MASK_STIP_DITHER_LOOP((x - dx), p, b, tab, tabstart, tabend);
+                }
+                break;
         }
     }
 
@@ -810,14 +808,14 @@ Pad_DrawImage(Display *display, Pad_Win *win, Drawable dbl, GC gc,
     } else {
         XPutImage(display, dbl, gc, xim,
                   0, 0, lmt_dst_left, lmt_dst_top, lmt_dst_width, lmt_dst_height);
-   }
+    }
 
     if (stipple || mask) {
         XSetFunction(display, gc, GXcopy);
         XSetFillStyle(display, gc, FillSolid);
     }
 
-    delete [] offsets;
+    delete[] offsets;
 
-    return(rc);
+    return (rc);
 }
