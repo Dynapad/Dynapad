@@ -214,18 +214,22 @@ CreateWindow(Pad_Win *parent, char *name) {
                 }
                 for (j = 0; j < info->num_classes; j++) {
                     switch (device->classes[j].input_class) {
-                        case ValuatorClass: DeviceMotionNotify(device, motion_type, event_list[number]);
+                        case ValuatorClass: {
+                            DeviceMotionNotify(device, motion_type, event_list[number]);
                             number++;
                             ProximityIn(device, proximity_in_type, event_list[number]);
                             number++;
                             ProximityOut(device, proximity_out_type, event_list[number]);
                             number++;
                             break;
-                        case ButtonClass: DeviceButtonPress(device, button_press_type, event_list[number]);
+                        }
+                        case ButtonClass: {
+                            DeviceButtonPress(device, button_press_type, event_list[number]);
                             number++;
                             DeviceButtonRelease(device, button_release_type, event_list[number]);
                             number++;
                             break;
+                        }
                     }
                 }
             }
@@ -273,9 +277,7 @@ CreateWindow(Pad_Win *parent, char *name) {
                  ButtonPressMask |
                  ButtonReleaseMask |
                  KeyPressMask |
-                 KeyReleaseMask
-    );
-
+                 KeyReleaseMask);
 
     // Create Pad++ window out of X window
     win = new Pad_Win(display, screen, visual, colormap, depth, name, id);
