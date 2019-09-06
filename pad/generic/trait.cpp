@@ -29,125 +29,104 @@ software in general.
 //
 
 Pad_Trait::Pad_Trait(int id)
-          : _id(id)
-{
+    : _id(id) {
 }
 
-Pad_Trait::~Pad_Trait()
-{
+Pad_Trait::~Pad_Trait() {
 }
 
 int
-Pad_Trait::Id()
-{
+Pad_Trait::Id() {
     return _id;
 }
 
 Pad_Bool
-Pad_Trait::Set_value(char*)
-{
+Pad_Trait::Set_value(char *) {
     return FALSE;
 }
 
 Pad_Bool
-Pad_Trait::Get_value(char*&)
-{
+Pad_Trait::Get_value(char *&) {
     return FALSE;
 }
 
 Pad_Bool
-Pad_Trait::Set_value(Pad_String*)
-{
+Pad_Trait::Set_value(Pad_String *) {
     return FALSE;
 }
 
 Pad_Bool
-Pad_Trait::Get_value(Pad_String*&)
-{
+Pad_Trait::Get_value(Pad_String *&) {
     return FALSE;
 }
 
 Pad_Bool
-Pad_Trait::Set_value(Pad_Callback*)
-{
+Pad_Trait::Set_value(Pad_Callback *) {
     return FALSE;
 }
 
 Pad_Bool
-Pad_Trait::Get_value(Pad_Callback*&)
-{
+Pad_Trait::Get_value(Pad_Callback *&) {
     return FALSE;
 }
 
 Pad_Bool
-Pad_Trait::Set_value(Pad_List*)
-{
+Pad_Trait::Set_value(Pad_List *) {
     return FALSE;
 }
 
 Pad_Bool
-Pad_Trait::Get_value(Pad_List*&)
-{
+Pad_Trait::Get_value(Pad_List *&) {
     return FALSE;
 }
 
 Pad_Bool
-Pad_Trait::Set_value(Pad_NoiseData*)
-{
+Pad_Trait::Set_value(Pad_NoiseData *) {
     return FALSE;
 }
 
 Pad_Bool
-Pad_Trait::Get_value(Pad_NoiseData*&)
-{
+Pad_Trait::Get_value(Pad_NoiseData *&) {
     return FALSE;
 }
 
 Pad_Bool
-Pad_Trait::Set_value(Pad_Sticky*)
-{
+Pad_Trait::Set_value(Pad_Sticky *) {
     return FALSE;
 }
 
 Pad_Bool
-Pad_Trait::Get_value(Pad_Sticky*&)
-{
+Pad_Trait::Get_value(Pad_Sticky *&) {
     return FALSE;
 }
 
 Pad_Bool
-Pad_Trait::Set_value(int*)
-{
+Pad_Trait::Set_value(int *) {
     return FALSE;
 }
 
 Pad_Bool
-Pad_Trait::Get_value(int*&)
-{
+Pad_Trait::Get_value(int *&) {
     return FALSE;
 }
 
 Pad_Bool
-Pad_Trait::Set_value(float*)
-{
+Pad_Trait::Set_value(float *) {
     return FALSE;
 }
 
 Pad_Bool
-Pad_Trait::Get_value(float*&)
-{
+Pad_Trait::Get_value(float *&) {
     return FALSE;
 }
 
 Pad_Bool
-Pad_Trait::Set_value(unsigned char*)
-{
+Pad_Trait::Set_value(unsigned char *) {
     return FALSE;
 }
 
 Pad_Bool
-Pad_Trait::Get_value(unsigned char*&)
-{
+Pad_Trait::Get_value(unsigned char *&) {
     return FALSE;
 }
 
@@ -157,69 +136,59 @@ Pad_Trait::Get_value(unsigned char*&)
 //
 
 Pad_StringTrait::Pad_StringTrait(int id) :
-Pad_Trait(id)
-{
+    Pad_Trait(id) {
 }
 
 Pad_StringTrait::Pad_StringTrait(int id, char *d) :
-Pad_Trait(id),
-value(d)
-{
+    Pad_Trait(id),
+    value(d) {
 }
 
 Pad_StringTrait::Pad_StringTrait(int id, int len) :
-Pad_Trait(id),
-value(len)
-{
+    Pad_Trait(id),
+    value(len) {
 }
 
 Pad_StringTrait::Pad_StringTrait(int id, Pad_String *ps) :
-Pad_Trait(id),
-value(ps)
-{
+    Pad_Trait(id),
+    value(ps) {
 }
 
 Pad_StringTrait::Pad_StringTrait(int id, Pad_String &ps) :
-Pad_Trait(id),
-value(ps)
-{
+    Pad_Trait(id),
+    value(ps) {
 }
 
 Pad_StringTrait::Pad_StringTrait(int id, char *d, int len) :
-Pad_Trait(id),
-value(d, len)
-{
+    Pad_Trait(id),
+    value(d, len) {
 }
 
 
 Pad_Bool
-Pad_StringTrait::Set_value(Pad_String *ps)
-{
-    int rc=TRUE;
+Pad_StringTrait::Set_value(Pad_String *ps) {
+    int rc = TRUE;
     value.Set(ps);
     return rc;
 }
 
 Pad_Bool
-Pad_StringTrait::Get_value(Pad_String *&ps)
-{
-    int rc=TRUE;
+Pad_StringTrait::Get_value(Pad_String *&ps) {
+    int rc = TRUE;
     ps = &value;
     return rc;
 }
 
 Pad_Bool
-Pad_StringTrait::Set_value(char *ps)
-{
-    int rc=TRUE;
+Pad_StringTrait::Set_value(char *ps) {
+    int rc = TRUE;
     value.Set(ps);
     return rc;
 }
 
 Pad_Bool
-Pad_StringTrait::Get_value(char *&ps)
-{
-    int rc=TRUE;
+Pad_StringTrait::Get_value(char *&ps) {
+    int rc = TRUE;
     ps = value.Get();
     return rc;
 }
@@ -230,25 +199,22 @@ Pad_StringTrait::Get_value(char *&ps)
 //
 
 Pad_CallbackTrait::Pad_CallbackTrait(int id, Pad_Callback &callback) :
-Pad_Trait(id),
-value(callback)
-{
+    Pad_Trait(id),
+    value(callback) {
 }
 
 Pad_Bool
-Pad_CallbackTrait::Get_value(Pad_Callback *&val)
-{
-    Pad_Bool rc=TRUE;
+Pad_CallbackTrait::Get_value(Pad_Callback *&val) {
+    Pad_Bool rc = TRUE;
     val = &value;
     return rc;
 }
 
 Pad_Bool
-Pad_CallbackTrait::Set_value(Pad_Callback *val)
-{
-    Pad_Bool rc=TRUE;
-    if ( !val ) {
-      return FALSE;
+Pad_CallbackTrait::Set_value(Pad_Callback *val) {
+    Pad_Bool rc = TRUE;
+    if (!val) {
+        return FALSE;
     }
     value.Set(val);
     return rc;
@@ -259,24 +225,21 @@ Pad_CallbackTrait::Set_value(Pad_Callback *val)
 //
 
 Pad_NoiseTrait::Pad_NoiseTrait(int id) :
-Pad_Trait(id)
-{
+    Pad_Trait(id) {
 }
 
 Pad_Bool
-Pad_NoiseTrait::Get_value(Pad_NoiseData *&val)
-{
-    Pad_Bool rc=TRUE;
+Pad_NoiseTrait::Get_value(Pad_NoiseData *&val) {
+    Pad_Bool rc = TRUE;
     val = &value;
     return rc;
 }
 
 Pad_Bool
-Pad_NoiseTrait::Set_value(Pad_NoiseData *val)
-{
-    Pad_Bool rc=TRUE;
-    if ( !val ) {
-      return FALSE;
+Pad_NoiseTrait::Set_value(Pad_NoiseData *val) {
+    Pad_Bool rc = TRUE;
+    if (!val) {
+        return FALSE;
     }
     value = *val;
     return rc;
@@ -287,29 +250,25 @@ Pad_NoiseTrait::Set_value(Pad_NoiseData *val)
 //
 
 Pad_ListTrait::Pad_ListTrait(int id) :
-Pad_Trait(id)
-{
+    Pad_Trait(id) {
 }
 
 Pad_ListTrait::Pad_ListTrait(int id, Pad_List &list) :
-Pad_Trait(id),
-value(list)
-{
+    Pad_Trait(id),
+    value(list) {
 }
 
 Pad_Bool
-Pad_ListTrait::Get_value(Pad_List *&val)
-{
+Pad_ListTrait::Get_value(Pad_List *&val) {
     val = &value;
     return TRUE;
 }
 
 Pad_Bool
-Pad_ListTrait::Set_value(Pad_List *val)
-{
-    Pad_Bool rc=TRUE;
-    if ( !val ) {
-      return FALSE;
+Pad_ListTrait::Set_value(Pad_List *val) {
+    Pad_Bool rc = TRUE;
+    if (!val) {
+        return FALSE;
     }
     value = *val;
     return rc;
@@ -320,18 +279,15 @@ Pad_ListTrait::Set_value(Pad_List *val)
 //
 
 Pad_ZoomActionTrait::Pad_ZoomActionTrait(int id) :
-Pad_ListTrait(id)
-{
+    Pad_ListTrait(id) {
 }
 
 Pad_ZoomActionTrait::Pad_ZoomActionTrait(int id, Pad_List &list) :
-Pad_ListTrait(id, list)
-{
+    Pad_ListTrait(id, list) {
 }
 
 Pad_Bool
-Pad_ZoomActionTrait::Get_prevsizes(Pad_List *&val)
-{
+Pad_ZoomActionTrait::Get_prevsizes(Pad_List *&val) {
     val = &prevSizes;
     return TRUE;
 }
@@ -341,24 +297,21 @@ Pad_ZoomActionTrait::Get_prevsizes(Pad_List *&val)
 //
 
 Pad_StickyTrait::Pad_StickyTrait(int id) :
-Pad_Trait(id)
-{
+    Pad_Trait(id) {
 }
 
 Pad_Bool
-Pad_StickyTrait::Get_value(Pad_Sticky *&val)
-{
-    Pad_Bool rc=TRUE;
+Pad_StickyTrait::Get_value(Pad_Sticky *&val) {
+    Pad_Bool rc = TRUE;
     val = &value;
     return rc;
 }
 
 Pad_Bool
-Pad_StickyTrait::Set_value(Pad_Sticky *val)
-{
-    Pad_Bool rc=TRUE;
-    if ( !val ) {
-      return FALSE;
+Pad_StickyTrait::Set_value(Pad_Sticky *val) {
+    Pad_Bool rc = TRUE;
+    if (!val) {
+        return FALSE;
     }
     value = *val;
     return rc;
@@ -367,67 +320,58 @@ Pad_StickyTrait::Set_value(Pad_Sticky *val)
 // Pad_TreeNode traits
 
 Pad_TreeNodeTrait::Pad_TreeNodeTrait(int id) :
-Pad_Trait(id),
-value(NULL)
-{
+    Pad_Trait(id),
+    value(NULL) {
 }
 
 Pad_Bool
-Pad_TreeNodeTrait::Get_value(Pad_TreeNode *&val)
-{
-   val = value;
-   return TRUE;
+Pad_TreeNodeTrait::Get_value(Pad_TreeNode *&val) {
+    val = value;
+    return TRUE;
 }
 
 Pad_Bool
-Pad_TreeNodeTrait::Set_value(Pad_TreeNode *val)
-{
-   value = val;
-   return TRUE;
+Pad_TreeNodeTrait::Set_value(Pad_TreeNode *val) {
+    value = val;
+    return TRUE;
 }
 
 // Pad_TreeLayout traits
 
 Pad_TreeLayoutTrait::Pad_TreeLayoutTrait(int id) :
-Pad_Trait(id),
-value(NULL)
-{
+    Pad_Trait(id),
+    value(NULL) {
 }
 
 Pad_Bool
-Pad_TreeLayoutTrait::Get_value(Pad_TreeLayout *&val)
-{
-   val = value;
-   return TRUE;
+Pad_TreeLayoutTrait::Get_value(Pad_TreeLayout *&val) {
+    val = value;
+    return TRUE;
 }
 
 Pad_Bool
-Pad_TreeLayoutTrait::Set_value(Pad_TreeLayout *val)
-{
-   value = val;
-   return TRUE;
+Pad_TreeLayoutTrait::Set_value(Pad_TreeLayout *val) {
+    value = val;
+    return TRUE;
 }
 
 // usigned char traits
 
 Pad_UCharTrait::Pad_UCharTrait(int id, unsigned char val) :
-Pad_Trait(id),
-value(val)
-{
+    Pad_Trait(id),
+    value(val) {
 }
 
 Pad_Bool
-Pad_UCharTrait::Get_value(unsigned char *&val)
-{
+Pad_UCharTrait::Get_value(unsigned char *&val) {
     val = &value;
     return TRUE;
 }
 
 Pad_Bool
-Pad_UCharTrait::Set_value(unsigned char *val)
-{
+Pad_UCharTrait::Set_value(unsigned char *val) {
     if (!val) {
-      return FALSE;
+        return FALSE;
     }
 
     value = *val;
@@ -437,23 +381,20 @@ Pad_UCharTrait::Set_value(unsigned char *val)
 // float traits
 
 Pad_FloatTrait::Pad_FloatTrait(int id, float val) :
-Pad_Trait(id),
-value(val)
-{
+    Pad_Trait(id),
+    value(val) {
 }
 
 Pad_Bool
-Pad_FloatTrait::Get_value(float *&val)
-{
+Pad_FloatTrait::Get_value(float *&val) {
     val = &value;
     return TRUE;
 }
 
 Pad_Bool
-Pad_FloatTrait::Set_value(float *val)
-{
+Pad_FloatTrait::Set_value(float *val) {
     if (!val) {
-      return FALSE;
+        return FALSE;
     }
 
     value = *val;

@@ -1441,16 +1441,22 @@ EvalEvent(Pad_Object *padobject, ClientData data, Pad_Event *padevent) {
 
     while (!SCHEME_NULLP(proclist)) {
         proc = SCHEME_CAR(proclist);
-        if (scheme_setjmp(scheme_error_buf)) {
-            scheme_warning((char *) "sch_bind EvalEvent: failed");
-            result = scheme_true;
-        } else {
+
+//        intptr_t err_buf_offset = offsetof(Scheme_Thread, error_buf);
+//        Thread_Local_Variables *tlv = scheme_get_thread_local_variables();
+//        Scheme_Thread *sct = scheme_current_thread;
+//        int *error_buf = *(sct->error_buf);
+
+//        if (scheme_setjmp(scheme_error_buf)) {
+//            scheme_warning((char *) "sch_bind EvalEvent: failed");
+//            result = scheme_true;
+//        } else {
             result = scheme_eval(
                 scheme_make_pair(proc,
                                  scheme_make_pair(obj,
                                                   scheme_make_pair(event, scheme_null))),
                 scheme_get_env(scheme_current_config()));
-        }
+//        }
 
         if (result == scheme_false)
             break;
@@ -4288,6 +4294,7 @@ Scheme_Object *scheme_reload(Scheme_Env *env) {
 Scheme_Object *scheme_initialize(Scheme_Env *env) {
     return scheme_reload(env);
 }
+
 
 Scheme_Object *scheme_module_name() {
     /* This extension doesn't define a module: */

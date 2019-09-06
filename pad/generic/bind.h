@@ -57,47 +57,68 @@ software in general.
 #define EVENT_BUFFER_SIZE 30
 typedef struct BindingTable {
     XEvent eventRing[EVENT_BUFFER_SIZE];/* Circular queue of recent events
-					 * (higher indices are for more recent
-					 * events). */
-    int detailRing[EVENT_BUFFER_SIZE];	/* "Detail" information (keySym or
-					 * button or 0) for each entry in
-					 * eventRing. */
-    int curEvent;			/* Index in eventRing of most recent
-					 * event.  Newer events have higher
-					 * indices. */
-    Pad_HashTable *patternTable;	/* Used to map from an event to a list
-					 * of patterns that may match that
-					 * event.  Keys are PatternTableKey
-					 * structs, values are (PatSeq *). */
-    Pad_HashTable *objectTable;		/* Used to map from an object to a list
-					 * of patterns associated with that
-					 * object.  Keys are ClientData,
-					 * values are (PatSeq *). */
+                                         * (higher indices are for more recent
+					                    * events). */
+
+    int detailRing[EVENT_BUFFER_SIZE];  /* "Detail" information (keySym or
+                                         * button or 0) for each entry in
+                                         * eventRing. */
+
+    int curEvent;                       /* Index in eventRing of most recent
+					                     * event.  Newer events have higher
+                                         * indices. */
+
+    Pad_HashTable *patternTable;        /* Used to map from an event to a list
+                                         * of patterns that may match that
+                                         * event.  Keys are PatternTableKey
+                                         * structs, values are (PatSeq *). */
+
+    Pad_HashTable *objectTable;         /* Used to map from an object to a list
+                                         * of patterns associated with that
+                                         * object.  Keys are ClientData,
+                                         * values are (PatSeq *). */
 } BindingTable;
 
 class Pad_Object;
+
 class Pad_Callback;
 
 //
 // Declare function prototypes
 //
-void     Pad_AddBindingModifier(const char *modifier);
-void     Pad_BindEvent(BindingTable *bindingTable, XEvent *eventPtr, Pad_Event *padEvent,
-		       int numObjects, ClientData *objectPtr, Pad_Object *itemPtr);
+void Pad_AddBindingModifier(const char *modifier);
+
+void
+Pad_BindEvent(BindingTable *bindingTable,
+              XEvent *eventPtr,
+              Pad_Event *padEvent,
+              int numObjects,
+              ClientData *objectPtr,
+              Pad_Object *itemPtr);
+
 BindingTable *Pad_CreateBindingTable();
-unsigned long Pad_CreateBinding(BindingTable *bindingTable, ClientData object, 
-				const char *eventString, Pad_Callback *callback);
-void     Pad_DeleteAllBindings(BindingTable *bindingTable, ClientData object);
-int      Pad_DeleteBinding(BindingTable *bindingTable, ClientData object, 
-			   const char *eventString);
+
+unsigned long
+Pad_CreateBinding(BindingTable *bindingTable, ClientData object, const char *eventString, Pad_Callback *callback);
+
+void Pad_DeleteAllBindings(BindingTable *bindingTable, ClientData object);
+
+int Pad_DeleteBinding(BindingTable *bindingTable, ClientData object, const char *eventString);
+
 Pad_Bool Pad_DeleteBindingModifier(const char *modifier);
-void     Pad_DeleteBindingTable(BindingTable *bindingTable);
-Pad_Callback *   Pad_GetCallback(BindingTable *bindingTable, ClientData object, const char *eventString);
-void     Pad_GetAllBindings(BindingTable *bindingTable, ClientData object,
-		Pad_List &list);
-int      Pad_GetBindingModifier(const char *modifier);
-const char *   Pad_GetBindingModifier(int mode);
-const char *   Pad_GetEventName(int type);
-void     Pad_Expand_event_macros(char input, Pad_Event *padEvent, KeySym keySym);
+
+void Pad_DeleteBindingTable(BindingTable *bindingTable);
+
+Pad_Callback *Pad_GetCallback(BindingTable *bindingTable, ClientData object, const char *eventString);
+
+void Pad_GetAllBindings(BindingTable *bindingTable, ClientData object, Pad_List &list);
+
+int Pad_GetBindingModifier(const char *modifier);
+
+const char *Pad_GetBindingModifier(int mode);
+
+const char *Pad_GetEventName(int type);
+
+void Pad_Expand_event_macros(char input, Pad_Event *padEvent, KeySym keySym);
 
 #endif

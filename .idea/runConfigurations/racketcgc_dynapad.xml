@@ -1,8 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="racketcgc+dynapad" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-f test/load_dynapad.rkt" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Dynapad" TARGET_NAME="dynapad" CONFIG_NAME="Debug" RUN_PATH="/usr/local/opt/racket/bin/racketcgc">
-    <envs>
-      <env name="DYLD_INSERT_LIBRARIES" value="/usr/lib/libgmalloc.dylib" />
-    </envs>
+  <configuration default="false" name="racketcgc+dynapad" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="-f test/load_dynapad.rkt -i" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="Dynapad" TARGET_NAME="dynapad" CONFIG_NAME="Debug" RUN_PATH="/usr/local/opt/racket/bin/racketcgc">
     <method v="2">
       <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
     </method>
