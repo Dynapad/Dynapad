@@ -34,6 +34,8 @@ find_package(Freetype MODULE REQUIRED)
 
 find_package(TCL MODULE REQUIRED)
 
+find_package(BerkeleyDB MODULE REQUIRED)
+
 add_definitions(-DXSHM)
 
 add_subdirectory(pad)
@@ -49,7 +51,8 @@ target_include_directories(dynapad
     ${X11_INCLUDE_DIR}
     ${FREETYPE_INCLUDE_DIRS}
     ${TCL_INCLUDE_PATH}
-    ${TK_INCLUDE_PATH})
+    ${TK_INCLUDE_PATH}
+    ${BerkeleyDB_INCLUDE_DIRS})
 
 target_link_libraries(dynapad
   PRIVATE
