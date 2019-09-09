@@ -10,6 +10,14 @@ if (${FORCE_COLORED_OUTPUT})
     endif()
 endif()
 
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+#    set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address ")
+#    set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
+
+#    set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=undefined")
+#    set (CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=undefined")
+endif()
+
 if (UNIX AND NOT APPLE)
     set(LINUX TRUE)
 endif()
@@ -26,6 +34,8 @@ find_package(Freetype MODULE REQUIRED)
 
 find_package(TCL MODULE REQUIRED)
 
+find_package(BerkeleyDB MODULE REQUIRED)
+
 add_definitions(-DXSHM)
 
 add_subdirectory(pad)
@@ -41,7 +51,8 @@ target_include_directories(dynapad
     ${X11_INCLUDE_DIR}
     ${FREETYPE_INCLUDE_DIRS}
     ${TCL_INCLUDE_PATH}
-    ${TK_INCLUDE_PATH})
+    ${TK_INCLUDE_PATH}
+    ${BerkeleyDB_INCLUDE_DIRS})
 
 target_link_libraries(dynapad
   PRIVATE

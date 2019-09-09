@@ -197,9 +197,9 @@ typedef struct {
  * USER -               Non-zero means there is a user-defined modifier
  */
 
-#define DOUBLE        1
-#define TRIPLE        2
-#define USER            4
+#define DOUBLE 1 << 0
+#define TRIPLE 1 << 1
+#define USER   1 << 2
 static int max_mode = USER;
 
 /*
@@ -271,8 +271,8 @@ static Pad_HashTable *modTable;
 
 typedef struct {
     const char *name;   /* Name of event. */
-    int type;            /* Event type for X, such as ButtonPress. */
-    int eventMask;        /* Mask bits (for XSelectInput) for this event type. */
+    int type;           /* Event type for X, such as ButtonPress. */
+    int eventMask;      /* Mask bits (for XSelectInput) for this event type. */
 } EventInfo;
 
 /*
@@ -330,24 +330,24 @@ static Pad_HashTable *eventTable;
  * out quickly where to extract information from events.
  */
 
-#define KEY_BUTTON_MOTION    0x1
-#define CROSSING        0x2
-#define FOCUS            0x4
-#define EXPOSE            0x8
-#define VISIBILITY        0x10
+#define KEY_BUTTON_MOTION   0x1
+#define CROSSING            0x2
+#define FOCUS               0x4
+#define EXPOSE              0x8
+#define VISIBILITY         0x10
 #define BIND_CREATE        0x20
-#define MAP            0x40
-#define REPARENT        0x80
+#define MAP                0x40
+#define REPARENT           0x80
 #define CONFIG            0x100
 #define CONFIG_REQ        0x200
 #define RESIZE_REQ        0x400
-#define GRAVITY            0x800
-#define PROP            0x1000
+#define GRAVITY           0x800
+#define PROP             0x1000
 #define SEL_CLEAR        0x2000
-#define SEL_REQ            0x4000
-#define SEL_NOTIFY        0x8000
+#define SEL_REQ          0x4000
+#define SEL_NOTIFY       0x8000
 #define COLORMAP        0x10000
-#define MAPPING            0x20000
+#define MAPPING         0x20000
 #define ACTIVATE        0x40000
 
 static int flagArray[TK_LASTEVENT] = {
@@ -1285,7 +1285,7 @@ Pad_BindEvent(BindingTable *bindPtr, XEvent *eventPtr, Pad_Event *padEvent,
                 *debug_event += debug_ds;
                 *debug_event += " ";
                 if (itemPtr) {
-                    *debug_event += (int)itemPtr->id;
+                    *debug_event += (int) itemPtr->id;
                 } else {
                     *debug_event += "1";
                 }

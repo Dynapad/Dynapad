@@ -46,17 +46,18 @@ software in general.
 // Forward reference static procedures
 //
 // [unused]: static void Destroy_window(char *clientData);
-static int  New_tcl_pad(ClientData clientData, int argc, char **argv);
+static int New_tcl_pad(ClientData clientData, int argc, char **argv);
+
 static void Event_proc(ClientData clientData, XEvent *eventPtr);
 // [unused]: static void Initialize_unit_factors(Pad_TkWin *tkwin);
 
-int         motion_type = -1;
-int         button_press_type = -1;
-int         button_release_type = -1;
-int         key_press_type = -1;
-int         key_release_type = -1;
-int         proximity_in_type = -1;
-int         proximity_out_type = -1;
+int motion_type = -1;
+int button_press_type = -1;
+int button_release_type = -1;
+int key_press_type = -1;
+int key_release_type = -1;
+int proximity_in_type = -1;
+int proximity_out_type = -1;
 
 ////////////////////////////////////////////////////////////////////////////
 //
@@ -71,24 +72,22 @@ int         proximity_out_type = -1;
 // (such as pack or grid before it will appear).
 //
 Pad_Bool
-Pad_Create_win(char *padName)
-{
+Pad_Create_win(char *padName) {
     int rc;
     char *args[2];
 
     Pad_InitIM();
-    
-    args[0] = (char *)"pad";
-    args[1] = padName;
-    rc = New_tcl_pad((ClientData)NULL, 2, args);
 
-    return((rc == PAD_OK) ? TRUE : FALSE);
+    args[0] = (char *) "pad";
+    args[1] = padName;
+    rc = New_tcl_pad((ClientData) NULL, 2, args);
+
+    return ((rc == PAD_OK) ? TRUE : FALSE);
 }
 
 static
 void
-proc(ClientData clientdata, int mask)
-{
+proc(ClientData clientdata, int mask) {
     Pad_Win *win;
     Display *display;
     int n;
@@ -97,69 +96,69 @@ proc(ClientData clientdata, int mask)
     // [unused]: int o = 0;
     XEvent nextevent;
 
-    win = (Pad_Win *)clientdata;
+    win = (Pad_Win *) clientdata;
     display = win->dpy->display;
     XSync(display, False);
     n = QLength(display);
     while (n) {
 
         //cerr << "proc " << n << " " << m << " " << o++ << endl;
-	XNextEvent(display, &event);
+        XNextEvent(display, &event);
 
-	// X Input Extension event types are dynamically defined.
-	// Map them to static values to simplify use.
-	if (event.type == motion_type)
-	  event.type = MotionType;
-	else if (event.type == button_press_type)
-	  event.type = ButtonPressType;
-	else if (event.type == button_release_type)
-	  event.type = ButtonReleaseType;
-	else if (event.type == proximity_in_type)
-	  event.type = ProximityInType;
-	else if (event.type == proximity_out_type)
-	  event.type = ProximityOutType;
+        // X Input Extension event types are dynamically defined.
+        // Map them to static values to simplify use.
+        if (event.type == motion_type)
+            event.type = MotionType;
+        else if (event.type == button_press_type)
+            event.type = ButtonPressType;
+        else if (event.type == button_release_type)
+            event.type = ButtonReleaseType;
+        else if (event.type == proximity_in_type)
+            event.type = ProximityInType;
+        else if (event.type == proximity_out_type)
+            event.type = ProximityOutType;
 
-	switch (event.type) {
-	  case Expose:
-	  case ConfigureNotify:
-	  case DestroyNotify:
-	  case MapNotify:
-	  case UnmapNotify:
-	    Event_proc(win, &event);
-	    break;
-	  case MotionNotify:
-	    while (1) {
-	      if (QLength(display) == 0)
-	        break;
-	      if (XCheckTypedEvent(display, MotionNotify, &nextevent) == False)
-	        break;
-	      memcpy(&event, &nextevent, sizeof(XPointerMovedEvent));
-	    }
-	  case MotionType:
-	    while (1) {
-	      if (QLength(display) == 0)
-	        break;
-	      if (XCheckTypedEvent(display, motion_type, &nextevent) == False)
-	        break;
-	      nextevent.type = MotionType;
-	      memcpy(&event, &nextevent, sizeof(XDeviceMotionEvent));
-	    }
-	  case EnterNotify:
-	  case LeaveNotify:
-	  case ButtonPress:
-	  case ButtonRelease:
-	  case KeyPress:
-	  case KeyRelease:
-	  case ButtonPressType:
-	  case ButtonReleaseType:
-          case ProximityInType:
-          case ProximityOutType:
-            Pad_Bind_proc(win, &event);
-	    break;
-	  case MappingNotify:
-	    XRefreshKeyboardMapping(&event.xmapping);
-	    break;
-	}
+        switch (event.type) {
+            case Expose:
+            case ConfigureNotify:
+            case DestroyNotify:
+            case MapNotify:
+            case UnmapNotify:
+                Event_proc(win, &event);
+                break;
+            case MotionNotify:
+                while (1) {
+                    if (QLength(display) == 0)
+                        break;
+                    if (XCheckTypedEvent(display, MotionNotify, &nextevent) == False)
+                        break;
+                    memcpy(&event, &nextevent, sizeof(XPointerMovedEvent));
+                }
+            case MotionType:
+                while (1) {
+                    if (QLength(display) == 0)
+                        break;
+                    if (XCheckTypedEvent(display, motion_type, &nextevent) == False)
+                        break;
+                    nextevent.type = MotionType;
+                    memcpy(&event, &nextevent, sizeof(XDeviceMotionEvent));
+                }
+            case EnterNotify:
+            case LeaveNotify:
+            case ButtonPress:
+            case ButtonRelease:
+            case KeyPress:
+            case KeyRelease:
+            case ButtonPressType:
+            case ButtonReleaseType:
+            case ProximityInType:
+            case ProximityOutType:
+                Pad_Bind_proc(win, &event);
+                break;
+            case MappingNotify:
+                XRefreshKeyboardMapping(&event.xmapping);
+                break;
+        }
         n = QLength(display);
     }
     m++;
@@ -169,8 +168,7 @@ XDeviceInfo *xinputdevices;
 int num_xinputdevices;
 
 static Pad_Win *
-CreateWindow(Pad_Win *parent, char *name)
-{
+CreateWindow(Pad_Win *parent, char *name) {
     Display *display;
     Screen *screen;
     Visual *visual;
@@ -179,14 +177,14 @@ CreateWindow(Pad_Win *parent, char *name)
     int id;
     Pad_Win *win;
 
-				// Open X connection, and create an X window
+    // Open X connection, and create an X window
 #ifdef CYGWIN
     if ((display = XOpenDisplay("127.0.0.1:0")) == NULL) {
 #else
     if ((display = XOpenDisplay(NULL)) == NULL) {
 #endif
-	cerr << "Error connecting to X server" << endl;
-	exit(1);
+        cerr << "Error connecting to X server" << endl;
+        exit(1);
     }
 
     screen = DefaultScreenOfDisplay(display);
@@ -195,96 +193,96 @@ CreateWindow(Pad_Win *parent, char *name)
     depth = DefaultDepthOfScreen(screen);
 
     XEventClass event_list[20];
-    int         number = 0;
+    int number = 0;
     {
-      XDeviceInfo *info;
-      XDevice     *device;
-      int         i, j;
+        XDeviceInfo *info;
+        XDevice *device;
+        int i, j;
 
-      xinputdevices = XListInputDevices(display, &num_xinputdevices);
-      for (i = 0; i < num_xinputdevices; i++) {
-        info = &xinputdevices[i];
-	if (info->use == IsXExtensionDevice) {
-	  device = XOpenDevice(display, info->id);
-	  if (!device) {
-            fprintf(stderr, "unable to open device %d\n", 0);
-            exit(1);
-          }
-          if (device->num_classes <= 0) {
-            fprintf(stderr, "num_classes %d <= 0\n", device->num_classes);
-            exit(1);
-          }
-	  for (j = 0; j < info->num_classes; j++) {
-	    switch (device->classes[j].input_class) {
-	      case ValuatorClass:
-	        DeviceMotionNotify(device, motion_type, event_list[number]);
-		number++;
-		ProximityIn(device, proximity_in_type, event_list[number]);
-		number++;
-		ProximityOut(device, proximity_out_type, event_list[number]);
-		number++;
-		break;
-	      case ButtonClass:
-	        DeviceButtonPress(device, button_press_type, event_list[number]);
-		number++;
-		DeviceButtonRelease(device, button_release_type, event_list[number]);
-		number++;
-	        break;
-	    }
-	  }
-	}
-      }
+        xinputdevices = XListInputDevices(display, &num_xinputdevices);
+        for (i = 0; i < num_xinputdevices; i++) {
+            info = &xinputdevices[i];
+            if (info->use == IsXExtensionDevice) {
+                device = XOpenDevice(display, info->id);
+                if (!device) {
+                    fprintf(stderr, "unable to open device %d\n", 0);
+                    exit(1);
+                }
+                if (device->num_classes <= 0) {
+                    fprintf(stderr, "num_classes %d <= 0\n", device->num_classes);
+                    exit(1);
+                }
+                for (j = 0; j < info->num_classes; j++) {
+                    switch (device->classes[j].input_class) {
+                        case ValuatorClass: {
+                            DeviceMotionNotify(device, motion_type, event_list[number]);
+                            number++;
+                            ProximityIn(device, proximity_in_type, event_list[number]);
+                            number++;
+                            ProximityOut(device, proximity_out_type, event_list[number]);
+                            number++;
+                            break;
+                        }
+                        case ButtonClass: {
+                            DeviceButtonPress(device, button_press_type, event_list[number]);
+                            number++;
+                            DeviceButtonRelease(device, button_release_type, event_list[number]);
+                            number++;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     id = XCreateWindow(display, RootWindowOfScreen(screen),
-		       WIN_DEFAULT_X, WIN_DEFAULT_Y, WIN_DEFAULT_WIDTH, WIN_DEFAULT_HEIGHT,
-		       0, depth, InputOutput, visual, 0, NULL);
+                       WIN_DEFAULT_X, WIN_DEFAULT_Y, WIN_DEFAULT_WIDTH, WIN_DEFAULT_HEIGHT,
+                       0, depth, InputOutput, visual, 0, NULL);
 
     {
-        char *windowname = (char *)"Dynapad";
-	char *iconname = (char *)"dynapad";
-	XTextProperty xwindowName, xiconName;
-	XClassHint *xclasshint;
-	/* without XSizeHints some window managers don't provide a border
-	 * that can be clicked on for moving the window
-	 */
-	XSizeHints *xsizehints;
+        char *windowname = (char *) "Dynapad";
+        char *iconname = (char *) "dynapad";
+        XTextProperty xwindowName, xiconName;
+        XClassHint *xclasshint;
+        /* without XSizeHints some window managers don't provide a border
+         * that can be clicked on for moving the window
+         */
+        XSizeHints *xsizehints;
 
-	XStringListToTextProperty(&windowname, 1, &xwindowName);
-	XStringListToTextProperty(&iconname, 1, &xiconName);
-	xclasshint = XAllocClassHint();
-	xclasshint->res_name = (char *)"Dynapad";
-	xclasshint->res_class = (char *)"Dynapad";
-	xsizehints = XAllocSizeHints();
-	xsizehints->flags = PPosition | PSize;
-	XSetWMProperties(display, id, &xwindowName, &xiconName, 0, 0,
-	  xsizehints, NULL, xclasshint);
+        XStringListToTextProperty(&windowname, 1, &xwindowName);
+        XStringListToTextProperty(&iconname, 1, &xiconName);
+        xclasshint = XAllocClassHint();
+        xclasshint->res_name = (char *) "Dynapad";
+        xclasshint->res_class = (char *) "Dynapad";
+        xsizehints = XAllocSizeHints();
+        xsizehints->flags = PPosition | PSize;
+        XSetWMProperties(display, id, &xwindowName, &xiconName, 0, 0,
+                         xsizehints, NULL, xclasshint);
     }
     XMapWindow(display, id);
 
-				// Initialize X events
+    // Initialize X events
     if (number > 0)
-      if (XSelectExtensionEvent(display, id, event_list, number)) {
-        fprintf(stderr, "error selecting extended events\n");
-        exit(1);
-      }
-    XSelectInput(display, id, 
-		 StructureNotifyMask |
-		 ExposureMask | 
-		 EnterWindowMask | 
-		 LeaveWindowMask | 
-		 PointerMotionMask | 
-		 ButtonPressMask | 
-		 ButtonReleaseMask | 
-		 KeyPressMask | 
-		 KeyReleaseMask
-		 );
+        if (XSelectExtensionEvent(display, id, event_list, number)) {
+            fprintf(stderr, "error selecting extended events\n");
+            exit(1);
+        }
+    XSelectInput(display, id,
+                 StructureNotifyMask |
+                 ExposureMask |
+                 EnterWindowMask |
+                 LeaveWindowMask |
+                 PointerMotionMask |
+                 ButtonPressMask |
+                 ButtonReleaseMask |
+                 KeyPressMask |
+                 KeyReleaseMask);
 
-
-				// Create Pad++ window out of X window
+    // Create Pad++ window out of X window
     win = new Pad_Win(display, screen, visual, colormap, depth, name, id);
 
-    return(win);
+    return (win);
 }
 
 //
@@ -298,37 +296,35 @@ CreateWindow(Pad_Win *parent, char *name)
 //   * Configures this Pad for the given arguments
 //
 static int
-New_tcl_pad(ClientData clientData, int argc, char **argv)
-{
+New_tcl_pad(ClientData clientData, int argc, char **argv) {
     char *name;
     Pad_String newName;
-    Pad_Win *main = (Pad_Win *)clientData;
+    Pad_Win *main = (Pad_Win *) clientData;
     Pad_HashTableIterator hi;
     // unused Pad_Language *language;
     Display *display;
     int fd;
     Pad_Win *win;
 
-    static int padId = 0;	// Counter for generating unique pad names
+    static int padId = 0;    // Counter for generating unique pad names
 
     //
     // Create the window.
     //
     if (argc > 1) {
-	name = argv[1];
-    }
-    else {
-	newName.Printf(".pad%d", padId++);
-	name = newName.Get();
+        name = argv[1];
+    } else {
+        newName.Printf(".pad%d", padId++);
+        name = newName.Get();
     }
     win = CreateWindow(main, name);
     if (win == NULL) {
-	return(PAD_ERROR);
+        return (PAD_ERROR);
     }
 
     display = win->dpy->display;
     fd = ConnectionNumber(display);
-    Pad_CreateFileHandler(fd, display, PAD_READABLE, proc, (void *)win);
+    Pad_CreateFileHandler(fd, display, PAD_READABLE, proc, (void *) win);
     XSync(display, FALSE);
 
     win->Make_window_restorer();
@@ -351,31 +347,29 @@ New_tcl_pad(ClientData clientData, int argc, char **argv)
 //		
 // This gets called to handle Pad window configuration events
 //
-static void 
-Event_proc(ClientData clientData, XEvent *eventPtr)
-{
-    Pad_Win *win = (Pad_Win *)clientData;
+static void
+Event_proc(ClientData clientData, XEvent *eventPtr) {
+    Pad_Win *win = (Pad_Win *) clientData;
 
-    switch (eventPtr->type)
-      {
-	case Expose:
-	  if (eventPtr->xexpose.count == 0) {
-	      win->Expose_win();
-	  }
-	  break;
+    switch (eventPtr->type) {
+        case Expose:
+            if (eventPtr->xexpose.count == 0) {
+                win->Expose_win();
+            }
+            break;
         case ConfigureNotify:
-	  win->Configure(eventPtr->xconfigure.width, eventPtr->xconfigure.height);
-	  break;
-	case DestroyNotify:
-	  //EventuallyFree((ClientData)win, Destroy_window);
-	  break;
-	case MapNotify:
-	  win->Map();
-	  break;
-	case UnmapNotify:
-	  win->Unmap();
-	  break;
-      }
+            win->Configure(eventPtr->xconfigure.width, eventPtr->xconfigure.height);
+            break;
+        case DestroyNotify:
+            //EventuallyFree((ClientData)win, Destroy_window);
+            break;
+        case MapNotify:
+            win->Map();
+            break;
+        case UnmapNotify:
+            win->Unmap();
+            break;
+    }
 }
 
 // [unused]:
@@ -386,7 +380,7 @@ Event_proc(ClientData clientData, XEvent *eventPtr)
 // Destroy_window(char *clientData)
 // {
 //     Pad_TkWin *tkwin = (Pad_TkWin *)clientData;
-    
+
 //     delete tkwin;
 // }
 
