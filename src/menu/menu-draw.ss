@@ -95,7 +95,7 @@
     linepane
     (lambda (button event)
       (clear-all-menu-buttons)
-      (send button set-label on_Line)
+      (send button set-label on_line)
       (set! Draw-multiple (button-double-clicked?))
       (for-all-pads (lambda (argPAD)
         (initDraw argPAD line% "Draw")))))
