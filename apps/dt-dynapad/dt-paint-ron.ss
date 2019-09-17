@@ -61,9 +61,9 @@
         (if (< (dist (car *old-pen*) bbc) 100)
           (begin
             ;draw it
-		    (set! crds (apply append (cadr *old-pen*) (caddr *old-pen*) (list bur bll)))
+            (set! crds (apply append (cadr *old-pen*) (caddr *old-pen*) (list bur bll)))
             (set! *old-pen* (list bbc bll bur))
-		    (make-object polygon% dynapad crds)
+            (make-object polygon% dynapad crds)
           )
           (begin
             (set! *old-pen* #f)
@@ -85,13 +85,13 @@
 (define (toggle-users-brush user-id)
   (define old-brush (vector-ref *user-brush-list* user-id))
   (vector-set! *user-brush-list* user-id
-	  (case old-brush
-	    ((0) 1)
-	    ((1) 2)
-	    ((2) 3)
-	    ((3) 0)
-	    (else 0)
-	  )
+      (case old-brush
+        ((0) 1)
+        ((1) 2)
+        ((2) 3)
+        ((3) 0)
+        (else 0)
+      )
   )
 ;  (if (eq? (vector-ref *user-brush-list* user-id) mk-oval)
 ;    (vector-set! *user-brush-list* user-id mk-pen)

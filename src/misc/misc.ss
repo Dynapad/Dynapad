@@ -11,9 +11,9 @@
   (syntax-rules ()
     ((_ lst)
        (and (not (null? lst))
-	    (let ((val (car lst)))
-	      (set! lst (cdr lst))
-	      val)))))
+        (let ((val (car lst)))
+          (set! lst (cdr lst))
+          val)))))
 
 (define (foreach elements body) (for-each body elements))
 (define (mforeach elements body) (mfor-each body elements))
@@ -44,8 +44,8 @@
   (if (null? list)
       #f
       (if (pred (car list))
-	  (car list)
-	  (find pred (cdr list)))))
+      (car list)
+      (find pred (cdr list)))))
 (define (cadr-equal? lst match)
   (if (or (null? lst) (null? (cdr lst))) #f
       (equal? (cadr lst) match)))
@@ -69,30 +69,30 @@
           (when (equal? cmd 'add)
             (when (not (member (list new_fnc) callback_list))
               (push! (list new_fnc) callback_list)))
-	  (when (equal? cmd 'add-last)
-	    (when (not (member (list new_fnc) callback_list))
-	      (endpush! callback_list (list new_fnc))))
+      (when (equal? cmd 'add-last)
+        (when (not (member (list new_fnc) callback_list))
+          (endpush! callback_list (list new_fnc))))
           (when (equal? cmd 'remove)
             (set! callback_list (remove (list new_fnc) callback_list))) )
         ; 3
         ((cmd new_fnc name)
-	 (case cmd
-	   ((add) 
-	      (push! (list new_fnc name) callback_list))
-	   ((add-last)
-	      (endpush! callback_list
-			(list new_fnc name)))
-	   ((find)
-	      (find (lambda (x) (cadr-equal? x name)) callback_list))
-	   ((remove) 
-	      (set! callback_list (apply append
-	        (map
-		 (lambda (p)
-		   (if (and (not (null? (cdr p))) (equal? (cadr p) name))
-		       '() ;
-		       (list p)))
-		 callback_list))))
-	  ((remq)
+     (case cmd
+       ((add) 
+          (push! (list new_fnc name) callback_list))
+       ((add-last)
+          (endpush! callback_list
+            (list new_fnc name)))
+       ((find)
+          (find (lambda (x) (cadr-equal? x name)) callback_list))
+       ((remove) 
+          (set! callback_list (apply append
+            (map
+         (lambda (p)
+           (if (and (not (null? (cdr p))) (equal? (cadr p) name))
+               '() ;
+               (list p)))
+         callback_list))))
+      ((remq)
             (set! callback_list (apply append
               (map
                 (lambda (p)
@@ -100,8 +100,8 @@
                     '() ;
                     (list p)))
                 callback_list))))
-	  )
-	 )))))
+      )
+     )))))
 
 (define-syntax exec-any-callbacks
   (syntax-rules ()
@@ -218,14 +218,14 @@
 ;  and return the symbols value
 ;Usage:
 ;  (with obj (ic (make-object blah% ...) (msg val) (msg val))
-;	     (do-more obj)
-;	     (do-still-more obj))   --> obj
+;         (do-more obj)
+;         (do-still-more obj))   --> obj
 (define-syntax with
   (syntax-rules ()
     ((_ obj-label ic-clause also ...)
        (let ((obj-label ic-clause))
-	 also ... ;ops which may refer to obj-label
-	 obj-label))))  ;return obj
+     also ... ;ops which may refer to obj-label
+     obj-label))))  ;return obj
 
 (define-syntax dotimes
   (syntax-rules ()
@@ -244,8 +244,8 @@
 ;   `(letrec 
 ;      ([loop 
 ;        (lambda () 
-; 	 (if ,cnd
-; 	     (begin ,@dos (loop))))])
+;      (if ,cnd
+;          (begin ,@dos (loop))))])
 ;      (loop)))
 
 ;(define-syntax unless (syntax-rules ()
@@ -301,26 +301,26 @@
 (define (safemax . args)
   (let ((non#f (filter (lambda (x) x) args)))
     (if (null? non#f)
-	#f
-	(apply max non#f))))
+    #f
+    (apply max non#f))))
 
 (define (safemin . args)
   (let ((alltrue? (andmap (lambda (x) x) args)))
     (if alltrue?
-	(apply min args)
-	#f)))
+    (apply min args)
+    #f)))
 
 (define (ensure-number str)
   (cond ((not str) 0)
-	((equal? "" str) 0)
-	((string? str) (string->number str))
-	(else str)))
+    ((equal? "" str) 0)
+    ((string? str) (string->number str))
+    (else str)))
     
 (define (ensure-string str)
   (cond ((string? str) str)
-	((number? str) (number->string str))
-	((path? str) (path->string str))
-	(else str)))
+    ((number? str) (number->string str))
+    ((path? str) (path->string str))
+    (else str)))
 
 ;use this instead of regexp-match if there's any chance that path is a
 ; #path obj (plt-299 and later) instead of a string
@@ -339,9 +339,9 @@
 ;if a matches head of b, returns tail of b after a
 ;when a=b, returns null
   (cond ((null? a) b)
-	((null? b) #f)
-	((not (eq-fn (car a) (car b))) #f)
-	(else (list-head? (cdr a) (cdr b) eq-fn))))
+    ((null? b) #f)
+    ((not (eq-fn (car a) (car b))) #f)
+    (else (list-head? (cdr a) (cdr b) eq-fn))))
 
 (define (find-layer argPAD name)
   (let ((ret (filter (lambda (lyr) (if (equal? name (send lyr name)) lyr #f))

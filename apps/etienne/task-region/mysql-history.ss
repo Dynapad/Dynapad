@@ -15,10 +15,10 @@
     (define/public (select-one-value query . default)
       (define result (select query))
       (cond ((null? default) (set! default #f))
-	    ((list? default) (set! default (car default))))
+        ((list? default) (set! default (car default))))
       (if (not result)
-	  default
-	  (caar result)))
+      default
+      (caar result)))
     )
   )
 
@@ -56,29 +56,29 @@
       (define d (seconds->date (current-seconds)))
       (select
        (format "id from event where time>\"~a\" and time<\"~a\" and type>200"
-	       (format "~a-~a-~a 00:00:00" (date-year d) (date-month d) (date-day d))
-	       (format "~a-~a-~a 23:59:59" (date-year d) (date-month d) (date-day d)))))
+           (format "~a-~a-~a 00:00:00" (date-year d) (date-month d) (date-day d))
+           (format "~a-~a-~a 23:59:59" (date-year d) (date-month d) (date-day d)))))
 
     (define/public (event-meta event meta)
       (define r
-	(select
-	 (format
-	  "value from event_meta where event=~a and meta=~a"
-	  event meta)))
+    (select
+     (format
+      "value from event_meta where event=~a and meta=~a"
+      event meta)))
       (if (null? r)
-	  #f
-	  (caar r)))
+      #f
+      (caar r)))
 
     (define/public (domain-title domain)
       (let ((event (select-one-value
-		    (format
-		     "event from event_meta where value=\"http://~a/\" order by id desc"
-		     domain)
-		    #f)))
-	(if event
-	    (select-one-value
-	     (format "value from event_meta where meta=3 and event=~a" event))
-	    domain)))
+            (format
+             "event from event_meta where value=\"http://~a/\" order by id desc"
+             domain)
+            #f)))
+    (if event
+        (select-one-value
+         (format "value from event_meta where meta=3 and event=~a" event))
+        domain)))
 
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

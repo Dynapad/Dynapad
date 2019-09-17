@@ -40,7 +40,7 @@
 (define (target-via-handle obj)
   (let ((hndl (get-hndl obj)))
     (if hndl (send hndl instances-except obj)
-	null)))
+    null)))
 
 (define default-brush-hilight%
   (class hilight%
@@ -63,28 +63,28 @@
       (case-lambda
        (() _color)
        ((c) (set! _color c)
-	    (sch_pen _cptr c))))
+        (sch_pen _cptr c))))
 ))
 
 (define (default-highlight-fn obj . highlight-class)
   ;return existing or new highlight
   (set! highlight-class (if (null? highlight-class)
-			    default-brush-hilight%
-			    (car highlight-class)))
+                default-brush-hilight%
+                (car highlight-class)))
   (let ((found (get-object-keyval obj 'highlight)))
     (if found
-	found
-	(let ((hl (make-object highlight-class (send obj dynapad) obj))
-	      (slct (send obj selected?)))
+    found
+    (let ((hl (make-object highlight-class (send obj dynapad) obj))
+          (slct (send obj selected?)))
       ;(if slct (send hl lower slct))
-	  (set-object-keyval obj 'highlight hl)
-	  hl))))
-			     
+      (set-object-keyval obj 'highlight hl)
+      hl))))
+                 
 (define (default-unhighlight-fn obj)
   (let ((hl (get-object-keyval obj 'highlight)))
     (when hl
-	  (send hl delete)
-	  (rem-object-keyval obj 'highlight))))
+      (send hl delete)
+      (rem-object-keyval obj 'highlight))))
 
 
 (define brush-set%
@@ -94,7 +94,7 @@
     ; target-objs-fn is (lambda (obj) ...) which specifies what obj brushes
     (field (target-list ()) ; alist of (target highlight-fn unhilight-fn) tuples
            (member-list ())
-	   (_enabled? #t))
+       (_enabled? #t))
     (public targets brushes?
             members selected-members)
 
@@ -113,14 +113,14 @@
 
     (define (add-target targ . fns)
       (when (list? targ)
-	    (set! fns (cdr targ))
-	    (set! targ (car targ)))
+        (set! fns (cdr targ))
+        (set! targ (car targ)))
       (if (null? fns)
-	  (set! fns (list default-highlight-fn default-unhighlight-fn)))
+      (set! fns (list default-highlight-fn default-unhighlight-fn)))
       (replace-else-push-onto-malist! assq targ fns target-list))
 ;      (when (not (assq obj target-list))
-;	    (push! 
-;	     (cons obj hilight-fn) target-list)))
+;        (push! 
+;         (cons obj hilight-fn) target-list)))
 
     (define (remove-target obj)
       (get-and-rem-from-malist! assq remq obj target-list))
@@ -129,7 +129,7 @@
 ; returns #f or list of (hilight-fn unhilight-fn) which specify how to (un)hilight obj
 ; list may have length<2-- then use default fns
       (let ((tuple (assq some-brush-set target-list)))
-	(and tuple (cdr tuple))))
+    (and tuple (cdr tuple))))
 
     (define members
       (case-lambda
@@ -148,14 +148,14 @@
     (define (add-member obj)
 ;(say "brush " this "adding obj " obj)
       (when (not (member obj member-list))
-	    (if _enabled?
-		(activate-member obj))
-	(send obj delete-callbacks 'add
-	      (lambda (o)
-		(send this members 'remove o)) this)
-;	(send obj post-build-ops 'add
-;	      (lambda (o)
-;		`(send obj refer-when-ready ,(send this id) 'members ''add obj)))
+        (if _enabled?
+        (activate-member obj))
+    (send obj delete-callbacks 'add
+          (lambda (o)
+        (send this members 'remove o)) this)
+;    (send obj post-build-ops 'add
+;          (lambda (o)
+;        `(send obj refer-when-ready ,(send this id) 'members ''add obj)))
         (set! member-list (cons obj member-list))))
 
     (define (remove-member obj)
@@ -171,58 +171,58 @@
     
     (define (bind-notify-brushes obj brushes)
       (if (null? brushes)
-	  (begin
-	    (let* ((tuple (get-and-rem-from-malist! assq remq 'brush-lambdas obj alist))
-		   (brush-lmb (cadr tuple))
-		   (unbrush-lmb (caddr tuple)))
-	      (bind obj "<Enter>" (remq brush-lmb (bind obj "<Enter>")))
-	      (bind obj "<Leave>" (remq unbrush-lmb (bind obj "<Leave>")))
-	    ; DiamondTouch-specific:
-	      (bind obj "dt-down" (remq brush-lmb (bind obj "dt-down")))
-	      (bind obj "dt-up"   (remq unbrush-lmb (bind obj "dt-up")))
-	    ))
-	  (begin
-	    (let ((brush-lambda (lambda (o e) (notify-brushes-of-obj-state brushes obj #t)))
-		  (unbrush-lambda (lambda (o e) (notify-brushes-of-obj-state brushes obj #f))))
-	      (get-else-push-onto-malist!
-	         assq (list 'brush-lambdas brush-lambda unbrush-lambda) obj alist)
-	      (bind obj "<Enter>" (cons brush-lambda (bind obj "<Enter>")))
-	      (bind obj "<Leave>" (cons unbrush-lambda (bind obj "<Leave>")))
-	      (bind obj "dt-down" (cons brush-lambda (bind obj "dt-down")))
-	      (bind obj "dt-up"   (cons unbrush-lambda (bind obj "dt-up")))
-	      ))))
+      (begin
+        (let* ((tuple (get-and-rem-from-malist! assq remq 'brush-lambdas obj alist))
+           (brush-lmb (cadr tuple))
+           (unbrush-lmb (caddr tuple)))
+          (bind obj "<Enter>" (remq brush-lmb (bind obj "<Enter>")))
+          (bind obj "<Leave>" (remq unbrush-lmb (bind obj "<Leave>")))
+        ; DiamondTouch-specific:
+          (bind obj "dt-down" (remq brush-lmb (bind obj "dt-down")))
+          (bind obj "dt-up"   (remq unbrush-lmb (bind obj "dt-up")))
+        ))
+      (begin
+        (let ((brush-lambda (lambda (o e) (notify-brushes-of-obj-state brushes obj #t)))
+          (unbrush-lambda (lambda (o e) (notify-brushes-of-obj-state brushes obj #f))))
+          (get-else-push-onto-malist!
+             assq (list 'brush-lambdas brush-lambda unbrush-lambda) obj alist)
+          (bind obj "<Enter>" (cons brush-lambda (bind obj "<Enter>")))
+          (bind obj "<Leave>" (cons unbrush-lambda (bind obj "<Leave>")))
+          (bind obj "dt-down" (cons brush-lambda (bind obj "dt-down")))
+          (bind obj "dt-up"   (cons unbrush-lambda (bind obj "dt-up")))
+          ))))
 
     (define (activate-member obj)
      ; (when (get-hndl obj) ; objects only have handles after one tries to get them
 ;      (send obj select-callbacks 'add brush-when-selected)
-	    (if (has-method? obj 'divisible)
-		(send obj divisible #f)) ;may be trouble...
-	    (let* ((entry (pushq-onto-malist-val-always! 'brush-set this obj alist))
-		   (brushes (cdr entry)))
-	      (bind-notify-brushes obj brushes))
+        (if (has-method? obj 'divisible)
+        (send obj divisible #f)) ;may be trouble...
+        (let* ((entry (pushq-onto-malist-val-always! 'brush-set this obj alist))
+           (brushes (cdr entry)))
+          (bind-notify-brushes obj brushes))
 ;(say (send obj alist))
-;	    (let ((old-brush-set (get-object-keyval obj 'brush-set)))
-;	      (when old-brush-set (send old-brush-set members 'remove obj)))
-;	    (set-object-keyval obj 'brush-set this))
-	    )
+;        (let ((old-brush-set (get-object-keyval obj 'brush-set)))
+;          (when old-brush-set (send old-brush-set members 'remove obj)))
+;        (set-object-keyval obj 'brush-set this))
+        )
 
     (define (deactivate-member obj)
 ;      (send obj select-callbacks 'remove brush-when-selected)
       (let ((remaining-entry (remq-clean-from-malist-val! 'brush-set this obj alist)))
-	(bind-notify-brushes obj (cdr remaining-entry))))
+    (bind-notify-brushes obj (cdr remaining-entry))))
 
 
     (define/public enable
       (case-lambda
        (() (enable #t))
        ((bool)
-	(if bool
-	    (unless _enabled? ;enable if not already
-		    (set! _enabled? #t)
-		    (foreach (members) (lambda (m) (activate-member m))))
-	    (when _enabled?   ;disable if not already
-		  (set! _enabled? #f)
-		  (foreach (members) (lambda (m) (deactivate-member m))))))))
+    (if bool
+        (unless _enabled? ;enable if not already
+            (set! _enabled? #t)
+            (foreach (members) (lambda (m) (activate-member m))))
+        (when _enabled?   ;disable if not already
+          (set! _enabled? #f)
+          (foreach (members) (lambda (m) (deactivate-member m))))))))
     (define/public (disable) (enable #f))
 
     (define (should-highlight? agent patient)
@@ -233,29 +233,29 @@
                  (patient-brush-sets (get-object-keyvals patient 'brush-set)))
              (and ;agent-brush-set
                   patient-brush-sets
-		  (ormap (lambda (bs) (send this brushes? bs))
-			 patient-brush-sets)))))
+          (ormap (lambda (bs) (send this brushes? bs))
+             patient-brush-sets)))))
     
 ;    (define/public brush-when-selected
 ;      (lambda (obj on)
 ;        (for-each (lambda (x)
-;		    (let ((highlight? (should-highlight? obj x)))
-;		      (when highlight?
-;			    (if on
-;				(apply highlight x highlight?)
-;				(apply unhighlight x highlight?)))))
-;		  (_target-objs-fn obj))))
+;            (let ((highlight? (should-highlight? obj x)))
+;              (when highlight?
+;                (if on
+;                (apply highlight x highlight?)
+;                (apply unhighlight x highlight?)))))
+;          (_target-objs-fn obj))))
 
     (define/public (brush-obj-targets obj on?)
       (let ((targets (_target-objs-fn obj)))
         (for-each (lambda (x)
-		    (let ((highlight-fns (should-highlight? obj x)))
-		      (when highlight-fns
-			    (if on?
-				;at this point, assumes (len highlight-fns)>1
-				((car highlight-fns) x)
-			        ((cadr highlight-fns) x)))))
-		  targets)))
+            (let ((highlight-fns (should-highlight? obj x)))
+              (when highlight-fns
+                (if on?
+                ;at this point, assumes (len highlight-fns)>1
+                ((car highlight-fns) x)
+                    ((cadr highlight-fns) x)))))
+          targets)))
   )
 )
 
@@ -268,18 +268,18 @@
   (class brush-set%
     (super-instantiate (void))
     (send this target-objs-fn
-	  (lambda (obj) ;for any obj, return union of all target-set members
-	                ; duplicates are possible if objs belong to >1 target-set
-	    (apply append (map (lambda (trgt) (send trgt members))
-			       (map car (send this targets))))))
+      (lambda (obj) ;for any obj, return union of all target-set members
+                    ; duplicates are possible if objs belong to >1 target-set
+        (apply append (map (lambda (trgt) (send trgt members))
+                   (map car (send this targets))))))
 
     (define/override (brush-obj-targets obj on?)
       (foreach (send this targets)
-	       (lambda (tuple)
-		 (let* ((brushset (car tuple))
-			(hilight-fns (cdr tuple))
-			(do-fn (if on? (car hilight-fns) (cadr hilight-fns))))
-		   (foreach (send brushset members) do-fn)))))
+           (lambda (tuple)
+         (let* ((brushset (car tuple))
+            (hilight-fns (cdr tuple))
+            (do-fn (if on? (car hilight-fns) (cadr hilight-fns))))
+           (foreach (send brushset members) do-fn)))))
 ))
 
 #|
@@ -316,11 +316,11 @@
 (define (register-object-with-brush-set obj setname)
   (let ((found (assq setname *brush-sets*)))
     (if (not found)
-	(begin
-	  (set! found (list setname
-			    (with newset (make-object brush-set%)
-				(send newset targets (list newset)))))
-	  (push! found *brush-sets*)))
+    (begin
+      (set! found (list setname
+                (with newset (make-object brush-set%)
+                (send newset targets (list newset)))))
+      (push! found *brush-sets*)))
     (send (cadr found) members 'add obj)))
 
 (define *highlight-duplicates?* #t)
@@ -330,7 +330,7 @@
    ((bool) 
       (set! *highlight-duplicates?* bool)
       (foreach (map cadr *brush-sets*)
-	       (lambda (bs) (send bs enable bool))))
+           (lambda (bs) (send bs enable bool))))
 ))
   
 
@@ -338,11 +338,11 @@
 (define (register-object-with-exhaustive-brush-set obj setname)
   (let ((found (assoc setname *brush-sets*)))
     (if (not found)
-	(begin
-	  (set! found (list setname
-			    (with newset (make-object exhaustive-brush-set%)
-				  (send newset targets (list newset)))))
-	  (push! found *brush-sets*)))
+    (begin
+      (set! found (list setname
+                (with newset (make-object exhaustive-brush-set%)
+                  (send newset targets (list newset)))))
+      (push! found *brush-sets*)))
     (send (cadr found) members 'add obj)))
 |#
 

@@ -19,8 +19,8 @@
 ; if none existing, make new using handle-class% and args
   (let* ((existing-hndls (get-handles url)))
     (if (null? existing-hndls)
-	(apply make-object hndl-class url args) ;make new
-	(choose-fn existing-hndls))))   ; reuse one
+    (apply make-object hndl-class url args) ;make new
+    (choose-fn existing-hndls))))   ; reuse one
 
 
 ;URL redirection
@@ -28,10 +28,10 @@
 ; if oldhead heads path, returns new path substituting newhead for oldhead
 ; else return #f
   (let* ((oldheadlist (explode-path->string oldhead))
-	 (pathlist (explode-path->string path))
-	 (tail	  (list-head? oldheadlist pathlist equal?)))
+     (pathlist (explode-path->string path))
+     (tail      (list-head? oldheadlist pathlist equal?)))
     (and tail
-	 (apply build-path->string newhead tail))))
+     (apply build-path->string newhead tail))))
 
 ; defs of *url-alias-alist* and alias-url
 ;  moved to alias.ss
@@ -47,20 +47,20 @@
       (case-lambda
        (() (ensure-string _url))  ;#path issues
        ((path) ;maybe replace path head
-	(when (and path (relative-path? path))
-	    (error "URL is relative path"))
-	(cset! _url
-	       (and path
-		    (let ((replacement
-			   (first-valid 
-			    *url-alias-alist*
-			    (lambda (tuple)
-			      (let ((old (car tuple))
-				    (new (cadr tuple)))
-				(replace-path-head? old new path))))))
-		      (if replacement
-			  (cadr replacement)
-			  path)))))))
+    (when (and path (relative-path? path))
+        (error "URL is relative path"))
+    (cset! _url
+           (and path
+            (let ((replacement
+               (first-valid 
+                *url-alias-alist*
+                (lambda (tuple)
+                  (let ((old (car tuple))
+                    (new (cadr tuple)))
+                (replace-path-head? old new path))))))
+              (if replacement
+              (cadr replacement)
+              path)))))))
 ))
 
 
@@ -82,11 +82,11 @@
 
     (define/public (add inst) ;inst is a dynaobject
       (if (memq inst _instances)
-	  #t ;already there
-	  (begin ;newly added
-	    (push! inst _instances)
-	    (set-object-keyval inst 'handle this)
-	    #f)))
+      #t ;already there
+      (begin ;newly added
+        (push! inst _instances)
+        (set-object-keyval inst 'handle this)
+        #f)))
 
     (define/public (remove inst)
       (rem-object-keyval inst 'handle)
@@ -102,9 +102,9 @@
 
 (define (get-pdf-metadata-dir pdfpath)
   (let ((url (send (make-object url% pdfpath)
-		   url)))
+           url)))
     (let-values (((pdfdir pdffile junk) (split-path->string url)))
-		(string-append pdfdir "." pdffile))))
+        (string-append pdfdir "." pdffile))))
 
 (define image-handle%
   (class base-handle%
@@ -121,27 +121,27 @@
     (super-instantiate (url))
 
     (field (_dir ;.name.pdf subdir where metadata/images are stored
-	    (get-pdf-metadata-dir url)))
-	  
+        (get-pdf-metadata-dir url)))
+      
     (field (_title-file "title")
-	   (_title #f)
-	   (_baseimage-file "firstpage.jpg") ; filename of base image
-	   (_composite-file "composite.jpg") ; filename of merged image
-	   (_subimages null)) ;configuration of subimages:
-			      ; list of tuples (filename b0 b1 b2 b3)
+       (_title #f)
+       (_baseimage-file "firstpage.jpg") ; filename of base image
+       (_composite-file "composite.jpg") ; filename of merged image
+       (_subimages null)) ;configuration of subimages:
+                  ; list of tuples (filename b0 b1 b2 b3)
                               ; where b0..b3 constitute relative bbox
-			      ; within portrait bbox
+                  ; within portrait bbox
 ;    (field (_year 1970))
 
     (define/public (title)
       (unless _title
-	;look up in title-file and cache
-	      (let* ((filename (build-path->string _dir _title-file))
-		     (readport (and (file-exists? filename)
-				    (open-input-file filename 'text)))
-		     (line (and readport (read-line readport))))
-		(when readport (close-input-port readport))
-		(set! _title (or line ""))))
+    ;look up in title-file and cache
+          (let* ((filename (build-path->string _dir _title-file))
+             (readport (and (file-exists? filename)
+                    (open-input-file filename 'text)))
+             (line (and readport (read-line readport))))
+        (when readport (close-input-port readport))
+        (set! _title (or line ""))))
       _title)
 
     (define/public dir (get/set _dir))
@@ -152,35 +152,35 @@
     ;  (case-lambda
     ;   (() _year)
     ;   ((y) (set! _year y)
-;	    (foreach (send this instances)
-;	       (lambda (inst)
-;		 (replace-else-push-onto-malist! assq 'timestamp (list y) inst alist))))))
-;			(list y "" "" "" "" "" "") inst alist))))))
+;        (foreach (send this instances)
+;           (lambda (inst)
+;         (replace-else-push-onto-malist! assq 'timestamp (list y) inst alist))))))
+;            (list y "" "" "" "" "" "") inst alist))))))
 
     (define/public (start-viewer)
       (let ((useapp (find-executable-path *pdf-viewer-app* #f)))
-	;this still works even if path is already found
-	(spawn-process useapp
-		       (ensure-string (send this url)))))
+    ;this still works even if path is already found
+    (spawn-process useapp
+               (ensure-string (send this url)))))
 
     (define/public (refresh-all-instances-except . excpts)
       (let ((valids ;(list-diff (send this instances) excpts memq)))
-	        (send/apply this instances-except excpts)))
-	; this first loop is a hack to solve the problem
-	; that shared image urls are cached:
-	; must first destroy all copies of old composite
-	;  before installing new one
-	(foreach valids
-	    (lambda (o)
-	      (let* ((old-pict (send o graphic))
-		     (old-pos  (and old-pict (send old-pict position))))
-		(when old-pos
-		      (send old-pict delete)
-		      (send o graphic (ic (make-object rect% (send o dynapad))
-					  (position old-pos)))))))
-	(foreach valids
-		 (lambda (i) 
-		   (unless (memq i excpts)
-			   (send i refresh-graphic))))))
+            (send/apply this instances-except excpts)))
+    ; this first loop is a hack to solve the problem
+    ; that shared image urls are cached:
+    ; must first destroy all copies of old composite
+    ;  before installing new one
+    (foreach valids
+        (lambda (o)
+          (let* ((old-pict (send o graphic))
+             (old-pos  (and old-pict (send old-pict position))))
+        (when old-pos
+              (send old-pict delete)
+              (send o graphic (ic (make-object rect% (send o dynapad))
+                      (position old-pos)))))))
+    (foreach valids
+         (lambda (i) 
+           (unless (memq i excpts)
+               (send i refresh-graphic))))))
 
 ))

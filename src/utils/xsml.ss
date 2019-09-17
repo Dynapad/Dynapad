@@ -78,7 +78,7 @@
   (let ((ret ()))
     (foreach (elem-list xtree) (lambda (elt)
       (if (and (eq? (car elt) tagname) (has-xtree-attrval elt attr val))
-	(set! ret (append ret (list elt))))))
+    (set! ret (append ret (list elt))))))
     ret
   )
 )
@@ -142,12 +142,12 @@
     (let ((e 0)(elts ())(found #f))
       (set! elts (elem-list xtree))
       (if (null? elts) #f
-	(do ((i 0 (+ 1 i))) ((or found (>= i (length elts))) (if found e #f))
-	  (set! e (list-ref elts i))
-	  (when (and (eq? (car e) tagname)
-		   (has-xtree-attrval e attr val))
-	    (set! found #t))
-	)
+    (do ((i 0 (+ 1 i))) ((or found (>= i (length elts))) (if found e #f))
+      (set! e (list-ref elts i))
+      (when (and (eq? (car e) tagname)
+           (has-xtree-attrval e attr val))
+        (set! found #t))
+    )
       )
     )
   )
@@ -176,7 +176,7 @@
               (set! elts (remove e elts))))
           (set-mcdr! (cdr xtree) elts)
           (not (null? remlist))
-	)
+    )
       )
     )
   )
@@ -200,37 +200,37 @@
 
       ; write the attributes of this tree
       (if (<= (length (cadr tree)) 3)
-	(begin (display " " fp) (write (cadr tree) fp))
-	;else put attributes in a column
-	(begin
-	  (newline fp)
-	  (display newindent fp)
-	  (display "(" fp)
-	  (newline fp)
-	    (foreach (cadr tree)
-	      (lambda (att)
-		(display newindent fp)
-		(display "  " fp)
-		(write att fp)(newline fp)
-	      )
-	    )
+    (begin (display " " fp) (write (cadr tree) fp))
+    ;else put attributes in a column
+    (begin
+      (newline fp)
+      (display newindent fp)
+      (display "(" fp)
+      (newline fp)
+        (foreach (cadr tree)
+          (lambda (att)
+        (display newindent fp)
+        (display "  " fp)
+        (write att fp)(newline fp)
+          )
+        )
 
-	  (display newindent fp)
-	  (display ")" fp)
-	  (newline fp)
-	  (set! needindent #t)
-	)
+      (display newindent fp)
+      (display ")" fp)
+      (newline fp)
+      (set! needindent #t)
+    )
       )
 
       ; write the elements of this tree
       (if (not (null? (cddr tree)))
-	(begin
-	  (newline fp)  ; conclude attributes line
-	  (foreach (cddr tree)
-	    (lambda (element)
-	      (prettyprint-xsml-aux fp newindent element)))
-	  (set! needindent #t)
-	)
+    (begin
+      (newline fp)  ; conclude attributes line
+      (foreach (cddr tree)
+        (lambda (element)
+          (prettyprint-xsml-aux fp newindent element)))
+      (set! needindent #t)
+    )
       )
       (if needindent (display indent fp))
       (display ")" fp)
@@ -322,11 +322,11 @@
   (let ((xtree (get-xtree obj)))
     (if (not xtree)
         ()
-	;else
-	(begin
-	  (set! xtree xtree)
+    ;else
+    (begin
+      (set! xtree xtree)
           (get-xtree-elements-by-fnc xtree match-fnc)
-	)
+    )
     )
   )
 )
@@ -375,7 +375,7 @@
 (define (get-categories-of-obj obj)
   (get-features-of-obj obj
     (lambda (elt) (and (eq? (car elt) 'feature)
-		       (has-xtree-attrval elt 'type 'categ))))
+               (has-xtree-attrval elt 'type 'categ))))
 )
 
 (define (show-categories-of-obj obj)

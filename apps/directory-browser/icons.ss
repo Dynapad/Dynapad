@@ -16,9 +16,9 @@
 (define bounded-icon%
   (class icon-container-form%
     (init dynaptr
-	  _init-path  ;;; must point to an image file
-	  (_init-title #f)
-	  (_init-position #f))
+      _init-path  ;;; must point to an image file
+      (_init-title #f)
+      (_init-position #f))
     (inherit-field _dynapad)
 
     (inherit image-obj title-obj dynaclass)
@@ -32,12 +32,12 @@
 
     ;; Imagedata fields
     (field (_icon-data #f)     ;; Icon imagedata
-	   (_preview-data #f)) ;; Preview imagedata (actual graphic if it exists)
+       (_preview-data #f)) ;; Preview imagedata (actual graphic if it exists)
     
     ;; Event handling placeholders
     (field (_enter (lambda() #f))
-	   (_leave (lambda() #f))
-	   (_double-click (lambda() #f)))
+       (_leave (lambda() #f))
+       (_double-click (lambda() #f)))
     
     ;; Get icon imagedata%
     (set! _icon-data (get-id (file-name-from-path _init-path)))
@@ -46,8 +46,8 @@
     ;; Make the title
     (let ((bb (send (image-obj) bbox)))
       (title-obj (make-object text% dynaptr _init-title
-			    (list (bxc bb) (b1 bb) (* (send this z) 0.75))
-			    "Helvetica" "n")))
+                (list (bxc bb) (b1 bb) (* (send this z) 0.75))
+                "Helvetica" "n")))
 
     ;; Set title properties
     (set! _text-width (send (title-obj) width))
@@ -55,11 +55,11 @@
 
     ;; Create a boundary around icon
     (let* ((bb (send (image-obj) bbox))
-	   (xc (bxc bb)) (yc (byc bb))
-	   (dx 32) (dy1 36) (dy2 21))
+       (xc (bxc bb)) (yc (byc bb))
+       (dx 32) (dy1 36) (dy2 21))
       (boundary 
        (make-object rect% dynaptr (list (- xc dx) (- yc dy1) 
-					(+ xc dx) (+ yc dy2)))))
+                    (+ xc dx) (+ yc dy2)))))
 
 
     (send (boundary) lower)
@@ -91,16 +91,16 @@
    ;; -- Public Methods --
    (define/public (draw-icon)
      (if (not (image-obj))
-	 (let ((bbx (bxc (send (title-obj) bbox)))
-	       (bby (b3 (send (title-obj) bbox))))
-	   (image-obj (make-object baseimage% _dynapad _icon-data
-				   (list bbx (+ bby 16) (send this z)))))))
+     (let ((bbx (bxc (send (title-obj) bbox)))
+           (bby (b3 (send (title-obj) bbox))))
+       (image-obj (make-object baseimage% _dynapad _icon-data
+                   (list bbx (+ bby 16) (send this z)))))))
 
 
    (define/public (draw-preview)
      (when _preview-data
-	   (erase-icon)
-	   (image-obj (make-object baseimage% _dynapad _preview-data (send this position)))))
+       (erase-icon)
+       (image-obj (make-object baseimage% _dynapad _preview-data (send this position)))))
 
    (define/public (erase-icon)
      (let ((_icon (image-obj)))
@@ -122,10 +122,10 @@
 (define file-icon%
   (class bounded-icon%
     (init dynaptr
-	  _init_file_path ;;can point to any existing file
-	  _init_path  ;;; must point to an image file
-	  (_init_title #f)
-	  (_init_position #f))
+      _init_file_path ;;can point to any existing file
+      _init_path  ;;; must point to an image file
+      (_init_title #f)
+      (_init_position #f))
 
     (field (_path _init_file_path))
 
@@ -137,7 +137,7 @@
 
      ;; Set title if necessary
     (if (not  _init_title)
-	(set! _init_title (file-name-from-path _init_file_path)))
+    (set! _init_title (file-name-from-path _init_file_path)))
 
 ))   
 
@@ -191,14 +191,14 @@
 ;; ---------- file-icon constructor ------------
 (define (make-file-icon file_path . arg)
   (let* ((pos (if (null? arg) #f (car arg)))
-	 (name (file-name-from-path file_path))
-	 (ext (filename-extension file_path))
-	 (a (assoc ext ext-path-alist))
-	 (img_path (if a (build-path->string icon-path (cadr a))
-		         (build-path->string icon-path "unknown.png")))
-	 )
+     (name (file-name-from-path file_path))
+     (ext (filename-extension file_path))
+     (a (assoc ext ext-path-alist))
+     (img_path (if a (build-path->string icon-path (cadr a))
+                 (build-path->string icon-path "unknown.png")))
+     )
     (when (not ext) 
-	  (if (directory-exists? file_path) 
-	      (set! img_path (build-path->string icon-path "folder.png"))
-	      (set! img_path (build-path->string icon-path "unknown.png"))))
+      (if (directory-exists? file_path) 
+          (set! img_path (build-path->string icon-path "folder.png"))
+          (set! img_path (build-path->string icon-path "unknown.png"))))
     (make-object file-icon% currentPAD file_path img_path name pos)))

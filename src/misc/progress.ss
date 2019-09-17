@@ -8,7 +8,7 @@
     (flush-output)
     (set! *progress-bar-len* 0)
     (set! *progress-bar-gap* (- *progress-bar-total-len*
-				(string-length str)))
+                (string-length str)))
 ))
 
 (define update-progress
@@ -19,12 +19,12 @@
    ((pct)
        (when (> pct 1) (set! pct 1))
        (let* ((target (inexact->exact (round (* *progress-bar-gap* pct))))
-	      (fill (- target *progress-bar-len*)))
-	 (when (< fill 0) (set! fill 0))
-	 (display (make-string fill #\.))
-	 (+= *progress-bar-len* fill)
-	 (when (>= pct 1)
-	       (newline) ;might want to add end marker (e.g. "done!")
-	       (set! *progress-bar-len* 0)))
+          (fill (- target *progress-bar-len*)))
+     (when (< fill 0) (set! fill 0))
+     (display (make-string fill #\.))
+     (+= *progress-bar-len* fill)
+     (when (>= pct 1)
+           (newline) ;might want to add end marker (e.g. "done!")
+           (set! *progress-bar-len* 0)))
        (flush-output))
    ))

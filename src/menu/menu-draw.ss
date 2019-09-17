@@ -149,7 +149,7 @@
       (send button set-label on_text)
       (set! Draw-multiple (button-double-clicked?))
       (for-all-pads (lambda (argPAD)
-	(initDraw argPAD text% "DrawText")))))
+    (initDraw argPAD text% "DrawText")))))
 )
 
 (define btn_freehand

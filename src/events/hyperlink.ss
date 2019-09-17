@@ -8,20 +8,20 @@
     (send o bind "<Run-Double-ButtonPress-1>"
       (lambda (eventPAD e) (set! currentPAD eventPAD)
         (let
-	  ((link (send (event-obj e) link)))
+      ((link (send (event-obj e) link)))
           (cond
-	    ((is-a? link dynaobject%) (send link center 1000))
-	    ((list? link)
-	      (let*
-	        ((x (car link))
-		 (y (cadr link))
-		 (xdim (caddr link))
-		 (bbox (send eventPAD bbox))
-		 (curxdim (- (caddr bbox) (car bbox)))
-		 (curzoom (caddr (send eventPAD view)))
-		 (zoom (* curzoom (/ curxdim xdim)))
-		 (link (list x y zoom)))
-	        (send eventPAD moveto link 1000)))))))
+        ((is-a? link dynaobject%) (send link center 1000))
+        ((list? link)
+          (let*
+            ((x (car link))
+         (y (cadr link))
+         (xdim (caddr link))
+         (bbox (send eventPAD bbox))
+         (curxdim (- (caddr bbox) (car bbox)))
+         (curzoom (caddr (send eventPAD view)))
+         (zoom (* curzoom (/ curxdim xdim)))
+         (link (list x y zoom)))
+            (send eventPAD moveto link 1000)))))))
       (send o bind "<Run-Double-ButtonPress-1>" #f)))
 
 ;======= Create Hyperlink ========
@@ -36,8 +36,8 @@
 (define (initCreateLink argPAD)
   (send argPAD focus)
   (set! *enact-link-fn*
-	(lambda (source target)
-	  (send source link target)))
+    (lambda (source target)
+      (send source link target)))
   (changemode argPAD "CreateLink"))
 
 (define (finishLink argPAD)
@@ -72,7 +72,7 @@
     ;;; start the link
     (send argPAD bind "<CreateLink-ButtonRelease-1>"
       (lambda (eventPAD e) (set! currentPAD eventPAD)
-	(when (not CreateLink)
+    (when (not CreateLink)
         (let*
           ((x (event-x e))
            (y (event-y e))
@@ -95,8 +95,8 @@
           ((x (event-x e))
            (y (event-y e))
            (l (remove LinkArrow
-	     (reverse (send eventPAD find 'overlapping (list x y x y)))))
-	   (bbox (send eventPAD bbox))
+         (reverse (send eventPAD find 'overlapping (list x y x y)))))
+       (bbox (send eventPAD bbox))
            (xdim (- (caddr bbox) (car bbox))))
     
         (when LinkArrow
@@ -105,12 +105,12 @@
         )
         (when CreateLink
           (if (not (null? l))
-	      (*enact-link-fn* CreateLink (car l))
-	      (*enact-link-fn* CreateLink (list x y xdim)))
+          (*enact-link-fn* CreateLink (car l))
+          (*enact-link-fn* CreateLink (list x y xdim)))
           (set! CreateLink #f))
-	
-	(unless Draw-multiple (finishLink argPAD))
-	)))
+    
+    (unless Draw-multiple (finishLink argPAD))
+    )))
 
     ;;; abort making the link
     (send argPAD bind "<CreateLink-KeyPress-Escape>"
@@ -118,9 +118,9 @@
         (when LinkArrow
           (send LinkArrow delete)
           (set! LinkArrow #f))
-	(if (not CreateLink)
-	    (finishLink argPAD)
-	    (set! CreateLink #f))))
+    (if (not CreateLink)
+        (finishLink argPAD)
+        (set! CreateLink #f))))
     
     ;;; enable pan during hyperlink mode
     (send argPAD bind "<CreateLink-ButtonPress-1>"

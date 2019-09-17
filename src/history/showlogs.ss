@@ -18,12 +18,12 @@
    (let ((shown? (send *logtree-layer* visible)))
      (show-history-tree (not shown?))))
 (define showhistorypane (and *use-menubar*
-			     (make-object horizontal-pane% *menubar*))) ;may be used by showlogs.ss
+                 (make-object horizontal-pane% *menubar*))) ;may be used by showlogs.ss
 
 (define showhistorybox
   (and showhistorypane
        (make-object check-box% "Show history tree" showhistorypane
-		    (lambda (button evnt) (toggle-history-tree)))))
+            (lambda (button evnt) (toggle-history-tree)))))
 (show-history-tree #f)
 
 ;add to popup menu
@@ -43,10 +43,10 @@
 
     (define (my-update-fn me dx dy)
       (let ((xy (map + (send _tree origin) (list (pixels->space dx)
-						 (pixels->space dy)))))
-	(when _prev-branch
-	    (send _prev-branch toxy xy))
-	(foreach _next-branches (lambda (b) (send b fromxy xy)))))
+                         (pixels->space dy)))))
+    (when _prev-branch
+        (send _prev-branch toxy xy))
+    (foreach _next-branches (lambda (b) (send b fromxy xy)))))
 
     (define/public prev-branch
       (case-lambda
@@ -59,9 +59,9 @@
       _next-branches)
 
     (super-instantiate (#f
-			my-update-fn
-			#f ;horizontal
-			20 4))
+            my-update-fn
+            #f ;horizontal
+            20 4))
     ))
 
 (define visible-logtree%
@@ -73,8 +73,8 @@
     (field (_active-path null))
 
     (field (_dim-color #f) ;should refresh before use
-	   (_mid-color #f)
-	   (_bright-color #f))
+       (_mid-color #f)
+       (_bright-color #f))
 
 
     (super-instantiate (_dynapad _branch-class _dir _name))
@@ -96,44 +96,44 @@
 
     (define/override (delete)
       (when (eq? *current-logtree* this)
-	  (set! *current-logtree* #f))
+      (set! *current-logtree* #f))
       (super delete))
 
     (define/public (refresh-color-scheme)
       (let* ((bgcolor (make-object dynacolor% (send (send this dynapad) background)))
-	     (anticolor (send bgcolor invert)))
-	(set! _bright-color (send anticolor tcl-color))
-	(set! _mid-color (send (send anticolor blend .5 128 128 128) ; -->half-grey
-			       tcl-color))
-	(set! _dim-color (send (send bgcolor blend .5 128 128 128) tcl-color))
-	))
+         (anticolor (send bgcolor invert)))
+    (set! _bright-color (send anticolor tcl-color))
+    (set! _mid-color (send (send anticolor blend .5 128 128 128) ; -->half-grey
+                   tcl-color))
+    (set! _dim-color (send (send bgcolor blend .5 128 128 128) tcl-color))
+    ))
     (define/public dim-color 
       (case-lambda
        (() (when (not _dim-color) (refresh-color-scheme))
-	   _dim-color)
+       _dim-color)
        ((val) (set! _dim-color val))))
     (define/public mid-color 
       (case-lambda
        (() (when (not _mid-color) (refresh-color-scheme))
-	   _mid-color)
+       _mid-color)
        ((val) (set! _mid-color val))))
     (define/public bright-color 
       (case-lambda
        (() (when (not _bright-color) (refresh-color-scheme))
-	   _bright-color)
+       _bright-color)
        ((val) (set! _bright-color val))))
 
     (define/public (refresh-active-path)
       (refresh-color-scheme) ;forces periodic refresh to follow changing background
       (let* ((curr-branch (send this current-branch))
-	     (head (send curr-branch path-from-root))
-	     (tail *future-log-path*)
-	     (new-path (append head tail))
-	     (remove (list-diff _active-path new-path memq))
-	     (add    (list-diff new-path _active-path memq)))
-	(foreach remove (lambda (b) (send b exclude-from-active-path)))
-	(foreach add    (lambda (b) (send b include-in-active-path)))
-	(set! _active-path new-path)))
+         (head (send curr-branch path-from-root))
+         (tail *future-log-path*)
+         (new-path (append head tail))
+         (remove (list-diff _active-path new-path memq))
+         (add    (list-diff new-path _active-path memq)))
+    (foreach remove (lambda (b) (send b exclude-from-active-path)))
+    (foreach add    (lambda (b) (send b include-in-active-path)))
+    (set! _active-path new-path)))
 
     (define/override (clear-active-path)
       (refresh-color-scheme)
@@ -144,9 +144,9 @@
 (say "gathering logfiles...")
     (foreach (send this gather-lognames)
        (lambda (file)
-	 (or (send this find-branch-matching
-		   (lambda (b) (equal? (send b file) file)))
-	     (make-object (send this branch-class) this #f file #f #f))))
+     (or (send this find-branch-matching
+           (lambda (b) (equal? (send b file) file)))
+         (make-object (send this branch-class) this #f file #f #f))))
     ))
 
 (define logbranch-line%
@@ -167,26 +167,26 @@
 
     ; automatically create and attach to line% object
     (let* ((origin (send _tree origin))
-	   (myline (ic (make-object line% (send _tree dynapad)
-				    (append origin origin))
-		       (sticky #t)
-		       (findable #f))))
+       (myline (ic (make-object line% (send _tree dynapad)
+                    (append origin origin))
+               (sticky #t)
+               (findable #f))))
       (send this attach-to myline 'logbranch)
       (send _tree add myline)) ;adds object to logtree (group%)
 
     (unless _no-autolink
 (say "autolinking... " _file)
-	; automatically find/create and link end nodes
-	    (let* ((prev-branch (send this get-parent))
-	   ; the (... get-parent) will recursively generate back to tree root
-	   ; if parents dont yet exist
-		   (from (or (and prev-branch (send prev-branch to-node))
-			     (send _tree root-node)))
-		   (to   (make-object log-treenode% _tree this)))
-	      (from-node from)
-	      (send _from-node next-branch this)
-	      (to-node to)
-	      (send _from-node add-child-after #f _to-node)))
+    ; automatically find/create and link end nodes
+        (let* ((prev-branch (send this get-parent))
+       ; the (... get-parent) will recursively generate back to tree root
+       ; if parents dont yet exist
+           (from (or (and prev-branch (send prev-branch to-node))
+                 (send _tree root-node)))
+           (to   (make-object log-treenode% _tree this)))
+          (from-node from)
+          (send _from-node next-branch this)
+          (to-node to)
+          (send _from-node add-child-after #f _to-node)))
 
     (define/public (dynapad) (send _tree dynapad))
 
@@ -207,46 +207,46 @@
       
     (define/override (split-at-entry state-id build-expr)
       (let* ((tail-branch (super split-at-entry state-id build-expr 'no-autolink))
-	     (oldnode _to-node)
-	     (newnode (make-object log-treenode% _tree this)))
-	(set! _to-node newnode)
-	(send tail-branch to-node oldnode)
-	(send tail-branch from-node newnode)
-	(send newnode next-branch tail-branch)
-	(send oldnode prev-branch tail-branch)
-	(send oldnode insert-parent newnode)
-	tail-branch))
+         (oldnode _to-node)
+         (newnode (make-object log-treenode% _tree this)))
+    (set! _to-node newnode)
+    (send tail-branch to-node oldnode)
+    (send tail-branch from-node newnode)
+    (send newnode next-branch tail-branch)
+    (send oldnode prev-branch tail-branch)
+    (send oldnode insert-parent newnode)
+    tail-branch))
 
     (define/public toxy 
       (case-lambda
        (() (cddr (send this coords)))
        ((xy) (let ((crds (send this coords)))
-	       (send this coords
-		     (append (list (car crds) (cadr crds)) xy))))))
+           (send this coords
+             (append (list (car crds) (cadr crds)) xy))))))
 
     (define/public fromxy
       (case-lambda
        (() (let ((crds (send this coords)))
-	     (list (car crds) (cadr crds))))
+         (list (car crds) (cadr crds))))
        ((xy) (let ((crds (send this coords)))
-	       (send this coords (append xy (cddr crds)))))))
+           (send this coords (append xy (cddr crds)))))))
 
     (define (compute-marker-xy state-id)
       (let* ((crds (send this coords))
-	     (undo-stack-len (- (length *undo-stack*) 1))
-	     (redo-stack-len (length *redo-stack*))
-	     (total-len (+ undo-stack-len redo-stack-len))
-	     (fract (if (zero? total-len) 1 (/ undo-stack-len total-len)))
+         (undo-stack-len (- (length *undo-stack*) 1))
+         (redo-stack-len (length *redo-stack*))
+         (total-len (+ undo-stack-len redo-stack-len))
+         (fract (if (zero? total-len) 1 (/ undo-stack-len total-len)))
 
-	     (x (lerp fract (car crds) (caddr crds)))
-	     (y (lerp fract (cadr crds) (cadddr crds))))
-	(list x y)))
+         (x (lerp fract (car crds) (caddr crds)))
+         (y (lerp fract (cadr crds) (cadddr crds))))
+    (list x y)))
 
     (define/public (hilight)
       ; set appearance of current branch
       (send this pen (send _tree bright-color))
       (let ((obj (send this object)))
-	(when obj (send obj raise))))
+    (when obj (send obj raise))))
     (define/public (unhilight)
       (if _on-active-path? (lolight) (unlolight)))
 
@@ -266,28 +266,28 @@
 
     (define/public (path-from-root)
       (let ((prev (prev-branch)))
-	(if (not prev)
-	    (list this)
-	    (append (send prev path-from-root) (list this)))))
+    (if (not prev)
+        (list this)
+        (append (send prev path-from-root) (list this)))))
 
     (define/public (setpath)
       (let* ((branch-path (path-from-root))
-	     (curr-branch (send _tree current-branch))
-	     (found (memq curr-branch branch-path)))
-	(when found
-	      (set! *future-log-path* (cdr found))
-	      (send _tree refresh-active-path)
-	      (send curr-branch hilight))))
+         (curr-branch (send _tree current-branch))
+         (found (memq curr-branch branch-path)))
+    (when found
+          (set! *future-log-path* (cdr found))
+          (send _tree refresh-active-path)
+          (send curr-branch hilight))))
 
     (define/public (restore)
       (send _tree clear-active-path)
       (show-possible-delay (send this dynapad)
-	   (restore-path (send this path))))
+       (restore-path (send this path))))
 
     (define/public (include-in-active-path)
       (set! _on-active-path? #t)
       (let ((obj (send this object)))
-	(when obj (send obj raise)))
+    (when obj (send obj raise)))
       (lolight))
 
     (define/public (exclude-from-active-path)

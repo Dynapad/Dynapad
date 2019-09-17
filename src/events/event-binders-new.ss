@@ -8,7 +8,7 @@
 ; Use new aftermake callbacks:
 (image-aftermake-callbacks 'add
    (lambda (img) (send img bind "<Double-ButtonPress-1>"
-		       (image-toggle-hires-thumb img))))
+               (image-toggle-hires-thumb img))))
 
 (define *beforezoom-callbacks* null)  ;(lambda (pad event)...)
 (define *afterzoom-callbacks* null)
@@ -55,35 +55,35 @@
      ; Combined "Gearshift" Pan/Zoom:
      (define init-drag-view
        (lambda (eventPAD e)
-	 (set! currentPAD eventPAD)
-	 (sendf eventPAD evs sy0 (event-sy e))
-	 (sendf eventPAD evs sx0 (event-sx e))))
+     (set! currentPAD eventPAD)
+     (sendf eventPAD evs sy0 (event-sy e))
+     (sendf eventPAD evs sx0 (event-sx e))))
 
      (define update-drag-view 
        (lambda (eventPAD e)
-	 (let* ((sx (event-sx e))
-		(sy (event-sy e))
-		(dx (- sx (sendf eventPAD evs sx0)))
-		(dy (- sy (sendf eventPAD evs sy0))))
-	   (cond 
-	; panning
-	    ((>= (abs dx) *startpan-dx-threshold*)
-	     (Start-Pan-Event eventPAD e)
-	     (do-beforepan-callbacks eventPAD)
-	     (push-event-mode eventPAD "Pan"))
-	; zooming
-	    ((>= (abs dy) *startzoom-dy-threshold*)
-	       (init-pushpull-zooming eventPAD e))
-	    (else #f)))))
+     (let* ((sx (event-sx e))
+        (sy (event-sy e))
+        (dx (- sx (sendf eventPAD evs sx0)))
+        (dy (- sy (sendf eventPAD evs sy0))))
+       (cond 
+    ; panning
+        ((>= (abs dx) *startpan-dx-threshold*)
+         (Start-Pan-Event eventPAD e)
+         (do-beforepan-callbacks eventPAD)
+         (push-event-mode eventPAD "Pan"))
+    ; zooming
+        ((>= (abs dy) *startzoom-dy-threshold*)
+           (init-pushpull-zooming eventPAD e))
+        (else #f)))))
 
      (define init-pushpull-zooming
        (lambda (eventPAD e)
-	 (init-push-pull-motion eventPAD e)
-	 (init-lerp-zooming eventPAD e
-			    (is-background? (event-obj e))
-			    (get-zoom-relevant-objects eventPAD))
-	 (do-beforezoom-callbacks eventPAD)
-	 (push-event-mode eventPAD "Zoom")))
+     (init-push-pull-motion eventPAD e)
+     (init-lerp-zooming eventPAD e
+                (is-background? (event-obj e))
+                (get-zoom-relevant-objects eventPAD))
+     (do-beforezoom-callbacks eventPAD)
+     (push-event-mode eventPAD "Zoom")))
 
      (send argPAD bind "<Run-ButtonPress-2>" init-drag-view)
      (send argPAD bind "<Drag-ButtonPress-2>" init-drag-view)
@@ -97,14 +97,14 @@
          (let ((frac (update-push-pull-motion eventPAD e)))
            (and frac (update-lerp-zooming eventPAD e frac)))))
      (send argPAD bind "<Zoom-ButtonRelease-2>"
-	   (lambda (eventPAD e) 
-	     (sendf eventPAD evs update-wide-view)
-	     (do-afterzoom-callbacks eventPAD)
-	     (pop-event-mode eventPAD "Zoom")))
+       (lambda (eventPAD e) 
+         (sendf eventPAD evs update-wide-view)
+         (do-afterzoom-callbacks eventPAD)
+         (pop-event-mode eventPAD "Zoom")))
      (send argPAD bind "<Pan-ButtonRelease-2>" 
-	   (lambda (eventPAD e)
-	     (do-afterpan-callbacks eventPAD)
-	     (pop-event-mode eventPAD "Pan")))
+       (lambda (eventPAD e)
+         (do-afterpan-callbacks eventPAD)
+         (pop-event-mode eventPAD "Pan")))
 
      (send argPAD bind "<Run-Shift-B2-Motion>"
        (lambda (eventPAD e) (set! currentPAD eventPAD)

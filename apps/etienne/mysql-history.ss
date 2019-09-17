@@ -12,10 +12,10 @@
     (define/public (select-one-value query . default)
       (define result (select query))
       (cond ((null? default) (set! default #f))
-	    ((list? default) (set! default (car default))))
+        ((list? default) (set! default (car default))))
       (if (not result)
-	  default
-	  (caar result)))
+      default
+      (caar result)))
 
     (define/public (select-list query)
       (map car (select query)))
@@ -35,18 +35,18 @@
     (define/public (get-meta-value event meta)
       (select-one-value
        (format
-	"value from meta_event_value where meta=~a and event=~a" meta event)))
+    "value from meta_event_value where meta=~a and event=~a" meta event)))
 
     (define/public (get-events-from-meta-value value)
       (map car (select
-		(format "event from meta_event_value where value=\"~a\"" value))))
+        (format "event from meta_event_value where value=\"~a\"" value))))
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Time methods
     (define/public (time-diff event)
       (select-one-value
        (format
-	"round((unix_timestamp(NOW())-time)/60) from event where id=~a" event)))
+    "round((unix_timestamp(NOW())-time)/60) from event where id=~a" event)))
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; User methods

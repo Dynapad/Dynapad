@@ -5,9 +5,9 @@
   (provide new-lambda ;(rename new-lambda lambda)
            procedure-body
            procedure-args
-	   write-lambda
-	   read-sterile-lambda
-	   read-fertile-lambda)
+       write-lambda
+       read-sterile-lambda
+       read-fertile-lambda)
   
   (define-values (struct:ap make-annotated-proc annotated-proc? ap-ref ap-set!) 
     (make-struct-type 'anotated-proc #f 3 0 #f null #f 0))
@@ -31,9 +31,9 @@
     (eqv? (car lst) 'lambda))
   (define (read-sterile-lambda lst)
     (if (is-lambda? lst)
-	(eval lst)))
+    (eval lst)))
   (define (read-fertile-lambda lst)
     (if (is-lambda? lst)
-	(eval (cons 'new-lambda (cdr lst)))))
+    (eval (cons 'new-lambda (cdr lst)))))
 
 ) ;end module

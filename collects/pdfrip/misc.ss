@@ -39,12 +39,12 @@
       ((path suf?)
         (let*-values
           (((dir name dir?) (split-path->string path))
-	   ((l) (regexp-match pathsuf-rexp name)))
-	  (cond
-	    (dir? "")
-	    (suf? name)
-	    (else (cadr l)))))))
-	  
+       ((l) (regexp-match pathsuf-rexp name)))
+      (cond
+        (dir? "")
+        (suf? name)
+        (else (cadr l)))))))
+      
   (define (copy-file-replace src dest)
     (if (file-exists? dest)
       (delete-file dest))

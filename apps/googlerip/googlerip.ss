@@ -18,11 +18,11 @@
 ;; from normal dynapad images
 (define googleimage%
   (class image%
-	 (init initpad)
-	 (init (_hirespath #f))
-	 (init (initposition #f))
-	 (super-instantiate (initpad _hirespath initposition))	 
-	 )
+     (init initpad)
+     (init (_hirespath #f))
+     (init (initposition #f))
+     (super-instantiate (initpad _hirespath initposition))     
+     )
   )
 
 
@@ -30,9 +30,9 @@
 (define (delete-google-images)
   ;; Delete images from Dynapad
   (for-each (lambda (o) 
-	      (if (is-a? o googleimage%)
-		  (send o delete-all)))
-	    (send currentPAD objects))
+          (if (is-a? o googleimage%)
+          (send o delete-all)))
+        (send currentPAD objects))
 
   ;; Remove images from file system
   (for-each
@@ -81,7 +81,7 @@
         (set! images
           (append images (list
             (make-object googleimage% dynapad file (list x y zfac)))))
-	(set! x (+ x (* 200 zfac)))
+    (set! x (+ x (* 200 zfac)))
         (when (> (- x view_x) (* (* 200 numrows) zfac))
           (set! x view_x)
           (set! y (- y (* 200 zfac)))))

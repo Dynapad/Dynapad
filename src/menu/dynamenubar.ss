@@ -31,7 +31,7 @@
           ((equal? mode "DrawText")    (for-all-pads (lambda (PAD) (send argPAD cursor 2))))
           ((equal? mode "EditText")    (for-all-pads (lambda (PAD) (send argPAD cursor 2))))
           ((equal? mode "GetBBox") (for-all-pads (lambda (PAD) (send argPAD cursor 1))))
-	  (cursor (for-all-pads (lambda (PAD) (send argPAD cursor cursor))))
+      (cursor (for-all-pads (lambda (PAD) (send argPAD cursor cursor))))
           (else
             ; unrecognized mode
             (for-all-pads (lambda (PAD) (send argPAD cursor 1))))
@@ -130,7 +130,7 @@
   (if btn_marquee (send btn_marquee set-label off_marquee  ))
   (if btn_lasso (send btn_lasso set-label off_lasso  ))
   (foreach *guest-button-off-labels*
-	   (lambda (pair) (mlet (((btn lbl) pair)) (send btn set-label lbl))))
+       (lambda (pair) (mlet (((btn lbl) pair)) (send btn set-label lbl))))
 )
 
 (define btn_run
@@ -456,9 +456,9 @@
           ((first (car l)) (l l))
           (cond
             ((null? (cdr l)) (if loop? (send (car l) link first)))
-	    (else
-	      (send (car l) link (cadr l))
-	      (loop first (cdr l)))))
+        (else
+          (send (car l) link (cadr l))
+          (loop first (cdr l)))))
         (send dialog show #f)))
     (send dialog show #t)))
 
@@ -487,10 +487,10 @@
     (make-object button% "Ok" cancelokpane
       (lambda (button event)
         (let loop
-	  ((o o))
-	  (let ((next (send o link)))
-	    (send o link #f)
-	    (if (and follow? next) (loop next))))
+      ((o o))
+      (let ((next (send o link)))
+        (send o link #f)
+        (if (and follow? next) (loop next))))
         (send dialog show #f)))
     (send dialog show #t)))
 

@@ -22,39 +22,39 @@
   (lambda(eventPAD e)
     (when press?
       (let
-	((x0 (car x0y0))
-	 (y0 (cadr x0y0))
+    ((x0 (car x0y0))
+     (y0 (cadr x0y0))
          (x2 (event-sx e))
-	 (y2 (event-sy e)))
+     (y2 (event-sy e)))
 
-	(if (not x1y1)
-	  (when (> (+ (abs (- x2 x0)) (abs (- y2 y0))) 10)
-	    (set! x1y1 (list x2 y2)))
-	  (let
-	    ((x1 (car x1y1))
-	     (y1 (cadr x1y1)))
-	    (when (> (+ (abs (- x2 x1)) (abs (- y2 y1))) 10)
-	      (let*
-	        ((ax (- x1 x0))
-	         (ay (- y1 y0))
-	         (bx (- x2 x1))
-	         (by (- y2 y1))
-	         (cp (- (* ax by) (* ay bx)))
-		 (zfac (+ 1 (/ cp 100000))))
+    (if (not x1y1)
+      (when (> (+ (abs (- x2 x0)) (abs (- y2 y0))) 10)
+        (set! x1y1 (list x2 y2)))
+      (let
+        ((x1 (car x1y1))
+         (y1 (cadr x1y1)))
+        (when (> (+ (abs (- x2 x1)) (abs (- y2 y1))) 10)
+          (let*
+            ((ax (- x1 x0))
+             (ay (- y1 y0))
+             (bx (- x2 x1))
+             (by (- y2 y1))
+             (cp (- (* ax by) (* ay bx)))
+         (zfac (+ 1 (/ cp 100000))))
 
-	        (cond
-	          ((= zoomtype 1)
-		    (let
-		      ((sgn (if (positive? cp) 1 -1))
-		       (dst (sqrt
-		         (+
-		           (expt (- x2 (car sxsy)) 2)
-		           (expt (- y2 (cadr sxsy)) 2)))))
-		      (set! zfac (if (zero? cp) 1 (+ 1 (/ (* sgn dst) 10000)))))
-	            (set! x0y0 x1y1)))
-	        (set! x1y1 (list x2 y2))
-	        (send dynapad zoom zfac 0
-		  (sendf eventPAD evs lastx)
-		  (sendf eventPAD evs lasty))))))))))
+            (cond
+              ((= zoomtype 1)
+            (let
+              ((sgn (if (positive? cp) 1 -1))
+               (dst (sqrt
+                 (+
+                   (expt (- x2 (car sxsy)) 2)
+                   (expt (- y2 (cadr sxsy)) 2)))))
+              (set! zfac (if (zero? cp) 1 (+ 1 (/ (* sgn dst) 10000)))))
+                (set! x0y0 x1y1)))
+            (set! x1y1 (list x2 y2))
+            (send dynapad zoom zfac 0
+          (sendf eventPAD evs lastx)
+          (sendf eventPAD evs lasty))))))))))
 
 (gui-mode-cursor "Zoom" 14)

@@ -5,7 +5,7 @@
 
 (define (safe-cmp-nums a b) ; handles #f
   (cond ((not a) -1)
-	((not b) 1)
+    ((not b) 1)
         ((< a b) -1)
         ((> a b) 1)
         (else 0)))
@@ -17,8 +17,8 @@
 
 (define (safe-cmp-strs a b) ; handles #f
   (cond ((not a) -1)
-	((not b) 1)
-	((string<? a b) -1)
+    ((not b) 1)
+    ((string<? a b) -1)
         ((string>? a b) 1)
         (else 0)))
 

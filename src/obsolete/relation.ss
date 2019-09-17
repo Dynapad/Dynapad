@@ -17,27 +17,27 @@
 
      (define/public members
        (case-lambda
-	(() _members)
+    (() _members)
         ((new-members)
          (for-each remove-member _members)
          (for-each add-member new-members))
-	((cmd . args)
+    ((cmd . args)
          (case cmd
            ('add (for-each add-member args))
            ('remove (for-each remove-member args))))))
 
      (define (add-member memb)
        (unless (memq memb _members)
-	       (activate-member memb)
-	       (send memb delete-callbacks 'add
-		     (lambda (o)
-		       (send this members 'remove o)) this)
-	       (send memb post-build-ops 'add
-		     (lambda (obj label) ;obj=memb;
-		       `(defer-send '(,(export-objs this) members 'add ,(export-objs memb)))))
-;		       `(send obj refer-when-ready
-;			      ,(send this id) 'members ''add obj)))
-	       (push! memb _members)))
+           (activate-member memb)
+           (send memb delete-callbacks 'add
+             (lambda (o)
+               (send this members 'remove o)) this)
+           (send memb post-build-ops 'add
+             (lambda (obj label) ;obj=memb;
+               `(defer-send '(,(export-objs this) members 'add ,(export-objs memb)))))
+;               `(send obj refer-when-ready
+;                  ,(send this id) 'members ''add obj)))
+           (push! memb _members)))
      
     (define (remove-member memb)
       (deactivate-member memb)
@@ -50,16 +50,16 @@
     (define/public (write)  ;at the moment: don't keep track of members;
                             ;  let them include selves in relation
       `(ic (make-object ,(myclass))
-	   ,@(writeoptions)))
+       ,@(writeoptions)))
 
     (define/public (write-all)
       (list (write)))
 
      (define/public (writeoptions)
        (filter identity
-	       `(
-		 (id ,(send this id))
-		 ,(if _name `(name ,_name) #f))))
+           `(
+         (id ,(send this id))
+         ,(if _name `(name ,_name) #f))))
      ;these will probably be overridden by subclass:
      (define/public (activate-member memb) #t)
      (define/public (deactivate-member memb) #t)
@@ -77,8 +77,8 @@
 
      (define/public enable
        (case-lambda
-	(() (enable #t))
-	((bool) (send _brush-set enable bool))))
+    (() (enable #t))
+    ((bool) (send _brush-set enable bool))))
      (define/public (disable) (enable #f))
       
 

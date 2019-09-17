@@ -30,9 +30,9 @@
       ((x) (image-suf? x sufs))
       ((x sufs)
         (cond
-	  ((null? sufs) #f)
-	  ((string-ci=? x (car sufs)) #t)
-	  (else (image-suf? x (cdr sufs)))))))
+      ((null? sufs) #f)
+      ((string-ci=? x (car sufs)) #t)
+      (else (image-suf? x (cdr sufs)))))))
       
   (define pathsuf-rexp (regexp "(.*)\\.(.*)"))
 
@@ -41,7 +41,7 @@
       ((l (regexp-match pathsuf-rexp path)))
       (cond
         ((not (list? l)) #f)
-	(else (image-suf? (list-ref l 2))))))
+    (else (image-suf? (list-ref l 2))))))
 
   (define dirname
     (case-lambda
@@ -58,7 +58,7 @@
       ((path)
         (let*-values
           (((dir name dir?) (split-path->string path)))
-	  (if dir? "" name)))))
+      (if dir? "" name)))))
 
   ; I know, this will be confusing
   ; thumbsdir is <imagedir>/thumbs and only used internally
@@ -91,7 +91,7 @@
       (() (thumbdir-exists? "." RES))
       ((path) (thumbdir-exists? path RES))
       ((path res)
-	(directory-exists? (thumbdir path res)))))
+    (directory-exists? (thumbdir path res)))))
 
   (define make-thumbdir
     (case-lambda
@@ -99,7 +99,7 @@
       ((path) (make-thumbdir path RES))
       ((path res)
         (let*
-	  ((dir (dirname path))
+      ((dir (dirname path))
            (thumbs (thumbsdir path))
            (thumbs/res (build-path->string thumbs (number->string res))))
           (if (not (directory-exists? thumbs))
@@ -111,79 +111,79 @@
     (case-lambda
       ((path) (thumb path RES))
       ((path res)
-	(cond
-	  ((not (image? path)) #f)
-	  (else
+    (cond
+      ((not (image? path)) #f)
+      (else
             (let*
-	      ((name (basename path))
-	       (l (regexp-match pathsuf-rexp name))
-	       (base (list-ref l 1))
-	       (suf (list-ref l 2)))
-	       (build-path->string
-	         (thumbdir path res)
-	         (format "~a-~a.~a" base res suf))))))))
+          ((name (basename path))
+           (l (regexp-match pathsuf-rexp name))
+           (base (list-ref l 1))
+           (suf (list-ref l 2)))
+           (build-path->string
+             (thumbdir path res)
+             (format "~a-~a.~a" base res suf))))))))
 
   (define thumb-exists?
     (case-lambda
       ((path) (thumb-exists? path RES))
       ((path res)
-	(cond
-	  ((not (image? path)) #f)
+    (cond
+      ((not (image? path)) #f)
           (else (file-exists? (thumb path res)))))))
 
   (define thumbify/force
     (let ((_force #f))
       (case-lambda
         (() _force)
-	((bool) (set! _force bool)))))
+    ((bool) (set! _force bool)))))
 
   (define thumbify/verbose
     (let ((_verbose #f))
       (case-lambda
         (() _verbose)
-	((bool) (set! _verbose bool)))))
+    ((bool) (set! _verbose bool)))))
 
   (define make-thumb
     (case-lambda
       ((path thumbpath) (make-thumb path thumbpath RES))
       ((path thumbpath res)
-	(im/resize path thumbpath res))))
+    (im/resize path thumbpath res))))
 
   (define thumbify
     (case-lambda
       ((path) (thumbify path RES))
       ((path res)
         (cond
-	  ((not (file-exists? path))
+      ((not (file-exists? path))
             (if (thumbify/verbose) (printf "~a is not a file~%" path))
-	    #f)
-	  ((not (image? path))
-	    (if (thumbify/verbose) (printf "~a is not a image~%" path))
-	    #f)
-	  ((and (thumb-exists? path res) (not (thumbify/force)))
-	    (list path res #f))
-	  (else
-	    (if (thumb-exists? path res)
-	      (delete-file (thumb path res)))
-	    (make-thumbdir path res)
-	    (make-thumb path (thumb path res) res)
-	    (if (thumbify/verbose) (printf "~a~%" path))
-	    (list path res #t))))))
+        #f)
+      ((not (image? path))
+        (if (thumbify/verbose) (printf "~a is not a image~%" path))
+        #f)
+      ((and (thumb-exists? path res) (not (thumbify/force)))
+        (list path res #f))
+      (else
+        (if (thumb-exists? path res)
+          (delete-file (thumb path res)))
+        (make-thumbdir path res)
+        (make-thumb path (thumb path res) res)
+        (if (thumbify/verbose) (printf "~a~%" path))
+        (list path res #t))))))
 
   (define thumbifydir
     (case-lambda
       (() (thumbifydir "." RES))
       ((dir) (thumbifydir dir RES))
       ((dir res)
-	(cond
-	  ((not (directory-exists? dir))
+    (cond
+      ((not (directory-exists? dir))
             (if (thumbify/verbose) (printf "~a is not a directory~%" dir))
-	    #f)
-	  (else
+        #f)
+      (else
             (map
-	      (lambda(x)
-		(thumbify (build-path->string dir x) res))
-	      (filter image? (directory-list->string dir))))))))
+          (lambda(x)
+        (thumbify (build-path->string dir x) res))
+          (filter image? (directory-list->string dir))))))))
 
   (define thumbifytree
     (case-lambda
@@ -191,18 +191,18 @@
       ((dir) (thumbifytree dir RES))
       ((dir res)
         (cond
-  	  ((not (directory-exists? dir))
+        ((not (directory-exists? dir))
             (if (thumbify/verbose) (printf "~a is not a directory~%" dir))
-	    #f)
-  	  (else
-	    (cons
-	      (thumbifydir dir res)
+        #f)
+        (else
+        (cons
+          (thumbifydir dir res)
               (map
                 (lambda(x)
-  	          (thumbifytree (build-path->string dir x) res))
-  	        (filter
-		  (lambda(x)
-		    (let ((path (build-path->string dir x)))
-		      (and (directory-exists? path)
-		           (not (thumbsdir? path)))))
-		  (directory-list->string dir))))))))))
+                (thumbifytree (build-path->string dir x) res))
+              (filter
+          (lambda(x)
+            (let ((path (build-path->string dir x)))
+              (and (directory-exists? path)
+                   (not (thumbsdir? path)))))
+          (directory-list->string dir))))))))))

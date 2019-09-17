@@ -75,34 +75,34 @@
   ; create a function to add bindings
   (set! addbindings (lambda (h i)  ; h is handle, i is coord index
     (let ((actor-drag-callbacks
-	   (if reshape-savvy-actors
-	       (filter (lambda (fn) fn)
-		       (map (lambda (actr)
-			      (send actr provide-reshape-handle-drag-callback i))
-			    reshape-savvy-actors))
-	       null))
-	  (actor-delete-callbacks
-	   (if reshape-savvy-actors
-	       (filter (lambda (fn) fn)
-		       (map (lambda (actr)
-			      (send actr provide-reshape-handle-delete-callback i))
-			    reshape-savvy-actors))
-	       null)))
+       (if reshape-savvy-actors
+           (filter (lambda (fn) fn)
+               (map (lambda (actr)
+                  (send actr provide-reshape-handle-drag-callback i))
+                reshape-savvy-actors))
+           null))
+      (actor-delete-callbacks
+       (if reshape-savvy-actors
+           (filter (lambda (fn) fn)
+               (map (lambda (actr)
+                  (send actr provide-reshape-handle-delete-callback i))
+                reshape-savvy-actors))
+           null)))
       (send h bind "<ButtonPress-2>" (lambda (w e) #f))
       (send h bind "<ButtonRelease-2>"
-	    (lambda (w e)
-	      (set! hlist (remove h hlist))
-	      (for-each (lambda (fn) (fn)) actor-delete-callbacks)
-	      (send poly coords (apply append (map (lambda (h) (send h xy)) hlist)))
-	      (send h delete)
-	      #f))
+        (lambda (w e)
+          (set! hlist (remove h hlist))
+          (for-each (lambda (fn) (fn)) actor-delete-callbacks)
+          (send poly coords (apply append (map (lambda (h) (send h xy)) hlist)))
+          (send h delete)
+          #f))
       (send h drag-callback
-	    (lambda (x y)
-	      (let ((my-xy (send h xy)))
-		(for-each (lambda (fn) (fn my-xy)) actor-drag-callbacks))
-	      (send poly select)
-	      ;UNDO HERE?
-	      (send poly coords (apply append (map (lambda (h) (send h xy)) hlist))))))
+        (lambda (x y)
+          (let ((my-xy (send h xy)))
+        (for-each (lambda (fn) (fn my-xy)) actor-drag-callbacks))
+          (send poly select)
+          ;UNDO HERE?
+          (send poly coords (apply append (map (lambda (h) (send h xy)) hlist))))))
   ))
 
   ; apply the function to the list of handles
@@ -131,7 +131,7 @@
       (let ((i (find-nearest-line-segment hlist (event-x e)(event-y e)))
             (newh (make-object general-handle% argPAD (event-x e)(event-y e)))
             (head '()))
-	(when reshape-savvy-actors
+    (when reshape-savvy-actors
         (for-each (lambda (actr)
         (send actr add-vertex-n i (send newh xy)))
             reshape-savvy-actors))

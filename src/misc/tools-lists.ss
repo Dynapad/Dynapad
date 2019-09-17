@@ -38,24 +38,24 @@
 ;        it))
 ;    ((n lst)
 ;     `(if (zero? ,n)
-; 	 null
-; 	 (let ((brk (list-tail ,lst (- ,n 1)))
-; 	       (head ,lst))
-; 	   (set! ,lst (cdr brk))
-; 	   (set-mcdr! brk null)
-; 	   head)))))
+;      null
+;      (let ((brk (list-tail ,lst (- ,n 1)))
+;            (head ,lst))
+;        (set! ,lst (cdr brk))
+;        (set-mcdr! brk null)
+;        head)))))
 
 (define-macro chop!
 ;chops last (n) item(s) off list and returns it/them
   (case-lambda
    ((lst)  ;return single item
     `(let* ((len (- (length ,lst) 1))
-	    (it (list-ref ,lst len)))
+        (it (list-ref ,lst len)))
        (set! ,lst (list-head ,lst len))
        it))
    ((n lst)  ;return list (singleton if n=1)
     `(let* ((len (- (length ,lst) ,n))
-	    (them (list-tail ,lst len)))
+        (them (list-tail ,lst len)))
        (set! ,lst (list-head ,lst len))
        them))))
 
@@ -70,9 +70,9 @@
 ;  (let ((also-ins (also-in-list l1 l2 mem-fn)))
 ;    (list
 ;     (filter (lambda (l1-item in-l2?) in-l2?)
-;	     l1 also-ins)
+;         l1 also-ins)
 ;     (filter (lambda (l1-item in-l2?) (not in-l2?))
-;	     l1 also-ins))))
+;         l1 also-ins))))
 
 (define (make-list n atom)
   (vector->list (make-vector n atom)))
@@ -82,15 +82,15 @@
 ; else appends copies of fill onto list to reach length n
   `(let ((tooshort (- ,n (length ,lst) -1)))
      (when (positive? tooshort)
-	 (set! ,lst (append ,lst (make-list tooshort ,fill))))
+     (set! ,lst (append ,lst (make-list tooshort ,fill))))
      (list-tail ,lst ,n)))
 
 (define (prior end lst)
 ;returns cons-cell in lst just prior to end
 ; or #f if fails
   (cond ((null? lst) #f)
-	((eq? (cdr lst) end) lst)
-	(else (prior end (cdr lst)))))
+    ((eq? (cdr lst) end) lst)
+    (else (prior end (cdr lst)))))
 
 
 (define (first-valid lst fn)
@@ -100,42 +100,42 @@
   (if (null? lst)
       #f
       (let ((result (fn (car lst))))
-	(if result
-	    (list lst result)
-	    (first-valid (cdr lst) fn)))))
+    (if result
+        (list lst result)
+        (first-valid (cdr lst) fn)))))
 
 (define (inserted-list key-fn cmp-fn newval newkey lst)
   (cond ((null? lst) (list newval))
-	((positive? (cmp-fn newkey (key-fn (car lst)))) ;keep going
-	   (cons (car lst) (inserted-list key-fn cmp-fn newval newkey (cdr lst))))
-	(else ;insert here
-	   (cons newval lst))))
+    ((positive? (cmp-fn newkey (key-fn (car lst)))) ;keep going
+       (cons (car lst) (inserted-list key-fn cmp-fn newval newkey (cdr lst))))
+    (else ;insert here
+       (cons newval lst))))
 
 (define-macro (insert-into-sorted-list key-fn cmp-fn newval . lst)
   `(let* ((newkey (,key-fn ,newval))
-	  (lst-val (remote-get ,@lst)))
+      (lst-val (remote-get ,@lst)))
      (remote-set! ,@lst (inserted-list ,key-fn ,cmp-fn ,newval newkey lst-val))))
 
 (define-macro (get-else-insert-into-sorted-list key-fn cmp-fn newval . lst)
   `(let* ((newkey (,key-fn ,newval))
-	  (lst-val (remote-get ,@lst))
-	  (found (memf (lambda (cel) (not (positive? (,cmp-fn newkey (,key-fn cel)))))
-		      lst-val)))
+      (lst-val (remote-get ,@lst))
+      (found (memf (lambda (cel) (not (positive? (,cmp-fn newkey (,key-fn cel)))))
+              lst-val)))
      (cond ((not found) ;append to end
-	    (let ((return (list ,newval)))
-	      (remote-append! ,@lst return)
-	      return))
-	   ((zero? (,cmp-fn newkey (,key-fn (car found)))) ;found match
-	    found)
-	   ((eq? found lst-val) ;insert as first
-	    (let ((return (cons ,newval lst-val)))
-	      (remote-set! ,@lst (cons ,newval lst-val))
-	      return))
-	   (else  ;insert mid-list
-	    (let ((pr (prior found lst-val))
-		  (return (cons ,newval found)))
-	      (set-mcdr! pr return)
-	      return)))))
+        (let ((return (list ,newval)))
+          (remote-append! ,@lst return)
+          return))
+       ((zero? (,cmp-fn newkey (,key-fn (car found)))) ;found match
+        found)
+       ((eq? found lst-val) ;insert as first
+        (let ((return (cons ,newval lst-val)))
+          (remote-set! ,@lst (cons ,newval lst-val))
+          return))
+       (else  ;insert mid-list
+        (let ((pr (prior found lst-val))
+          (return (cons ,newval found)))
+          (set-mcdr! pr return)
+          return)))))
 
 (define (list-delete-nth lst n)
   (if (zero? n)
@@ -148,14 +148,14 @@
   (if (null? l1)
       (list null null)
       (let* ((this (car l1))
-	     (rest (list-intersect+diff (cdr l1) l2 mem-fn))
-	     (ints (car rest))
-	     (diffs (cadr rest)))
-	(if (mem-fn this l2)
-	    (list (cons this ints)
-		  diffs)
-	    (list ints
-		  (cons this diffs))))))
+         (rest (list-intersect+diff (cdr l1) l2 mem-fn))
+         (ints (car rest))
+         (diffs (cadr rest)))
+    (if (mem-fn this l2)
+        (list (cons this ints)
+          diffs)
+        (list ints
+          (cons this diffs))))))
 
 (define (list-overlap l1 l2 mem-fn rem-fn)
 ;return three-part list:
@@ -163,24 +163,24 @@
 ; \------- l1 -------------/
 ;          \------------l2 ---------/
   (cond ((null? l1) (list null null l2))
-	((null? l2) (list l1 null null))
-	(else
-	 (let* ((this (car l1))
-		(trio (list-overlap (cdr l1) l2 mem-fn rem-fn))
-		(l1-l2 (car trio))
-		(int (cadr trio))
-		(l2-l1 (rem-fn this (caddr trio))))
-	   (if (mem-fn this l2)
-	       (list l1-l2 (cons this int) l2-l1)
-	       (list (cons this l1-l2) int l2-l1))))))
+    ((null? l2) (list l1 null null))
+    (else
+     (let* ((this (car l1))
+        (trio (list-overlap (cdr l1) l2 mem-fn rem-fn))
+        (l1-l2 (car trio))
+        (int (cadr trio))
+        (l2-l1 (rem-fn this (caddr trio))))
+       (if (mem-fn this l2)
+           (list l1-l2 (cons this int) l2-l1)
+           (list (cons this l1-l2) int l2-l1))))))
 (define (list-overlapq l1 l2) (list-overlap l1 l2 memq remq))
 (define (list-overlapv l1 l2) (list-overlap l1 l2 memv remv))
 
 (define (list-position-general lst target match-fn)
     (let loop ((i 0) (lst lst))
       (if (null? lst) #f
-	  (if (match-fn target (car lst)) i
-	      (loop (+ i 1) (cdr lst))))))
+      (if (match-fn target (car lst)) i
+          (loop (+ i 1) (cdr lst))))))
 (define (list-position lst target)
   (list-position-general lst target equal?))
 (define (list-positionv lst target)
@@ -204,13 +204,13 @@
 (define (remove-duplicates lst mem-fn)
   (let ((newones null))
     (filter (lambda (it)
-	      (let ((seen? (mem-fn it newones)))
-		(if (not seen?)
-		    (begin
-		      (push! it newones)
-		      #t)
-		    #f)))
-	    lst)))
+          (let ((seen? (mem-fn it newones)))
+        (if (not seen?)
+            (begin
+              (push! it newones)
+              #t)
+            #f)))
+        lst)))
 
 ;---
 (define cross-map
@@ -219,9 +219,9 @@
   (case-lambda
    ((fn lst1 lst2)
     (apply append
-	   (map (lambda (c)
-		  (map (lambda (l) (fn c l)) lst2))
-		lst1)))))
+       (map (lambda (c)
+          (map (lambda (l) (fn c l)) lst2))
+        lst1)))))
 
 (define (filtered-cross-map filter-fn map-fn l1 l2)
   (filter filter-fn (cross-map map-fn l1 l2)))
@@ -230,9 +230,9 @@
   (case-lambda
    ((fn lst1 lst2)
     (apply append
-	   (map (lambda (c)
-		  (filter (lambda (l) (fn c l)) lst2))
-		lst1)))))
+       (map (lambda (c)
+          (filter (lambda (l) (fn c l)) lst2))
+        lst1)))))
 
 ;---
 (define (list-head lst n)
@@ -247,8 +247,8 @@
    ((zero? n) lst)
    ((positive? n) (append (list-tail lst n) (list-head lst n)))
    (else (let* ((l (length lst))
-		(end (+ l n))) ;n is negative
-	   (append (list-tail lst end) (list-head lst end))))))
+        (end (+ l n))) ;n is negative
+       (append (list-tail lst end) (list-head lst end))))))
 
 (define (left-rotate-list lst)
   (append (list-tail lst 1) (list (car lst))))
@@ -267,9 +267,9 @@
    ((lst offset runlen) (list-slice-wrap lst offset runlen (length lst)))
    ((lst offset runlen listlen)
     (if (zero? runlen)
-	null
-	(cons (list-ref-wrap lst offset listlen)
-	      (list-slice-wrap lst (+ offset 1) (- runlen 1) listlen))))))
+    null
+    (cons (list-ref-wrap lst offset listlen)
+          (list-slice-wrap lst (+ offset 1) (- runlen 1) listlen))))))
 
 (define list-ref-wrap
   (case-lambda
@@ -277,7 +277,7 @@
    ((lst ref len)
     (list-ref lst (modulo ref len)))))
     
-(define (mmap width shift  skip fn lst) ;"Multi-map" 	       
+(define (mmap width shift  skip fn lst) ;"Multi-map"            
 ; generalized map where lambda fn can operate on multiple adjacent elements
 ; Special case: (mmap 1 0 1 fn lst) = (map fn lst)
 ; width is # of args to fn, each set a series of successive lst elements
@@ -298,16 +298,16 @@
 ;                                              ^ ^
 ;                                                ^ ^...   --> (bc cd de ef fa ab)
   (let* ((result '())
-	 (l (length lst)))
+     (l (length lst)))
     (let loop ((i 0))
       (when (< i l)
-	    (set! result (cons (apply fn (list-slice-wrap
-					  lst
-					  (+ i shift)
-					  width
-					  l))
-			       result))
-	    (loop (+ i skip))))
+        (set! result (cons (apply fn (list-slice-wrap
+                      lst
+                      (+ i shift)
+                      width
+                      l))
+                   result))
+        (loop (+ i skip))))
     (reverse result)))
 
 ;---
@@ -323,8 +323,8 @@
    ((len) (counting-list len 0))
    ((len from)
     (if (zero? len)
-	null
-	(cons from (counting-list (- len 1) (+ from 1)))))))
+    null
+    (cons from (counting-list (- len 1) (+ from 1)))))))
 
 (define (count-between-list from to step)
   (if (>= from to)
@@ -349,5 +349,5 @@
 
 ;(define-macro (bind-list-elements vars vals)
 ;  (cons `(full-list ,vals)
-;	 (map (lambda (var) `(,var (pop! ,full-list)))
-;	      vars)))
+;     (map (lambda (var) `(,var (pop! ,full-list)))
+;          vars)))

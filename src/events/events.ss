@@ -55,19 +55,19 @@
   (lambda (argPAD evnt bb)
     (let* ((obj (event-obj evnt)))
       (if (is-a? obj dynapad%)
-	  (find-enclosed-objects-standard argPAD evnt bb) ;this case shouldn't happen, but does for some reason
-	  (let* ((outer (get-container obj))
-		 (local-objs (send outer contents))
-		 (bounded-objs (send argPAD find 'groupmembers 'enclosed bb))
-		 (these-objs (list-intersect local-objs bounded-objs memq)))
-	    these-objs)))))
+      (find-enclosed-objects-standard argPAD evnt bb) ;this case shouldn't happen, but does for some reason
+      (let* ((outer (get-container obj))
+         (local-objs (send outer contents))
+         (bounded-objs (send argPAD find 'groupmembers 'enclosed bb))
+         (these-objs (list-intersect local-objs bounded-objs memq)))
+        these-objs)))))
 
 (define (choose-appropriate-drag-find-function obj)
   (unless (is-a? obj dynapad%)
-	  (let ((shell (get-container obj))) ;may be #f, ok
-	    (if (is-a? shell container-form%)
-		(set! find-enclosed-objects find-enclosed-objects-in-container)
-		(set! find-enclosed-objects find-enclosed-objects-standard)))))
+      (let ((shell (get-container obj))) ;may be #f, ok
+        (if (is-a? shell container-form%)
+        (set! find-enclosed-objects find-enclosed-objects-in-container)
+        (set! find-enclosed-objects find-enclosed-objects-standard)))))
 
 (set! find-enclosed-objects find-enclosed-objects-standard)
 |#
@@ -103,43 +103,43 @@
 
      ; Undo/Redo
      (let ((undo-lambda (lambda (eventPAD e) (set! currentPAD eventPAD) (undo)))
-	   (redo-lambda (lambda (eventPAD e) (set! currentPAD eventPAD) (redo))))
+       (redo-lambda (lambda (eventPAD e) (set! currentPAD eventPAD) (redo))))
        (send argPAD bind "<Control-KeyPress-z>"       undo-lambda)
        (send argPAD bind "<Control-KeyPress-y>"       redo-lambda)
        (send argPAD bind "<Control-Shift-KeyPress-Z>" redo-lambda))
 
      ; Copy/Paste/Cut/Duplicate
      (send argPAD bind "<Control-KeyPress-c>"
-	   (lambda (eventPAD e) (set! currentPAD eventPAD) (Copy-Selected)))     
+       (lambda (eventPAD e) (set! currentPAD eventPAD) (Copy-Selected)))     
      (send argPAD bind "<Control-KeyPress-v>"
-	   (lambda (eventPAD e) (set! currentPAD eventPAD) (Paste-From-Copy-Buffer)))
+       (lambda (eventPAD e) (set! currentPAD eventPAD) (Paste-From-Copy-Buffer)))
      (send argPAD bind "<Control-KeyPress-x>"
-	   (lambda (eventPAD e) (set! currentPAD eventPAD) (Copy-Selected) (send-selected delete)))     
+       (lambda (eventPAD e) (set! currentPAD eventPAD) (Copy-Selected) (send-selected delete)))     
      (send argPAD bind "<Control-KeyPress-d>"
-	   (lambda (eventPAD e) (set! currentPAD eventPAD) (Copy-Selected)(Paste-From-Copy-Buffer)))
+       (lambda (eventPAD e) (set! currentPAD eventPAD) (Copy-Selected)(Paste-From-Copy-Buffer)))
      ; Delete
      (send argPAD bind "<Select-KeyPress-Delete>"
-	   (lambda (eventPAD e) (Delete-Selected)))
+       (lambda (eventPAD e) (Delete-Selected)))
      (send argPAD bind "<Select-KeyPress-BackSpace>"
-	   (lambda (eventPAD e) (Delete-Selected)))
+       (lambda (eventPAD e) (Delete-Selected)))
      (send argPAD bind "<Run-KeyPress-Delete>"
-	   (lambda (eventPAD e) (Delete-Selected)))
+       (lambda (eventPAD e) (Delete-Selected)))
      (send argPAD bind "<Run-KeyPress-BackSpace>"
-	   (lambda (eventPAD e) (Delete-Selected)))
+       (lambda (eventPAD e) (Delete-Selected)))
      ; Deep Delete
      (send argPAD bind "<Select-Shift-KeyPress-Delete>"
-	   (lambda (eventPAD e) (Deep-Delete-Selected)))
+       (lambda (eventPAD e) (Deep-Delete-Selected)))
      (send argPAD bind "<Select-Shift-KeyPress-BackSpace>"
-	   (lambda (eventPAD e) (Deep-Delete-Selected)))
+       (lambda (eventPAD e) (Deep-Delete-Selected)))
      (send argPAD bind "<Run-Shift-KeyPress-Delete>"
-	   (lambda (eventPAD e) (Deep-Delete-Selected)))
+       (lambda (eventPAD e) (Deep-Delete-Selected)))
      (send argPAD bind "<Run-Shift-KeyPress-BackSpace>"
-	   (lambda (eventPAD e) (Deep-Delete-Selected)))
+       (lambda (eventPAD e) (Deep-Delete-Selected)))
      ; Grow/shrink
      (send argPAD bind "<Run-KeyPress-b>"
-	   (lambda (d e) (make-selected-bigger)))
+       (lambda (d e) (make-selected-bigger)))
      (send argPAD bind "<Run-KeyPress-s>"
-	   (lambda (d e) (make-selected-smaller)))
+       (lambda (d e) (make-selected-smaller)))
      ; Arrows
      (bindArrows argPAD) ;pan.ss
      ; Dragging

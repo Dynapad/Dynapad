@@ -29,20 +29,20 @@
        (ry (cadr (send r xy))))
       (cond
         ((= (tablet-event-xid e) tablet)
-	  (printf "~a ~a~%" (event-x e) (event-y e))
+      (printf "~a ~a~%" (event-x e) (event-y e))
           (send l coords (list
             rx
             ry
             (- rx (* 2 (tablet-event-tiltx e)))
             (- ry (* 2 (tablet-event-tilty e))))))
         ((= (tablet-event-xid e) mouse)
-	  (printf "~a ~a~%" (event-x e) (event-y e))
-	  (when (> (tablet-event-state e) 0)
+      (printf "~a ~a~%" (event-x e) (event-y e))
+      (when (> (tablet-event-state e) 0)
           (send l coords (list
-	    rx
-	    ry
-	    (event-x e)
-	    (event-y e)))))))))
+        rx
+        ry
+        (event-x e)
+        (event-y e)))))))))
 
 (send g bind "<ButtonPressType>"
   (lambda(w e)
@@ -55,9 +55,9 @@
         ((= (tablet-event-xid e) mouse)
           (printf "mouse ~a ~a ~a~%" (tablet-event-button e) (event-x e) (event-y e))
           (send l coords (list
-	    rx
-	    ry
-	    (event-x e)
-	    (event-y e))))
+        rx
+        ry
+        (event-x e)
+        (event-y e))))
         (else
           (printf "unknown ~a~%" (tablet-event-xid e)))))))

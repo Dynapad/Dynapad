@@ -17,7 +17,7 @@
   ;Loading/Importing:
   (add-menu-item sb "Revert Workspace"         Restore-Current)
   (add-menu-item sb "Restore Workspace..." Select-and-Restore-File)
-					;(lambda () (LoadPad-Dialog #t)))
+                    ;(lambda () (LoadPad-Dialog #t)))
 
 ;  (add-menu-item sb "Import Pad File..."  Select-and-Import-File)
   (make-submenu-Import sb object)
@@ -63,8 +63,8 @@
 (define (make-submenu-Export mb object)
   (define sb (add-submenu mb "Export"))
   (add-menu-item sb "Export Selected..."
-		 (lambda () (Export-To-Directories (send currentPAD selected)))
-		 (any-selected?))
+         (lambda () (Export-To-Directories (send currentPAD selected)))
+         (any-selected?))
   (add-menu-item sb "Export All..." Export-To-Directories))
 
 
@@ -84,16 +84,16 @@
   (add-menu-item sb "Copy" Copy-Selected     (or (eq? object #t) (any-selected?)))
   (add-menu-item sb "Paste" Do-Paste         (or (eq? object #t) (not (Copy-Buffer-empty?))))
   (add-menu-item sb (if (many-selected?) "Delete Selected" "Delete")
-		 Delete-Selected (or (eq? object #t) (any-selected?)))
+         Delete-Selected (or (eq? object #t) (any-selected?)))
   (add-menu-item sb (if (many-selected?) "Delete Selected Groups" "Delete Group")
-		 Deep-Delete-Selected (or (eq? object #t) (any-selected?)))
+         Deep-Delete-Selected (or (eq? object #t) (any-selected?)))
 
   (add-menu-separator sb) ;------------------------------
 
   (add-menu-item sb "Select All" Select-All
-		                    (or (eq? object #t) (any-objects?)))
+                            (or (eq? object #t) (any-objects?)))
   (add-menu-item sb "Delete All" Confirm-and-Delete-All
-		                    (or (eq? object #t) (any-objects?)))
+                            (or (eq? object #t) (any-objects?)))
 )
 
 
@@ -111,9 +111,9 @@
     (add-menu-separator sb) ;------------------------------
 
     (add-menu-item sb "Group" Group-Selected
-		   (or (eq? object #t) (more-than-one-selected?)))
+           (or (eq? object #t) (more-than-one-selected?)))
     (add-menu-item sb "Ungroup" UnGroup-Selected
-		   (or (eq? object #t) (any-accept-method? 'ungroup)))
+           (or (eq? object #t) (any-accept-method? 'ungroup)))
 
     (add-menu-separator sb) ;------------------------------
 
@@ -199,8 +199,8 @@
 ;
 (define (make-submenu-Draw mb object)
   (let ((pad (cond ((is-a? object dynapad%) object)
-		   ((not object) currentPAD)
-		   (else (send object dynapad)))))
+           ((not object) currentPAD)
+           (else (send object dynapad)))))
     (define sb (add-submenu mb "Draw"))
     (add-menu-item sb "Text" (lambda () (initDraw dynapad text% "DrawText")))
     (add-menu-item sb "Rect" (lambda () (initDraw dynapad rect% "Draw")))
@@ -211,11 +211,11 @@
     (add-menu-separator sb) ;------------------------------
     (add-checkable-menu-item sb "Fill shapes"
        (lambda (i) 
-	 (send pad fill? (send i is-checked?)))
+     (send pad fill? (send i is-checked?)))
        (send pad fill?))
     (add-checkable-menu-item sb "Draw multiple"
        (lambda (i) 
-	 (set! Draw-multiple (send i is-checked?)))
+     (set! Draw-multiple (send i is-checked?)))
        Draw-multiple)
   ))
 

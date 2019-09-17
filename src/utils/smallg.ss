@@ -79,11 +79,11 @@
 (define contains-pt?
   (case-lambda
    ((container xy)  (if (list? xy)
-			(apply contains-pt? container xy)
-			(error ("Expects xy-pair or x, y args\n"))))
+            (apply contains-pt? container xy)
+            (error ("Expects xy-pair or x, y args\n"))))
    ((container x y)  (and
-		      (bbenclosedoron x y (send container bbox))
-		      ;(send-actor-named container geo-actor-name contains-pt? (list x y))
+              (bbenclosedoron x y (send container bbox))
+              ;(send-actor-named container geo-actor-name contains-pt? (list x y))
                       ))))
 
 ;--- Containment -------------------------------------------------
@@ -108,10 +108,10 @@
 
 (define (contained-objects container)
   (let* ((bbox (send container bbox))
-	 (intruders (send dynapad find 'groupmembers 'overlapping bbox)))
+     (intruders (send dynapad find 'groupmembers 'overlapping bbox)))
     (filter (lambda (it) (and (not (eq? it container))
-			      (contained-in? it container)))
-	    intruders)))
+                  (contained-in? it container)))
+        intruders)))
 
 
 (define (add-objects-to-greedy-region region-box imagelist)
@@ -134,9 +134,9 @@
   (case-lambda
    ((fn lst1 lst2)
     (apply append
-	   (map (lambda (c)
-		  (map (lambda (l) (fn c l)) lst2))
-		lst1)))))
+       (map (lambda (c)
+          (map (lambda (l) (fn c l)) lst2))
+        lst1)))))
 
 (define (filtered-cross-map filter-fn map-fn l1 l2)
   (filter filter-fn (cross-map map-fn l1 l2)))
@@ -145,19 +145,19 @@
   (case-lambda
    ((fn lst1 lst2)
     (apply append
-	   (map (lambda (c)
-		  (filter (lambda (l) (fn c l)) lst2))
-		lst1)))))
+       (map (lambda (c)
+          (filter (lambda (l) (fn c l)) lst2))
+        lst1)))))
 
 (define (list-intersect+diff l1 l2 mem-fn)
   (if (null? l1)
       (list null null)
       (let* ((this (car l1))
-	     (rest (list-intersect+diff (cdr l1) l2 mem-fn))
-	     (ints (car rest))
-	     (diffs (cadr rest)))
-	(if (mem-fn this l2)
-	    (list (cons this ints)
-		  diffs)
-	    (list ints
-		  (cons this diffs))))))
+         (rest (list-intersect+diff (cdr l1) l2 mem-fn))
+         (ints (car rest))
+         (diffs (cadr rest)))
+    (if (mem-fn this l2)
+        (list (cons this ints)
+          diffs)
+        (list ints
+          (cons this diffs))))))

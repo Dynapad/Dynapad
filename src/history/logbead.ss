@@ -3,11 +3,11 @@
 
 (define (infer-logbead-position)
   (let* ((r (length *redo-stack*))
-	 (u (- (length *undo-stack*) 1))
-	 (r+u (+ r u)))
+     (u (- (length *undo-stack*) 1))
+     (r+u (+ r u)))
     (if (zero? r+u)
-	1
-	(/ u r+u))))
+    1
+    (/ u r+u))))
  
 ; these override defns in logs.ss to update position of *current-state-marker*
 (define (enter-midstate new)
@@ -34,21 +34,21 @@
 
     (define/public (lerp-marker fract)
       (let* ((crds (send this coords))
-	     (toxy (cddr crds))
-	     (x (lerp fract (car crds) (caddr crds)))
-	     (y (lerp fract (cadr crds) (cadddr crds))))
+         (toxy (cddr crds))
+         (x (lerp fract (car crds) (caddr crds)))
+         (y (lerp fract (cadr crds) (cadddr crds))))
       (when (not *current-state-marker*)
-	  (set! *current-state-marker*
-		(ic (make-object rect% dynapad)
-		    (coords (append toxy
-				    (map (lambda (x)
-					   (+ x (pixels->space 3))) toxy)))
-		    (pen "red")
-		    (penwidth -1)
-		    (sticky #t)
-		    (findable #f)
-		    (layer *logtree-layer*)
-		    )))
+      (set! *current-state-marker*
+        (ic (make-object rect% dynapad)
+            (coords (append toxy
+                    (map (lambda (x)
+                       (+ x (pixels->space 3))) toxy)))
+            (pen "red")
+            (penwidth -1)
+            (sticky #t)
+            (findable #f)
+            (layer *logtree-layer*)
+            )))
       (send *current-state-marker* xy x y)
       (send *current-state-marker* raise (send this object))
       ))

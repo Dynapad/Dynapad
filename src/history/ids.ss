@@ -12,7 +12,7 @@
 (define (importing?)
   (or (null? *load-context-stack*)
       (eq? 'import
-	   (load-context-importing? (car *load-context-stack*)))))
+       (load-context-importing? (car *load-context-stack*)))))
 (define (set-load-context imp?)
   (push! (make-load-context imp? null null) *load-context-stack*))
 (define (revert-load-context)
@@ -20,14 +20,14 @@
 ;(define (push-loaded-obj obj)
 ;  (let ((oldlst (load-context-objs (car *load-context-stack*))))
 ;    (set-load-context-objs! (car *load-context-stack*)
-;			    (cons obj oldlst))))
+;                (cons obj oldlst))))
 ;(define (loaded-objs)
 ;  (load-context-objs (car *load-context-stack*)))
 (define (push-deferred-expr phase expr)
   (let ((oldlst (load-context-deferred-exprs (car *load-context-stack*))))
     (pushq-onto-malist-val-always! phase expr oldlst)
     (set-load-context-deferred-exprs! (car *load-context-stack*) oldlst)))
-;				     (cons expr oldlst))))
+;                     (cons expr oldlst))))
 (define (deferred-exprs)
   ;alist by phase ((0 expr...) (1 expr....) (n expr....))
   (load-context-deferred-exprs (car *load-context-stack*)))
@@ -35,9 +35,9 @@
   ;lst is ((0 x1 x2...) (1 x3 x4...) ...)
   ; returns appended list of all 0's, then 1's, etc
   (let ((phases (sort
-		 (lambda (phase-a phase-b)
-		   (< (car phase-a) (car phase-b)))
-		 lst)))
+         (lambda (phase-a phase-b)
+           (< (car phase-a) (car phase-b)))
+         lst)))
     (apply append (map cdr phases))
     ))
 
@@ -51,19 +51,19 @@
   (++_ *id-counter*))      ;PREincrement
 (define (set-max-padid new) ;use carefully...
   (unless (importing?)
-	  (when (< new *id-counter*) ;decreasing;
-	      ; if any entries remain in *id->obj-index,
-	      ; make sure new is increased past them
-	      (let* ((ids-still-in-use
-		      (hash-table-map *id->obj-index* (lambda (k v) k)))
-		     (max-id-in-use
-		      (if (null? ids-still-in-use) 0
-			  (apply max ids-still-in-use))))
-		(set! new (max new max-id-in-use))))
-	     ;   ;make sure index is cleared of all ids higher
-	     ; (set! *id->obj-index*
-		;    (filter (lambda (pair) (if (> (car pair) new) #f pair))
-			;    *id->obj-index*)))
+      (when (< new *id-counter*) ;decreasing;
+          ; if any entries remain in *id->obj-index,
+          ; make sure new is increased past them
+          (let* ((ids-still-in-use
+              (hash-table-map *id->obj-index* (lambda (k v) k)))
+             (max-id-in-use
+              (if (null? ids-still-in-use) 0
+              (apply max ids-still-in-use))))
+        (set! new (max new max-id-in-use))))
+         ;   ;make sure index is cleared of all ids higher
+         ; (set! *id->obj-index*
+        ;    (filter (lambda (pair) (if (> (car pair) new) #f pair))
+            ;    *id->obj-index*)))
     (set! *id-counter* new)))
 (define (max-padid new)
 ;May appear at the start of a load-set block;
@@ -88,9 +88,9 @@
 (define id->obj
   (case-lambda
    ((id)       (or (lookup-id id *id->obj-index*)    ;use master index
-		   (error "No object with id " id))) ;else fail
+           (error "No object with id " id))) ;else fail
    ((id index) (or (lookup-id id index)  ;use provided index first,
-		   (id->obj id)))  ; then try master index
+           (id->obj id)))  ; then try master index
 ))
 (define ObjID id->obj) ;terse version for save files
 (define objid id->obj) ;sadly, this variation propogated in log files
@@ -127,19 +127,19 @@
 ; error + return #f if already taken;
 ; else returns id
   (let ((found (hash-table-get *id->obj-index* id false-fn)))
-	 ;(assq id *id->obj-index*)))
+     ;(assq id *id->obj-index*)))
     (if found
-	(handle-id-conflict id found obj)
-	(begin
-	  ;(push! (list id obj) *id->obj-index*)
-	  (hash-table-put! *id->obj-index* id obj)
-	  id))))
+    (handle-id-conflict id found obj)
+    (begin
+      ;(push! (list id obj) *id->obj-index*)
+      (hash-table-put! *id->obj-index* id obj)
+      id))))
 
 (define (unregister-id id)
   (hash-table-remove! *id->obj-index* id))
 ;  (let ((found (assq id *id->obj-index*)))
 ;    (if found
-;	(set! *id->obj-index* (remq found *id->obj-index*)))))
+;    (set! *id->obj-index* (remq found *id->obj-index*)))))
 
 (define (handle-id-conflict id oldobj newobj)
 ;  (send newobj delete)
@@ -148,10 +148,10 @@
 
 (define (revert-id obj oldid)
   (cond ((importing?)  ;importing causes remap; generate newid
-	   (register-obj-id obj (new-padid)))
-	((register-obj-id obj oldid) ;try to register with oldid
-	     oldid) ;ok, use oldid
-	(else #f))) ;(handle-id-conflict obj oldid))))
+       (register-obj-id obj (new-padid)))
+    ((register-obj-id obj oldid) ;try to register with oldid
+         oldid) ;ok, use oldid
+    (else #f))) ;(handle-id-conflict obj oldid))))
 
 ;--- Load contexts : restore, import ------------
 
@@ -166,10 +166,10 @@
   (with-handlers
 ;   ([exn:user? (lambda (exn)
    ([exn:fail? (lambda (exn)
-		 (foreach (current-error-ports)
-		     (lambda (port)
-		       (fprintf port  "Error (~a) in ~a~%" (exn-message exn) expr)))
-		 #f)])
+         (foreach (current-error-ports)
+             (lambda (port)
+               (fprintf port  "Error (~a) in ~a~%" (exn-message exn) expr)))
+         #f)])
    (eval expr)))
 
 (define-syntax use-load-context
@@ -178,16 +178,16 @@
      (begin
        (set-load-context type)
        (let ((result (begin do-sth ...)))
-	 (revert-load-context)
-	 result)))))
+     (revert-load-context)
+     result)))))
 
 (define (restore-path path)
   (use-load-context 'restore ;needed here to set (importing?) context for load-set
-			     ; also nested in restore-set
+                 ; also nested in restore-set
 ;    (show-possible-delay currentPAD
-	   (delete-all currentPAD) ;DO NOT move these inside restore-set-core
-	   (clear-undo/redo)
-;	   )
+       (delete-all currentPAD) ;DO NOT move these inside restore-set-core
+       (clear-undo/redo)
+;       )
     (load path)) ; file should call load-set --> restore-set
   path)
 
@@ -196,25 +196,25 @@
     ((_ expr ...)
      (show-possible-delay currentPAD
        (let* ((objs (filter (lambda (o) (is-a? o object%))
-			    (map safe-eval (list expr ...)))))
-	 (do-deferred-evals *id->obj-index*)
-	 objs)))))
+                (map safe-eval (list expr ...)))))
+     (do-deferred-evals *id->obj-index*)
+     objs)))))
 
 (define-syntax import-set-core
   (syntax-rules ()
     ((_ expr ...)
      (show-possible-delay currentPAD
        (let* ((objs (filter (lambda (o) (is-a? o object%))
-			    (map safe-eval (list expr ...))))
-				;build temp id->obj map:
-	      (idmap  (filter ;omit objs with no id
-		       (lambda (pair) pair)
-		       (map
-			(lambda (o) (let ((i (send o wasid)))
-				      (and i (cons i o))));(list i o))))
-			objs))))
-	 (do-deferred-evals (make-immutable-hash-table idmap))
-	 objs)))))
+                (map safe-eval (list expr ...))))
+                ;build temp id->obj map:
+          (idmap  (filter ;omit objs with no id
+               (lambda (pair) pair)
+               (map
+            (lambda (o) (let ((i (send o wasid)))
+                      (and i (cons i o))));(list i o))))
+            objs))))
+     (do-deferred-evals (make-immutable-hash-table idmap))
+     objs)))))
 
 (define (import-path path)
   (use-load-context 'import
@@ -225,8 +225,8 @@
   (syntax-rules ()
     ((_ obj ...)
      (if (importing?)
-	 (import-set-core obj ...)
-	 (restore-set-core obj ...)))))
+     (import-set-core obj ...)
+     (restore-set-core obj ...)))))
 
 ;these set load-context if restore/import-path are bypassed
 (define-syntax import-set
@@ -255,34 +255,34 @@
 
      (define id
        (case-lambda
-	;auto-allocate ids on demand
-	(() (when (not _id)
-		(set! _id (register-obj-id this (new-padid))))
-	 _id)
-	((wasid) 
-	 (set! _wasid wasid)
-	 ;importing-->renumber; restoring->reuse:
-	 (set! _id (revert-id this wasid)))
-	))
+    ;auto-allocate ids on demand
+    (() (when (not _id)
+        (set! _id (register-obj-id this (new-padid))))
+     _id)
+    ((wasid) 
+     (set! _wasid wasid)
+     ;importing-->renumber; restoring->reuse:
+     (set! _id (revert-id this wasid)))
+    ))
      (define (wasid) _wasid)
 
      ;this replaces refer-when-ready
      ;overrides global defer-send (see below), assumes target is this
      (define defer-send
        (case-lambda
-	((expr) (defer-send 0 expr)) ;default phase=0
-	((phase expr) ;phase determines order of eval: all 0's, then all 1's, etc
+    ((expr) (defer-send 0 expr)) ;default phase=0
+    ((phase expr) ;phase determines order of eval: all 0's, then all 1's, etc
        ;expr must be non-null list:
        ;("#id" msg . args) or (msg . args) where args may include nested "#id"s
        ;Maybe needs error trapping on expr?
        (let ((head (car expr))
-	     (args (cdr expr)))
-	 (if (IDatom->id head) ; ("#id" msg . args); send to obj "#id" instead
-	   (push-deferred-expr phase ; as with global defer-send
-	    `(send ,head ,@args))
-	   (push-deferred-expr phase ; (msg . args); send to this
-	    `(send ,this ,head ,@args)))))
-	))
+         (args (cdr expr)))
+     (if (IDatom->id head) ; ("#id" msg . args); send to obj "#id" instead
+       (push-deferred-expr phase ; as with global defer-send
+        `(send ,head ,@args))
+       (push-deferred-expr phase ; (msg . args); send to this
+        `(send ,this ,head ,@args)))))
+    ))
 
      ;----------- obsolete, keep for back-compat: --------------------------
      (define (refer-when-ready . args)
@@ -291,17 +291,17 @@
        ;  must convert to new format "#N", or whatever id->IDatom yields
        ;  Also: nested lists of ids must have leading 'list renewed
        (let ((wrap-ids (map wrap-all-nums args)))
-	 (send this defer-send wrap-ids)))
+     (send this defer-send wrap-ids)))
 
      ; temp fn to help refer-when-ready convert:
      (define (wrap-all-nums arg)
        (cond ((null? arg) null)
-	     ((number? arg) (id->IDatom arg))
-	     ((list? arg) ;(cons 'list (map wrap-all-nums arg)))
-	      (if (number? (car arg))
-		  (cons 'list (map wrap-all-nums arg))
-		  (map wrap-all-nums arg)))
-	     (else arg)))
+         ((number? arg) (id->IDatom arg))
+         ((list? arg) ;(cons 'list (map wrap-all-nums arg)))
+          (if (number? (car arg))
+          (cons 'list (map wrap-all-nums arg))
+          (map wrap-all-nums arg)))
+         (else arg)))
 
 ))
 
@@ -320,8 +320,8 @@
    ((phase expr)
   ; expr must be format ("#id" msg . args)
     (if (IDatom->id (car expr)) ;is first arg an obj ref?
-	(push-deferred-expr phase `(send ,@expr))
-	(error "No target for defer-send in " expr)))
+    (push-deferred-expr phase `(send ,@expr))
+    (error "No target for defer-send in " expr)))
    ))
 
 ;(define (replace-IDatoms->objs arg idmap)
@@ -332,10 +332,10 @@
 ;recursively descends arg, converting all IDatoms to corresponding obj, via idmap
     (let ((id (IDatom->id expr))) ;try to convert to an id
       (cond (id (id->obj id idmap)) ;if id, replace with obj
-	    ((list? expr)         ;descend if list
-	     (map (lambda (subexpr) (import-expr-with-objs subexpr idmap))
-		  expr))
-	    (else expr))))
+        ((list? expr)         ;descend if list
+         (map (lambda (subexpr) (import-expr-with-objs subexpr idmap))
+          expr))
+        (else expr))))
 ))
 
 
@@ -359,7 +359,7 @@
 ;(lambda (e) (printf "~a~%" e) (eval e))
    eval
        (map (lambda (expr) (import-expr-with-objs expr idmap))
-	    (order-by-phase (deferred-exprs)))))
+        (order-by-phase (deferred-exprs)))))
 
 #|
 ;Example:
@@ -372,8 +372,8 @@
 
      (define/public (write)
        `(ic (make-object linkdemo%)
-	    (id ,(send this id))
-	    (defer-send `(refs (list ,@(map obj->id _refs))))))
+        (id ,(send this id))
+        (defer-send `(refs (list ,@(map obj->id _refs))))))
 ))
 
 (define a (make-object linkdemo%))

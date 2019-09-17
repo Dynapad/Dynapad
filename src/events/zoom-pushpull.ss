@@ -2,7 +2,7 @@
 
 (define (wider-view? v1 v2)
   (let ((z1 (caddr v1))
-	(z2 (caddr v2)))
+    (z2 (caddr v2)))
     (< z1 z2)))
 
 (define newpad-event-state%
@@ -22,19 +22,19 @@
 
 ;    (define/public (update-wide-view)
 ;      (let ((currview (sendf this pad view)))
-;	(case _dirflag
-;	  ((-1) (set! _recent-wide-view currview))
-;	  ((1)  (begin
-;		  (set! _vwide _recent-wide-view)
-;		  (say "resetting wide-view...")))
-;	  (else #f))))
+;    (case _dirflag
+;      ((-1) (set! _recent-wide-view currview))
+;      ((1)  (begin
+;          (set! _vwide _recent-wide-view)
+;          (say "resetting wide-view...")))
+;      (else #f))))
 
     (define/public (update-wide-view)
       (let ((currview (sendf this pad view)))
-	(when (wider-view? currview _recent-wide-view)
-	    (set! _vwide currview))
-	(set! _recent-wide-view currview)
-	))
+    (when (wider-view? currview _recent-wide-view)
+        (set! _vwide currview))
+    (set! _recent-wide-view currview)
+    ))
 
 ))
 
@@ -47,28 +47,28 @@
   (set! *last-zoom-targets* object_list)
   (let*((bbv (send PAD bbox))
         (bbo (bbunion-objects object_list))
-	(oldz (send PAD getzoom))
+    (oldz (send PAD getzoom))
         (newz (* oldz
-		 (min (/ (* *closeup_scale* (bbwidth bbv))
-			 (bbwidth bbo))
-		      (/ (* *closeup_scale* (bbheight bbv))
-			 (bbheight bbo)))))
-	(target-view (append (bbcenter bbo) (list newz))))
+         (min (/ (* *closeup_scale* (bbwidth bbv))
+             (bbwidth bbo))
+              (/ (* *closeup_scale* (bbheight bbv))
+             (bbheight bbo)))))
+    (target-view (append (bbcenter bbo) (list newz))))
     (cond ((not target-obj) target-view)
-	  ((< newz (* 1.01 oldz)) ;already at or adequately closer than target(s)...
-	     (if (or
-		  (null? object_list)
-		  (equal? object_list (list target-obj)))
-		 ;only target; zoom in 2X toward x y (presumably drag origin)
-		 (let ((closeup (list x y (* 1000 oldz))))
-		   (set! *pull-range* (adjust-push/pull-range
-				       (send PAD view)
-				       closeup))
-		   closeup)
-		 ;else zoom to single target object
-		 (precompute-closeup-view PAD (list target-obj) target-obj x y)))
-	  (else target-view) ;else target normally
-	  )
+      ((< newz (* 1.01 oldz)) ;already at or adequately closer than target(s)...
+         (if (or
+          (null? object_list)
+          (equal? object_list (list target-obj)))
+         ;only target; zoom in 2X toward x y (presumably drag origin)
+         (let ((closeup (list x y (* 1000 oldz))))
+           (set! *pull-range* (adjust-push/pull-range
+                       (send PAD view)
+                       closeup))
+           closeup)
+         ;else zoom to single target object
+         (precompute-closeup-view PAD (list target-obj) target-obj x y)))
+      (else target-view) ;else target normally
+      )
   
 )))
 
@@ -98,7 +98,7 @@
 
 (define (adjust-push/pull-range farview nearview)
   (let* ((zfac (/ (third nearview) (third farview)))
-	 (newrange (* *default-push-pull-range* (log zfac))))
+     (newrange (* *default-push-pull-range* (log zfac))))
     (when (< newrange 25) (set! newrange 0))
     newrange))
 
@@ -107,15 +107,15 @@
 
 (define (update-push-pull-motion argPAD e)
   (let* ((dy (- (sendf argPAD evs sy0) (event-sy e)))
-	 (-dy (- dy))
-	 (denom (if (positive? dy) *pull-range* *push-range*)))
+     (-dy (- dy))
+     (denom (if (positive? dy) *pull-range* *push-range*)))
     ;(send argPAD warp-pointer 0 -dy)
     ;problem: this generates reverse mouse-motion pseudo-event, counteracting real event e
     ; so cache these -dy's and ignore each when it appears
-	  (if (zero? denom)
-	      0
-	      (/ dy denom))))
-	;returns frac used by update-lerp-zooming
+      (if (zero? denom)
+          0
+          (/ dy denom))))
+    ;returns frac used by update-lerp-zooming
   
 ;---------------------------------------------
 
@@ -140,27 +140,27 @@
   (set! *at-zoom-limit?* 0) ; start at midpoint
 
   (if (or (not is-background?)
-	  (and (any-selected?)
-	       (bbenclosedoron ex ey
-			       (bbunion-objects (send argPAD selected)))))
+      (and (any-selected?)
+           (bbenclosedoron ex ey
+                   (bbunion-objects (send argPAD selected)))))
       (begin ;object or within bbox of selected objs
-	(set! closeup_set
-	      (if (or is-background?
-		      (send (event-obj e) selected?))
-		  (send argPAD selected)
-		  (list (get-top-group closeup_set))))
-	(sendf argPAD evs vclose (precompute-closeup-view argPAD
-							  closeup_set
-							  (if is-background?
-							      #f
-							      (event-obj e))
-							  ex ey))
-	)
-	  ;else background outside selection bbox:
+    (set! closeup_set
+          (if (or is-background?
+              (send (event-obj e) selected?))
+          (send argPAD selected)
+          (list (get-top-group closeup_set))))
+    (sendf argPAD evs vclose (precompute-closeup-view argPAD
+                              closeup_set
+                              (if is-background?
+                                  #f
+                                  (event-obj e))
+                              ex ey))
+    )
+      ;else background outside selection bbox:
           ; zoom in 2X closer to that spot
       (let ((closeup (list ex ey (* 1000 (send argPAD getzoom)))))
-	(sendf argPAD evs vclose closeup)
-	(set! *pull-range* (adjust-push/pull-range pos closeup)))
+    (sendf argPAD evs vclose closeup)
+    (set! *pull-range* (adjust-push/pull-range pos closeup)))
     )
   )
 
@@ -195,34 +195,34 @@
   (if (sendf argPAD evs dirflag)
     (if (= 1 (sendf argPAD evs dirflag))
       (when (< frac 0) (set! frac 0)
-	    (unless (eq? *at-zoom-limit?* 0)
-		    (set! *at-zoom-limit?* 0)
-		    (set! do-zoomlimit-cbs *hit-midfar-zoomlimit-callbacks*)))
+        (unless (eq? *at-zoom-limit?* 0)
+            (set! *at-zoom-limit?* 0)
+            (set! do-zoomlimit-cbs *hit-midfar-zoomlimit-callbacks*)))
       ;else
       (when (> frac 0) (set! frac 0) 
-	    (unless (eq? *at-zoom-limit?* 0)
-		    (set! *at-zoom-limit?* 0)
-		    (set! do-zoomlimit-cbs *hit-midnear-zoomlimit-callbacks*)))
+        (unless (eq? *at-zoom-limit?* 0)
+            (set! *at-zoom-limit?* 0)
+            (set! do-zoomlimit-cbs *hit-midnear-zoomlimit-callbacks*)))
       )
     ;else set direction flag
     (when (or (> frac 0.25) (< frac -0.25))
-	  ;(apply adjust-push-pull-range (if (> frac 0)
-	;				    (list view0 view_closeup)
-	;				    (list view_of_everything view0)))
-	  (sendf argPAD evs dirflag (sign frac)))) ;(if (> frac 0) 1 -1))))
+      ;(apply adjust-push-pull-range (if (> frac 0)
+    ;                    (list view0 view_closeup)
+    ;                    (list view_of_everything view0)))
+      (sendf argPAD evs dirflag (sign frac)))) ;(if (> frac 0) 1 -1))))
   ;all conditions so far may fail...
 
   ; enforce hard bounds
   (when (> frac  1) (set! frac 1)
-	(unless (eq? *at-zoom-limit?* 1)
-		; 1st time hitting near-limit
-		(set! *at-zoom-limit?* 1)
-		(set! do-zoomlimit-cbs *hit-near-zoomlimit-callbacks*)))
+    (unless (eq? *at-zoom-limit?* 1)
+        ; 1st time hitting near-limit
+        (set! *at-zoom-limit?* 1)
+        (set! do-zoomlimit-cbs *hit-near-zoomlimit-callbacks*)))
   (when (< frac -1) (set! frac -1)
-	(unless (eq? *at-zoom-limit?* -1)
-		; 1st time hitting far-limit
-		(set! *at-zoom-limit?* -1)
-		(set! do-zoomlimit-cbs *hit-far-zoomlimit-callbacks*)))
+    (unless (eq? *at-zoom-limit?* -1)
+        ; 1st time hitting far-limit
+        (set! *at-zoom-limit?* -1)
+        (set! do-zoomlimit-cbs *hit-far-zoomlimit-callbacks*)))
   ;if not -1, 0 or 1, *at-zoom-limit?* --> intermediate (#f)
   (when (!= (round frac) frac) (set! *at-zoom-limit?* #f))
 

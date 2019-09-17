@@ -36,19 +36,19 @@
        (tile (build-path->string dir "tile.jpg")))
       (if (> (length images) 4)
         (set! images
-	  (reverse (list-tail (reverse images) (- (length images) 4)))))
+      (reverse (list-tail (reverse images) (- (length images) 4)))))
       (if (and (not (null? images)) (file-exists? firstpage))
         (apply im/montage
-	  (append
-	    (append (list "-geometry" "600x800" "-tile" "2x2") images)
-	    (list tile))))
+      (append
+        (append (list "-geometry" "600x800" "-tile" "2x2") images)
+        (list tile))))
       (cond
         ((and (file-exists? firstpage) (file-exists? tile))
-	  (im/montage "-geometry" "600x800" firstpage tile composite))
-	((file-exists? firstpage)
-	  (im/montage "-geometry" "600x800" firstpage composite))
-	((file-exists? tile)
-	  (copy-file-replace tile composite)))
+      (im/montage "-geometry" "600x800" firstpage tile composite))
+    ((file-exists? firstpage)
+      (im/montage "-geometry" "600x800" firstpage composite))
+    ((file-exists? tile)
+      (copy-file-replace tile composite)))
       (if (file-exists? tile)
         (delete-file tile))))
 
@@ -59,11 +59,11 @@
        (largest (largest path)))
       (cond
         ((and (file-exists? firstpage) (file-exists? largest))
-	  (im/montage "-geometry" "600x800" firstpage largest composite))
-	((file-exists? firstpage)
-	  (copy-file-replace firstpage composite))
-	((file-exists? largest)
-	  (copy-file-replace largest composite)))))
+      (im/montage "-geometry" "600x800" firstpage largest composite))
+    ((file-exists? firstpage)
+      (copy-file-replace firstpage composite))
+    ((file-exists? largest)
+      (copy-file-replace largest composite)))))
     
 
   (define (largest_bottomhalf path)
@@ -73,11 +73,11 @@
        (largest (largest path)))
       (cond
         ((and (file-exists? firstpage) (file-exists? largest))
-	  (im/composite "-geometry" "600x800" largest firstpage composite))
-	((file-exists? firstpage)
-	  (copy-file-replace firstpage composite))
-	((file-exists? largest)
-	  (copy-file-replace largest composite)))))
+      (im/composite "-geometry" "600x800" largest firstpage composite))
+    ((file-exists? firstpage)
+      (copy-file-replace firstpage composite))
+    ((file-exists? largest)
+      (copy-file-replace largest composite)))))
 
   (define funcs (list
     tile2x2
@@ -102,8 +102,8 @@
       ((path) (composite-NNN path 0))
       ((path n)
          (build-path
-	   (ripdir path)
-	   (format "composite-~a.jpg" (%0wd n))))))
+       (ripdir path)
+       (format "composite-~a.jpg" (%0wd n))))))
 
   (define (composite-NNN? x)
     (let ((rexp (regexp "composite-[0-9][0-9]*.jpg")))
@@ -120,25 +120,25 @@
        (n 0))
       (cond
         ((null? funcs) ())
-	((file-exists? (composite-NNN path n))
-	  (loop (cdr funcs) (+ n 1)))
-	(else
-	  ((car funcs) path)
+    ((file-exists? (composite-NNN path n))
+      (loop (cdr funcs) (+ n 1)))
+    (else
+      ((car funcs) path)
           (if (file-exists? (composite.jpg path))
             (begin
               (printf "~a~%" (composite-NNN path n))
-	      (rename-file-or-directory
-	        (composite.jpg path)
-		(composite-NNN path n))
-	      (thumbify (composite-NNN path n)))
+          (rename-file-or-directory
+            (composite.jpg path)
+        (composite-NNN path n))
+          (thumbify (composite-NNN path n)))
               (printf "failed to create ~a~%" (composite-NNN path n)))
-	  (loop (cdr funcs) (+ n 1)))))
-	(if (and
-	      (file-exists? (composite-NNN path 0))
-	      (not (file-exists? (composite.jpg path))))
-	  (begin
-	    (copy-file-replace (composite-NNN path 0) (composite.jpg path))
-	    (thumbify (composite.jpg path)))))
+      (loop (cdr funcs) (+ n 1)))))
+    (if (and
+          (file-exists? (composite-NNN path 0))
+          (not (file-exists? (composite.jpg path))))
+      (begin
+        (copy-file-replace (composite-NNN path 0) (composite.jpg path))
+        (thumbify (composite.jpg path)))))
 
   (define (compositedir dir)
     (for-each

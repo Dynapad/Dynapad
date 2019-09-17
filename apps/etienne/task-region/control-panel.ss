@@ -29,18 +29,18 @@
 
       (for-each
        (lambda (item)
-	 (define w (send item width))
-	 (define h (send item height))
-	 ;;
-	 ;; place the item
-	 (if (eq? _orientation 'h)
-	     (send item bbox (list x y (+ x w) (+ y h)))
-	     (send item bbox (list (- x w) (- y h) x y)))
-	 ;;
-	 ;; update our coordinates
-	 (if (eq? _orientation 'h)
-	     (set! x (+ x w))
-	     (set! y (- y h))))
+     (define w (send item width))
+     (define h (send item height))
+     ;;
+     ;; place the item
+     (if (eq? _orientation 'h)
+         (send item bbox (list x y (+ x w) (+ y h)))
+         (send item bbox (list (- x w) (- y h) x y)))
+     ;;
+     ;; update our coordinates
+     (if (eq? _orientation 'h)
+         (set! x (+ x w))
+         (set! y (- y h))))
        (send this contents)))
 
     ;; Returns the width of the control panel
@@ -48,9 +48,9 @@
       (define length 0)
       (for-each
        (lambda (item)
-	 (if (eq? dim 'h)
-	     (set! length (+ length (send item width)))
-	     (set! length (+ length (send item height)))))
+     (if (eq? dim 'h)
+         (set! length (+ length (send item width)))
+         (set! length (+ length (send item height)))))
        (send this contents))
       length)
 
@@ -60,8 +60,8 @@
       (define h (if (eq? _orientation 'v) (content-length 'v) _limiting))
 
       (if (eq? _orientation 'h)
-	  (send (panel) bbox (list _ax _ay (+ _ax w) (+ _ay h)))
-	  (send (panel) bbox (list _ax _ay (- _ax w) (- _ay h)))))
+      (send (panel) bbox (list _ax _ay (+ _ax w) (+ _ay h)))
+      (send (panel) bbox (list _ax _ay (- _ax w) (- _ay h)))))
 
     (rename (super-add add))
     (define/override (add item)
@@ -70,8 +70,8 @@
       ;;
       ;; Scale the item before you add it to the panel.
       (if (<= itemw itemh)
-	  (send item scale (/ _limiting itemw))
-	  (send item scale (/ _limiting itemh)))
+      (send item scale (/ _limiting itemw))
+      (send item scale (/ _limiting itemh)))
       ;;
       ;; Add it to the contents.
       (super-add item)

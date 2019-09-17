@@ -21,20 +21,20 @@
   (send argPAD bind "<Control-Shift-KeyPress-Z>" redo-lambda)
 
   (send argPAD bind "<Select-KeyPress-Delete>"
-	  (lambda (eventPAD e) (Delete-Selected)))
+      (lambda (eventPAD e) (Delete-Selected)))
     (send argPAD bind "<Select-KeyPress-BackSpace>"
-	  (lambda (eventPAD e) (Delete-Selected)))
+      (lambda (eventPAD e) (Delete-Selected)))
     (send argPAD bind "<Run-KeyPress-Delete>"
-	  (lambda (eventPAD e) (Delete-Selected)))
+      (lambda (eventPAD e) (Delete-Selected)))
     (send argPAD bind "<Run-KeyPress-BackSpace>"
-	  (lambda (eventPAD e) (Delete-Selected)))
+      (lambda (eventPAD e) (Delete-Selected)))
 
     (send argPAD bind "<Select-Shift-KeyPress-Delete>"
-	  (lambda (eventPAD e) (Deep-Delete-Selected)))
+      (lambda (eventPAD e) (Deep-Delete-Selected)))
     (send argPAD bind "<Select-Shift-KeyPress-BackSpace>"
-	  (lambda (eventPAD e) (Deep-Delete-Selected)))
+      (lambda (eventPAD e) (Deep-Delete-Selected)))
     (send argPAD bind "<Run-Shift-KeyPress-Delete>"
-	  (lambda (eventPAD e) (Deep-Delete-Selected)))
+      (lambda (eventPAD e) (Deep-Delete-Selected)))
     (send argPAD bind "<Run-Shift-KeyPress-BackSpace>"
-	  (lambda (eventPAD e) (Deep-Delete-Selected)))
+      (lambda (eventPAD e) (Deep-Delete-Selected)))
 )

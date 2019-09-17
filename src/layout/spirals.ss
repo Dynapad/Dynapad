@@ -15,16 +15,16 @@
 
      (define/override (render)
        (let ((target (send _rgn boundary))
-	     (stuff (send _cells map-cells
-			  (lambda (o) (send o obj)))))
-;	 (say target stuff)
-	 (unless (null? stuff)
-		 (arrange-in-spiral-onto-object-no-scaling stuff target))
+         (stuff (send _cells map-cells
+              (lambda (o) (send o obj)))))
+;     (say target stuff)
+     (unless (null? stuff)
+         (arrange-in-spiral-onto-object-no-scaling stuff target))
 
-	 (send _rgn contents stuff) ;forces recompute of fencepost positions
-	                            ; for pile auto-wrap
-	 (send _rgn finish)
-	 ))
+     (send _rgn contents stuff) ;forces recompute of fencepost positions
+                                ; for pile auto-wrap
+     (send _rgn finish)
+     ))
 ))
 
 ;(define (get-webthumb-date thumb)

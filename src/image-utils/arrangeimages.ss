@@ -18,8 +18,8 @@
     (lambda (x)
       (cond
        ;((regexp-match thumb_rexp x) #f)
-	((sch_imagep (build-path->string dir x)) x)
-	(else #f)))
+    ((sch_imagep (build-path->string dir x)) x)
+    (else #f)))
     (sort (lambda (a b)
          (or (< (string-length a) (string-length b))
              (string<? a b)))
@@ -27,11 +27,11 @@
 
 (define (hires-list-by-size dir)
  (let ((img-files (filter
-		   (lambda (f) (sch_imagep (build-path->string dir f)))
-		   (directory-list->string dir))))
+           (lambda (f) (sch_imagep (build-path->string dir f)))
+           (directory-list->string dir))))
    (sort (lambda (a b)
-	   (> (file-size (build-path->string dir a)) (file-size (build-path->string dir b))))
-	 img-files)))
+       (> (file-size (build-path->string dir a)) (file-size (build-path->string dir b))))
+     img-files)))
 
 ; image-dir-callbacks allow functions to be called after (arrangedir dir).
 ; callbacks take two args:  dir-fullpath and imagelist
@@ -75,11 +75,11 @@
     (when *current-z-plane* (set! zfac *current-z-plane*))
     (for-each
       (lambda (file)
-	(when (sch_imagep file)
+    (when (sch_imagep file)
           (set! images
             (append images (list
               (make-object image% dynapad file (list x y zfac)))))
-	  (set! x (+ x (* 200 zfac)))
+      (set! x (+ x (* 200 zfac)))
           (when (> (- x view_x) (* (* 200 numrows) zfac))
             (set! x view_x)
             (set! y (- y (* 200 zfac))))))
@@ -171,7 +171,7 @@
       `(let ((obj (make-object ,(dynaclass) dynapad ,(path))))
          (send* obj
            ,@(writeoptions))
-	 obj))
+     obj))
 
     (set! _path (path->complete-path initpath))
     (let-values (((base name dir?) (split-path->string _path)))
@@ -220,7 +220,7 @@
     (lambda (x)
       (and
         (regexp-match pdf_rexp x)
-	(file-exists? (build-path->string dir x))))
+    (file-exists? (build-path->string dir x))))
     (sort (lambda (a b)
          (or (< (string-length a) (string-length b))
              (string<? a b)))
@@ -249,7 +249,7 @@
         (set! pdfs
           (append pdfs (list
             (make-pdf-at-position file x y zfac))))
-	(set! x (+ x (* 200 zfac)))
+    (set! x (+ x (* 200 zfac)))
         (when (> (- x view_x) (* (* 200 numrows) zfac))
           (set! x view_x)
           (set! y (- y (* 200 zfac)))))

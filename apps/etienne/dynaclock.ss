@@ -1,8 +1,8 @@
 (define dynaclock%
   (class text%
-    (init	_dynapad)
+    (init    _dynapad)
     (init-field (_year 1980)  (_month 8)   (_day 27)
-		(_hour 22)    (_minute 30) (_24-hour #f))
+        (_hour 22)    (_minute 30) (_24-hour #f))
 
     (public inc-minute inc-hour inc-day inc-month inc-year)
     (public set-time year month day hour minute)
@@ -57,7 +57,7 @@
     (define 24-hour
       (case-lambda
         (()  _24-hour)
-	((x) (set! _24-hour x) (text))))
+    ((x) (set! _24-hour x) (text))))
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -84,12 +84,12 @@
       (define e (- (daysInMonth _month 1) _day))
 
       (if (<= n e)
-      	  (set! _day (+ _day n))
-	  (begin
-	    (set! n (- n e 1))
-	    (inc-month 1)
-	    (set! _day 1)
-	    (inc-day n)))
+            (set! _day (+ _day n))
+      (begin
+        (set! n (- n e 1))
+        (inc-month 1)
+        (set! _day 1)
+        (inc-day n)))
       (text))
 
     (define (inc-month n)
@@ -98,7 +98,7 @@
 
       (set! _month (- total (* 12 years)))
       (if (= _month 0)
-	  (set! _month 12))
+      (set! _month 12))
 
       (if (> years 0)
         (inc-year years))
@@ -114,40 +114,40 @@
     ;; Helper methods
     (define (monthName m)
       (cond ((= m 1) "January")
-	    ((= m 2) "February")
-	    ((= m 3) "March")
-	    ((= m 4) "April")
-	    ((= m 5) "May")
-	    ((= m 6) "June")
-	    ((= m 7) "July")
-	    ((= m 8) "August")
-	    ((= m 9) "September")
-	    ((= m 10) "October")
-	    ((= m 11) "November")
-	    ((= m 12) "December")))
+        ((= m 2) "February")
+        ((= m 3) "March")
+        ((= m 4) "April")
+        ((= m 5) "May")
+        ((= m 6) "June")
+        ((= m 7) "July")
+        ((= m 8) "August")
+        ((= m 9) "September")
+        ((= m 10) "October")
+        ((= m 11) "November")
+        ((= m 12) "December")))
 
     (define (daysInMonth m . y)
       (if (null? y)
-	  (set! y _year)
-	  (set! y (car y)))
+      (set! y _year)
+      (set! y (car y)))
 
       (cond ((or (= m 1) (= m 3) (= m 5) (= m 7) (= m 8) (= m 10) (= m 12))
-	     31)
-	    ((or (= m 4) (= m 6) (= m 9) (= m 11))
-	     30)
-	    ((= m 2)
-	     (if (isLeapYear y)
-		 29
-		 28))))
+         31)
+        ((or (= m 4) (= m 6) (= m 9) (= m 11))
+         30)
+        ((= m 2)
+         (if (isLeapYear y)
+         29
+         28))))
 
     (define (isLeapYear y)
       (if (= (modulo y 4) 0)
-	  (if (= (modulo y 100) 0)
-	      (if (= (modulo y 400) 0)
-	           #t
-		   #f)
-	      #t)
-	  #f))
+      (if (= (modulo y 100) 0)
+          (if (= (modulo y 400) 0)
+               #t
+           #f)
+          #t)
+      #f))
 
     (define (syncWithSystem)
       (define cur (seconds->date (current-seconds)))
@@ -165,11 +165,11 @@
 
       ; The hour
       (cond ((and (not _24-hour) (= _hour 0))
-	     (set! return (string-append return "12")))
-	    ((and (not _24-hour) (> _hour 12))
-	     (set! return (string-append return (number->string (- _hour 12)))))
-	    (else
-	     (set! return (string-append return (number->string _hour)))))
+         (set! return (string-append return "12")))
+        ((and (not _24-hour) (> _hour 12))
+         (set! return (string-append return (number->string (- _hour 12)))))
+        (else
+         (set! return (string-append return (number->string _hour)))))
 
       ; The minute
       (if (< _minute 10)
@@ -179,16 +179,16 @@
       ; Am/Pm
       (if (not _24-hour)
           (if (< _hour 12)
-	      (set! return (string-append return "am"))
-	      (set! return (string-append return "pm"))))
+          (set! return (string-append return "am"))
+          (set! return (string-append return "pm"))))
 
       return)
 
     (define (date)
       (string-append
         (monthName _month) " "
-	(number->string _day) ", "
-	(number->string _year)))
+    (number->string _day) ", "
+    (number->string _year)))
 
     (define (text)
       (super-text (string-append (date) " " (time))))

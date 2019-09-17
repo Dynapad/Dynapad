@@ -10,7 +10,7 @@
     (define speed
       (case-lambda
         (() zoom_speed)
-	((newspeed) (set! zoom_speed newspeed))))
+    ((newspeed) (set! zoom_speed newspeed))))
 
     (define (start direction interval)
       (set! zoom_dir direction)
@@ -20,17 +20,17 @@
 
     (define (zmult)
       (let*
-	((cur_msec (current-milliseconds))
-	 (elapsed (- cur_msec prev_msec))
-	 (elapsed (if (> elapsed 0) elapsed (+ elapsed 1000)))
+    ((cur_msec (current-milliseconds))
+     (elapsed (- cur_msec prev_msec))
+     (elapsed (if (> elapsed 0) elapsed (+ elapsed 1000)))
          (requested_iterations (/ elapsed 50))
-	 (iterations (* 0.5 (+ prev_iterations requested_iterations))))
+     (iterations (* 0.5 (+ prev_iterations requested_iterations))))
 
-	(set! prev_msec cur_msec)
-	(set! prev_iterations iterations)
-	(when (> iterations 5) (set! iterations 5))
+    (set! prev_msec cur_msec)
+    (set! prev_iterations iterations)
+    (when (> iterations 5) (set! iterations 5))
 
-	(+ 1 (* iterations zoom_speed zoom_dir))))
+    (+ 1 (* iterations zoom_speed zoom_dir))))
 
     (define (proc)
       (_zoomproc _PAD (zmult)))

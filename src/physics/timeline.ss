@@ -76,9 +76,9 @@
 
 (define (DumpSelectedTrays)
   (let* ((rgns (apply append (map 
-			      (lambda (o) (get-actors-named o 'region))
-			      (send dynapad selected))))
-	 (trays (filter (lambda (r) (is-a? r tray%)) rgns)))
+                  (lambda (o) (get-actors-named o 'region))
+                  (send dynapad selected))))
+     (trays (filter (lambda (r) (is-a? r tray%)) rgns)))
     (for-each (lambda (t) (send t remove-objects (send t contents))) trays)))
 
 (define (make-popup-menu-for-tray object)
@@ -92,64 +92,64 @@
 
 (define (make-submenu-Layout mb object)
   (let* ((sb (add-submenu mb "Layout Format..."))
-	 (grid-proj? (get-actor-named object 'raster-projector))
-	 (line-proj? (get-actor-named object 'linear-projector)))
+     (grid-proj? (get-actor-named object 'raster-projector))
+     (line-proj? (get-actor-named object 'linear-projector)))
     (add-checkable-menu-item sb "Grid"
            (lambda (i) (SetProjectorForSelected raster-projector%))
-	   grid-proj?)
+       grid-proj?)
     (add-checkable-menu-item sb "Linear"
-	   (lambda (i) (SetProjectorForSelected labeled-linear-projector%))
-	   line-proj?)
+       (lambda (i) (SetProjectorForSelected labeled-linear-projector%))
+       line-proj?)
     ))
 
 (define (make-submenu-SortBy mb object)
   (let* ((proj (get-actor-named object projector-actor-name))
-	 (sb (add-submenu mb "Sort by..." proj))
-	 (param (and proj (send proj param))))
+     (sb (add-submenu mb "Sort by..." proj))
+     (param (and proj (send proj param))))
     (add-checkable-menu-item sb "Date Created"
-	   (lambda (i) (SetParamForSelectedProjectors date-created-parameter))
-	   (eq? param date-created-parameter) proj)
+       (lambda (i) (SetParamForSelectedProjectors date-created-parameter))
+       (eq? param date-created-parameter) proj)
     (add-checkable-menu-item sb "Date Acquired"
-	   (lambda (i) (SetParamForSelectedProjectors date-acquired-parameter))
-	   (eq? param date-acquired-parameter) proj)
+       (lambda (i) (SetParamForSelectedProjectors date-acquired-parameter))
+       (eq? param date-acquired-parameter) proj)
     (add-checkable-menu-item sb "Focus Distance (Images)"
-	   (lambda (i) (SetParamForSelectedProjectors focus-dist-parameter))
-	   (eq? param focus-dist-parameter) proj)
+       (lambda (i) (SetParamForSelectedProjectors focus-dist-parameter))
+       (eq? param focus-dist-parameter) proj)
     (add-checkable-menu-item sb "Camera Aperture (Images)"
-	   (lambda (i) (SetParamForSelectedProjectors fstop-parameter))
-	   (eq? param fstop-parameter) proj)
+       (lambda (i) (SetParamForSelectedProjectors fstop-parameter))
+       (eq? param fstop-parameter) proj)
     ))
 
 (define (make-submenu-Spacing mb object)
   (let* ((proj (get-actor-named object 'linear-projector))
-	 (sb (add-submenu mb "Linear Spacing..." proj))
-	 (iq (and proj (send proj iq-weight))))
+     (sb (add-submenu mb "Linear Spacing..." proj))
+     (iq (and proj (send proj iq-weight))))
     (add-checkable-menu-item sb "Evenly Spread"
-	   (lambda (i) (SetSelectedLinearProjectorWeight 0))
-	   (and iq (= iq 0)) proj)
+       (lambda (i) (SetSelectedLinearProjectorWeight 0))
+       (and iq (= iq 0)) proj)
     (add-checkable-menu-item sb "Loosely Clumped"
-	   (lambda (i) (SetSelectedLinearProjectorWeight .3))
-	   (and iq (= iq .3)) proj)
+       (lambda (i) (SetSelectedLinearProjectorWeight .3))
+       (and iq (= iq .3)) proj)
     (add-checkable-menu-item sb "Tightly Clumped"
-	   (lambda (i) (SetSelectedLinearProjectorWeight .7))
-	   (and iq (= iq .7)) proj)
+       (lambda (i) (SetSelectedLinearProjectorWeight .7))
+       (and iq (= iq .7)) proj)
     (add-checkable-menu-item sb "Precisely Scaled"
-	   (lambda (i) (SetSelectedLinearProjectorWeight 1))
-	   (and iq (= iq 1)) proj)
+       (lambda (i) (SetSelectedLinearProjectorWeight 1))
+       (and iq (= iq 1)) proj)
     ))
 
 ; dont call this raw
 (define (make-region-tool-from-bb argPAD bbox obj-type form-type rgn-type proj-type . params)
   (let* ((obj (make-object obj-type argPAD bbox))
-	 (form (regionize obj rgn-type form-type)))
+     (form (regionize obj rgn-type form-type)))
     (apply attach-projector-to-obj form proj-type params)
     (send (get-rgn form) refresh-contents)
     form))
 
 (define (make-region-tool-with-objs argPAD objs obj-type form-type rgn-type proj-type . params)
   (let* ((bbox (bbunion-objects objs))
-	 (obj  (make-object obj-type argPAD bbox))
-	 (form (regionize obj rgn-type form-type)))
+     (obj  (make-object obj-type argPAD bbox))
+     (form (regionize obj rgn-type form-type)))
     (apply attach-projector-to-obj form proj-type params)
     (send (get-rgn form) final-contents objs)
     form))
@@ -166,19 +166,19 @@
       (NewRegionTool rgn-type form-type proj-type date-acquired-parameter)) ;date-created-parameter))
    ((rgn-type form-type proj-type param . more)
     (if (any-selected?)
-	(let ((form #f))
-	  (Start-Changing-Select--undoable dynapad)
-	  (set! form
-		(apply make-region-tool-with-objs dynapad (fs) rect%
-		       form-type rgn-type proj-type param more))
-	  (send dynapad selected (list form))
-	  (Done-Changing-Select--undoable dynapad)
-	  (undoify-fresh-obj form))
-	(ask-user-for-bbox dynapad
-	   (lambda (bb)
-	     (undoify-fresh-obj
-	      (apply make-region-tool-from-bb dynapad bb rect%
-		     form-type rgn-type proj-type param more))))))
+    (let ((form #f))
+      (Start-Changing-Select--undoable dynapad)
+      (set! form
+        (apply make-region-tool-with-objs dynapad (fs) rect%
+               form-type rgn-type proj-type param more))
+      (send dynapad selected (list form))
+      (Done-Changing-Select--undoable dynapad)
+      (undoify-fresh-obj form))
+    (ask-user-for-bbox dynapad
+       (lambda (bb)
+         (undoify-fresh-obj
+          (apply make-region-tool-from-bb dynapad bb rect%
+             form-type rgn-type proj-type param more))))))
 ))
 
 (when *popup-menus-enabled?*
@@ -186,25 +186,25 @@
      (lambda (mb obj)
        (add-menu-separator mb)
        (add-menu-item mb (if (any-selected?)
-			     "Make Lens w. Selected"
-			     "Make Lens...")
-		      (lambda () (NewRegionTool lens%
-						resizable-frame-container%
-						;optional form type
-						)))
+                 "Make Lens w. Selected"
+                 "Make Lens...")
+              (lambda () (NewRegionTool lens%
+                        resizable-frame-container%
+                        ;optional form type
+                        )))
        (add-menu-item mb (if (any-selected?)
-			     "Make Magnet w. Selected"
-			     "Make Magnet...")
-		      (lambda () (NewRegionTool mutator%
-						resizable-frame-container%
-						;optional form type
-						)))
+                 "Make Magnet w. Selected"
+                 "Make Magnet...")
+              (lambda () (NewRegionTool mutator%
+                        resizable-frame-container%
+                        ;optional form type
+                        )))
        (add-menu-item mb (if (any-selected?)
-			     "Make Tray w. Selected"
-			     "Make Tray...")
-		      (lambda () (NewRegionTool fusing-container%
-						resizable-dissolving-fusing-frame-container%
-						)))
+                 "Make Tray w. Selected"
+                 "Make Tray...")
+              (lambda () (NewRegionTool fusing-container%
+                        resizable-dissolving-fusing-frame-container%
+                        )))
        )))
 
 

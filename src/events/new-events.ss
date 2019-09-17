@@ -33,13 +33,13 @@
   (def imagelist  (list (event-obj e)))
   (show-possible-delay eventPAD
     (if (send (car imagelist) selected?)
-	(set! imagelist (send eventPAD selected)))
+    (set! imagelist (send eventPAD selected)))
 
     (if (andmap (lambda (img) (member img *list_of_hirez_images*)) imagelist)
-	(remove-images-from-hires-list *list_of_hirez_images*)
+    (remove-images-from-hires-list *list_of_hirez_images*)
       ;else
-	(set-image-hires-list imagelist)
-	)
+    (set-image-hires-list imagelist)
+    )
     (center-images-or-return-to-previous-view)
     #f
     ))
@@ -48,13 +48,13 @@
   (def imagelist  (list (event-obj e)))
   (show-possible-delay eventPAD
     (if (send (car imagelist) selected?)
-	(set! imagelist (send eventPAD selected)))
+    (set! imagelist (send eventPAD selected)))
     
     (if (andmap (lambda (img) (member img *list_of_hirez_images*)) imagelist)
-	(remove-images-from-hires-list imagelist)
+    (remove-images-from-hires-list imagelist)
     ;else
-	(add-images-to-hires-list imagelist)
-	)
+    (add-images-to-hires-list imagelist)
+    )
     (center-images-or-return-to-previous-view)
     #f
     ))

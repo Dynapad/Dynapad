@@ -46,14 +46,14 @@
     (init _name _access-fn _label-fn)
     (init-field _compare-fn)  ;(fn val-a val-b) returns -1,0,1 for <,=,>
     (super-instantiate (_name _access-fn
-			      (lambda (a b) (zero? (_compare-fn a b)))
-			      _label-fn))
+                  (lambda (a b) (zero? (_compare-fn a b)))
+                  _label-fn))
 
     (define/public compare-fn
       (case-lambda
        (() _compare-fn)
        ((fn) (set! _compare-fn fn)
-	     (send this equal-fn (lambda (a b) (zero? (_compare-fn a b)))))))
+         (send this equal-fn (lambda (a b) (zero? (_compare-fn a b)))))))
 ))
 
 (define quantitative-parameter%
@@ -68,21 +68,21 @@
 ; Example:
 (define zero-parameter
   (make-object quantitative-parameter%
-	       'zero-parameter
-	       (lambda (obj) 0)
-	       (lambda (nums) (map number->string nums))
-	       (lambda (a b) cmp-nums)
-	       (lambda (val) 0)))
+           'zero-parameter
+           (lambda (obj) 0)
+           (lambda (nums) (map number->string nums))
+           (lambda (a b) cmp-nums)
+           (lambda (val) 0)))
 
 
 ;generalize generate-and-cache process:
 (define (get-obj-metadata obj tag generate-fn)
   (let* ((keyval (assq tag (send obj alist)))
-	 (val (if keyval
-		  (cadr keyval) ;reuse cached val
-		  (generate-fn obj)))) ;unknown, generate anew
+     (val (if keyval
+          (cadr keyval) ;reuse cached val
+          (generate-fn obj)))) ;unknown, generate anew
     (when (not keyval) ;cache for next time
-	(remote-push! (list tag val) obj alist))
+    (remote-push! (list tag val) obj alist))
     val))
       
 
@@ -101,37 +101,37 @@
       ; other services/entries may be added here...
       )
   (set! match-metadata-line-for-tag
-	(lambda (line tag)
-	  (case tag 
-	    ((photo-datetime)
-	     (let ((match (regexp-match photo-datetime-rexp line)))
-	       (and match
-		    (infer-complete-date
-		     (apply list->date
-		      (map ensure-number (reverse (cdr match))))))))
+    (lambda (line tag)
+      (case tag 
+        ((photo-datetime)
+         (let ((match (regexp-match photo-datetime-rexp line)))
+           (and match
+            (infer-complete-date
+             (apply list->date
+              (map ensure-number (reverse (cdr match))))))))
 
-	    ((file-datetime)
-	     (let ((match (regexp-match file-datetime-rexp line)))
-	       (and match
-		    (infer-complete-date
-		     (apply list->date
-		      (map ensure-number (reverse (cdr match))))))))
+        ((file-datetime)
+         (let ((match (regexp-match file-datetime-rexp line)))
+           (and match
+            (infer-complete-date
+             (apply list->date
+              (map ensure-number (reverse (cdr match))))))))
 
-	    ((fstop)
-	     (let ((match (regexp-match aperture-rexp line)))
-	       (and match (ensure-number (cadr match)))))
+        ((fstop)
+         (let ((match (regexp-match aperture-rexp line)))
+           (and match (ensure-number (cadr match)))))
 
-	    ((focus-dist)
-	     (let ((match (regexp-match focus-dist-rexp line)))
-	       (and match (ensure-number (cadr match)))))
+        ((focus-dist)
+         (let ((match (regexp-match focus-dist-rexp line)))
+           (and match (ensure-number (cadr match)))))
 
-	    ((publish-date)
-	     (let ((match (regexp-match publish-date-rexp line)))
-	       (and match
-		    (infer-complete-date
-		     (string->date (cadr match))))))
+        ((publish-date)
+         (let ((match (regexp-match publish-date-rexp line)))
+           (and match
+            (infer-complete-date
+             (string->date (cadr match))))))
 
-	    (else #f)))))
+        (else #f)))))
 
 (define (extract-metadata-with-cmd tag path cmd)
 ; jhead is a system app which extracts exif data from .jpgs;
@@ -140,105 +140,105 @@
 ;  and reads its results on input-port;
 ;  if any line matches regexp (above) for tag, returns parsed value, else #f
   (let* ((ports (and path (file-exists? path)
-		     (process (format "~a ~s" cmd path))))
-	 (input-port (and ports (car ports))))
+             (process (format "~a ~s" cmd path))))
+     (input-port (and ports (car ports))))
     (and input-port
-	 (let ((line #f)
-	       (found #f))
-	   (while (and (not found)
-		       (not (eq? eof (cset! line (read-line input-port)))))
-		  (set! found
-			(match-metadata-line-for-tag line tag)))
-	   (close-input-port input-port)
-	   (close-output-port (second ports))
-	   (close-input-port (fourth ports))
-	   found))))
+     (let ((line #f)
+           (found #f))
+       (while (and (not found)
+               (not (eq? eof (cset! line (read-line input-port)))))
+          (set! found
+            (match-metadata-line-for-tag line tag)))
+       (close-input-port input-port)
+       (close-output-port (second ports))
+       (close-input-port (fourth ports))
+       found))))
 
 (define (get-filedate path)
   (and (file-exists? path)
        (let* ((secs (file-or-directory-modify-seconds path))
-	      (date (seconds->date secs)))
-	 (list secs date))))
+          (date (seconds->date secs)))
+     (list secs date))))
     
 (define (get-image-date obj)
   (let ((pair
-	 (get-obj-metadata
-	  obj 'photo-datetime
-	  (lambda (img) (let ((date
-			     (extract-metadata-with-cmd
-			      'photo-datetime (send img hirespath) "jhead ")))
-			  (and date
-			       (list (date->seconds date) date)))))))
+     (get-obj-metadata
+      obj 'photo-datetime
+      (lambda (img) (let ((date
+                 (extract-metadata-with-cmd
+                  'photo-datetime (send img hirespath) "jhead ")))
+              (and date
+                   (list (date->seconds date) date)))))))
     pair))
 
 (define (get-image-filedate img)
   (let ((pair
-	 (get-obj-metadata
-	  img 'filedate
-	  (lambda (img) (get-filedate (send img hirespath))))))
+     (get-obj-metadata
+      img 'filedate
+      (lambda (img) (get-filedate (send img hirespath))))))
     pair))
 
 (define (get-pdf-date obj)
   (let ((pair
-	 (get-obj-metadata
-	  obj 'publish-date
-	  (lambda (pdf) (let ((date
-			     (extract-metadata-with-cmd
-			      'publish-date (send pdf url) "pdfinfo ")))
-			  (and date
-			       (list (date->seconds date) date)))))))
+     (get-obj-metadata
+      obj 'publish-date
+      (lambda (pdf) (let ((date
+                 (extract-metadata-with-cmd
+                  'publish-date (send pdf url) "pdfinfo ")))
+              (and date
+                   (list (date->seconds date) date)))))))
     pair))
 
 (define (get-pdf-filedate pdf)
   (let ((pair
-	 (get-obj-metadata
-	  pdf 'filedate
-	  (lambda (pdf) (get-filedate (send pdf url))))))
+     (get-obj-metadata
+      pdf 'filedate
+      (lambda (pdf) (get-filedate (send pdf url))))))
     pair))
 
 (define (pair->date pair)
   (and pair
        (or (cadr pair)
-	   (and (car pair)
-		(seconds->date (car pair))))))
+       (and (car pair)
+        (seconds->date (car pair))))))
 
 (define (get-image-fstop obj)
   (get-obj-metadata obj 'fstop
-		    (lambda (img) 
-		      (and (is-a? img image%)
-			   (extract-metadata-with-cmd
-			    'fstop (send img hirespath) "jhead ")))))
+            (lambda (img) 
+              (and (is-a? img image%)
+               (extract-metadata-with-cmd
+                'fstop (send img hirespath) "jhead ")))))
 
 (define (get-image-focus-dist obj)
   (get-obj-metadata obj 'focus-dist
-		    (lambda (img) 
-		      (and (is-a? img image%)
-			   (extract-metadata-with-cmd
-			    'focus-dist (send img hirespath) "jhead ")))))
+            (lambda (img) 
+              (and (is-a? img image%)
+               (extract-metadata-with-cmd
+                'focus-dist (send img hirespath) "jhead ")))))
 
 (define (get-obj-date obj)
   (cond ((is-a? obj group%)
-	   (get-obj-date (car (send obj members))))
-	((is-a? obj image%)
-	   (get-image-date obj))
-	((is-a? obj pdf-portrait%)
-	   (get-pdf-date obj))
-	(else #f)))
+       (get-obj-date (car (send obj members))))
+    ((is-a? obj image%)
+       (get-image-date obj))
+    ((is-a? obj pdf-portrait%)
+       (get-pdf-date obj))
+    (else #f)))
 (define (get-obj-filedate obj)
   (cond ((is-a? obj group%)
-	   (get-obj-filedate (car (send obj members))))
-	((is-a? obj image%)
-	   (get-image-filedate obj))
-	((is-a? obj pdf-portrait%)
-	   (get-pdf-filedate obj))
-	(else #f)))
+       (get-obj-filedate (car (send obj members))))
+    ((is-a? obj image%)
+       (get-image-filedate obj))
+    ((is-a? obj pdf-portrait%)
+       (get-pdf-filedate obj))
+    (else #f)))
 
 ;====== Set alist modifiers so obj can write metadata vals ===
 (alist-filters 'add (make-alist-modifier-function-general
-		     (lambda (key) (memq key (list 'filedate 'photo-datetime 'publish-date)))
-		     (lambda (vals) (let* ((pair (car vals)) ;assumes only one val
-					   (sec (car pair)))
-				      (list (list sec #f))))))
+             (lambda (key) (memq key (list 'filedate 'photo-datetime 'publish-date)))
+             (lambda (vals) (let* ((pair (car vals)) ;assumes only one val
+                       (sec (car pair)))
+                      (list (list sec #f))))))
 
 ; ====== Metadata menu =========
 (define *show-metadata-time?* #t)
@@ -252,18 +252,18 @@
    ((frmt) (set! *pad-date-format* frmt)
            (date-display-format frmt))))
 
-						 
+                         
 (define-macro (time-format-item format)
   `(add-checkable-menu-item sb ,(symbol->string format)
-	   (lambda (i) 
-	     (pad-date-format ',format))
-	   (eq? ',format (pad-date-format))))
+       (lambda (i) 
+         (pad-date-format ',format))
+       (eq? ',format (pad-date-format))))
 
 (define (make-submenu-DateFormat mb obj)
   (let* ((sb (add-submenu mb "Date Format...")))
     (add-checkable-menu-item sb "Show time"
        (lambda (i) (set! *show-metadata-time?*
-			 (not (show-metadata-time?))))
+             (not (show-metadata-time?))))
        (show-metadata-time?))
     (add-menu-separator sb) ;------------------------------
     (time-format-item american)
@@ -290,69 +290,69 @@
 
 (define date-created-parameter
   (make-object quantitative-parameter%
-	       'date-created-parameter
-	       get-obj-date
-	       (lambda (prs) (dates->labels
-			      (map (lambda (pr)
-				     (or (cadr pr) (seconds->date (car pr))))
-				   prs)))
-	       (lambda (pr1 pr2) (safe-cmp-nums (car pr1) (car pr2)))
-	       (lambda (pr) (ensure-number (car pr)))))
+           'date-created-parameter
+           get-obj-date
+           (lambda (prs) (dates->labels
+                  (map (lambda (pr)
+                     (or (cadr pr) (seconds->date (car pr))))
+                   prs)))
+           (lambda (pr1 pr2) (safe-cmp-nums (car pr1) (car pr2)))
+           (lambda (pr) (ensure-number (car pr)))))
 
 (define date-acquired-parameter
   (make-object quantitative-parameter%
-	       'date-acquired-parameter
-	       get-obj-filedate
-	       (lambda (prs) (dates->labels
-			      (map (lambda (pr)
-				     (or (cadr pr) (seconds->date (car pr))))
-				   prs)))
-	       (lambda (pr1 pr2) (safe-cmp-nums (car pr1) (car pr2)))
-	       (lambda (pr) (ensure-number (car pr)))))
+           'date-acquired-parameter
+           get-obj-filedate
+           (lambda (prs) (dates->labels
+                  (map (lambda (pr)
+                     (or (cadr pr) (seconds->date (car pr))))
+                   prs)))
+           (lambda (pr1 pr2) (safe-cmp-nums (car pr1) (car pr2)))
+           (lambda (pr) (ensure-number (car pr)))))
 
 
 (define (extract-image-filename obj)
   (if (not (is-a? obj image%))
       #f
       (let* ((filename (send obj hirespath))
-	     (matches  (regexp-match gifjpg_rexp filename))
-	     (base     (caddr matches)))
-	(replace-else-push-onto-malist! assq 'filename (list base) obj alist)
-	base)))
+         (matches  (regexp-match gifjpg_rexp filename))
+         (base     (caddr matches)))
+    (replace-else-push-onto-malist! assq 'filename (list base) obj alist)
+    base)))
 
 (define (get-image-filename obj)
       (let* ((filename (assq 'filename (send obj alist))))
-	(when (and (not filename)
-		 (extract-image-filename obj))
-	    (set! filename (assq 'filename (send obj alist))))
-	(cadr filename)))
+    (when (and (not filename)
+         (extract-image-filename obj))
+        (set! filename (assq 'filename (send obj alist))))
+    (cadr filename)))
 
 (define filename-parameter
   (make-object quantitative-parameter%
-	       'filename-parameter
-	       get-image-filename
-	       list
-	       safe-cmp-strs
-	       (lambda (str) (if str
-				 (char->integer (car (string->list str)))
-				 ""))
+           'filename-parameter
+           get-image-filename
+           list
+           safe-cmp-strs
+           (lambda (str) (if str
+                 (char->integer (car (string->list str)))
+                 ""))
                  ))
 
 (define focus-dist-parameter
   (make-object quantitative-parameter%
-	       'focus-dist-parameter
-	       get-image-focus-dist
-	       (lambda (nums) (list (map number->string nums)))
-	       safe-cmp-nums
-	       ensure-number))
+           'focus-dist-parameter
+           get-image-focus-dist
+           (lambda (nums) (list (map number->string nums)))
+           safe-cmp-nums
+           ensure-number))
 
 (define fstop-parameter
   (make-object quantitative-parameter%
-	       'fstop-parameter
-	       get-image-fstop
-	       (lambda (nums) (list (map (lambda (num) (format "f/~a" num)) nums)))
-	       safe-cmp-nums
-	       ensure-number))
+           'fstop-parameter
+           get-image-fstop
+           (lambda (nums) (list (map (lambda (num) (format "f/~a" num)) nums)))
+           safe-cmp-nums
+           ensure-number))
 
 ;  Date labels
 
@@ -366,11 +366,11 @@
 (define (count-adjacent-inequalities lst eq-fn . last-val-arg)
 ; count # of times adjacent values in a list are unequal (via eq-fn)
   (cond ((null? lst) 0)
-	((null? last-val-arg) (count-adjacent-inequalities (cdr lst) eq-fn (car lst)))
-	(else (let* ((last-val (car last-val-arg))
-		     (this-val (car lst))
-		     (diff (if (eq-fn last-val this-val) 0 1)))
-		(+ diff (count-adjacent-inequalities (cdr lst) eq-fn this-val))))))
+    ((null? last-val-arg) (count-adjacent-inequalities (cdr lst) eq-fn (car lst)))
+    (else (let* ((last-val (car last-val-arg))
+             (this-val (car lst))
+             (diff (if (eq-fn last-val this-val) 0 1)))
+        (+ diff (count-adjacent-inequalities (cdr lst) eq-fn this-val))))))
 
 (define (count-adjacent-inequalities-of-sublists-at-level sublists lvl eq-fn)
 ; EX: sublists [(1 2 3 4 5)
@@ -391,45 +391,45 @@
 
 (define (choose-level-of-description sublists eq-fn ineq-ratio-fn)
   (let* ((len (length sublists))
-;	 (num-ineqs (map (lambda (lvl)
-;			   (count-adjacent-inequalities-of-sublists-at-level
-;			    expanded-vals-list lvl eq-fn))
-;			 (counting-list len)))
-	 (found (first-valid (counting-list len)
-		     (lambda (lvl)
-			(let* ((ineqs (count-adjacent-inequalities-of-sublists-at-level
-				       sublists lvl eq-fn))
-			       (ineq-ratio (/ ineqs len)))
-			  (ineq-ratio-fn ineq-ratio))))))
+;     (num-ineqs (map (lambda (lvl)
+;               (count-adjacent-inequalities-of-sublists-at-level
+;                expanded-vals-list lvl eq-fn))
+;             (counting-list len)))
+     (found (first-valid (counting-list len)
+             (lambda (lvl)
+            (let* ((ineqs (count-adjacent-inequalities-of-sublists-at-level
+                       sublists lvl eq-fn))
+                   (ineq-ratio (/ ineqs len)))
+              (ineq-ratio-fn ineq-ratio))))))
     (and found (caar found))))
 
 (define (choose-desc-lvl-range-for-dates datelist)
   (let* ((sublists (map subdivide-date datelist))
-	 (top-lvl-fn (lambda (ratio) (> ratio 0)))
-;	 (btm-lvl-fn (lambda (ratio) (> ratio .5)))
-	 (top-lvl (choose-level-of-description sublists eq? top-lvl-fn))
-	 (btm-lvl (min (+ top-lvl 1) 5)))
-;	 (btm-lvl (choose-level-of-description sublists eq? btm-lvl-fn)))
+     (top-lvl-fn (lambda (ratio) (> ratio 0)))
+;     (btm-lvl-fn (lambda (ratio) (> ratio .5)))
+     (top-lvl (choose-level-of-description sublists eq? top-lvl-fn))
+     (btm-lvl (min (+ top-lvl 1) 5)))
+;     (btm-lvl (choose-level-of-description sublists eq? btm-lvl-fn)))
     (list (or top-lvl 5) (or btm-lvl 5))))
 
 (define (convert-dates-to-labels datelist)
   (date-display-format 'iso-8601)
   (let* ((range (choose-desc-lvl-range-for-dates datelist))
-	 (from (car range))
-	 (to (max (cadr range) from))
-	 (template (map (lambda (n) (and (>= n from) (<= n to)))
-			(counting-list 6))) ;--> e.g. (#f #f #t #t #f #f) for range (2 3)
-	 (shared-template
-	           (map (lambda (n) (< n from)) (counting-list 6)))
-	 (raw-strs (map (lambda (d) (date->string d #t)) datelist))
-	 (trim-strs (map (lambda (str)
-			   (prune-date-string template
-					      *iso-date-format-rexp*
-					      str)) raw-strs)))
+     (from (car range))
+     (to (max (cadr range) from))
+     (template (map (lambda (n) (and (>= n from) (<= n to)))
+            (counting-list 6))) ;--> e.g. (#f #f #t #t #f #f) for range (2 3)
+     (shared-template
+               (map (lambda (n) (< n from)) (counting-list 6)))
+     (raw-strs (map (lambda (d) (date->string d #t)) datelist))
+     (trim-strs (map (lambda (str)
+               (prune-date-string template
+                          *iso-date-format-rexp*
+                          str)) raw-strs)))
     (list
      trim-strs
      (if (null? raw-strs)
-	 ""
-	 (prune-date-string shared-template *iso-date-format-rexp* (car raw-strs)))
+     ""
+     (prune-date-string shared-template *iso-date-format-rexp* (car raw-strs)))
      )))
 |#

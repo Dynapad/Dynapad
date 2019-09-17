@@ -12,8 +12,8 @@
        (send button set-label on_navline)
        (set! Draw-multiple (button-double-clicked?))
        (for-all-pads
-	(lambda (argPAD)
-	  (initDraw argPAD navline% "Draw")))
+    (lambda (argPAD)
+      (initDraw argPAD navline% "Draw")))
        )))
 
 (define *navline-message* (make-object message% "(bearing)" guestpane))
@@ -21,15 +21,15 @@
 (define (coords->bearing crds)
   (mlet (((x2 y2 x1 y1) crds))
     (let* ((pi/2 (/ pi 2))
-	   (dx (- x2 x1))
-	   (dy (- y2 y1))
-	   (rads (cond ((not (zero? dx)) (/ dy dx))
-		       ((< dy 0) (- (tan pi/2)))
-		       (else (tan pi/2))))
-	   (bearing (* (/ 180 pi) (atan rads))))
+       (dx (- x2 x1))
+       (dy (- y2 y1))
+       (rads (cond ((not (zero? dx)) (/ dy dx))
+               ((< dy 0) (- (tan pi/2)))
+               (else (tan pi/2))))
+       (bearing (* (/ 180 pi) (atan rads))))
       (set! bearing (if (>= dx 0)
-			(- 90 bearing)
-			(- 270 bearing)))
+            (- 90 bearing)
+            (- 270 bearing)))
       (round-to-int bearing))))
 
 (define navline%
@@ -40,10 +40,10 @@
     (dynaclass 'navline%)
 
     (send this coords-callbacks 'add
-	  (lambda (obj crds)
-	    (send *navline-message*
-		  set-label
-		  (format "~a" (coords->bearing crds)))))
+      (lambda (obj crds)
+        (send *navline-message*
+          set-label
+          (format "~a" (coords->bearing crds)))))
 
     (if initcoords (coords initcoords))
 

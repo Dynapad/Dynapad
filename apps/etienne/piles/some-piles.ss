@@ -42,7 +42,7 @@
     (define/override (events)
       (say "in events")
       (map car (send _mysql select
-	(format "event from event_shared_pile where shared_pile=~a" _pile-id))))
+    (format "event from event_shared_pile where shared_pile=~a" _pile-id))))
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Override the enter and leave methods
@@ -54,7 +54,7 @@
 ;    (define/override (leave-object obj)
 ;      (define event (string->number (get-object-keyval obj 'event -1)))
 ;      (if (> event 0)
-;	  (send _mysql shared-pile-remove-event _pile-id event)))
+;      (send _mysql shared-pile-remove-event _pile-id event)))
     ;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     )

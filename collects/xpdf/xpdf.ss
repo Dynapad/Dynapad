@@ -9,7 +9,7 @@
     (let ((_verbose #f))
       (case-lambda
         (() _verbose)
-	((bool) (set! _verbose bool)))))
+    ((bool) (set! _verbose bool)))))
 
   (define pdfimages (find-executable-path "pdfimages" #f))
   (if (not pdfimages) (error "can't find pdfimages"))
@@ -32,14 +32,14 @@
       ((null? args) #f)
       ((< (length args) 2)
         (if (xpdf/verbose)
-	  (printf "xpdf/pdfinfo: too few arguments ~a~%" args))
-	#f)
+      (printf "xpdf/pdfinfo: too few arguments ~a~%" args))
+    #f)
       (else
         (let*
-	  ((ofile (car (reverse args)))
-	   (out (open-output-file ofile))
-	   (args (reverse (cdr (reverse args))))
-	   (l (apply process*/ports out #f #f pdfinfo args))
+      ((ofile (car (reverse args)))
+       (out (open-output-file ofile))
+       (args (reverse (cdr (reverse args))))
+       (l (apply process*/ports out #f #f pdfinfo args))
            (stdout (list-ref l 0))
            (stdin  (list-ref l 1))
            (pid    (list-ref l 2))
@@ -47,7 +47,7 @@
            (proc (list-ref l 4))
            (result #f))
           (proc 'wait)
-	  (set! result (proc 'status))
+      (set! result (proc 'status))
           (close-output-port out)
           (close-output-port stdin)
           (close-input-port stderr)

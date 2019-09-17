@@ -61,7 +61,7 @@
           ((eq? line eof) ())
           (else
             (cons
-	      (let*
+          (let*
                 ((rexp "(.*)\t(.*)\t(.*)\t(.*)\t(.*)\t(.*)\t(.*)")
                  (parsed (cdr (regexp-match rexp line))))
                 (apply make-object entry% dynapad parsed))

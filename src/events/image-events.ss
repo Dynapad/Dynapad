@@ -51,7 +51,7 @@
 (define (ensure-thumb hirespath)
   (let ((thumbpath (findthumb hirespath)))
     (unless (and thumbpath (file-exists? thumbpath))
-	    (thumbify hirespath))
+        (thumbify hirespath))
     thumbpath))
 
 ;------ New Auto-hires....
@@ -71,18 +71,18 @@
    ((eventPAD e) (image-hires-and-center (list (event-obj e))))
    ((imagelist)
     (unless (null? imagelist)
-	    (let ((eventPAD (send (car imagelist) dynapad)))
-	      (show-possible-delay eventPAD
-	        (when (send (car imagelist) selected?)
-		            (set! imagelist (send eventPAD selected)))
-		
-		(if (andmap (lambda (img) (member img *list_of_hirez_images*)) imagelist)
-		    (remove-images-from-hires-list *list_of_hirez_images*)
-					;else
-		    (set-image-hires-list imagelist)
-		    )
-		(center-images-or-return-to-previous-view)
-		)))
+        (let ((eventPAD (send (car imagelist) dynapad)))
+          (show-possible-delay eventPAD
+            (when (send (car imagelist) selected?)
+                    (set! imagelist (send eventPAD selected)))
+        
+        (if (andmap (lambda (img) (member img *list_of_hirez_images*)) imagelist)
+            (remove-images-from-hires-list *list_of_hirez_images*)
+                    ;else
+            (set-image-hires-list imagelist)
+            )
+        (center-images-or-return-to-previous-view)
+        )))
     #f
     )))
 
@@ -91,18 +91,18 @@
    ((eventPAD e) (image-also-hires-and-center (list (event-obj e))))
    ((imagelist)
     (unless (null? imagelist)
-	    (let ((eventPAD (send (car imagelist) dynapad)))
-	      (show-possible-delay eventPAD
-	        (when (send (car imagelist) selected?)
-		            (set! imagelist (send eventPAD selected)))
-	      
-		(if (andmap (lambda (img) (member img *list_of_hirez_images*)) imagelist)
-		    (remove-images-from-hires-list imagelist)
-					;else
-		    (add-images-to-hires-list imagelist)
-		    )
-		(center-images-or-return-to-previous-view)
-	      )))
+        (let ((eventPAD (send (car imagelist) dynapad)))
+          (show-possible-delay eventPAD
+            (when (send (car imagelist) selected?)
+                    (set! imagelist (send eventPAD selected)))
+          
+        (if (andmap (lambda (img) (member img *list_of_hirez_images*)) imagelist)
+            (remove-images-from-hires-list imagelist)
+                    ;else
+            (add-images-to-hires-list imagelist)
+            )
+        (center-images-or-return-to-previous-view)
+          )))
     #f
     )))
 
@@ -114,7 +114,7 @@
     ;(send dynapad moveto *last_view_before_image_centering* 1000 #t)
     (let ((returnview (sendf dynapad evs vwide)))
       (when returnview
-	    (send dynapad moveto returnview 1000 #t)))))
+        (send dynapad moveto returnview 1000 #t)))))
 
 (define (remove-images-from-hires-list imagelist)
   (foreach imagelist (lambda (img)

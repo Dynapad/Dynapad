@@ -14,29 +14,29 @@
 
     (field (_ext_type_alist
 
-	    '(("txt"  text)
+        '(("txt"  text)
 
-	      ("ss"   code)
-	      ("cpp"  code)
-	      ("c"    code)
-	      ("h"    code)
+          ("ss"   code)
+          ("cpp"  code)
+          ("c"    code)
+          ("h"    code)
 
-	      ("htm"  webpage)
-	      ("html" webpage)
+          ("htm"  webpage)
+          ("html" webpage)
 
-	      ("jpg"  image) ("Jpg"  image) ("JPG"  image)
-	      ("gif"  image) ("Gif"  image) ("GIF"  image)
-	      ("png"  image) ("Png"  image) ("PNG"  image)
+          ("jpg"  image) ("Jpg"  image) ("JPG"  image)
+          ("gif"  image) ("Gif"  image) ("GIF"  image)
+          ("png"  image) ("Png"  image) ("PNG"  image)
 
-	      ("pdf"  pdf) ("PDF"  'pdf)
+          ("pdf"  pdf) ("PDF"  'pdf)
 
-	      ("ps"  postscript) ("PS"   postscript)
-	      ("eps" postscript) ("EPS"  postscript)
+          ("ps"  postscript) ("PS"   postscript)
+          ("eps" postscript) ("EPS"  postscript)
 
-	      ("o"    noapp)
-	      ("db"   noapp)
+          ("o"    noapp)
+          ("db"   noapp)
 
-	      ("exe"  exe)
+          ("exe"  exe)
               )))
 
  
@@ -50,7 +50,7 @@
       ;   'exe
       ; otherwise, assume local file to view
       (let* ((ext (filename-extension path_or_url))
-	     (file-type (assoc ext _ext_type_alist)))
+         (file-type (assoc ext _ext_type_alist)))
         (if file-type (cadr file-type) #f)))
 
     (define/public (open-application-for path)

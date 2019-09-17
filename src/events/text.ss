@@ -28,7 +28,7 @@
             (send obj focus)
             (text-move-point-to-xy obj x y))
           (else
-	    (changemode eventPAD "EditText")
+        (changemode eventPAD "EditText")
             (set! obj (make-object text% eventPAD "" pos))
             (send obj focus)))))))
     #f
@@ -55,21 +55,21 @@
 (define (start-text-event eventPAD e)
   (set! currentPAD eventPAD)
   (let* ((x (event-x e))
-	 (y (event-y e))
+     (y (event-y e))
          (pos (list x y (/ 1.0 (send eventPAD getzoom))))
-	 (objs-here (reverse (send eventPAD find 'overlapping (list x y x y))))
-	 (target (if (null? objs-here) #f (car objs-here))))
+     (objs-here (reverse (send eventPAD find 'overlapping (list x y x y))))
+     (target (if (null? objs-here) #f (car objs-here))))
     (unless (and target
-		 (is-a? target text%))
-	; make new text:
-	    (set! target (make-object text% eventPAD "" pos)))
-	 ;   (set! Draw-object target))
+         (is-a? target text%))
+    ; make new text:
+        (set! target (make-object text% eventPAD "" pos)))
+     ;   (set! Draw-object target))
     (edit-text-at-xy eventPAD target x y)))
     
 (define (bindTextMode argPAD)
   (send argPAD bind "<DrawText-ButtonPress-1>" start-text-event)
   (send argPAD bind "<DrawText-KeyPress-Escape>" esc-shape-event)
-  (send argPAD bind "<EditText-ButtonPress-1>" 	esc-shape-event)
+  (send argPAD bind "<EditText-ButtonPress-1>"     esc-shape-event)
 )
 
 (define (add-Text-Bindings o)
@@ -83,10 +83,10 @@
     (lambda (eventPAD e)
       (let ((str (event-key e)))
       (when (> (string-length str) 0)
-	(send o insert str)))))
+    (send o insert str)))))
 
   (send o bind "<EditText-KeyPress-Escape>"
-	esc-shape-event)
+    esc-shape-event)
 
   (send o bind "<EditText-KeyPress-Right>"
     (lambda (eventPAD e) (send (event-obj e) forward) #f))
@@ -145,14 +145,14 @@
   (send o bind "<EditText-ButtonPress-1>"
    (lambda (eventPAD e)
      (let ((x (event-x e))
-	   (y (event-y e)))
+       (y (event-y e)))
        (text-move-point-to-xy o x y)
        #f)))
 ;       (if (bbenclosedoron x y (send (event-obj e) bbox))
-;	   (text-move-point-to-xy o x y)
-;	   (begin
-;	     (say "outside")
-;	     (send eventPAD focus))))
+;       (text-move-point-to-xy o x y)
+;       (begin
+;         (say "outside")
+;         (send eventPAD focus))))
 ;     #f))
 
 

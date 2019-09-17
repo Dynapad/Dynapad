@@ -104,9 +104,9 @@
       lst
       ;else
       (let ((mems (send mp members)))
-	(filter
-	 (lambda (o) (member o mems))
-	 lst))))
+    (filter
+     (lambda (o) (member o mems))
+     lst))))
 
 (define (add-minipad-member-bindings argMINIPAD obj)
   (send obj bind "<Run-ButtonPress-2>"
@@ -132,7 +132,7 @@
     (init _arg0)  ;_arg0 = _pad is a minipad
     (inherit-field _pad)
     (if (not (is-a? _arg0 minipad%))
-	(error "Requires minipad% argument"))
+    (error "Requires minipad% argument"))
     (super-instantiate (_arg0))
 
     ;--- local tools ---------------------------------------------
@@ -155,22 +155,22 @@
     ;--- bindings
     (define/public (Run-Control-ButtonPress-1)
       (lambda (eventPAD e)
-	(send eventPAD store-prev_xy (event-x e) (event-y e))
-	#f))
+    (send eventPAD store-prev_xy (event-x e) (event-y e))
+    #f))
   
     (define/public (Run-Control-B1-Motion)
       (lambda (eventPAD e)
-	(def vu (send minipad view))
-	(def prev_x (send eventPAD get-prev_x))
-	(def prev_y (send eventPAD get-prev_y))
-	(send eventPAD store-prev_xy (event-x e) (event-y e))
-	
-	(when (and prev_x prev_y)
-	      (send _pad slideview
-		    (/ (* (- (event-x e) prev_x) (send eventPAD getzoom)) (caddr vu))
-		    (/ (* (- (event-y e) prev_y) (send eventPAD getzoom)) (caddr vu))
-		    ))
-	#f))
+    (def vu (send minipad view))
+    (def prev_x (send eventPAD get-prev_x))
+    (def prev_y (send eventPAD get-prev_y))
+    (send eventPAD store-prev_xy (event-x e) (event-y e))
+    
+    (when (and prev_x prev_y)
+          (send _pad slideview
+            (/ (* (- (event-x e) prev_x) (send eventPAD getzoom)) (caddr vu))
+            (/ (* (- (event-y e) prev_y) (send eventPAD getzoom)) (caddr vu))
+            ))
+    #f))
 
   ; Panning
   (send _pad bind "<Run-Control-ButtonPress-1>" (Run-Control-ButtonPress-1))

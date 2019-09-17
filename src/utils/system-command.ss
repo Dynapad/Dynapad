@@ -17,8 +17,8 @@
 
   (if (not no-return-value?)
       (do ((line "" (read-line in)))
-	  ((eq? line eof))
-	(push! line return-value)))
+      ((eq? line eof))
+    (push! line return-value)))
 
   (close-input-port  in)
   (close-output-port out)

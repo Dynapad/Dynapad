@@ -8,11 +8,11 @@
     (set! pmenu (make-popup-menu #f))
     (let ((obj (get-top-group (event-obj e))))
       (when #t ;(send obj findable)
-	    (unless (send obj selected?)
-		    (let ((already-selected (send (send obj dynapad) selected)))
-		      (foreach already-selected (lambda (o) (send o unselect)))
-		      (send obj select)))
-	    (set! pmenu (make-popup-menu obj)))))
+        (unless (send obj selected?)
+            (let ((already-selected (send (send obj dynapad) selected)))
+              (foreach already-selected (lambda (o) (send o unselect)))
+              (send obj select)))
+        (set! pmenu (make-popup-menu obj)))))
   (when pmenu (show-popup-function pmenu (event-sx e) (event-sy e)))
 )
 
@@ -60,7 +60,7 @@
 
 (define (append-mainmenu-constructor fn)
   (set! *application-mainmenu-constructors*
-	(append *application-mainmenu-constructors* (list fn))))
+    (append *application-mainmenu-constructors* (list fn))))
 
 (define (include-application-mainmenu-constructors popmenu object)
   (for-each (lambda (fn) (fn popmenu object)) *application-mainmenu-constructors*))
@@ -71,8 +71,8 @@
     ;object-specific menu
     (let ((popmenu (send-actor object 'make-popup-menu)))
       (unless (send object findable)  ;kludgy, but this allows unfindable objs
-	                              ; to have menus w/o being selected
-	      (send object unselect))
+                                  ; to have menus w/o being selected
+          (send object unselect))
       (when popmenu (set! popmenu (car popmenu))) ;in case multiple actors respond
       popmenu
     )
@@ -142,7 +142,7 @@
 
 (define (include-custom-popup-items menu obj)
   (when (and obj (send-actor obj 'provides-popup-item?))
-	(send-actor obj 'make-popup-items menu)))
+    (send-actor obj 'make-popup-items menu)))
 
 (define (add-custom-popup-items item-maker obj)
   (define ppir (make-object popup-item-provider%))

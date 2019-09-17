@@ -79,7 +79,7 @@
 
 (define (add-checkable-menu-item menu label func checked? . enabled?)
   (let ((cmi (make-object checkable-menu-item% label menu
-			  (lambda (i e) (func i)) #f #f void checked?)))
+              (lambda (i e) (func i)) #f #f void checked?)))
     (when (not (null? enabled?)) (send cmi enable (car enabled?)))
     cmi))
 
@@ -95,8 +95,8 @@
     (define/public (new-item item) (push! item _items))
     (define/public (uncheck-others exception)
       (foreach _items (lambda (i) (unless (eq? i exception)
-					  (if (send i is-checked?)
-					      (send i check #f))))))
+                      (if (send i is-checked?)
+                          (send i check #f))))))
     ))
 
 (define (add-exclusive-checkable-item-set menu)
@@ -104,12 +104,12 @@
 
 (define (add-exclusive-checkable-menu-item checkable-set label funct)
   (let* ((menu (send checkable-set menu))
-	 (full-funct (lambda (item evnt)
-		       (unless (send item is-checked?) ;already checked?
-			       (send checkable-set uncheck-others item)
-			       (send item check #t)
-			       (funct))))
-	 (newitem (make-object checkable-menu-item% label menu full-funct)))
+     (full-funct (lambda (item evnt)
+               (unless (send item is-checked?) ;already checked?
+                   (send checkable-set uncheck-others item)
+                   (send item check #t)
+                   (funct))))
+     (newitem (make-object checkable-menu-item% label menu full-funct)))
     (send checkable-set new-item newitem)
     newitem))
 |#

@@ -16,11 +16,11 @@
     (movebaddir dir)
     (for-each
       (lambda(x)
-	(cond
-	  ((string=? x "thumbs") #f)
-	  ((string=? x "bad") #f)
-	  ((ripdir? x) #f)
-	  (else (movebadtree (build-path->string dir x)))))
+    (cond
+      ((string=? x "thumbs") #f)
+      ((string=? x "bad") #f)
+      ((ripdir? x) #f)
+      (else (movebadtree (build-path->string dir x)))))
       (filter
         (lambda(x) (directory-exists? (build-path->string dir x)))
-	(directory-list->string dir)))))
+    (directory-list->string dir)))))

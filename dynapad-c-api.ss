@@ -547,9 +547,9 @@
                       (set! selected (_select_highlight_func _dynapad this))
                       (set! selected (make-object select% _dynapad this)) )
                     )))
-;		    (when (and *selection-layer* (*selection-layer-filter-fn* this))
-;			  (push! (send this layer) _layer-stack)
-;			  (send this layer *selection-layer*)))))
+;            (when (and *selection-layer* (*selection-layer-filter-fn* this))
+;              (push! (send this layer) _layer-stack)
+;              (send this layer *selection-layer*)))))
        ;allows syntax (send this select #t/#f)
        ((val)
         (if val (select)
@@ -582,10 +582,10 @@
 ;      (case-lambda
 ;       (() _id)
 ;       ((new) (set! new (import-id new))
-;	      ;(if _id (error "ID overwrite: " _id new)
-;		  (begin
-;		    (set! _id new)
-;		    (push! (list new this) *id->obj-index*)))));)
+;          ;(if _id (error "ID overwrite: " _id new)
+;          (begin
+;            (set! _id new)
+;            (push! (list new this) *id->obj-index*)))));)
 ;    (define id
 ;      (case-lambda
 ;       (() _id)
@@ -680,7 +680,7 @@
             ((eq? initlink #f) #f)
             ((list? initlink) `(savelink ',initlink))
             ((is-a? initlink dynaobject%) ;(send initlink padid))
-;	       `(refer-when-ready 'savelink ,(obj->id initlink)))
+;           `(refer-when-ready 'savelink ,(obj->id initlink)))
              `(defer-send (savelink ,(export-objs initlink))))
             (else
               (error "savelink expects dynaobject% or view, given " initlink))))
@@ -701,7 +701,7 @@
 ;    (define oldid
 ;      (case-lambda
 ;        (() _oldid)
-;	((new_oldid) (set! _oldid new_oldid))))
+;    ((new_oldid) (set! _oldid new_oldid))))
 
     (define bbox (case-lambda
       (() (sch_bbox cptr))
@@ -1334,11 +1334,11 @@
          (for-each (lambda (o) (send o unselect)) _selectlist)
          (for-each (lambda (o) (send o select)) newset))))
 ;This version may or may not be faster:
-;	 (let* ((now _selectlist)
-;		(outs (list-diffq now newset))
-;		(ins  (list-diffq newset now)))
-;	   (for-each (lambda (o) (send o unselect)) outs)
-;	   (for-each (lambda (o) (send o select)) ins))
+;     (let* ((now _selectlist)
+;        (outs (list-diffq now newset))
+;        (ins  (list-diffq newset now)))
+;       (for-each (lambda (o) (send o unselect)) outs)
+;       (for-each (lambda (o) (send o select)) ins))
 
     (define cpanzoom
       (case-lambda
@@ -1738,8 +1738,8 @@
 |#
 ;    (define/override (write)
 ;      `(ic (make-object ,(dynaclass) dynapad)
-;	   ,@(writeoptions)
-;	   (saveimagepath)))
+;       ,@(writeoptions)
+;       (saveimagepath)))
       
     (define imagedata
       (case-lambda
@@ -1844,15 +1844,15 @@
 |#
 ;    (define/override (write)
 ;      `(ic (make-object ,(dynaclass) dynapad ,(hirespath))
-;	   ,@(writeoptions)))
+;       ,@(writeoptions)))
 ;      (let* ((suffixes (map (lambda (fn) ((car fn) this)) _post-build-ops))
-;	     (alter-bld (and _alternate-build-fn (_alternate-build-fn this)))
-;	     (build-expr (or alter-bld
-;			     `(ic (make-object ,(dynaclass) dynapad)
-;				  ,@(writeoptions)))))
-;	(if (null? suffixes)
-;	    build-expr
-;	    `(with obj ,build-expr ,@suffixes))))
+;         (alter-bld (and _alternate-build-fn (_alternate-build-fn this)))
+;         (build-expr (or alter-bld
+;                 `(ic (make-object ,(dynaclass) dynapad)
+;                  ,@(writeoptions)))))
+;    (if (null? suffixes)
+;        build-expr
+;        `(with obj ,build-expr ,@suffixes))))
 
     (define hirespath
       (case-lambda
