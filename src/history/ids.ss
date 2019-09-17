@@ -259,7 +259,7 @@
     (() (when (not _id)
         (set! _id (register-obj-id this (new-padid))))
      _id)
-    ((wasid) 
+    ((wasid)
      (set! _wasid wasid)
      ;importing-->renumber; restoring->reuse:
      (set! _id (revert-id this wasid)))
@@ -393,4 +393,4 @@
 (memq aprime (send bprime refs))  ;--> (<aprime>)
 
 |#
-       
+

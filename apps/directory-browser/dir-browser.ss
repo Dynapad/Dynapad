@@ -85,25 +85,25 @@
 
       ;; Resize _frameptr to half of original size
       (send _frameptr bbox (list xleft ybottom xright ycenter))
-      
-      ;; Make _dir_frame_rect to other half 
+
+      ;; Make _dir_frame_rect to other half
       (set! _dir_frame_rect
         (make-object rect% dynaptr (list xleft ycenter xright ytop)))
       (dir-frame _dir_frame_rect)
-       
+
       ;; If there are no subdirectories, then shrink dir-frame, resize frameptr
       (when (null? _subdirs)
         (send _dir_frame bbox (list xleft ytop xright ytop))
         (send _frameptr bbox (list xleft ybottom xright ytop))
         )
-      
+
       ;; If there are only subdirectories (no files), then resize dir-frame
       ;; and shrink frameptr
       (when (and (null? _files) (not (null? _subdirs)))
         (send _dir_frame bbox (list xleft ybottom xright ytop))
         (send _frameptr bbox (list xleft ybottom xright ybottom))) ;;hide hack
       )
- 
+
     ;; -- Public Methods --
     (define/public centered?
       (case-lambda
@@ -114,9 +114,9 @@
      ((not arg) (show-name-only)))
     (reconfigure-titlebox)
     )))
-    
+
     (define/public (close)
-      (for-each (lambda (o) 
+      (for-each (lambda (o)
           (send this remove o)
           (send o delete))
         (send this contents))
@@ -153,7 +153,7 @@
       (draw-rects-for-subdirs)
       (draw-sub-windows)
 
-      (if _dirbrowserptr 
+      (if _dirbrowserptr
       (send _dirbrowserptr add-event-bindings _subdirwindows))
 
       (send _dynapad moveto _save_view)
@@ -164,36 +164,36 @@
     (define/public (opened?) _opened?)
 
     (define/public (subdirs) _subdirs)
-    
+
     (define/public (subdirwindows) _subdirwindows)
 
     (define/public titleboxzfac (get/set _titleboxzfac))
 
     ;; -- Private Methods --
     (define (draw-icons-for-files)
-      (let ((_file_icon_list (map 
-                  (lambda (file) 
+      (let ((_file_icon_list (map
+                  (lambda (file)
                 (make-file-icon (build-path->string _path file)
                      (generate-random-pos 1)))
                   _files)))
     (unless (null? _file_icon_list)
         (arrange-in-grid-onto-object _file_icon_list _frameptr))
     (set! _fileicons _file_icon_list)
-    (for-each (lambda(o) 
+    (for-each (lambda(o)
             (send this add o)
                     (send o bind "<Double-ButtonPress-1>"
                       (lambda (eventPAD evnt)
                         (let* ((obj (event-obj evnt))
-                               (path (send obj path))) 
+                               (path (send obj path)))
                           (send *launcher* open-application-for path))))
             (send thermometer set-temp o)
-            ) _fileicons)    
+            ) _fileicons)
     ))
-      
+
     (define (draw-rects-for-subdirs)
       (let ((_rect_list (map
              (lambda (subdir)
-               (ic (make-object rect% dynaptr 
+               (ic (make-object rect% dynaptr
                  (send dynapad bbox)) ;;hack for bbox
                    (fill "white")
                    (position (generate-random-pos))
@@ -207,14 +207,14 @@
       (let ((_subwinlist (map
               (lambda (rect subdir)
                 (make-object dir-window% dynaptr
-                     (build-path->string _path subdir) rect 
+                     (build-path->string _path subdir) rect
                      (- _initmaxdepth 1) this))
               _rects _subdirs)))
     (unless (null? _subwinlist)
         (arrange-in-grid-onto-object _subwinlist _dir_frame 1.10 0.90))
     (set! _subdirwindows _subwinlist)
     (set! _rects '())
-    (for-each (lambda (win) 
+    (for-each (lambda (win)
             (send this add win)
             ) _subdirwindows)
     ))
@@ -255,7 +255,7 @@
         (send _frameptr bbox (list xleft ybot xright ytop))
         (arrange-in-grid-onto-object _fileicons _frameptr 1.10 0.90)
         )
-      
+
       ;; If there are only subdirectories (no files), then resize dir-frame
       ;; and shrink frameptr
       (when (and (null? _files) (not (null? _subdirs)))
@@ -286,16 +286,16 @@
 
 (define dir-browser%
   (class base-formation%
-    (init dynaptr) 
+    (init dynaptr)
     (init-field (_initpath #f) (_initdepth 9999) (_initframe #f))
     (inherit dynaclass)
-    
+
     (super-instantiate (dynaptr))
     (dynaclass 'dir-browser%)
 
     ;; Create name part
     (name-part _parent parent)
-    
+
     ;; Instantiate parent
     (parent (make-object dir-window% dynaptr _initpath _initframe _initdepth))
 
@@ -304,7 +304,7 @@
 
     ;; -- Public Methods --
     (define/public (window) _currwin)
-    
+
     (define/public initpath (get/set _initpath))
 
     (define/public (add-event-bindings winlist)
@@ -313,9 +313,9 @@
              (titlebox (send win titlebox))
              (frame (send win frame))
              (dirframe (send win dir-frame)))
-        (send frame bind "<Run-ButtonRelease-1>" 
+        (send frame bind "<Run-ButtonRelease-1>"
               (lambda (o e) (centeron win)))
-        (send dirframe bind "<Run-ButtonRelease-1>" 
+        (send dirframe bind "<Run-ButtonRelease-1>"
               (lambda (o e) (centeron win)))
         (send frame bind "<Shift-ButtonPress-1>"
               (lambda (o e)
@@ -326,12 +326,12 @@
               (lambda (o e)
             (if (send win opened?)
                 (send win close)
-                (send win open))))    
+                (send win open))))
         (send win dirbrowser this) ;;send each window a ptr to this dirbrowser
         (add-event-bindings (append (cdr winlist) (send win subdirwindows)))
         )))
 
-    ;; -- Private Methods --     
+    ;; -- Private Methods --
     (define (centeron win)
       (if (send win centered?)
       (send win center 1 #f 0.5 0.5 .99)
@@ -343,7 +343,7 @@
           (send oldwin centered? #f)))))
 
     ;; -------------------------------------
-    
+
     (add-event-bindings (list _parent))
     (send _parent centered? #t)
     (centeron _parent)

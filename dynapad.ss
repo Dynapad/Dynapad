@@ -46,7 +46,7 @@
     (send newPAD focus)
 
     (set! *list-of-all-dynapads*
-      (append *list-of-all-dynapads* (list newPAD))) 
+      (append *list-of-all-dynapads* (list newPAD)))
 
     newPAD
   )
@@ -59,8 +59,8 @@
 ; define some variable aliases
 (define dynapad  dp1) ; dynapad means "current pad"
 
-(define currentPAD  dp1) ; temporary 
-                         
+(define currentPAD  dp1) ; temporary
+
 
 (load-and-apply-user-preferences dynapad)
 

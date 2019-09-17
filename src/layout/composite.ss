@@ -110,7 +110,7 @@
 
     (define (get-my-frame-bbox obj)  ;doesnt use obj arg
       (send (send this frame) bbox))
-    
+
     (define/override (add obj)
       (limit-drag-to-bbox obj get-my-frame-bbox)
       (if (is-a? obj base-formation%)
@@ -195,7 +195,7 @@
           (error "Only image%s may be added to image-composite%"))
       (send img bbox bb)
       (send this add img))
-    
+
 ;    (define/public (toggle)
 ;      ((image-toggle-hires-thumb
 
@@ -264,7 +264,7 @@
    ((filepath maxsize)
       (set! maxsize (round-to-int maxsize))
       (let-values (((dir name junk) (split-path->string filepath)))
-        (let* ((newpath (format "~athumbs/~a/~a" dir maxsize 
+        (let* ((newpath (format "~athumbs/~a/~a" dir maxsize
                 (insert-filenamebase-suffix
                    name (format "-~a" maxsize))))
            (copy-cmd (format "cp ~a ~a" filepath newpath))
@@ -272,7 +272,7 @@
                     maxsize maxsize newpath)))
       (system copy-cmd)
       (system mogrify-cmd))))))
-     
+
 |#
 
 ; no need for above; use build-in split path
@@ -331,7 +331,7 @@
   (cond ((is-a? obj pdf-portrait%) obj)
     ((is-a? obj resizable-image%) (send (get-container obj) getgroup))
     (else #f)))
-      
+
 
 (define (save-pdf-config pdf) ;pdf is a pdf-portrait
   (let ((dir (send pdf dir)))
@@ -446,7 +446,7 @@
                 #f)) ;stop event cascade
             (send this bind "dt-down"))) ;don't clobber other bindings
 |#
-    
+
     (define/public (hires?)
       (and (is-a? _graphic image%)
        (send _graphic hires?)))
@@ -499,13 +499,13 @@
     (define (disable-me)
       (let ((savebindings
          (send this bind "<ButtonPress-1>")))
-    (send this bind "<ButtonPress-1>" 
+    (send this bind "<ButtonPress-1>"
           (cons (lambda (e o) #f) savebindings))))
 
     (define (reenable-me)
       (send this bind "<ButtonPress-1>"
         (cdr (send this bind "<ButtonPress-1>"))))
-    
+
 
     (define/public (expanded?) (is-a? _graphic image-composite%))
     (define/public (expand)
@@ -647,7 +647,7 @@
     (exec-any-callbacks *pdf-aftermake-callbacks* this))
 ))
 
-  
+
 (define (make-pdf-portrait dynapad pdfpath)
   (let ((dir (get-pdf-metadata-dir pdfpath)))
     (unless (directory-exists? dir)
@@ -665,7 +665,7 @@
 
 ;this is an override of (make-pdf...) in arrangeimages.ss
 (define (make-pdf-at-position file x y zfac)
-  (ic (make-pdf-portrait dynapad file) 
+  (ic (make-pdf-portrait dynapad file)
       (position (list x y zfac))))
 
 
@@ -673,10 +673,10 @@
 ;  (class actor%
 ;    (init (_obj #f))
 ;    (super-instantiate ())
-;    
+;
 ;    (if _obj (send this attach-to _obj));;;
 
-;    (define/public 
+;    (define/public
 
 
 ; ---- bootstrapping:

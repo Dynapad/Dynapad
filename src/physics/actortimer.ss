@@ -16,12 +16,12 @@
      (dtime (- cur_msec prev_msec)))
 
      ; broadcast update message to all dynapad objects
-     (for-each 
+     (for-each
        (lambda (x) (send-actor x 'update cur_msec dtime))
        (send dynapad objects))
 
      ; send update message to all actors on the list
-     (for-each 
+     (for-each
        (lambda (x) (send x update cur_msec dtime))
        subscribed_actors)
 
@@ -55,12 +55,12 @@
      (dtime (- cur_msec prev_msec)))
 
      ; broadcast update message to all dynapad objects
-     (for-each 
+     (for-each
        (lambda (x) (send-actor x 'update cur_msec dtime))
        subscribed_dynaobjects)
 
      ; send update message to all actors on the list
-     (for-each 
+     (for-each
        (lambda (x) (send x update cur_msec dtime))
        subscribed_actors)
 
@@ -84,7 +84,7 @@
       (let ((found #f))
     (if (is-a? actor_or_padobject dynaobject%)
         (begin
-          (set! found (memq actor_or_padobject subscribed_dynaobjects))           
+          (set! found (memq actor_or_padobject subscribed_dynaobjects))
           (set! subscribed_dynaobjects (remq actor_or_padobject subscribed_dynaobjects)))
         (begin
           (set! found (memq actor_or_padobject subscribed_actors))
@@ -102,29 +102,29 @@
      (init dynapad (interval 100))
      (init (update-fn #f))
      (inherit-field prev_msec subscribed_dynaobjects subscribed_actors)
-     
+
      (define (update)
        (let*
            ((cur_msec (current-milliseconds))
         (dtime (- cur_msec prev_msec))
         (cancel-list null))
-    
+
         ; broadcast update message to all dynapad objects
-         (for-each 
+         (for-each
           (lambda (x) (when (eqv? (send-actor x 'update cur_msec dtime)
                     'unsubscribe)
                   (set! cancel-list (cons x cancel-list))))
           subscribed_dynaobjects)
-         
+
         ; send update message to all actors on the list
-         (for-each 
+         (for-each
           (lambda (x) (when (eqv? (send x update cur_msec dtime)
                     'unsubscribe)
                   (set! cancel-list (cons x cancel-list))))
           subscribed_actors)
 
          (for-each (lambda (it) (send this unsubscribe it)) cancel-list)
-         
+
          (set! prev_msec cur_msec)))
 
 ;     (define (proc) (update))

@@ -17,7 +17,7 @@
        (set! popmenu (new-popup "Object Menu"))
        ;else
        (set! popmenu (new-popup "Photo Op Menu")))
-     
+
       ;----------
 
       (add-menu-item popmenu "Import Images From Directory..." Arrange-Images)

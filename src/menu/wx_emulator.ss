@@ -159,7 +159,7 @@
         (send _btn_rect coords (send _label bbox))
         (send this add _btn_rect)
       )
-                        
+
       (send _label raise)
       (send this update-all)
       (send _pane update)

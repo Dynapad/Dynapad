@@ -17,7 +17,7 @@
 
 (define popup-server%
   (class canvas%  (parent)
-    
+
     (inherit popup-menu)
     (define/override
       (on-focus on?) (say on?))
@@ -126,7 +126,7 @@
 ;example
 ; assume S1 is an object with method (state . newval)
 ;  (add-checkable-menu-item popmenu
-;    "Current Object State" 
+;    "Current Object State"
 ;    (lambda (mi) (send S1 state (send mi is-checked?)) )
 ;    (send S1 state))
 

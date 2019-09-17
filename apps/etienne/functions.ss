@@ -46,7 +46,7 @@
     (if (<= r 0)
     (decv->hexv d)
     (string-append (dec->hex r) (decv->hexv d)))))
-    
+
 (define (join d l)
   (if (> (length l) 1)
       (string-append (car l) d (join d (cdr l)))

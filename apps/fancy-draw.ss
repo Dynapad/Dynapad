@@ -85,7 +85,7 @@
          (if next-edge
          (send next-edge move-head-to x y))
          (send Draw-object coords c)))
-     
+
      (let* ((zoom (caddr (send dynapad view)))
         (radius (/ sz zoom))
         (x (car pt))
@@ -201,7 +201,7 @@
 
 
 (define (handleize-draw-object obj)
-      (let ((c (make-pairs (send obj coords)))) 
+      (let ((c (make-pairs (send obj coords))))
     (unhandleize-draw-object)
     (set! Draw-object obj)
     (when (or (is-a? obj polygon%)
@@ -250,14 +250,14 @@
                 (send Draw-object fill thefill)))
               (if (has-method? Draw-object 'pen)
                   (send Draw-object pen (send dynapad defaultpen)))
-            
+
               (send Draw-object coords (list x y x y)) ;make 2 points, initially the same
               (handleize-draw-object Draw-object))))
-          
+
           (unhandleize-draw-object)) ;unselect object
           ;click on existing object
         (maybe-handleize-draw-object obj)))))
-      
+
 
 (send dynapad bind "<Draw-Double-ButtonPress-1>"
   (lambda(dynapad e)
@@ -268,7 +268,7 @@
   (lambda(dynapad e)
     (changemode dynapad "Select")
     (gui-update-mode)))
-    
+
   (send dynapad bind "<Draw-B1-Motion>"
      (lambda(dynapad e)
        (if *freehanding*

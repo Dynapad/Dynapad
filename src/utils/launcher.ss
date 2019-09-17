@@ -39,7 +39,7 @@
           ("exe"  exe)
               )))
 
- 
+
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Methods
 
@@ -66,7 +66,7 @@
               ('noapp    #f)
               (else      (edit-file path)) ;;assume text
               )))
-      
+
 
     (define/public (web-browser url)
       (system-application (format "~a ~a" (car _webbrowserlist) url)))

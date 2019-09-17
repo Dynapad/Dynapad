@@ -141,13 +141,13 @@
     (when (bbenclosed x y (send *dt-colormap-image* bbox))
       (set! xpixel (- x (first pos)))
       (set! ypixel (- (second pos) y))
-      (set! xpixel 
+      (set! xpixel
         (* (/ xpixel (send *dt-colormap-image* width))
            (first *dt-colormap-dimensions*)))
       (set! ypixel
         (* (/ ypixel (send *dt-colormap-image* height))
            (second *dt-colormap-dimensions*)))
-      (set! rgb 
+      (set! rgb
         (sch_imagedata_rgb (send *dt-colormap-imagedata* get-cptr)
                            (inexact->exact (floor ypixel))
                            (inexact->exact (floor xpixel))))

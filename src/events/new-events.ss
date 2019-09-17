@@ -49,7 +49,7 @@
   (show-possible-delay eventPAD
     (if (send (car imagelist) selected?)
     (set! imagelist (send eventPAD selected)))
-    
+
     (if (andmap (lambda (img) (member img *list_of_hirez_images*)) imagelist)
     (remove-images-from-hires-list imagelist)
     ;else

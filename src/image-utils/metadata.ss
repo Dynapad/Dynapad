@@ -84,7 +84,7 @@
     (when (not keyval) ;cache for next time
     (remote-push! (list tag val) obj alist))
     val))
-      
+
 
 ; this define...let...set! construction lets regexps be pre-compiled but scoped locally:
 (define (match-metadata-line-for-tag line tag) #f)
@@ -102,7 +102,7 @@
       )
   (set! match-metadata-line-for-tag
     (lambda (line tag)
-      (case tag 
+      (case tag
         ((photo-datetime)
          (let ((match (regexp-match photo-datetime-rexp line)))
            (and match
@@ -159,7 +159,7 @@
        (let* ((secs (file-or-directory-modify-seconds path))
           (date (seconds->date secs)))
      (list secs date))))
-    
+
 (define (get-image-date obj)
   (let ((pair
      (get-obj-metadata
@@ -204,14 +204,14 @@
 
 (define (get-image-fstop obj)
   (get-obj-metadata obj 'fstop
-            (lambda (img) 
+            (lambda (img)
               (and (is-a? img image%)
                (extract-metadata-with-cmd
                 'fstop (send img hirespath) "jhead ")))))
 
 (define (get-image-focus-dist obj)
   (get-obj-metadata obj 'focus-dist
-            (lambda (img) 
+            (lambda (img)
               (and (is-a? img image%)
                (extract-metadata-with-cmd
                 'focus-dist (send img hirespath) "jhead ")))))
@@ -246,16 +246,16 @@
 (define *pad-date-format* 'american)
 (define pad-date-format
 ;(date-display-format ...) needs this wrapper for some reason
-;  or menu doesnt refresh  
+;  or menu doesnt refresh
   (case-lambda
    (() *pad-date-format*)
    ((frmt) (set! *pad-date-format* frmt)
            (date-display-format frmt))))
 
-                         
+
 (define-macro (time-format-item format)
   `(add-checkable-menu-item sb ,(symbol->string format)
-       (lambda (i) 
+       (lambda (i)
          (pad-date-format ',format))
        (eq? ',format (pad-date-format))))
 

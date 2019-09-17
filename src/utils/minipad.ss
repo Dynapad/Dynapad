@@ -52,10 +52,10 @@
     ((x y s)
       (define scl (/ s _viewz))
       (sch_panelmoveview (get-cptr) scl
-        (+ 
+        (+
            (* (- 1 scl) 0.5 (send dynapad getzoom) (send this width))
            (* (- _viewx x) s) )
-        (+ 
+        (+
            (* (- 1 scl) 0.5 (send dynapad getzoom) (send this height))
            (* (- _viewy y) s) )
       )
@@ -157,14 +157,14 @@
       (lambda (eventPAD e)
     (send eventPAD store-prev_xy (event-x e) (event-y e))
     #f))
-  
+
     (define/public (Run-Control-B1-Motion)
       (lambda (eventPAD e)
     (def vu (send minipad view))
     (def prev_x (send eventPAD get-prev_x))
     (def prev_y (send eventPAD get-prev_y))
     (send eventPAD store-prev_xy (event-x e) (event-y e))
-    
+
     (when (and prev_x prev_y)
           (send _pad slideview
             (/ (* (- (event-x e) prev_x) (send eventPAD getzoom)) (caddr vu))

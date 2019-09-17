@@ -55,7 +55,7 @@
          (dx 0)(dy 0)
          (rx 0)(ry 0)(rr 1)
          (squeeze (if (null? bbox_fraction) 1.0 (car bbox_fraction))))
-     (for-each (lambda (obj ) 
+     (for-each (lambda (obj )
                 (set! oldbbox (bbunion oldbbox (send obj bbox))))
               lst)
      (set! oldbbox_center (bbcenter oldbbox))
@@ -66,7 +66,7 @@
      (set! rx (/ (bbwidth  oldbbox) (bbwidth  target_bbox) 0.5))
      (set! ry (/ (bbheight oldbbox) (bbheight target_bbox) 0.5))
      (set! rr (/ squeeze (max rx ry)))
-     (foreach lst (lambda (obj) 
+     (foreach lst (lambda (obj)
        (send obj scale 2.0 (- (car oldbbox_center) dx) (- (cadr oldbbox_center) dy))
        (send obj scale rr  (car target_center) (cadr target_center)))) )))
 
@@ -106,7 +106,7 @@
     (set! xstart (car tbbox))
     (set! ystart (cadddr tbbox))
     ;; pick a width and height that are proportional to the bounding box width and height
-    (set! width (ceiling 
+    (set! width (ceiling
                  (sqrt (* (length lst) (/ (bbwidth tbbox) (bbheight tbbox))))))
     (set! height (ceiling (/ (length lst) width)))
     (set! dx (if (< (bbwidth tbbox) (bbheight tbbox))
@@ -114,7 +114,7 @@
                  (/ (bbheight tbbox) height)))
     (set! dy dx)
     (set! bb_scale (* item_scale dx))
-    (for-each 
+    (for-each
      (lambda (obj)
        (let* ((curr-bbox (send obj bbox))
               (curr-bbs (max (bbwidth curr-bbox) (bbheight curr-bbox)))
@@ -123,7 +123,7 @@
                            (send obj anchor)
                            (car dynapad-anchor))))
          (send obj position
-               (list (+ xstart (* dx icol)) 
+               (list (+ xstart (* dx icol))
                      (- ystart (* dy irow))
                      (* curr-z (/ bb_scale curr-bbs))))
          (send obj anchor panchor)
@@ -131,7 +131,7 @@
          (when (= icol width)
                (set! icol 0)
                (set! irow (+ 1 irow)))))
-     lst)  
+     lst)
     dynapad-anchor)))
 
 (define (arrange-objs-in-row lst targetbbox spread)
@@ -257,7 +257,7 @@
          (vx (car (bbcenter tbbox)))
          (vy (cadr (bbcenter tbbox)))
          (d_theta 0))
-      (for-each 
+      (for-each
        (lambda (obj)
          (let* ((curr-bbox (send obj bbox))
                 (curr-bbs (max (bbwidth curr-bbox) (bbheight curr-bbox)))
@@ -265,12 +265,12 @@
                 (panchor (if (null? dynapad-anchor)
                              (send obj anchor)
                              (car dynapad-anchor))))
-           (send obj position (list 
+           (send obj position (list
                                    (+ vx (* radius (cos theta)))
                                    (+ vy (* radius (sin theta)))
                                    (* curr-z (/ bb_scale curr-bbs))))
            (send obj anchor panchor)
-           
+
            (set! d_theta (/ 2 (- (/ theta pi) 1)))
            (set! theta (+ theta d_theta))
            (set! radius (* item_radius
@@ -292,7 +292,7 @@
     (set! xcenter (car (bbcenter tbbox)))
     (set! ycenter (cadr (bbcenter tbbox)))
     (set! bb_scale (/ (min (bbwidth tbbox) (bbheight tbbox)) (+ 1 item_scale)))
-    (for-each 
+    (for-each
      (lambda (obj)
        (let* ((curr-bbox (send obj bbox))
               (curr-bbs (max (bbwidth curr-bbox) (bbheight curr-bbox)))
@@ -312,7 +312,7 @@ lst)
     dynapad-anchor))
 
 (define (get-target-bbox possible-bbox lst)
-  (let ((targetbbox 
+  (let ((targetbbox
          (if (null? possible-bbox)
              ;; generate a reasonable targetbbox from the union of all bboxes
              ;; in lst
@@ -345,7 +345,7 @@ lst)
   )
   (list (exact->inexact mcolumns) (exact->inexact nrows))
 )
- 
+
 ; mn are a pair of integers
 ; xd_yd are a pair of distance deltas, center point to center point.
 (define (array-objs-in-m-by-n-grid lst mn xd_yd)
@@ -377,7 +377,7 @@ lst)
 
 (define (arrange-behind-object lst obj)
   (arrange-objs-in-bbox  lst (send obj bbox) 0.95)
-  (for-each 
+  (for-each
    (lambda (id)
      (send id lower obj))
    lst)
@@ -386,7 +386,7 @@ lst)
 (define (arrange-in-grid-behind-object lst obj)
   (arrange-objs-in-grid lst (send obj bbox) '() "nw")
   (arrange-objs-in-bbox  lst (send obj bbox) 0.8)
-  (for-each 
+  (for-each
    (lambda (id)
      (send id lower obj))
    lst)
@@ -395,16 +395,16 @@ lst)
 (define (arrange-in-spiral-behind-object lst obj)
   (arrange-objs-in-spiral lst (send obj bbox) '() "center")
   (arrange-objs-in-bbox  lst (send obj bbox) 0.95)
-  (for-each 
-   (lambda (id) 
+  (for-each
+   (lambda (id)
      (send id lower obj))
    lst)
   (send obj maxsize (list 50 #t)))
 
 (define (arrange-onto-object lst obj)
   (arrange-objs-in-bbox  lst (send obj bbox) 0.8)
-  (for-each 
-   (lambda (id) 
+  (for-each
+   (lambda (id)
      (send id raise obj))
    lst)
   (send obj maxsize (list 0.95 #t)))
@@ -412,8 +412,8 @@ lst)
 (define (arrange-in-grid-onto-object lst obj)
   (arrange-objs-in-grid lst (send obj bbox) '() "nw")
   (arrange-objs-in-bbox  lst (send obj bbox) 0.8)
-  (for-each 
-   (lambda (id) 
+  (for-each
+   (lambda (id)
      (send id raise obj))
    lst)
   (send obj maxsize (list 0.95 #t)))
@@ -434,7 +434,7 @@ lst)
 (define (arrange-in-spiral-onto-object lst obj)
   (arrange-objs-in-spiral lst (send obj bbox) '() "center")
   (arrange-objs-in-bbox  lst (send obj bbox) 0.8)
-  (for-each 
+  (for-each
    (lambda (id)
      (send id raise obj))
    lst)

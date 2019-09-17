@@ -27,7 +27,7 @@
 (define (send-actor obj msg . args)
   (let ((result null))
     (for-each
-      (lambda (actor) 
+      (lambda (actor)
     (when (method-in-interface? msg (object-interface actor))
       (if (null? args)
         (set! result (cons (eval `(send ,actor ,msg)) result))
@@ -83,7 +83,7 @@
      (define/override (remove-from padobject name)
        (remq-from-malist-val! name this padobject alist))
 
-     (define/override (delete) 
+     (define/override (delete)
        ;removes references to actor for GCing
        (let ((obj (send this object)))
          (for-each (lambda (name) (remove-from obj name))
@@ -123,7 +123,7 @@
      (let ((actors (get-actors-named obj name)))
        (map (lambda (a) (send a msg args ...))
         actors)))))
-       
+
 
 ;(define (send-actor-named obj name msg . args)
 ;  (let ((result (apply send-actors-named obj name msg args)))
@@ -164,7 +164,7 @@
      (define/public (kick until rel-time)
      ;One of until, rel-time is #f; use the other
        ;When actor is kicked, will run until *at least* _expiration
-       ; (after which it might choose to expire, depending on subclass) 
+       ; (after which it might choose to expire, depending on subclass)
        (when (not until)
            (set! until (+ (current-milliseconds) rel-time)))
        (when (or (not _expiration) (> until _expiration))
@@ -172,7 +172,7 @@
 
      (define/public maybe-expire
        (case-lambda
-       ;when this is checked, takes action if past _expiration 
+       ;when this is checked, takes action if past _expiration
         ((action) ;use current time
          (maybe-expire action (current-milliseconds)))
         ((action now)

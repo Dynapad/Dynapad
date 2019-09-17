@@ -65,7 +65,7 @@
 
   (send argPAD ztimer (make-object zoomtimer% argPAD zoomproc))
   (send argPAD zinterval 10)
-  
+
   (send argPAD bind "<Run-ButtonPress-2>"   Zoom-In-lambda)
   (send argPAD bind "<Run-ButtonRelease-2>" Zoom-In-Stop-lambda)
   (send argPAD bind "<Run-ButtonPress-3>"   Zoom-Out-lambda)

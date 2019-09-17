@@ -72,7 +72,7 @@
               (precompute-distant-view p (send p objects))
               500)))
 (send dynapad bind "<Control-KeyPress-g>"
-      (lambda (p e) 
+      (lambda (p e)
     (when *last-view-outline*
           (dynapad-zoom-to-bbox (send *last-view-outline* bbox)))))
 
@@ -98,7 +98,7 @@
 
 )))
     (send* *last-view-outline* (coords bb) (pen "yellow"))
-    ;(dynapad-zoom-to-bbox bb) 
+    ;(dynapad-zoom-to-bbox bb)
     )
       (when *last-view-outline*
         (send *last-view-outline* delete)

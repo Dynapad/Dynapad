@@ -3,7 +3,7 @@
 (dynaload "strings.ss")
 
 (define (thumbify hires-path thumb-path size)
-  (system (string-append "thumbify thumb_max_size=" size  
+  (system (string-append "thumbify thumb_max_size=" size
              " " hires-path " " thumb-path)))
 
 (define (create-thumbs hires-dir size)
@@ -23,5 +23,5 @@
             (thumbify hires-path thumb-path size-string)))
           hires))))
 
-    
+
 

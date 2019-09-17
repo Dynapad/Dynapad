@@ -57,7 +57,7 @@
 
 (define-macro (ensure-segment-object seg)
   `(when (list? ,seg)
-      (set! ,seg (make-object geo-segment% ,seg))))  
+      (set! ,seg (make-object geo-segment% ,seg))))
 
 ;============ debugging tools ================
 (define next-obj-ID 0)  ;any obj ref'd in a desc is given unique ID#,
@@ -150,7 +150,7 @@
 ;      geo-polygon-edge  : <.
 ;  geo-polyline  ........:  :
 ;  geo-polygon .............:
-;                    comprises                    
+;                    comprises
 
 #|
 (define (attach-geo-callbacks obj this)
@@ -178,12 +178,12 @@
 (define geo-actor%
   (class named-actor%
     (super-instantiate ())
-    
+
     ;FOR ALL (descendants must override)
-    (define/public (clone) 'undefined)     
+    (define/public (clone) 'undefined)
     (define/public (slide-by-dxy dx dy) 'undefined)
     (define/public slide-copy (vector-op-template slide-by-dxy))
-    (define/public (slide-by-dxy! dx dy) 'undefined)            
+    (define/public (slide-by-dxy! dx dy) 'undefined)
     (define/public slide! (vector-op-template slide-by-dxy!))
     (define/public slide (vector-op-template slide-by-dxy!))
     (define/public (describe-fields) (format "Object ~a:~%" (name-of-obj this)))
@@ -210,7 +210,7 @@
              (xy (send obj xy))
              (fact (/ new-h old-h)))
         (send this rescale-around-xy 1 fact xy))) this)
-      
+
       (send obj position-callbacks 'add
         (lambda (obj new-xyz)
           (let* ((new-xy (list (car new-xyz) (cadr new-xyz)))
@@ -220,7 +220,7 @@
         (if (not (null? new-z))
             (let ((factor (/ (car new-z) (send obj z))))
               (send this rescale-around-xy factor factor new-xy))))) this)
-      
+
       (send obj slide-callbacks 'add
         (lambda (obj dx dy) ;(display (format "sliding ~a~%" obj))
             (send this slide dx dy)) this)
@@ -251,11 +251,11 @@
       (send obj reposition-callbacks 'remove #f this)
       (send obj resize-callbacks 'remove #f this)
       )
-      
+
 ;    (define (rescale-around-xy xfact yfact xy-src)
 ;      (
 ))
- 
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;
 ;     /~\ /~\ | |\ | ~T~
@@ -292,10 +292,10 @@
 
     (define/override (slide-by-dxy! dx dy) ;slide this
       (send this xy (+ _x dx) (+ _y dy)))
-        
+
     (define/override (slide-by-dxy dx dy)  ;slide copy
       (make-object geo-point% (+ _x dx) (+ _y dy)))
-        
+
     ;LOCAL
     (define/public x (get/set _x))
     (define/public y (get/set _y))
@@ -336,7 +336,7 @@
           (or (and (< lo _y) (< _y hi) 0) ;strictly between
           (and (= _y y1) (if y1-hi? 2 -2))
           (and (not exclude-p2) (= _y y2) (if y1-hi? -2 2)))))))
-    
+
     (define/public segment-to
       (case-lambda
        ((pt)    (make-object geo-segment% this pt))
@@ -355,7 +355,7 @@
     (init _x _y)
     (init-field _parents)
     (super-instantiate (_x _y))
-    
+
     (define/public parents (get/set _parents))
     ))
 
@@ -433,7 +433,7 @@
       (atan _dy _dx)))
     (define/public (invalidate-theta)
       (invalidate-vars _theta _net-theta _pos-theta))
-    (define/public theta 
+    (define/public theta
       (case-lambda
        (() (ensure-fresh _theta refresh-theta))
        ((val) (begin
@@ -473,7 +473,7 @@
        ((dx dy) (set! _dx dx)
             (set! _dy dy)
         (invalidate-vars _length _theta _net-theta _pos-theta _slope))))
-    
+
     ;SLOPE
     (define (refresh-slope)
       (if (fresh? _dx) ;use _dxy if available
@@ -668,7 +668,7 @@
     (define/public (copy-as-vector)
       (make-object geo-vector% _dx _dy))
     (define/override (clone) (copy-as-vector))
-    
+
     (define/override dxy
       (case-lambda
         (() (list _dx _dy))
@@ -721,7 +721,7 @@
           (set! _dx (* _dx scl))
           (set! _dy (* _dy scl))
           (set! _length (abs (* len scl)))))))
-    
+
     (define/public (add-dxy! dx dy)
        (send this dxy (+ _dx dx) (+ _dy dy)))
     (define/public (subtract-dxy! dx dy)
@@ -729,7 +729,7 @@
     (define/public add!
       (vector-op-template add-dxy!))
     (define/public subtract!
-      (vector-op-template subtract-dxy!))    
+      (vector-op-template subtract-dxy!))
 
     (define/public (add-dxy dx dy)
       (let ((new (send this clone)))
@@ -770,7 +770,7 @@
          (by (cadr bxy)))
     (make-object geo-vector%
              (- (* (dx) bx) (* (dy) by))
-             (+ (* (dx) by) (* (dy) bx)))))         
+             (+ (* (dx) by) (* (dy) bx)))))
 ))
 
 (define (null-vector) (make-object geo-vector% 0 0))
@@ -816,7 +816,7 @@
     (define/public (refresh-slope) _slope)
     (define/public (refresh-intercept) _intercept)
 
-    (define/public slope-intercept 
+    (define/public slope-intercept
       (case-lambda
         (() (list (ensure-fresh _slope refresh-slope) (ensure-fresh _intercept refresh-intercept)))
         ((m b)
@@ -869,13 +869,13 @@
     (define/public normal-slope
       (case-lambda
         (() (normal-slope (send this slope)))
-        ((slp) 
+        ((slp)
      (cond ((infinite? slp) 0)
            ((zero? slp) infinity)
            (else (- (/ 1 slp)))))))
     (define/public (normal? line2)
       (same-slope? (normal-slope) (send line2 slope)))
-    
+
     (define/public (y-at-x x)
       (linear-y x (slope) (intercept)))
 
@@ -978,7 +978,7 @@
 
     (define/override (refresh-slope)
       (send (angle) slope))
-          
+
     (define/override (refresh-intercept)
       (super go-thru-point _origin))
 
@@ -990,7 +990,7 @@
       (let ((clone (send this clone)))
     (send clone slide-by-dxy! dx dy)
     clone))
-      
+
     (define/override (intersects obj)
       ;must check classes from specific->general
       (cond
@@ -1020,7 +1020,7 @@
       ; assuming pt is collinear w. this, is it after _origin in direction _angle?
       (ordered-in-direction? _origin pt _angle))
 
-    (define/public origin 
+    (define/public origin
       (case-lambda
         (() _origin)
         ((pt) (ensure-point-object pt)
@@ -1033,7 +1033,7 @@
         ((ang) (ensure-angle-object ang)
            (invalidate-vars _slope _intercept)
                (set! _angle ang))))
-      
+
     (define/public (dxy . args)
       (if (null? args)
       (send _angle dxy)
@@ -1067,7 +1067,7 @@
            (_endpoint stale)
        (_exclude-endpt? #f) ;if #t, segment is open-ended in intersections
        (_anchor-endpt? #f)) ;if #f, length/dxy/angle/slide measured from origin
-                ;if #t,                        measured from endpt 
+                ;if #t,                        measured from endpt
     ; ...
     ;SEE INIT CODE AT END OF CLASS DEFN
 
@@ -1183,11 +1183,11 @@
 
     (define (refresh-endpoint)
       (send _origin slide-copy this)) ;treats this as a vector
-    
-    (define/public (invalidate-origin) 
+
+    (define/public (invalidate-origin)
       (invalidate-vars _origin _bbox))
 
-    (define/public (invalidate-endpoint) 
+    (define/public (invalidate-endpoint)
       (invalidate-vars _endpoint _bbox))
 
     (define (refresh-bbox)
@@ -1213,7 +1213,7 @@
     (list lox loy hix hiy)))
     (define/public (bbox)
       (ensure-fresh _bbox refresh-bbox))
-      
+
     (define local-endpoint
       (case-lambda
        (()   (ensure-fresh _endpoint refresh-endpoint))
@@ -1260,7 +1260,7 @@
     (apply make-object geo-point% (map (lambda (o d) (+ o (* frac d)))
                        (send _origin xy)
                        (send this dxy))))))
-    
+
 ;     (define/public (slide-left dist)
 ;       (let ((l-normal-vect (send (send this angle) l-normal)))
 ;     (send l-normal-vect length dist)
@@ -1291,7 +1291,7 @@
     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;     
+;
 ;     /~\ /~\ |  \ /   /~ /~~  /\   / /~~ |~\  /\ /~~
 ;     |_/ | | |   Y -- \_ |-- / _  /  |-- |  >/ _ |--
 ;     |   |_/ |__ |    _/ |__ \_/ /   |__ |_/ \_/ |__
@@ -1354,7 +1354,7 @@
       (string-append (super describe-fields)
              (format "geo-poly-segment%: parent:~a next:~a prev:~a~%"
                  (name-of-obj _parent) (name-of-obj _next) (name-of-obj _prev))))
-    
+
     (define/public (slide-alone-by-dxy! dx dy)
       ;Parent polygon/polyline will call this for each segment
       (send this invalidate-intercept)
@@ -1436,7 +1436,7 @@
     new-seg))
 
     (define/public (insert-segment-before pt)
-      ;     a----->b  >> pt==>a----->b 
+      ;     a----->b  >> pt==>a----->b
       (let* ((new-seg (make-object (my-seg-type) _parent pt (send this origin))))
     (if _prev
         (begin
@@ -1474,7 +1474,7 @@
 ; edge/  . ang ,           V
 ;    /    .<--, spoke
 ;   /      . ,
-;  / . . . .* 
+;  / . . . .*
 ;   \        anchor
 ;    \
 
@@ -1509,7 +1509,7 @@
     ;should be called for all sectors if at all
     ;(send _spoke origin pt)
       (invalidate-vars _spoke _median _area _sector-angle))
-    
+
     (define (refresh-spoke)
       (send (send parent anchor) vector-to (send this origin)))
     (define/public (spoke) (ensure-fresh _spoke refresh-spoke))
@@ -1525,13 +1525,13 @@
        (() (super endpoint))
        ((pt) (super endpoint pt))
        (invalidate-vars _median _area _sector-angle _inward-normal)))
-    
+
     (define/public (inward-normal)
     ;returns segment: rim rotated pi/2 ccw around vtx
       (when (stale? _inward-normal)
       (set! _inward-normal (send this left-normal)))
       _inward-normal)
-    
+
     (define (refresh-median)
     ;finds median of sector triangle (= area centroid)
       (let* ((rim-bisector (make-object geo-segment%
@@ -1540,12 +1540,12 @@
     (send rim-bisector midpoint)))
     (define/public (median)
       (ensure-fresh _median refresh-median))
-    
+
     (define (refresh-angle-area)
     ;almost same computation to find either, so find both together
       (let* ((my-spoke (spoke))
          (next-spoke (send (send this next) spoke))
-         (l1 (send my-spoke length)) 
+         (l1 (send my-spoke length))
          (l2 (send next-spoke length))
          (z  (send my-spoke cross next-spoke))
          (s  (2val-sign z))
@@ -1570,7 +1570,7 @@
       (when (stale? _area)
       (refresh-angle-area))
       _area)
-    
+
     (define/public (contains-line-of-ang? ang)
       (let* ((ang1 (spoke))
          (ang2 (send (send this next) spoke)))
@@ -1590,7 +1590,7 @@
 ;polylines use PATH _seg-path as primary structure;
 ; lists _vertices and _segments are refreshed only as needed
   (class geo-actor%
-    (init init-points) ;list of >=2 pts 
+    (init init-points) ;list of >=2 pts
     (set! init-points (map (lambda (pt) (ensure-point-object pt)) init-points))
     (super-instantiate ())
     (field (_vertices stale)  ;ready-made lists of vtxs/segs; refresh on demand
@@ -1645,7 +1645,7 @@
     (set! init-points (map (lambda (pt) (ensure-point-object pt)) init-points))
     (super-instantiate ())
     (field (_edges stale)  ;ready-made lists of edges/vtxs; refresh on demand
-           (_vertices stale)) ; don't set _vertices now; clobbered by (insert...) below 
+           (_vertices stale)) ; don't set _vertices now; clobbered by (insert...) below
     (field (_anchor stale)
        (_orientation stale) ;1 for ccw (positive area), -1 for cw
        (_pt-centroid stale)
@@ -1700,7 +1700,7 @@
              (dy (* yfact (cadr dxy))))
             (send edge origin (map + xy-src (list dx dy)))))
         (edges)))
-      
+
     (define/override (attach-to obj name)
       (super attach-to obj name)
       (super attach-to obj 'reshape-sensitive))
@@ -1913,7 +1913,7 @@
          (let* ((myvect (send edge angle))
             (nextvect (send (send edge next) angle))
             (dullness (send myvect unit-dot nextvect)))
-           (cond 
+           (cond
             ((< dullness 0) (append (margin-bisect-point edge dist)
                         (margin-corner-points edge dist))) ;3 pts
             ; dullness 0 = interior right angle
@@ -1935,7 +1935,7 @@
            (send e cut-origin)))))
 ;       (send this edges)))
        (ensure-fresh _edge-ring refresh-edge-ring)))
-          
+
 
     (define/public (closest-pt-to pt)
       (ensure-point-object pt)
@@ -1971,7 +1971,7 @@
      (super-instantiate ((map car _vtx-donor-list)))
      (field (_donors (map cadr _vtx-donor-list)))
      (field (_parents (remove-duplicates _donors memq)))
-                      
+
      (define/public (donor-of-edge-n n)
        (list-ref _parents n))
 
@@ -2074,7 +2074,7 @@
 
 ;returns either P or Q, whichever is: outermost if outer?, innermost else
 ; if neither contains other, returns #f
-; If already known whether Q contains P0, passed in as PinQ? 
+; If already known whether Q contains P0, passed in as PinQ?
 (define (inner/outer-polygon outer? P Q . PinQ?)
   (if (null? PinQ?)
       (set! PinQ? (send Q contains-pt? (send P vertex-n 0)))
@@ -2285,7 +2285,7 @@
       (else (polygon-pairwise-intersection
          (car polys)
          (polygon-intersection (cdr polys)))))))
- 
+
 
 (define (intersection . objs)
   (let* ((geo-objs (map geodize objs)))
@@ -2365,7 +2365,7 @@
 ;returns list of dynaobjs whose centroid lies within dynaobj container
 (define (contained-objects container . fn)
 ;container may be: 1) bbox 2) geo-actor% 3) dynaobject%
-  (set! fn (if (null? fn) contained-in? (car fn)))      
+  (set! fn (if (null? fn) contained-in? (car fn)))
   (if (list? container)
       (send dynapad find 'groupmembers 'overlapping container)     ;assume bbox
       (let* ((bbox (send container bbox))

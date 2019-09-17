@@ -6,7 +6,7 @@
 
 (define (store-attribute-of-selected-objects-for-undo argPAD attr) #f)
 (define (store-attribute-of-selected-objects-for-redo argPAD attr) #f)
-  
+
 (define (store-selection-for-undo objs) #f)
 (define (store-selection-for-redo objs) #f)
 

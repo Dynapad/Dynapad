@@ -77,14 +77,14 @@
         ; 3
         ((cmd new_fnc name)
      (case cmd
-       ((add) 
+       ((add)
           (push! (list new_fnc name) callback_list))
        ((add-last)
           (endpush! callback_list
             (list new_fnc name)))
        ((find)
           (find (lambda (x) (cadr-equal? x name)) callback_list))
-       ((remove) 
+       ((remove)
           (set! callback_list (apply append
             (map
          (lambda (p)
@@ -241,9 +241,9 @@
      body ...))))
 
 ; (define-macro (while cnd . dos)
-;   `(letrec 
-;      ([loop 
-;        (lambda () 
+;   `(letrec
+;      ([loop
+;        (lambda ()
 ;      (if ,cnd
 ;          (begin ,@dos (loop))))])
 ;      (loop)))
@@ -315,7 +315,7 @@
     ((equal? "" str) 0)
     ((string? str) (string->number str))
     (else str)))
-    
+
 (define (ensure-string str)
   (cond ((string? str) str)
     ((number? str) (number->string str))

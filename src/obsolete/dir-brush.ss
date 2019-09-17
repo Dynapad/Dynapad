@@ -112,7 +112,7 @@
 (define (select-highlighted obj brush-set)
   (let* ((target-fn (and brush-set (send brush-set target-objs-fn)))
      (others (if target-fn (target-fn obj) null))
-     (all (filter 
+     (all (filter
            (lambda (o) (and
                 (not (send o deleted?))
                 (send o findable)))

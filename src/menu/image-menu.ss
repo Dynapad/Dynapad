@@ -1,7 +1,7 @@
 (dynaload "metadata.ss")
 
 (image-aftermake-callbacks 'add
-     (lambda (img) 
+     (lambda (img)
        (send (assign-handle (send img hirespath) car image-handle%)
          add img) ;makes, attaches handle
        ;(register-object-with-brush-set img 'images)

@@ -107,17 +107,17 @@
                    tcl-color))
     (set! _dim-color (send (send bgcolor blend .5 128 128 128) tcl-color))
     ))
-    (define/public dim-color 
+    (define/public dim-color
       (case-lambda
        (() (when (not _dim-color) (refresh-color-scheme))
        _dim-color)
        ((val) (set! _dim-color val))))
-    (define/public mid-color 
+    (define/public mid-color
       (case-lambda
        (() (when (not _mid-color) (refresh-color-scheme))
        _mid-color)
        ((val) (set! _mid-color val))))
-    (define/public bright-color 
+    (define/public bright-color
       (case-lambda
        (() (when (not _bright-color) (refresh-color-scheme))
        _bright-color)
@@ -204,7 +204,7 @@
       (send/apply (send this object) penwidth args))
     (define/public (z)
       (send (send this object) z))
-      
+
     (define/override (split-at-entry state-id build-expr)
       (let* ((tail-branch (super split-at-entry state-id build-expr 'no-autolink))
          (oldnode _to-node)
@@ -217,7 +217,7 @@
     (send oldnode insert-parent newnode)
     tail-branch))
 
-    (define/public toxy 
+    (define/public toxy
       (case-lambda
        (() (cddr (send this coords)))
        ((xy) (let ((crds (send this coords)))

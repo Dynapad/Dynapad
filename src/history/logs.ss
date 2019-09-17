@@ -261,7 +261,7 @@
 ;(define (view-state . args) #f)
 ;(define (change-view . args) #f)
 ;(define (visit-state . args) #f)
-      
+
 ; (start-start...) overrides warning-generator version in ids.ss
 (define-syntax (start-state stx)
   (syntax-case stx ()
@@ -425,7 +425,7 @@
   ;creates buildstr of state after applying undo-expr
 ;  (append (buildstr-this-state) (list (export-expr undo-expr))))
   (Format-SaveAll-Expr-Into-String
-   (append (list 'begin) 
+   (append (list 'begin)
        (list (Save-All-To-Expr))
        (list undo-expr))))
 
@@ -518,7 +518,7 @@
 (define (timestamp->datestring id)
   (date->string (timestamp->date id) #t))
 ;-------------------------------------------
-  
+
 (start-new-history)
 
 (update-progress 1)

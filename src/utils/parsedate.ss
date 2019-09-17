@@ -12,7 +12,7 @@
 ; date-month
 ; date-year
 ; date-week-day (0-6)
-; date-year-day 
+; date-year-day
 ; date-dst? (bool)
 ; date-time-zone-offset
 
@@ -166,7 +166,7 @@
 ; iso-8601:   "YYYY-MM-DD hh:mm:ss"
 (define *iso-date-format-rexp*
   (regexp "()(....)(-)(..)(-)(..)( +)0?([^0]?.)(:)(..)(:)(..)"))
-; american:   
+; american:
 ;(define *american-date-format-rexp*
 ;  (regexp "([A-Za-z]+, )([0-9]+)( )([A-Za-z]+)( )([0-9a-z]+)(, )(....)( )([0-9]+)(:)([0-9]+)(:)([0-9]+)([a-z])"))
 

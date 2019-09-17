@@ -21,7 +21,7 @@
   mysql_errno
   mysql_error
   mysql_real_connect
-  ) 
+  )
   (load-relative-extension
     (build-path
       (this-expression-source-directory)

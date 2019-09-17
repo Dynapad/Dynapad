@@ -10,7 +10,7 @@
      (init-field (_reverse? #f)) ;if #t, brushes opposite relation
      (init       (initially-active? #f))
      (field      (_active? #f))
-     
+
     ;(define/public (activate relation)
     ;( ;go to each relation-subset of relation,
       ;get members, activate e. member
@@ -29,7 +29,7 @@
      (define/public (relation) _relation)
      (define/public (active?)  _active?)
 
-     (define/public (brush-object on? source-obj target-obj) 
+     (define/public (brush-object on? source-obj target-obj)
        ;(subclass may override)
        ; do something to target-obj via stored brush-unbrush fns
        (if on?
@@ -317,7 +317,7 @@
     ;possible anti-brushes:
     (when (subclass? curr-class directed-relation%)
       (add-menu-separator sb)
-      (make-halfmenu-BrushStyles sb relation (send relation antibrush-style) 
+      (make-halfmenu-BrushStyles sb relation (send relation antibrush-style)
                      (send relation antibrush) #t))
 
     ))
@@ -410,7 +410,7 @@
       ;(if slct (send hl lower slct))
       (set-object-keyval obj 'highlight hl)
       hl))))
-                 
+
 (define (default-unhighlight-fn obj)
   (let ((hl (get-object-keyval obj 'highlight)))
     (when hl
@@ -426,7 +426,7 @@
     (super-instantiate (dynapad-arg object-arg 'brush))
     (sch_pen _cptr _color)
 
-    (define/public color 
+    (define/public color
       (case-lambda
        (() _color)
        ((c) (set! _color c)

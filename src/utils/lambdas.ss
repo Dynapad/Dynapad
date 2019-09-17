@@ -8,13 +8,13 @@
        write-lambda
        read-sterile-lambda
        read-fertile-lambda)
-  
-  (define-values (struct:ap make-annotated-proc annotated-proc? ap-ref ap-set!) 
+
+  (define-values (struct:ap make-annotated-proc annotated-proc? ap-ref ap-set!)
     (make-struct-type 'anotated-proc #f 3 0 #f null #f 0))
-  
+
   (define procedure-args (make-struct-field-accessor ap-ref 1))
   (define procedure-body (make-struct-field-accessor ap-ref 2))
-  
+
   (define-syntax new-lambda
     (syntax-rules ()
       [(_ args . body)

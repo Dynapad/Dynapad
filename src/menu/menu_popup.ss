@@ -103,13 +103,13 @@
 ; wants to provide it's own popup menu, before displaying the
 ; default object menu.  The test is made by sending an actor-message
 ; called "provides-popup?".  If the object has an attached actor
-; which responds to this query, then a second actor-message 
+; which responds to this query, then a second actor-message
 ; "make-popup-menu" is used to generate the menu.
 ;
 ; In the following example code we see a generic actor that handles
 ; these messages, as well as a utility for adding the actor and
 ; a small example popup-menu.
-; 
+;
 (define popup-provider%
   (class actor%
     (field (_make-popup-menu #f))
@@ -134,7 +134,7 @@
   (class actor%
     (field (_make-popup-menu-item #f))
     (inherit-field _object)
-    
+
     (define/public (provides-popup-item?) _make-popup-menu-item)
     (define/public (make-popup-items menu) (_make-popup-menu-item _object menu))
     (define/public (use-this-popup-fnc newfnc) (set! _make-popup-menu-item newfnc))
@@ -155,23 +155,23 @@
 ;   (when ppr
 ;     (send ppr use-this-popup-fnc  make-popup-menu-for-region)
 ;     (send ppr attach-to object)))
-; 
+;
 ; (define (make-popup-menu-for-region regn)
 ;   (let ((popmenu (new-popup "Region Menu")))
-;    
+;
 ;     (make-submenu-File    popmenu regn)
 ;     (make-submenu-Edit    popmenu regn)
-; 
+;
 ;     (add-menu-item popmenu
 ;        "Arrange in Grid"  (lambda () (Arrange-in-Grid regn)))
-; 
+;
 ;     (add-menu-item popmenu
 ;        "Arrange in Spiral"  (lambda () (Arrange-in-Spiral regn)))
-; 
+;
 ;     popmenu
 ;   )
 ; )
-; 
+;
 
 (define (special-menu-item-maker obj menu)
   (add-menu-item menu "I'm special!" void #f)

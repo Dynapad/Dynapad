@@ -71,7 +71,7 @@
     (if (> x threshold)
         (push! (make-object time-label% _time) *time-labels*))
     (set! _blots
-          (map 
+          (map
            (lambda (y)
          (ic (make-object _blotclass dynapad)
              (penwidth 1)
@@ -177,7 +177,7 @@
      ;(min (and matches (cadr tag-matches)))
      ;(sec (and matches (caddr tag-matches)))
      )
-    (if tags 
+    (if tags
         ;(say min sec codes)
       (apply register-evnt
          (string->number (cadr tag-matches)) ;min
@@ -188,7 +188,7 @@
         (register-evnt
          (string->number (cadr other-matches)) ;min
          (string->number (caddr other-matches));sec
-         verb-str obj-str)) 
+         verb-str obj-str))
       )))
 
 

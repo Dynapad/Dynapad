@@ -22,7 +22,7 @@
          (pos (list x y (/ 1.0 (send eventPAD getzoom))))
          (lst (reverse (send eventPAD find 'overlapping (list x y x y))))
          (obj (if (null? lst) #f (car lst))))
-        
+
         (cond
           ((is-a? obj text%)
             (send obj focus)
@@ -65,7 +65,7 @@
         (set! target (make-object text% eventPAD "" pos)))
      ;   (set! Draw-object target))
     (edit-text-at-xy eventPAD target x y)))
-    
+
 (define (bindTextMode argPAD)
   (send argPAD bind "<DrawText-ButtonPress-1>" start-text-event)
   (send argPAD bind "<DrawText-KeyPress-Escape>" esc-shape-event)

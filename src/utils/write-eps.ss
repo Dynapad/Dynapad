@@ -11,7 +11,7 @@
   (apply writeps-polything #t args))
 
 (define (writeps-color color)
-  (cond ((number? color) (format "~a setgray" color)) 
+  (cond ((number? color) (format "~a setgray" color))
     ((list? color) (apply format "~a ~a ~a setrgbcolor" color))
     ((string? color) ;assume tcl/dynapad color string, e.g. "#000000"
        (let ((temp-color (make-object dynacolor% color)))
@@ -27,7 +27,7 @@
       (format "gsave ~a stroke grestore~%" (writeps-color color))
       (format "stroke~%")))
 
-(define writeps-string 
+(define writeps-string
   (case-lambda
    ((bb crds font size str) (writeps-text bb crds font size str #f))
    ((bb crds font size str pen)
@@ -125,14 +125,14 @@
 ))
 
 
-(define writeps-obj 
+(define writeps-obj
   (case-lambda
    ((bb obj) (writeps-obj bb obj #f))
    ((bb obj lighten)
-    (when lighten (set! lighten 
+    (when lighten (set! lighten
               (max lighten
                (if (send obj findable) .5 .8))))
-    (cond 
+    (cond
      ((is-a? obj text%)  (list (writeps-textobj bb obj)))
      ((is-a? obj line%)  (list (writeps-line bb
                   (send obj coords) .9)))
@@ -140,7 +140,7 @@
 ;      (list (writeps-polygon bb
 ;           (coords-from-bbox (send obj coords))
 ;           #f (list 0 1 0))))
-     ((is-a? obj rect%)  (list (writeps-polygon bb 
+     ((is-a? obj rect%)  (list (writeps-polygon bb
                   (coords-from-bbox (send obj coords))
                   (send obj pen)
                   (send obj fill))))
@@ -178,7 +178,7 @@
   (apply append (map (lambda (o) (writeps-obj bb o)) objs))
 )
 
-(define writeps-batch 
+(define writeps-batch
   (case-lambda
    ((objs)
     (if (list? objs)

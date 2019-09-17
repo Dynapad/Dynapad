@@ -43,32 +43,32 @@
 (define (finishLink argPAD)
   (changemode--no-gui argPAD (default-mode argPAD))
   (gui-update-mode argPAD))
-  
+
 ; must call bindZoom first to create ztimer and zinterval
 (define (bindHyperlink argPAD)
   (let ((CreateLink #f)
         (LinkArrow #f)
         )
-    
+
     ;;; enable zooming during hyperlink mode
     (send argPAD bind "<CreateLink-ButtonPress-2>"
       (lambda (eventPAD e) (set! currentPAD eventPAD)
           (sendf eventPAD evs set-last-xy (event-x e) (event-y e))
           (send (send eventPAD ztimer) start 1 (send eventPAD zinterval))))
-    
+
     (send argPAD bind "<CreateLink-ButtonRelease-2>"
       (lambda (eventPAD e) (set! currentPAD eventPAD)
         (send (send eventPAD ztimer) stop)))
-    
+
     (send argPAD bind "<CreateLink-ButtonPress-3>"
       (lambda (eventPAD e) (set! currentPAD eventPAD)
           (sendf eventPAD evs set-last-xy (event-x e) (event-y e))
           (send (send eventPAD ztimer) start -1 (send eventPAD zinterval))))
-    
+
     (send argPAD bind "<CreateLink-ButtonRelease-3>"
       (lambda (eventPAD e) (set! currentPAD eventPAD)
         (send (send eventPAD ztimer) stop)))
-    
+
     ;;; start the link
     (send argPAD bind "<CreateLink-ButtonRelease-1>"
       (lambda (eventPAD e) (set! currentPAD eventPAD)
@@ -77,16 +77,16 @@
           ((x (event-x e))
            (y (event-y e))
            (l (reverse (send eventPAD find 'overlapping (list x y x y)))))
-    
+
           (when (not (null? l))
           (set! CreateLink (car l)))
           (when (not LinkArrow)
             (set! LinkArrow (ic (make-object line% eventPAD (list x y x y))
                                 (penwidth 0)
                                 (pen "yellow"))))
-    
+
           (sendf eventPAD evs set-last-xy x y)))))
-    
+
     ;;; make the link
     ; see link-hook for explanation of use of xdim
     (send argPAD bind "<CreateLink-KeyPress-space>"
@@ -98,7 +98,7 @@
          (reverse (send eventPAD find 'overlapping (list x y x y)))))
        (bbox (send eventPAD bbox))
            (xdim (- (caddr bbox) (car bbox))))
-    
+
         (when LinkArrow
           (send LinkArrow delete)
           (set! LinkArrow #f)
@@ -108,7 +108,7 @@
           (*enact-link-fn* CreateLink (car l))
           (*enact-link-fn* CreateLink (list x y xdim)))
           (set! CreateLink #f))
-    
+
     (unless Draw-multiple (finishLink argPAD))
     )))
 
@@ -121,7 +121,7 @@
     (if (not CreateLink)
         (finishLink argPAD)
         (set! CreateLink #f))))
-    
+
     ;;; enable pan during hyperlink mode
     (send argPAD bind "<CreateLink-ButtonPress-1>"
       (lambda (eventPAD e) (set! currentPAD eventPAD)

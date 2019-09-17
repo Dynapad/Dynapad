@@ -46,7 +46,7 @@
         ((< (max (car segA)(caddr segA)) (min (car segB)(caddr segB))) #f)
         ((> (min (cadr segA)(cadddr segA)) (max (cadr segB)(cadddr segB))) #f)
         ((< (max (cadr segA)(cadddr segA)) (min (cadr segB)(cadddr segB))) #f)
-          ; from http://www.faqs.org/faqs/graphics/algorithms-faq/  
+          ; from http://www.faqs.org/faqs/graphics/algorithms-faq/
           ; find: "intersections of 2 2D line segments"
         (else (let* ((A.dx (- (caddr segA) (car segA)))
                      (A.dy (- (cadddr segA) (cadr segA)))

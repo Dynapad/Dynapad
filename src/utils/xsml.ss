@@ -155,7 +155,7 @@
 
 (define (xrem-object-element obj elem)
   (define xtree (get-xtree obj))
-  (if xtree 
+  (if xtree
     (rem-xtree-element xtree elem))
 )
 

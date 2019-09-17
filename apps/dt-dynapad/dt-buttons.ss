@@ -32,7 +32,7 @@
     (inherit dynaclass)
     (super-instantiate (dynaptr))
     (dynaclass 'dt-button-formation%)
-    
+
     (name-part _label-obj label-obj)
     (name-part _rect rect)
 

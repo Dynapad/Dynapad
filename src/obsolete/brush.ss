@@ -1,35 +1,35 @@
 ; $Id: brush.ss,v 1.1 2006/04/02 05:51:38 dsbauer Exp $
 ; THIS SHOULD BE ALL OBSOLETE, replaced by newbrush.ss
 ; keep for back-compat
-; 
+;
 ; Brush sets contain objects (not brushes). Selecting an object in a brush set
 ; may cause other objects with the same handle to be highlighted, but only if
 ; the proper relation exists between the brush sets to which the objects
 ; respectively belong.
-; 
+;
 ; For example, suppose obj1 and obj2 share a handle. Then we
-; 
+;
 ;   (define bs1 (make-object brush-set%))
 ;   (define bs2 (make-object brush-set%))
 ;   (send bs1 members 'add obj1)
 ;   (send bs2 members 'add obj2)
-; 
+;
 ; which puts obj1 in bs1 and obj2 in bs2. Now we
-; 
+;
 ;   (send bs1 targets 'add bs2)
-; 
+;
 ; which tells bs1 to brush bs2, so selecting obj1 highlights obj2. ; The
 ; reverse is not true, however, unless we
-; 
+;
 ;   (send bs2 targets 'add bs1)
-; 
+;
 ; which makes bs2 brush bs1 as well. Another way to give obj1 and obj2 a
 ; mutual brushing relationship is to
-; 
+;
 ;   (define bs (make-object brush-set%))
 ;   (send bs1 members 'add obj1 obj2)
 ;   (send bs1 targets 'add bs1)
-; 
+;
 ; which puts both objects in a set that brushes itself. Note, however, that
 ; while obj1 and obj2 will highlight each other, selecting an object will not
 ; highlight itself.
@@ -59,7 +59,7 @@
     (super-instantiate (dynapad-arg object-arg 'brush))
     (sch_pen _cptr _color)
 
-    (define/public color 
+    (define/public color
       (case-lambda
        (() _color)
        ((c) (set! _color c)
@@ -79,7 +79,7 @@
       ;(if slct (send hl lower slct))
       (set-object-keyval obj 'highlight hl)
       hl))))
-                 
+
 (define (default-unhighlight-fn obj)
   (let ((hl (get-object-keyval obj 'highlight)))
     (when hl
@@ -119,7 +119,7 @@
       (set! fns (list default-highlight-fn default-unhighlight-fn)))
       (replace-else-push-onto-malist! assq targ fns target-list))
 ;      (when (not (assq obj target-list))
-;        (push! 
+;        (push!
 ;         (cons obj hilight-fn) target-list)))
 
     (define (remove-target obj)
@@ -168,7 +168,7 @@
     (define (notify-brushes-of-obj-state brushes obj on?)
 ;      (say brushes)
       (foreach brushes (lambda (b) (send b brush-obj-targets obj on?))))
-    
+
     (define (bind-notify-brushes obj brushes)
       (if (null? brushes)
       (begin
@@ -235,7 +235,7 @@
                   patient-brush-sets
           (ormap (lambda (bs) (send this brushes? bs))
              patient-brush-sets)))))
-    
+
 ;    (define/public brush-when-selected
 ;      (lambda (obj on)
 ;        (for-each (lambda (x)
@@ -261,7 +261,7 @@
 
 
 ;(define (objects-brushed-by-obj-via-set obj brush-set)
-;#f) ;FINISH...  
+;#f) ;FINISH...
 
 (define exhaustive-brush-set%
   ; all members brush all members of targets
@@ -327,12 +327,12 @@
 (define highlight-duplicates
   (case-lambda
    (() *highlight-duplicates?*)
-   ((bool) 
+   ((bool)
       (set! *highlight-duplicates?* bool)
       (foreach (map cadr *brush-sets*)
            (lambda (bs) (send bs enable bool))))
 ))
-  
+
 
 #|
 (define (register-object-with-exhaustive-brush-set obj setname)

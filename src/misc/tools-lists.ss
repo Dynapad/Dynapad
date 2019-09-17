@@ -276,8 +276,8 @@
    ((lst ref) (list-ref-wrap lst ref (length lst)))
    ((lst ref len)
     (list-ref lst (modulo ref len)))))
-    
-(define (mmap width shift  skip fn lst) ;"Multi-map"            
+
+(define (mmap width shift  skip fn lst) ;"Multi-map"
 ; generalized map where lambda fn can operate on multiple adjacent elements
 ; Special case: (mmap 1 0 1 fn lst) = (map fn lst)
 ; width is # of args to fn, each set a series of successive lst elements

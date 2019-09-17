@@ -3,7 +3,7 @@
 ; The following is a 2D implementation of the QuickHull algorithm
 ;
 ;           p  (left-pts)         p
-;                p             
+;                p
 ;                        p     ^ lnormal
 ;  line ....a________b.....i...!
 ;               seg        |
@@ -129,12 +129,12 @@
   (make-object geo-polygon% (convex-hull pts)))
 
 ;DEBUGGING TOOLS----------------
-  
+
 (define (random-coord lo hi bins)
   (let ((x (+ (* (random bins) (/ (- hi lo) bins)) lo))
         (y (+ (* (random bins) (/ (- hi lo) bins)) lo)))
     (list x y)))
- 
+
 (define (random-points n lo hi bins)
   (if (zero? n)
       null
@@ -142,7 +142,7 @@
             (random-points (- n 1) lo hi bins))))
 
 (define (render-points pts)
-  (map 
+  (map
    (lambda (pt)
      (ic (make-object oval% dynapad '(0 0 1 1))
      (anchor "center")

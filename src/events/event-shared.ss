@@ -18,7 +18,7 @@
 ;      (sendf eventPAD evs x0 (event-x e))
 ;      (sendf eventPAD evs y0 (event-y e))
       (sendf eventPAD evs set-sx0sy0 (event-sx e) (event-sy e))
-      
+
       (if (buttonpress-on-background? obj)
       (begin ; begin dragging select rect...
         (Start-Changing-Select--undoable eventPAD)

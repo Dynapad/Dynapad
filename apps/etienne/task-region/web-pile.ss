@@ -79,7 +79,7 @@
       ;; Arrange the images into a spiral
       (arrange-objs-in-pile _icons (send _poly bbox) 0.9)  ;arrange-...-spiral looks better
 
-      ;; Now refresh contents to be _icons 
+      ;; Now refresh contents to be _icons
       (send this contents _icons)
       ;; Tell the region to finish -- marking the end of a batch
       ;;  to tell the pile to redraw zone

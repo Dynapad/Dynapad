@@ -37,7 +37,7 @@
         (() _children)
         ((i) (vector-ref _children i))
     ((i v) (vector-set! _children i v))))))
-    
+
 (define NBodyForce%
   (class object%
     (field
@@ -100,7 +100,7 @@
      (splitx (+ x1 (/ (- x2 x1) 2)))
      (splity (+ y1 (/ (- y2 y1) 2)))
      (i (+ (if (> x splitx) 1 0) (if (> y splity) 2 0))))
-    
+
     (when (not (send n children i))
       (send n children i (send factory getQuadTreeNode))
       (send n hasChildren #t))

@@ -14,7 +14,7 @@
      (apply + wts)))
 
 (define-macro (increment-mean mean n x)
-  `(cset! ,mean 
+  `(cset! ,mean
           (if (zero? ,n)
               (begin
                 (++_ ,n)
@@ -35,7 +35,7 @@
       b
       a))
 
-; x is a variable, toggles between vals a and b 
+; x is a variable, toggles between vals a and b
 (define-macro (toggle x eq-fn a b)
   `(set! ,x (other ,x ,eq-fn ,a ,b)))
 
@@ -154,7 +154,7 @@
 
 
 ;a,b,p are coord pairs '(xa ya)...
-;returns #t iff p lies in box  with corners a,b 
+;returns #t iff p lies in box  with corners a,b
 (define (pt-in-bbox? p a b)
   (and (between? (car a) (car p) (car b))
        (between? (cadr a) (cadr p) (cadr b))))
@@ -197,7 +197,7 @@
                              (> this max-ahead))
                          this)
                         (else max-ahead)))))))
-                           
+
 (define (limit-between! x a b)
   (let ((lo (minfinity a b))
         (hi (maxfinity a b)))

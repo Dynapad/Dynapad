@@ -20,7 +20,7 @@
   (let ((log (Select-File-Dialog 'load "/home/Share/dsbauer/subjects/")))
     (and log
      (summarize-log log))))
-      
+
 (if *popup-menus-enabled?*
     (append-mainmenu-constructor
      (lambda (mb obj)
@@ -205,7 +205,7 @@
          ((is-a? o titled-frame-container%)
           (format "~a-~a" (send (get-rgn o) dynaclass) (send o id)))
          (else o))))
-  
+
 (define (replace-idlist-with-names ids) ;ids has form '(list (objid N) ...)
   (let* ((objs (or (safe-eval ids) null))
      (names (map replace-obj-with-name objs)))
@@ -238,7 +238,7 @@
              words))
          (keeps (list-head (filter identity inits) 8)))
     (apply string-append keeps))))
-    
+
 
 ;(define-syntax summarize-drag
 ;  (syntax-rules ()
@@ -280,7 +280,7 @@
 
     (define/override (refer-when-ready . args) #f)
     (define/public (name) _name)
-    (super-instantiate ())      
+    (super-instantiate ())
 ))
 
 (define (make-pdf-at-position url x y z)

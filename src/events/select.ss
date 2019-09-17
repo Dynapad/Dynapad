@@ -36,19 +36,19 @@
 
     (send argPAD bind (format "<~a-ButtonPress-1>" modestr)
       Start-Drag/Select-Event) ;see event-shared.ss
-              
+
     (send argPAD bind "<BBox-B1-Motion>"
       Update-Select-Marquee-With-Motion)
-    
+
     (send argPAD bind "<BBox-ButtonRelease-1>"
       End-Select-Event)
 
     (send argPAD bind (format "<~a-Shift-ButtonPress-1>" modestr)
       Start-Shift-Select-Event)
-    
+
     (send argPAD bind "<BBox-Shift-B1-Motion>"
       Update-Select-Marquee-With-Motion)
-    
+
     (send argPAD bind "<BBox-Shift-ButtonRelease-1>"
       End-Shift-Select-Event)
 )

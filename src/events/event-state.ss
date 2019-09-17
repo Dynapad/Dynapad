@@ -3,7 +3,7 @@
 (define event-state%
   (class object%
     (init-field _pad)
-    (super-instantiate ())         
+    (super-instantiate ())
     (send _pad evs this)
 
     (public-field lasso? _lasso?)
@@ -159,7 +159,7 @@
     (define (in-poly? obj poly)
       (def bbc (bbcenter (send obj bbox)))
       (sch_xy_in_poly (car bbc) (cadr bbc) (send poly get-cptr)))
-    
+
     (define (objects-in-poly backgnd-obj)
       (let* ((poly (ic (make-object polygon% _dynapad (send this recall-coords))
                        (fill "none")
@@ -184,7 +184,7 @@
 
     (define default-containment-fn
       (lambda (obj) (objects-in-poly obj)))
-        
+
     (public-field containment-fn _containment-fn)
     (containment-fn default-containment-fn)
 
@@ -194,7 +194,7 @@
 
     ;(if *selection-layer* (send this layer *selection-layer*))
     (send this dynaclass 'lasso%)))
-    
+
 ;
 ; File selector
 ;
@@ -212,7 +212,7 @@
 (define combo-event-state% ;combines bbox and lasso
   (class event-state%
     (init _dp)
-    (super-instantiate (_dp))         
+    (super-instantiate (_dp))
     (inherit-field _pad _obj0 _lastx _lasty _sx0 _sy0)
 
     ; here, lasso? and box? are independent, but one must be #t

@@ -50,7 +50,7 @@
   (Start-Drag eventPAD evnt obj-list)
   ; NOTE: pick-up and drop events both currently use same evnt
   ; ideally should include both events as separate args
-;  (for-each (lambda (o psn) 
+;  (for-each (lambda (o psn)
 ;             (send o position psn))
 ;            obj-list dest-list)
 ;  (Finish-Drag eventPAD evnt obj-list))
@@ -82,7 +82,7 @@
               (send eventPAD getvar 'dragset) )))
         (sendf eventPAD evs set-last-xy x y)
   )))
-  
+
 ;  (send argPAD bind "<Drag-ButtonRelease-1>"
 ;        End-Drag-Event)
   (send argPAD bind "<Drag-ButtonRelease-1>"

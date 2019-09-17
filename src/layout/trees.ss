@@ -11,18 +11,18 @@
 (define treenode%
   ; A treenode% represents only a RELATIVE layout, maintaining topology and
   ;   values of depth and column for each node.
-  ; See also spatial-treenode% below 
+  ; See also spatial-treenode% below
   (class named-actor%
      (init _obj)
 
      ;(init-field (_link-fn (lambda (from to) #f)))
      ; if provided, (lambda (from to) ...) constructs an arc
      ; from parent's obj to child's obj
-     
+
      ;(init-field (_relink-fn (lambda (old-parent new-parent child) #f)))
      ; if provided, (lambda (child) ...) updates links from old-parent
      ;  to child when new-parent is inserted between them.
-     ; May either relink OP->C as OP->NP and add NP->C 
+     ; May either relink OP->C as OP->NP and add NP->C
      ; or relink OP->C as NP->C and add OP->NP
 
      (field (_parent #f)
@@ -80,7 +80,7 @@
            (send this nudge-family-after later)))
 ;     (send new uplink (_link-fn (send this object) (send new object)))
      ))
-     
+
      (define/public (nudge-family-by-2)
        (send this column (+ _column 2))
        (foreach _children (lambda (child) (send child nudge-family-by-2)))
@@ -97,7 +97,7 @@
 
      (super-instantiate ())
      (when _obj (send this attach-to _obj 'treenode))
-))         
+))
 
 
 (define spatial-treenode%
@@ -152,7 +152,7 @@
 #|
 (dynaload "edges.ss")
 
-(define (make-treenode) 
+(define (make-treenode)
   (let* ((obj (make-object oval% dynapad (list -5 -5 5 5)))
      (node (make-object spatial-treenode%
                 obj

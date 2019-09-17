@@ -19,7 +19,7 @@
 (access-hit-far-zoomlimit-callbacks
  'add
  (lambda (argPAD evnt)
-   (log-changeview-entry ''zoom-out 
+   (log-changeview-entry ''zoom-out
              (cons 'newview (send argPAD view))
              (cons 'newbb (send argPAD bbox)))))
 

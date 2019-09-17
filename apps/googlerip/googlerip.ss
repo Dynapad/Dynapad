@@ -9,27 +9,27 @@
   (delete-google-images)
   (for-each (lambda (a) (set! cmd (string-append cmd " " a))) args)
   (set! cmd (string-append cmd " 2> /dev/null"))
-  (system cmd)  
+  (system cmd)
   (arrange-google-images)
 )
 
 
-;; Use object-oriented design to distinguish google images 
+;; Use object-oriented design to distinguish google images
 ;; from normal dynapad images
 (define googleimage%
   (class image%
      (init initpad)
      (init (_hirespath #f))
      (init (initposition #f))
-     (super-instantiate (initpad _hirespath initposition))     
+     (super-instantiate (initpad _hirespath initposition))
      )
   )
 
 
-;; Delete images from last google query if they exist  
+;; Delete images from last google query if they exist
 (define (delete-google-images)
   ;; Delete images from Dynapad
-  (for-each (lambda (o) 
+  (for-each (lambda (o)
           (if (is-a? o googleimage%)
           (send o delete-all)))
         (send currentPAD objects))
@@ -47,7 +47,7 @@
     (if image-list (send dynapad center image-list 1000 #t))
     ;(if (null? returnflag) (length image-list) image-list)
     image-list
-    ) 
+    )
   )
 
 (define (arrangedir-google)

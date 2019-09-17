@@ -210,11 +210,11 @@
     (add-menu-item sb "PolyLine" (lambda () (initDraw dynapad polyline% "Draw")))
     (add-menu-separator sb) ;------------------------------
     (add-checkable-menu-item sb "Fill shapes"
-       (lambda (i) 
+       (lambda (i)
      (send pad fill? (send i is-checked?)))
        (send pad fill?))
     (add-checkable-menu-item sb "Draw multiple"
-       (lambda (i) 
+       (lambda (i)
      (set! Draw-multiple (send i is-checked?)))
        Draw-multiple)
   ))

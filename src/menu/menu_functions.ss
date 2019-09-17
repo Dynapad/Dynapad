@@ -192,7 +192,7 @@
              (newbb (bbstretch mybb offset))
              (dxy   (map - (cddr newbb) (cddr mybb))))
         (send/apply obj slide dxy)))))
-  
+
 
 (define (Copy-Buffer-empty?) (null?  *copy_buffer*))
 
@@ -418,7 +418,7 @@
   (case-lambda
    (() (Select-and-Load-File import-path)) ;import by default
    ((load-context-fn)
-    (let ((path (Select-File-Dialog 'load)))      
+    (let ((path (Select-File-Dialog 'load)))
       (when path
             (load-context-fn path))
       path))))
@@ -449,10 +449,10 @@
 
 (define (Clear-Workspace . stuff)  ;may be overridden in logs.ss
   (apply undoable-delete-all currentPAD stuff))
-   
+
 (define (Confirm-and-Delete-All)
   (let
-    ((l (filter (lambda (x) (send x deletable?)) 
+    ((l (filter (lambda (x) (send x deletable?))
                 (saveable-objects currentPAD)))) ;include abstract objs
                 ;(send currentPAD objects))))
     (cond
@@ -464,7 +464,7 @@
               ;(destroy-and-keep-destroying-until-everything-is-gone currentPAD)
               (Clear-Workspace l)
               )))))
- 
+
 (define delete-all
   (case-lambda
    ((argPAD) (delete-all argPAD (saveable-objects argPAD)))
@@ -568,7 +568,7 @@
 (define (Select-All)
   (Set-Select--undoable currentPAD (send currentPAD objects)))
 
-(define (Arrange-Selected patternname) 
+(define (Arrange-Selected patternname)
   (case patternname
     ('Horz (not-implemented "Horizontal Arrange"))
     ('Vert (not-implemented "Vertical Arrange"))
@@ -593,11 +593,11 @@
         (send currentPAD defaultfill result)
         result)
       (send currentPAD defaultfill))))
-    
+
 (define (pengetcolor)
   (let ((result (ask-user-for-color (send currentPAD defaultpen))))
     (if result
       (begin
         (send currentPAD defaultpen result)
         result)
-      (send currentPAD defaultpen)))) 
+      (send currentPAD defaultpen))))

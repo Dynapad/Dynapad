@@ -39,7 +39,7 @@
     (send* left  (fill "black") (scale .5) (transparency .001) (anchor "se"))
     (make-object group% dynapad (list right left obj))
     (list left right)))
-  
+
 
 
 ;;Misc Routines
@@ -66,32 +66,32 @@
 ;;
 ;; View an object, list, or everything
 ;;
-(define view-it 
+(define view-it
   (case-lambda
-   ((it) 
-    (send it center 2000) 
+   ((it)
+    (send it center 2000)
     (sleep 3))
-   ((it view-time) 
-    (send it center 2000) 
+   ((it view-time)
+    (send it center 2000)
     (sleep view-time))
-   ((it slide-time view-time) 
-    (send it center slide-time) 
+   ((it slide-time view-time)
+    (send it center slide-time)
     (sleep view-time))))
 
 (define view-all
-  (case-lambda 
+  (case-lambda
    (()
-    (for-each 
+    (for-each
      (lambda (obj)
        (view-it obj))
      (send dynapad objects)))
    ((lst view-time)
-    (for-each 
+    (for-each
      (lambda (obj)
        (view-it obj view-time))
      lst))
    ((lst view-time slide-time)
-    (for-each 
+    (for-each
      (lambda (obj)
        (view-it obj slide-time view-time))
      lst))))

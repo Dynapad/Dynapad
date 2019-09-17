@@ -4,7 +4,7 @@
 
     (super-instantiate (_rgn _cells))
 ))
-   
+
 (define spiral-projector%
   (class blob-projector%
      (init-field _rgn)
@@ -28,7 +28,7 @@
 ))
 
 ;(define (get-webthumb-date thumb)
-  
+
 
 ;(define web-time-param
 ;  (make-object quantitative-parameter%

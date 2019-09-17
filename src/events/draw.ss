@@ -70,17 +70,17 @@
        (is-a? Draw-object Draw-class)
        (eq? Draw-class text%))
       (edit-text-at-xy Draw-object x y))
-     
+
      (else ; make new obj
       (set! Draw-object (make-object Draw-class eventPAD))
-      
+
       (when (has-method? Draw-object 'fill)
       (send Draw-object fill
         (if (send eventPAD fill?) (send eventPAD defaultfill) "none")))
-      
+
       (when (has-method? Draw-object 'pen)
       (send Draw-object pen (send eventPAD defaultpen)))
-      
+
       (cond
         ;edit new text
        ((subclass? Draw-class text%)
@@ -94,7 +94,7 @@
     (changemode eventPAD "DrawAdd")
     )
        ;new rect/oval/line/etc
-       (else 
+       (else
     (send Draw-object save-coords (list x y)))
        )))
     ))
@@ -150,7 +150,7 @@
 (define (bindDrawMode argPAD)
 
   (send argPAD bind "<Draw-ButtonPress-1>" start-shape-event)
-  
+
   (send argPAD bind "<DrawAdd-B1-Motion>" drag-shape-vertex-event)
   (send argPAD bind "<Draw-B1-Motion>" drag-shape-vertex-event)
 
@@ -165,8 +165,8 @@
   (send argPAD bind "<DrawAdd-Double-ButtonPress-1>" esc-shape-event)
 
   (send argPAD bind "<Draw-KeyPress-Escape>"    esc-shape-event)
-  (send argPAD bind "<DrawAdd-KeyPress-Escape>" esc-shape-event) 
-    
+  (send argPAD bind "<DrawAdd-KeyPress-Escape>" esc-shape-event)
+
   ; allow zooming (oldschool) while drawing
   ;(send argPAD bind "<Draw-ButtonPress-2>"   Zoom-In-lambda)
   ;(send argPAD bind "<Draw-ButtonRelease-2>" Zoom-In-Stop-lambda)

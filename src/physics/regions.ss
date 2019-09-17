@@ -80,7 +80,7 @@
     (define/public (final-contents objs)
       (contents objs)
       (finish))
-    
+
     (define/public (visible-contents) _contents)  ;overridden by lenses
 
     ; Undoable effects: ------------------------------
@@ -95,7 +95,7 @@
     (define/public (undo-on-abandon obj do-fn undo-fn)
       (pushq-onto-malist-val-always! obj undo-fn _restore-abandoned-alist)
       (do-fn obj))
-    
+
     (define (restore-any-obj obj)
       (let ((undo-fns (get-and-rem-from-malist! assq remv obj _restore-always-alist)))
     (when undo-fns
@@ -167,7 +167,7 @@
           (get-and-rem-from-malist! assq remv obj _restore-abandoned-alist) ; clean up unused abandonment undos
           (restore-any-obj obj)       ; do removal undos
           ))
-    
+
     (define/public (abandon-obj obj)
 ;(say "depart region " (length _contents))
       (unless (or (send obj deleted?) _loyal)
@@ -176,7 +176,7 @@
           (for-each (lambda (fn) ((car fn) obj)) _leave-actions)
           (restore-any-obj obj)
           (restore-abandoned-obj obj)))
-    
+
     ; Updating: --------------------------
     (define/public (update objs)
       (when (not (list? objs))
@@ -184,11 +184,11 @@
       (for-each (lambda (o) (update-obj o)) objs))
 
     (define/public (update-obj obj)
-      (for-each (lambda (fn) ((car fn) obj)) _update-actions))    
-    
+      (for-each (lambda (fn) ((car fn) obj)) _update-actions))
+
     (define/public (finish)
       (for-each (lambda (fn) ((car fn))) _finish-actions))
-      
+
     (define/public (pickup obj) ;object is picked up at start of drag
       (for-each (lambda (fn) ((car fn) obj)) _pickup-actions)
       ;this ensures that obj will be replaced if undo:
@@ -197,7 +197,7 @@
       ; `(send (get-rgn ,(obj->IDexpr (send this formation))) receive ,(obj->IDexpr obj))
       ; *undo-ops*)
       )
-      
+
     ; Effect lists: ------------------------
     (define/public filter-fn (callback-accessor-functions _filter-fns))
     ; callbacks to restrict contents
@@ -229,7 +229,7 @@
 
       (push! this *all-regions*)
 
-      ;==============      
+      ;==============
       (define/public containment-fn (get/set _containment-fn))
 
       (define/public pane
@@ -356,14 +356,14 @@
                      ,(export-objs (send this contents)))
                  ))
 ;      (lambda (o) `(with rgn (get-actor-named obj region-actor-name)
-;                 (send rgn 
+;                 (send rgn
 ;                   refer-when-ready
 ;                   'final-contents
 ;                   (list ,@(map obj->id (send this contents))))
 ;                 ;(send rgn finish)
 ;                 ))
       'enumerate-contents)
-    
+
     (send (formation) dependents-fn
       (lambda (form)
         (send-rgn form contents)))
@@ -401,7 +401,7 @@
 ;    (remote-push! (list 'region-owner this) obj alist)
 ;    (push-onto-malist-val-always! assq
 ;                     'region-owner
-;                     this obj alist)    
+;                     this obj alist)
     ))
 
     (define (detach-obj obj)
@@ -414,7 +414,7 @@
       (remote-push! (list 'last-region-owner this) obj alist))
 
     (define (commit-release-obj obj)
-      (detach-obj obj)  
+      (detach-obj obj)
       (get-and-rem-from-malist! assq remq 'region-owner obj alist)
       (get-and-rem-from-malist! assq remq 'last-region-owner obj alist)
       ;un-propogate geon callbacks
@@ -716,7 +716,7 @@
           )))
     (send this finish-actions 'add
       (lambda () (sendf this formation refresh-fusing-size)))
-        
+
 ))
 
 (define sponge%
@@ -763,7 +763,7 @@
        ;drop to top of main layer
        (send obj layer (send (send (send this object) dynapad) main-layer))
        (send obj raise)))
-  
+
     (send this enter-actions 'add
      (lambda (obj)
        (def curr-layer)
@@ -785,7 +785,7 @@
      'setlayer)
 
 ))
-    
+
 (define sticky-shelf%
   (class shelf%
     (init _obj)
@@ -845,7 +845,7 @@
 ;       (let ((regs (get-pickup-relevant-regions o)))
 ;;         (lyr  (send o layer)))
 ;     (if regs
-;         (foreach regs (lambda (r) 
+;         (foreach regs (lambda (r)
 ;                 (send r pickup o))))))
 ;;     (when (or (eq? lyr (send dynapad main-layer))
 ;;         (eq? lyr *shelf-layer*))
@@ -938,7 +938,7 @@
       ;(top-greedy-rgn-at-cursor (car (reverse greedy-rgns-at-cursor))))
       ;(say greedy-rgns-at-cursor)
     (foreach (reverse greedy-rgns-at-cursor) ;top->bottom order
-         (lambda (r) 
+         (lambda (r)
          ;(say (send (send r pane) fill)) ;debugging
            (send r receive moved-objs)
            (send r finish)))

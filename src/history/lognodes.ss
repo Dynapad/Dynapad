@@ -70,7 +70,7 @@
 
     (let ((pairs (sort (lambda (p1 p2) (logid<? (cadr p1) (cadr p2)))
                (gather-log-transitions _dir _treename))))
-      (map (lambda (pair) 
+      (map (lambda (pair)
          (mlet (((preid nextid) pair))
            (let* ((prevbranch (send this logbranch-with-logid preid))
               (prevnode (and prevbranch (send prevbranch to-node)))
@@ -174,7 +174,7 @@
     (define/public to-node   (get/set _to-node))
     (define/public from-node (get/set _from-node))
 
-    (define/public toxy 
+    (define/public toxy
       (case-lambda
        (() (cddr (send this coords)))
        ((xy) (let ((crds (send this coords)))
@@ -283,7 +283,7 @@
     (set! *future-log-path* future-ids)
     (send/apply _tree refresh-active-path *current-logbranch* future-branches)
     (send *current-logbranch* hilight)))
-      
+
     (exclude-from-active-path)
     (send this bind "<Run-Shift-ButtonPress-1>" (lambda (ePAD e) (restore)))
     (send this bind "<Select-Shift-ButtonPress-1>"  (lambda (ePAD e) (restore)))
@@ -319,7 +319,7 @@
 (define (ensure-logbranch prev-logid this-logid)
   (if (not *current-logtree*)
       (set! *current-logtree*
-        (make-object logtree% dynapad 
+        (make-object logtree% dynapad
              *current-log-directory*
              *current-log-treename*)))
   (let* ((prevbranch (send *current-logtree*
@@ -331,7 +331,7 @@
                     *current-logtree*
                     this-logid prevnode))))
     thisbranch))
-           
+
 (define-macro (switch-logs var new)
  `(let* ((newlogid ,new)
      (oldlogbranch (send *current-logtree*

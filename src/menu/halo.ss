@@ -80,7 +80,7 @@
 ; just the selected object (or the list of selected objects).  This means
 ; that re-positioning the halo buttons is done with respect to the bounding
 ; box of the selected objects.
-; This function computes that bbox.  It returns an adjusted bbox if 
+; This function computes that bbox.  It returns an adjusted bbox if
 ; the actual bbox is too small.
 ;
 ; Also, if no objects are selected then the bbox is centered
@@ -140,7 +140,7 @@
 ; The example lambda above would be generated like this:
 ;   (add-lambda-to-halo-update
 ;     (make-layout-function  halo_btn1  b2 b3   b0 b1   0 0) )
-; 
+;
 (define (make-layout-function
            btn                   ; the button to be positioned
            fnc-xref fnc-yref     ; corner of reference bbox
@@ -151,7 +151,7 @@
   (lambda ()
     (define bbox_ref *halo_ref_bbox*)
     (define bbox_btn (send btn bbox))
-  
+
     (define dx (- (fnc-xref bbox_ref) (fnc-xbtn bbox_btn)))
     (define dy (- (fnc-yref bbox_ref) (fnc-ybtn bbox_btn)))
     (define pz (send dynapad getzoom))
@@ -169,7 +169,7 @@
 ; The offset parameters adjust the position
 ; by one button-width (or button-height).
 ; For example, if one button is positioned at
-; the upper right corner of the ref bbox: 
+; the upper right corner of the ref bbox:
 ;     (make-layout-function  halo_btn1  b2 b3   b0 b1   0 0)
 ; another button can be positioned just to its
 ; left by using a negative offset in the x direction
@@ -209,7 +209,7 @@
 
 ; When an dynaobject is selected I need to add the appropriate
 ; halo layout callbacks
-; 
+;
 
 ; Wedge a function into these Select events
 (define *orig-Select-ButtonPress-1*
@@ -227,7 +227,7 @@
        (set! obj (get-top-group obj))
        (if (not (send obj selected?)) (add-halo-layout-callbacks obj)))))
 
-(send dynapad bind "<Select-ButtonPress-1>" 
+(send dynapad bind "<Select-ButtonPress-1>"
   (lambda (w e)
     (add-halo-callbacks? (event-obj e))
     (*orig-Select-ButtonPress-1* w e)
@@ -236,7 +236,7 @@
     )
   ))
 
-(send dynapad bind "<Select-ButtonRelease-1>" 
+(send dynapad bind "<Select-ButtonRelease-1>"
   (lambda (w e)
     (*orig-Select-ButtonRelease-1* w e)
     (if (any-selected?)
@@ -251,19 +251,19 @@
     #f
   ))
 
-(send dynapad bind "<Control-Select-ButtonRelease-1>" 
+(send dynapad bind "<Control-Select-ButtonRelease-1>"
   (lambda (w e)
     (*orig-Select-ButtonRelease-1* w e)
     (update-halo-layout (event-x e)(event-y e))
     #f
   ))
 
-(send dynapad bind "<Shift-Select-ButtonPress-1>" 
+(send dynapad bind "<Shift-Select-ButtonPress-1>"
   (lambda (w e)
   (add-halo-callbacks? (event-obj e))
   (*orig-Shift-Select-ButtonPress-1* w e)
   ))
-(send dynapad bind "<Shift-Select-ButtonRelease-1>" 
+(send dynapad bind "<Shift-Select-ButtonRelease-1>"
   (lambda (w e)
   (*orig-Shift-Select-ButtonRelease-1* w e)
   (update-halo-layout (event-x e)(event-y e))
@@ -273,7 +273,7 @@
 (send dynapad bind "<Control-ButtonPress-1>" (lambda (w e) (handle-meta-click e) #f))
 (send dynapad bind "<Control-Select-ButtonPress-1>" (lambda (w e) (handle-meta-click e) #f))
 
-(define (handle-meta-click e) 
+(define (handle-meta-click e)
   (define obj (event-obj e))
 
   (when (not (is-a? obj select%))
@@ -425,9 +425,9 @@
 
 (define move_btn
   (ic (make-object polygon% dynapad (scale-crds '(
-       0.4 0.6 0.40 0.90 0.25 0.90 0.50 1.15 0.75 0.90 0.60 0.90 
+       0.4 0.6 0.40 0.90 0.25 0.90 0.50 1.15 0.75 0.90 0.60 0.90
        0.6 0.6 0.9 0.6 0.9 0.75 1.15 0.5 0.9 0.25 0.9 0.4 0.6 0.4
-       0.6 0.1 0.75 0.1 0.5 -0.15 0.25 0.1 0.4 0.1 0.4 0.4 
+       0.6 0.1 0.75 0.1 0.5 -0.15 0.25 0.1 0.4 0.1 0.4 0.4
        0.1 0.4 0.1 0.25 -0.15 0.5 0.1 0.75 0.1 0.6 0.4 0.6
       )))
     (layer hide_layer)
@@ -435,9 +435,9 @@
 
 (define moveview_btn
   (ic (make-object polygon% dynapad (scale-crds '(
-       0.4 0.6 0.40 0.90 0.25 0.90 0.50 1.15 0.75 0.90 0.60 0.90 
+       0.4 0.6 0.40 0.90 0.25 0.90 0.50 1.15 0.75 0.90 0.60 0.90
        0.6 0.6 0.9 0.6 0.9 0.75 1.15 0.5 0.9 0.25 0.9 0.4 0.6 0.4
-       0.6 0.1 0.75 0.1 0.5 -0.15 0.25 0.1 0.4 0.1 0.4 0.4 
+       0.6 0.1 0.75 0.1 0.5 -0.15 0.25 0.1 0.4 0.1 0.4 0.4
        0.1 0.4 0.1 0.25 -0.15 0.5 0.1 0.75 0.1 0.6 0.4 0.6
       )))
     (layer hide_layer)
@@ -542,7 +542,7 @@
 (def _resize_btn_layer)
 (def _resize_btn_saveanchor)
 (def _resize_btn_subject)
- 
+
 ;--- maintain aspect ratio ------
 (send resize_btn bind "<Select-ButtonPress-1>" (lambda (w e)
   (set! _resize_btn_subject (car (reverse (send dynapad selected))))
@@ -559,7 +559,7 @@
   (set! _resize_btn_y0 (event-y e))
   (set! _resize_btn_xoff (- _resize_btn_x0 (b2 _resize_btn_bbox0)))
   (set! _resize_btn_yoff (- _resize_btn_y0 (b0 _resize_btn_bbox0)))
- 
+
   #f
 ))
 
@@ -605,7 +605,7 @@
   (set! _resize_btn_layer (send (event-obj e) layer))
   (set! _resize_btn_x0 (event-x e))
   (set! _resize_btn_y0 (event-y e))
- 
+
   #f
 ))
 (send resize_btn bind "<Shift-Select-ButtonRelease-1>" (lambda (w e)
@@ -621,7 +621,7 @@
   (send _resize_btn_subject position (list _resize_btn_px0 _resize_btn_py0 _resize_btn_pz0))
   #f
 ))
- 
+
 ;-----------------------------------------------------------------
 (def _width_btn_x0)
 (def _width_btn_y0)
@@ -651,7 +651,7 @@
   (set! _width_btn_layer (send (event-obj e) layer))
   (set! _width_btn_x0 (event-x e))
   (set! _width_btn_y0 (event-y e))
- 
+
   #f
 ))
 (send width_btn bind "<Select-ButtonRelease-1>" (lambda (w e)
@@ -698,7 +698,7 @@
   (set! _height_btn_layer (send (event-obj e) layer))
   (set! _height_btn_x0 (event-x e))
   (set! _height_btn_y0 (event-y e))
- 
+
   #f
 ))
 (send height_btn bind "<Select-ButtonRelease-1>" (lambda (w e)

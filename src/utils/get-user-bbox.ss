@@ -28,7 +28,7 @@
               (or _dy default))))
 
     (push-event-mode _dynapad "GetBBox")
-          
+
     (let* ((dxy (refresh-dxy))
            (dx (car dxy))
            (dy (cadr dxy))
@@ -55,7 +55,7 @@
                             (+ (event-y evnt) dy)
                             )))
       )
-    
+
     (define (GetBBox_SetOrigin evnt)
  ;     (define size (/ 1 (send _dynapad getzoom)))
  ;     (set! _upperleft_x (- (event-x evnt) (* _dx size)))
@@ -64,7 +64,7 @@
         (set! _upperleft_x (b0 bb))
         (set! _upperleft_y (b3 bb)))
    )
-    
+
     (define (GetBBox_TrackSize evnt)
       ;(define size (/ 100 (send _dynapad getzoom)))
       (let ((ex (event-x evnt))
@@ -90,12 +90,12 @@
         (when _release_callback
                (_release_callback bb))
       ))
-    
+
     (send _dynapad bind "<GetBBox-Motion>"          (lambda (d e)
                                                       (if _upperleft_x ;already set origin?
                                                           (GetBBox_TrackSize e)
                                                           (GetBBox_TrackOrigin e))))
-    (send _dynapad bind "<GetBBox-ButtonPress-1>"   (lambda (d e) 
+    (send _dynapad bind "<GetBBox-ButtonPress-1>"   (lambda (d e)
                                                       (if (dt-event? e)
                                                           (if _upperleft_x
                                                               #f
@@ -106,7 +106,7 @@
                                                           (GetBBox_TrackSize e)
                                                           (GetBBox_TrackOrigin e))
                                                       #f))
-    (send _dynapad bind "<GetBBox-ButtonRelease-1>" (lambda (d e) 
+    (send _dynapad bind "<GetBBox-ButtonRelease-1>" (lambda (d e)
                                                       (if (or _upperleft_x
                                                               (and _dx _dy))
                                                           (GetBBox_Finish e)
@@ -119,7 +119,7 @@
         (when _rect (send _rect delete) (set! _rect #f))
         (when _release_callback
               (_release_callback #f))))
-  
+
   ; allow zooming (oldschool) while getting bbox
 ;  (send _dynapad bind "<GetBBox-ButtonPress-2>"   Zoom-In-lambda)
 ;  (send _dynapad bind "<GetBBox-ButtonRelease-2>" Zoom-In-Stop-lambda)

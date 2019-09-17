@@ -157,7 +157,7 @@
         (send label layer (send pad main-layer))
         (add label)
         (send label lower)))
-  
+
     (define (bindvec v)
       (when (not (eq? (vector-length v) 8))
         (error "flow vector length must be 8, given " v))

@@ -44,7 +44,7 @@
 
 
 ;---- TIMERS ----
-              
+
 (define motion-tick 150)
 (define repulsion-tick 250)  ; should be >motion, <lookout
 (define repulsion-kick-duration (+ repulsion-tick 100))
@@ -68,7 +68,7 @@
   (send motion-timer stop)
   (send repulsion-timer stop)
   (send lookout-timer stop))
-    
+
 ;---- PHYSICS ACTORS ----
 (define homing-actor-name 'homer)
 (define homing-actor
@@ -78,7 +78,7 @@
 
      (send homing-timer subscribe this)
 ;     (define/public (update abstime dtime)
-;       ;try to go home if 
+;       ;try to go home if
 ;       )
 ))
 
@@ -134,7 +134,7 @@
     ;go to sleep (i.e. unsubscribe from timer)
     ; will awaken when next kicked
 ))
-     
+
 (define default-mass 100)
 (define default-friction 0)
 (define particle-actor%
@@ -278,7 +278,7 @@
 ;         (time-force-last-applied (current-milliseconds)))
 ;      (super-instantiate ())
 ;      ;(send motion-timer subscribe this)
-     
+
 ;      (define/public (speed) (send _velocity length))
 
 ;      (define/public velocity (get/set _velocity))
@@ -307,7 +307,7 @@
 ;                 (dspeed (* fract decel))
 ;                 (newspeed (- (send _velocity length) dspeed))
 ;                 )
-               
+
 ;                (if (negative? newspeed)
 ;                (set! newspeed 0))
 ; ;           (send _velocity scale! .9)
@@ -339,7 +339,7 @@
 ;   (class named-actor%
 ;      (super-instantiate ('lookout))
 ;      (field (_repulsors-alist null))
-     
+
 ;      (send lookout-timer subscribe this) ;activate
 
 ;      (define (delete-watch watch)
@@ -470,7 +470,7 @@
       (if _target-fn   ; handle moving target
       (let ((newxy (_target-fn)))
         (set! _target-x (car newxy))
-        (set! _target-y (cadr newxy))))        
+        (set! _target-y (cadr newxy))))
       (let* ((timeleft (- _duedate abstime)))
     (if (positive? timeleft)
         (let* ((rawfraction (/ motion-tick timeleft))
@@ -503,7 +503,7 @@
 ;     (send motor accumulate-force _force)
 ;     (send motor apply-force 1 repulsion-kick-duration)))
 ))
-    
+
 (define animate-to
   (case-lambda
    ((obj target-fn) (animate-to obj target-fn 1000)) ;1000ms by default
@@ -517,7 +517,7 @@
       (send homer duedate (+ (current-milliseconds) howlong))
       (send homer go)
       homer))))
-    
+
 
 #|EXAMPLES:
  (animate-to obj '(0 0))        take 1 sec
@@ -538,7 +538,7 @@
      ;temp:
 ;     (field (birthdate (let ((now (current-milliseconds)))
 ;                 (- now (modulo now repulsion-tick)))))
-     
+
      (send repulsion-timer subscribe this) ;activate
 
      (define/override (object) (list obj1 obj2))
@@ -565,7 +565,7 @@
 ;       (define time1 (/ (- (current-milliseconds) birthdate) 10))
        (if (not (send this maybe-expire `(send ,this overlap-or-die)))
            (let ((overlap (intersection obj1 obj2))) ;see geometry.ss
-;       (let ((overlap 
+;       (let ((overlap
 ;          (measure 'itrsct intersection obj1 obj2)))
          (if overlap
              (begin
@@ -579,7 +579,7 @@
 ;              time1
 ;              (/ (- (current-milliseconds) birthdate) 10)
 ;              "red")
-       
+
            ))
      ))
 
@@ -648,7 +648,7 @@
 
 ; (define vitalize
 ;   (case-lambda
-; ;   (() (vitalize (send dynapad find 
+; ;   (() (vitalize (send dynapad find
 ;    ((it)   (if (list? it)
 ;            (for-each vitalize it)
 ;         ;else
@@ -678,7 +678,7 @@
 
 (define physics-region%
   (class region%
-     (init _obj)     
+     (init _obj)
      (super-instantiate (_obj))
      (send this enter-action awaken)
      (send this leave-action (lambda (obj) (send-actor-named obj 'awakener delete)))

@@ -77,7 +77,7 @@
 
     (define/public blend
       ;returns new dynacolor whose rgb are interpolated by fraction t
-      ; toward color 
+      ; toward color
       (case-lambda
        ((t color)
           (when (string? color) (set! color (make-object dynacolor% color)))
@@ -85,7 +85,7 @@
        ((t r g b)
          (when (> t 1) (set! t 1))   ;limit between -1 and 1
          (when (< t -1) (set! t -1))
-         (apply make-object dynacolor% 
+         (apply make-object dynacolor%
                (map round-to-int
                     (map lerp (list t t t) (send this rgb) (list r g b)))))))
 
@@ -95,7 +95,7 @@
 
     (define/public (lighten t)
       (blend t 255 255 255))
-    
+
     (define/public (darken t)
       (blend t 0 0 0))
 ))

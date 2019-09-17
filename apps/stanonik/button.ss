@@ -33,7 +33,7 @@
     (sticky #t)
     (coords '(0 0 25 25))
     (findable #f)
-    
+
     (bind "<Mod1-ButtonPress-1>"
       (lambda(o e)
         (findable (if (findable) #f #t))))))

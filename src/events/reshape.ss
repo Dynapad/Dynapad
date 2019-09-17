@@ -21,7 +21,7 @@
     ;--- methods ---
 
     (define/public drag-callback
-      (case-lambda 
+      (case-lambda
         (() _drag_callback)
         ((new_fnc) (set! _drag_callback new_fnc))
       ))
@@ -34,7 +34,7 @@
     (send this bind "<Run-ButtonPress-1>"      (list (lambda (w e) #f)))
     (send this bind "<Run-ButtonRelease-1>"    (list (lambda (w e) #f)))
 
-    (send this bind "<Select-B1-Motion>" 
+    (send this bind "<Select-B1-Motion>"
       (list
       (lambda (eventPAD e) (set! currentPAD eventPAD)
         (let ((x (event-x e)) (y (event-y e)))
@@ -108,7 +108,7 @@
   ; apply the function to the list of handles
   (let ((i 0))
     (foreach hlist (lambda (h) (addbindings h i) (set! i (+ i 1)))))
-  
+
   ; when object slides, reposition handles
   (send poly afterslide-callbacks
     'add

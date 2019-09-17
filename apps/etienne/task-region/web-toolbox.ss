@@ -68,7 +68,7 @@
 
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ;; Builds all the working icons from the working events. 
+    ;; Builds all the working icons from the working events.
     (define/public (build-working-icons)
       ;; remove our old working icons
       (for-each
@@ -164,7 +164,7 @@
 
       ;; Build the text objects as labeled-groups with
       ;;  the icons as members
-      (for-each 
+      (for-each
        (lambda (domain-list)
      (define domain  (symbol->string (car domain-list)))
      (define icons   (cadr domain-list))

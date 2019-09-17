@@ -22,7 +22,7 @@
                             (pen "red")
                             (coords _lastxy)))
         ))
-            
+
     (define minjump 7) ;min spacing between points (reduces vtx density)
 
     (define (Lasso_ButtonMotion e)
@@ -58,7 +58,7 @@
     (send _dynapad bind "<GetLasso-KeyPress-Escape>"
       (lambda (eventPAD e)
         (pop-event-mode _dynapad)
-        (when _freehand (send _freehand delete) 
+        (when _freehand (send _freehand delete)
                         (set! _freehand #f))
         (when _release_callback
               (_release_callback #f))))

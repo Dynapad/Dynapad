@@ -33,7 +33,7 @@
       ((null? sufs) #f)
       ((string-ci=? x (car sufs)) #t)
       (else (image-suf? x (cdr sufs)))))))
-      
+
   (define pathsuf-rexp (regexp "(.*)\\.(.*)"))
 
   (define (image? path)

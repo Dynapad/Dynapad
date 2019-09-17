@@ -32,8 +32,8 @@
         ;PROBLEM: this slide is not undoable, not logged;
       ; consider using Start-Undoable-Drag --> slide --> Finish-Undoable-Drag
       (send-selected slide (/ (- dx) view_z) (/ (- dy) view_z))
-        
-    (send eventPAD moveto 
+
+    (send eventPAD moveto
           (list (+ view_x (/ dx view_z)) (+ view_y (/ dy view_z)) view_z))))))
 
 (define (bindArrows argPAD)

@@ -55,7 +55,7 @@
      (init _obj)
      (send _obj fill "#333300")
      (field (_bulb-pt (make-object geo-point% (bbcenter (send _obj bbox)))))
-     (field (_bulb-obj 
+     (field (_bulb-obj
          (let ((x (send _bulb-pt x))
                (y (send _bulb-pt y))
                (rad (/ (maxdim (send _obj bbox)) 100)))

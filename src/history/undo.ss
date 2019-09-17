@@ -36,7 +36,7 @@
   (cond ((null? ops) null)
     ((null? (cdr ops)) (car ops)) ;single op, no 'begin needed
     (else (cons 'begin ops)))) ; >1 ops, wrap in ('begin ...)
-   
+
 (define push-ops-no-exec ;overridden in logs.ss
   (case-lambda
    (()  ;if no ops specified, use *undo-ops* and *redo-ops*,
@@ -176,7 +176,7 @@
                (map car do-undo-pairs)
                (list `(send dynapad selected
                     ,(cons 'list (map obj->IDexpr objs))))))))
-;    (set! redos (append redos (list 
+;    (set! redos (append redos (list
 ;                   `(send dynapad selected
 ;                      ,(cons 'list (map obj->IDexpr objs))))))
     (push-ops-and-exec redos undos)))
@@ -210,7 +210,7 @@
 ;    (for-each
 ;      (lambda (o) (send-nd o fill color_or_colors))
 ;      object_list)))
- 
+
 
 ;-----------------------------------------------------------------
 ; Example 3 - delete command (move to "trash")
@@ -220,17 +220,17 @@
 ;         (undo-op (lambda () (undelete-objects object_list)))
 ;         )
 ;     (push-ops-and-exec do-op undo-op) ))
-; 
+;
 ; (define  main_layer (send dynapad main-layer))
 ; (define trash_layer (make-object layer% dynapad "trash"))
 ; (send trash_layer visible #f)
-; 
+;
 ; (define (delete-objects object_list)
-;   (foreach object_list (lambda (o) 
+;   (foreach object_list (lambda (o)
 ;     (send-nd o layer trash_layer)
 ;     (send-nd o unselect))))
 ; (define (undelete-objects object_list)
-;   (foreach object_list (lambda (o) 
+;   (foreach object_list (lambda (o)
 ;     (send-nd o layer main_layer)
 ;     (send-nd o select))))
 ; (define (empty-trash)
@@ -259,7 +259,7 @@
 ;
 ;(define (gen-closure-to-reposition-objects object_list)
 ;  (cons 'begin
-;    (map (lambda (obj) 
+;    (map (lambda (obj)
 ;           (let ((oldpos (send-nd obj position)))
 ;         `(send ,obj position (list ,@oldpos))))
 ;         object_list)))
@@ -278,7 +278,7 @@
 ;(define (store-positions-of-specified-object-for-redo-and-push-on-stack argPAD obj)
 ;  (set! *drag-do-op* (gen-closure-to-reposition-objects (list obj)))
 ;  (push-ops-and-exec *drag-do-op* *drag-undo-op*) )
- 
+
 ;(define (store-positions-of-specified-object-for-redo-and-push-on-stack argPAD obj)
 ;  (set! *drag-do-op* (gen-closure-to-reposition-objects (list obj)))
 ;  (push-ops-and-exec *drag-do-op* *drag-undo-op*) )
@@ -309,7 +309,7 @@
   (let ((newops (map (lambda (o) (expr-to-set-obj-attr o attr))
              (send argPAD selected))))
     (set! *redo-ops* (append newops *redo-ops*))))
-  
+
 (define (store-selection-for-undo objs)
   (push! `(send dynapad selected
         ,(cons 'list (map obj->IDexpr objs)))

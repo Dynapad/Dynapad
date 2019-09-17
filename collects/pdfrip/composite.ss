@@ -64,7 +64,7 @@
       (copy-file-replace firstpage composite))
     ((file-exists? largest)
       (copy-file-replace largest composite)))))
-    
+
 
   (define (largest_bottomhalf path)
     (let

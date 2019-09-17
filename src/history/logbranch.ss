@@ -232,7 +232,7 @@
               (cache-maxid))
           (when _trust-cache?
               (uncache-maxid))))))
-      
+
     (define/public cache-maxid ;create file
       (case-lambda
        (() (cache-maxid (get-cache-filename)))
@@ -264,7 +264,7 @@
     (if (and (trust-cache?)
          (file-exists? cachefile))
         (load cachefile)
-    ;else no/stale cache or 
+    ;else no/stale cache or
         (let* ((logfiles (send this gather-lognames))
            (logpaths (map (lambda (file) (build-path->string (directory) file)) logfiles))
            (newmax (get-tree-maxid logpaths)))
@@ -426,7 +426,7 @@
       ((0) #f)
       ((1) (car found))
       (else (error "Multiple logs match pattern" pattern)))))
-             
+
     (define/public (get-parent)
       (let* ((start (startnum)))
         ;first check other branches in _tree
@@ -470,9 +470,9 @@
          (len  (- (file-position _write-port) fpos)))
     ;write length field
     (fprintf _write-port (format "~a~%" len))))
-      
+
     (define (rewind-entry)
-  ; Assumes log position is at ^: (entry...)^N, where N is length of (entry...) 
+  ; Assumes log position is at ^: (entry...)^N, where N is length of (entry...)
   ; moves log position to ^(entry...) N and returns file position of that point
       (let ((start-pos (file-position _read-port))
         (jump-bytes (read _read-port)))
@@ -497,7 +497,7 @@
       (let ((expr #f))
     (while (not (eq? eof (cset! expr (read-line _read-port))))
            (send to-logbranch write-to-log (format "~a~%" expr)))))
-    
+
     (define (read-log-until quit-fn)
     ;leaves log at start of first entry for which quit-fn is #t,
     ; or at eof and returns #f if not found
@@ -507,7 +507,7 @@
           (else (begin
               (read _read-port) ;read length field, advancing to next entry
               (read-log-until quit-fn))))))
-      
+
     (define (seek-log-entry-with-ID state-id)
       (prepare-for-read)
       (read-log-until
@@ -536,14 +536,14 @@
                  (send dynapad winid)
                  (get-username)
                  (get-hostname))))
-                 
+
 
     (define/public (log-startstate-entry state-ID build-expr)
       (if (string? build-expr)
       (write-log-entry (format
                 "(start-state ~a ~s '~a)"
                 state-ID (logid) build-expr))
-      (write-log-entry (list 'start-state 
+      (write-log-entry (list 'start-state
                  state-ID
                  ;'(my-logtreedir) '(my-logtreename)
                  ;(treename)
@@ -554,7 +554,7 @@
                  (get-username)
                  (get-hostname)))
       )
-      
+
     (define/public (initialize-log start-state-id build-msg)
       (log-startstate-entry start-state-id build-msg)
       (send (current-logtree) trust-cache? #t)
@@ -585,8 +585,8 @@
     tail-branch
     ))
 
-    
-      
+
+
     (define/public (split-at-entry  state-id build-expr . more)
 ; Assumes state-id being sought != log start state (else error)
   ; forks log (THIS) corresponding to *current-logid*:

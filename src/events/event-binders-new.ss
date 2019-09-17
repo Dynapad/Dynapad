@@ -59,13 +59,13 @@
      (sendf eventPAD evs sy0 (event-sy e))
      (sendf eventPAD evs sx0 (event-sx e))))
 
-     (define update-drag-view 
+     (define update-drag-view
        (lambda (eventPAD e)
      (let* ((sx (event-sx e))
         (sy (event-sy e))
         (dx (- sx (sendf eventPAD evs sx0)))
         (dy (- sy (sendf eventPAD evs sy0))))
-       (cond 
+       (cond
     ; panning
         ((>= (abs dx) *startpan-dx-threshold*)
          (Start-Pan-Event eventPAD e)
@@ -90,18 +90,18 @@
 
      (send argPAD bind "<Run-B2-Motion>" update-drag-view)
      (send argPAD bind "<Drag-B2-Motion>" update-drag-view)
-     
+
      (send argPAD bind "<Pan-B2-Motion>" Do-Pan-Event)
-     (send argPAD bind "<Zoom-B2-Motion>" 
+     (send argPAD bind "<Zoom-B2-Motion>"
        (lambda (eventPAD e)
          (let ((frac (update-push-pull-motion eventPAD e)))
            (and frac (update-lerp-zooming eventPAD e frac)))))
      (send argPAD bind "<Zoom-ButtonRelease-2>"
-       (lambda (eventPAD e) 
+       (lambda (eventPAD e)
          (sendf eventPAD evs update-wide-view)
          (do-afterzoom-callbacks eventPAD)
          (pop-event-mode eventPAD "Zoom")))
-     (send argPAD bind "<Pan-ButtonRelease-2>" 
+     (send argPAD bind "<Pan-ButtonRelease-2>"
        (lambda (eventPAD e)
          (do-afterpan-callbacks eventPAD)
          (pop-event-mode eventPAD "Pan")))
@@ -111,7 +111,7 @@
          (let ((frac (update-push-pull-motion eventPAD e)))
            (update-lerp-zooming eventPAD e frac 'relax-constraints))))
 
-  
+
      (bindSelect argPAD "Select") ;select.ss
      (bindSelect argPAD "Run")
 

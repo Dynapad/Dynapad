@@ -184,7 +184,7 @@
         (clear-all-menu-buttons)
         (send button set-label on_marquee)
         (printf "marquee select not available yet~%") )))
-  
+
   (set! btn_lasso
     (make-object button%
       off_lasso
@@ -235,7 +235,7 @@
       (update-panel-colors)
       (cond ((null? args) (set! tclcolor (pengetcolor)))
              (else
-               (set! tclcolor "none") 
+               (set! tclcolor "none")
                (for-all-pads (lambda (argPAD) (send argPAD defaultpen "none")))))
       (update-panel-colors)
       (for-all-pads (lambda (argPAD)
@@ -340,7 +340,7 @@
     (make-object check-box% "loop" looppane loopcb null)
     (set! cancelokpane (make-object horizontal-pane% dialog))
     (send cancelokpane stretchable-height #f)
-    
+
     (make-object button% "Cancel" cancelokpane
       (lambda (button event)
         (send dialog show #f)))
@@ -374,7 +374,7 @@
     (make-object check-box% "Follow and delete links" followpane followcb null)
     (set! cancelokpane (make-object horizontal-pane% dialog))
     (send cancelokpane stretchable-height #f)
-    
+
     (make-object button% "Cancel" cancelokpane
       (lambda (button event)
         (send dialog show #f)))

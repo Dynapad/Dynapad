@@ -27,7 +27,7 @@
          (add-resize-handles-to-object argPAD obj)))
 
   ; cleanup: when obj is unselected, delete handles, callbacks, etc
-  (send obj select-callbacks 
+  (send obj select-callbacks
     'add
     (lambda (o on?) (when (not on?) ; whenunselected
       (send obj afterslide-callbacks 'remove #t 'resize)
@@ -80,7 +80,7 @@
     (send h bind "<Select-ButtonRelease-1>" '())
     (send h bind "<Run-ButtonRelease-1>"    '())
 
-    (send h bind "<ButtonPress-1>" (lambda (d e) 
+    (send h bind "<ButtonPress-1>" (lambda (d e)
       (send obj re-anchor corner)
       (reposition-handles obj)
       (set! w0 (send obj width))
@@ -126,7 +126,7 @@
     'add
     (lambda (d . args) (reposition-handles obj))
     'resize)
-  
+
   ; when dynapad zooms, reposition handles
   (send argPAD afterzoom-callbacks
     'add
@@ -168,7 +168,7 @@
     (define (Resize_Enter e)
       (SetResizeMode e)
       (send _dynapad bind "<Motion>" (lambda (d e) (SetResizeMode e))) )
-    
+
     (define (SetResizeMode evnt)
       (when (not _button_down)
         (let*((bb (send (event-obj evnt) bbox))
@@ -184,13 +184,13 @@
           (when (< x (+ (b0 bb) xmarg)) (set! xmode 0))
           (when (> y (- (b3 bb) ymarg)) (set! ymode 2))
           (when (< y (+ (b1 bb) ymarg)) (set! ymode 0))
-      
+
           (set! _resize_mode (+ (* 3 ymode) xmode))
-      
+
           (when (!= _resize_mode lastmode)
                 (case _resize_mode
                   ((0) (send _dynapad cursor 4))   ;   modes       cursors
-                  ((1) (send _dynapad cursor 9))   ;  6  7  8      6  8  7 
+                  ((1) (send _dynapad cursor 9))   ;  6  7  8      6  8  7
                   ((2) (send _dynapad cursor 5))   ;  3     5 ==> 10     11
                   ((3) (send _dynapad cursor 10))  ;  0  1  2      4  9  5
                   ((5) (send _dynapad cursor 11))
@@ -198,19 +198,19 @@
                   ((7) (send _dynapad cursor 8))
                   ((8) (send _dynapad cursor 7))))
       )))
-    
+
     (define (Resize_Leave e)
       (when (not _button_down)
         (set! _resize_mode -1)
         (gui-update-mode _dynapad)
         (send _dynapad bind "<Motion>" #f) ))
-    
+
     (define/public (Resize_ButtonPress evnt)
       (set! _last_x (event-x evnt))
       (set! _last_y (event-y evnt))
       (set! _button_down #t)
       )
-    
+
     (define (Rescale_ButtonMotion evnt)
       ; like Resize_ButtonMotion, but locks aspect ratio
       (define obj (event-obj evnt))
@@ -254,15 +254,15 @@
           ((8) (if (> dy mx0) (list x0 y1 #f (max y (+ y1 _minsize)))
                               (list x0 y1 (max x (+ x0 _minsize)) #f)))
           ))
-    
+
       (send obj bbox new-bb)
 
       (when _motion_callback (_motion_callback obj new-bb))
-    
+
       (set! _last_x (event-x evnt))
       (set! _last_y (event-y evnt))
     )
-          
+
     (define (Resize_ButtonMotion evnt)
       ; unconstrained aspect ratio
       (define obj (event-obj evnt))
@@ -274,7 +274,7 @@
       (define y1 (b1 crds))
       (define y3 (b3 crds))
       (define newbb null)
-    
+
       (case _resize_mode
         ((0) (set! x0 (min x (- x2 _minsize)))  (set! y1 (min y (- y3 _minsize))))
         ((1)                                    (set! y1 (min y (- y3 _minsize))))
@@ -295,15 +295,15 @@
 ;        ((7)                          (set! y3 (event-y evnt)) )
 ;        ((8) (set! x2 (event-x evnt)) (set! y3 (event-y evnt)) )
 ;        )
-    
+
       (set! newbb  (list x0 y1 x2 y3))
       (send obj bbox newbb)
       (when _motion_callback (_motion_callback obj newbb))
-    
+
       (set! _last_x x)
       (set! _last_y y)
     )
-    
+
     (define (Default_ButtonMotion evnt)
       (if _default-rescale-lock?
           (Rescale_ButtonMotion evnt)
@@ -319,7 +319,7 @@
         (when _release_callback
             (_release_callback obj)))
     )
-    
+
     (send _object bind "<Enter>" (lambda (d e) (Resize_Enter e)))
     (send _object bind "<Leave>" (lambda (d e) (Resize_Leave e)))
     (send _object bind "dt-down" (lambda (d e) (Resize_Enter e) #t))  ; do cascade to mouse bindings

@@ -64,7 +64,7 @@
         (let* ((mode (send argPAD modifier 'get))
                ;(cursor (gui-mode-cursor mode))
                (tuple (massoc mode gui-mode-malist)))
-          (cond 
+          (cond
            (tuple
             (mforeach (mcdr tuple)
                      (lambda (val)
@@ -129,7 +129,7 @@
                       (car newstack))))
     (send argPAD eventModeStack newstack)
     (changemode argPAD newmode)))
-   
+
 
 ; --- Show hourglass cursor for potentially long operations ---
 ;Note: mred includes (begin-busy-cursor) and (end-busy-cursor),
@@ -139,7 +139,7 @@
     ((_ the-delayed-pad do-sth ...)
      (with-handlers
       ([exn:fail?
-        (lambda (exn) 
+        (lambda (exn)
           (foreach (current-error-ports)
                    (lambda (port)
                      (fprintf port "~a~%" (exn-message exn))))

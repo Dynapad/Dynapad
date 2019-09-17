@@ -6,17 +6,17 @@
 (define *menu* (make-object menu% dynapad))
 
 (define (mk-image imgname)
-  (make-object image% dynapad (build-path->string 
+  (make-object image% dynapad (build-path->string
     "/home/hci/dynapad/images/people" imgname)))
 
 ;-----------------------------------------------------------------
-  
+
 (define image_menu (make-menu *menu*
   (list 0 "Image"   (lambda (menu) (Load-Image)))
   (list 1 "Arrange" (lambda (menu) (Arrange-Images)))
   (list 6 "Dismiss" (lambda (menu) (send menu pop)))
 ))
-  
+
 (define folks_menu (make-menu *menu*
   (list 0 (mk-image "dbauer.gif") (lambda (menu) (printf "what's shakin'?~%")) )
   (list 1 (mk-image "mhayward.gif")   (lambda (menu) (printf "mike~%")) )
@@ -26,8 +26,8 @@
   (list 5 (mk-image "rstanonik.gif") (lambda (menu) (printf "ron~%")) )
   (list 6 (mk-image "rstanonik.gif")  (lambda (menu) (printf "yow!~%")) )
   (list 7 "Dismiss"                   (lambda (menu) (send menu pop)) )
-))  
-    
+))
+
 (define draw_menu (make-menu *menu*
     (list 0 "rect"    (lambda (menu) (initDraw dynapad rect%)) )
     (list 1 "oval"    (lambda (menu) (initDraw dynapad oval%)) )
@@ -35,18 +35,18 @@
     (list 4 "line"    (lambda (menu) (initDraw dynapad line%)) )
     (list 5 "free"    (lambda (menu) (initDraw dynapad freehand%)) )
     (list 6 "poly"    (lambda (menu) (initDraw dynapad polygon%)) )
-))  
+))
 
-    
+
 (define run_menu (make-menu *menu*
-    (list 0 "Pan"     (lambda (menu) (changemode dynapad "Run")) ) 
+    (list 0 "Pan"     (lambda (menu) (changemode dynapad "Run")) )
     (list 1 "Dismiss" (lambda (menu) (send menu pop)) )
     (list 4 "Zoom"    (lambda (menu) (set! zoomtype 0)
                                      (changemode dynapad "Zoom")) )
     (list 5 "Zoom1"   (lambda (menu) (set! zoomtype 1)
                                      (changemode dynapad "Zoom")) )
-))  
-    
+))
+
 (define select_menu (make-menu *menu*
     (list 0 "Delete All" (lambda (menu) (Delete-All)))
     (list 2 "Dismiss"    (lambda (menu) (send menu pop)))
@@ -55,7 +55,7 @@
     (list 5 "Group"      (lambda (menu) (Group-Selected)))
     (list 6 "Ungroup"    (lambda (menu) (UnGroup-Selected)))
     (list 7 "Delete"     (lambda (menu) (Delete-Selected)))
-))  
+))
 
 (define main_menu (make-menu *menu*
     (list 0 "Dismiss" (lambda (menu) (send menu popdown)))

@@ -8,7 +8,7 @@
     (if (zero? r+u)
     1
     (/ u r+u))))
- 
+
 ; these override defns in logs.ss to update position of *current-state-marker*
 (define (enter-midstate new)
   (set-current-state-id new)
@@ -29,7 +29,7 @@
     (init _logid)
     (init (_endnum #f))
     (init (_no-autolink #f))
-    
+
     (super-instantiate (_tree-arg _path _file _startnum _logid _endnum _no-autolink))
 
     (define/public (lerp-marker fract)

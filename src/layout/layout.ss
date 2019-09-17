@@ -25,7 +25,7 @@
     (super-instantiate ())
     (send this x-margin _x-pad-arg)
     (send this y-margin _y-pad-arg)
-    
+
     (define (refresh)
       (when _x-margin-fract
       (set! _x-margin (* _x-margin-fract (bbwidth _outer-bb))))
@@ -56,7 +56,7 @@
                (set! _x-margin newval)
                (set! _x-margin-fract #f)))
            (set! _inner-bb #f)) ))
-  
+
     (define/public y-margin
       (case-lambda
         (() (when _y-margin-fract (number->string _y-margin-fract)))
@@ -90,7 +90,7 @@
      (init-field _accept-fn)
      (field (_list null))
      (super-instantiate ())
-     
+
      (define/public (maybe-push item)
        (if (_accept-fn item _list)
            (begin
@@ -109,10 +109,10 @@
 ;  accepts newcell (as per [_accept-fn newcell car])
 ; If no existing stack accepts, create new stack and try one last time
   (class object%
-     (init-field _accept-fn) ;(lambda (new lst)... 
+     (init-field _accept-fn) ;(lambda (new lst)...
      (field (_stacks null))
      (super-instantiate ())
-     
+
      (define/public (accomodate cell) ;returns idx of accepting stack
        (define (try-push) ;returns list (cascade-tail result)
          (first-valid _stacks
@@ -212,7 +212,7 @@
       ; if crds provided, uses it as template for all coords, iterating only
       ; on this axis
       (let* ((count 0)
-         (renumber-fn (lambda (cell) 
+         (renumber-fn (lambda (cell)
                 (when (not (null? crds))
                 (send cell i-coords (car crds))) ;set all coords using template
                 (send cell i-coord-n _axis (_++ count)))))
@@ -255,7 +255,7 @@
     (init-field _cells)     ; a cell-mesh object
     (field (_dynaclass 'projector%))
     (super-instantiate ())
-    
+
     (when _rgn
     (let ((obj (send _rgn object)))
       (when (and obj
@@ -397,7 +397,7 @@
 (define (SetProjectorForSelected proj-class)
   (let ((objs (filter (lambda (o) (get-actor-named o projector-actor-name))
               (send dynapad selected))))
-    (foreach objs (lambda (o) 
+    (foreach objs (lambda (o)
             (let* ((proj (get-actor-named o projector-actor-name))
                (param (send proj param)))
               (attach-projector-to-obj o proj-class param))))))
@@ -490,7 +490,7 @@
      ; _cells are indexed by i (relative/ordinal) and q (quantified)
      ;  both scales are mapped onto the region's x-range
          ;     (encoded with i/q-slope, i/q-intercept)
-     ;  and then interpolated 
+     ;  and then interpolated
     (define (compute-cell-x cell)
       (let ((x (send cell x-coord-n 0)))
     (when (not x)
@@ -552,7 +552,7 @@
                      (>= diff (send this cell-width)))))))
           (set! _max-j 0)
           ))))
-      
+
     (define (locate-cell cell)
       (send cell x-coord-n 0 #f) ;reset x coord
       (compute-cell-x cell)  ;recompute x coord
@@ -590,7 +590,7 @@
     (init _param)
     (super-instantiate (_rgn _param))
     (send this dynaclass 'labeled-linear-projector%)
-    
+
     (field (_labels null)) ; list of text objects
     (inherit-field _y-stacks)
     (inherit-field _y-base _y-step)
@@ -696,7 +696,7 @@
            (set! _row-len 1.0)
            (set! _col-len len)
            (set! _y-spacing (/ bbh (- _col-len 1))))
-        
+
         ((= 0.0 ideal-col-len)
            (set! _col-len 1.0)
            (set! _row-len len)
@@ -716,7 +716,7 @@
                (set! _col-len (ceiling (/ len (max _row-len 1))))
                (when (> _row-len 1) (set! _x-spacing (/ bbw (- _row-len 1))))
                (when (> _col-len 1) (set! _y-spacing (/ bbh (- _col-len 1)))) ))))))
-         
+
       (set! _x-base (b0 bb))
       (set! _y-base (b3 bb)) )))
 

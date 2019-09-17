@@ -21,10 +21,10 @@
     (public (mybind bind) base-bb delete get-cptr update writable?)
 
     (define (get-cptr) _cptr)
-    
+
 ;    (define/public (lower target)
 ;      (sch_lower _cptr (send target get-cptr)))
-    
+
     (define (delete)
       (get-and-rem-from-malist! assq remq this _object hilights)
 ;      (send _object hilights 'remove this)
@@ -49,7 +49,7 @@
       (case-lambda
         (() _writable)
     ((bool) (set! _writable bool))))
-    
+
     (define sticky
       (case-lambda
         (() (sch_sticky _cptr))
@@ -71,7 +71,7 @@
     (sch_layer _cptr (send (send _dynapad getvar 'select-layer) get-cptr))
 
     (update)))
-    
+
 ;(define rect-hilight%
 ;  (class hilight%
 ;     (init dynapad-arg object-arg (label-arg #f))

@@ -73,7 +73,7 @@
       (if x (cdr x) null))
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ;; Remove a binding object from a list of 
+    ;; Remove a binding object from a list of
     ;;  region or object bindings
     (define/public (remove-binding type event name)
       ;; Get the bindings for this event.
@@ -196,7 +196,7 @@
 
     ;; Set region bindings
     (add-region-binding "<Remove>" make-new-pile)
-         
+
     )
   )
 

@@ -36,7 +36,7 @@
       ;could also mean delete all objects in domain/range?
 
     (define/public sets (get/set _sets)) ;NOT FOR PUBLIC USE
- 
+
     (define/public (members) ;union of domain, range,
       ;ie all objects involved in relation
       (apply append
@@ -260,9 +260,9 @@
       (super delete))
 
     (define/public relation (get/set _relation))
-  
+
     ;new member must have relations homomorphic to existing members;
-    ;initially all members put this into their 'relations alist 
+    ;initially all members put this into their 'relations alist
     ;add/remove member must notify brusher of proper relation
 
     (define/public (add-member obj)
@@ -302,9 +302,9 @@
       ))))
 
     (define/public (domain-sets) (list this))
-      
+
     (define/public (range-sets) _targets)  ;i.e. targets
-      
+
     (define/public (antirange-sets)  _sources)  ;sets that target this
 
     (define/public (domain?)

@@ -75,7 +75,7 @@
     popmenu ))
 
 (define (DumpSelectedTrays)
-  (let* ((rgns (apply append (map 
+  (let* ((rgns (apply append (map
                   (lambda (o) (get-actors-named o 'region))
                   (send dynapad selected))))
      (trays (filter (lambda (r) (is-a? r tray%)) rgns)))

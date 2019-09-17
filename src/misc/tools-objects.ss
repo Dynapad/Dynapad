@@ -1,6 +1,6 @@
 (require (lib "defmacro.ss"))
 
-;remote-get, -set, -push 
+;remote-get, -set, -push
 ; are "remote" in that they can operate through an object interface
 ; where they can't set! the field/variable directly.
 ;They work on either lvals (settable variables)

@@ -222,7 +222,7 @@
 
 ;    (let ((frame (send this pane)))
 ;      (send frame aftercoords-callbacks 'add ;recompute fadesize after re-wrap
-;        (lambda (o crds) 
+;        (lambda (o crds)
 ;          (send (send (send this formation) cover) coords crds)
 ;          (refresh-fadesize))))
 
@@ -245,10 +245,10 @@
     (init _obj)
     (super-instantiate (_obj))
     (send this dynaclass 'fusing-pile%)
-    
+
     (let ((frame (send this pane)))
       (send frame aftercoords-callbacks 'add ;recompute fadesize after re-wrap
-        (lambda (o crds) 
+        (lambda (o crds)
           (send (send (send this formation) shadow) coords crds))))
 
     (define/override (decorate)
@@ -308,7 +308,7 @@
         (lambda (o crds) (refresh-fadesize))))
 ))
 |#
-          
+
 (define highlight-pile%
   (class pile-region%
     (init _obj)
@@ -386,11 +386,11 @@
 ;   ((crds) ;old-style default
 ;    (apply nowrap-pile-from-coords fusing-pile% fusing-frame-container% crds))
 ;))
-   
+
 (define (make-pile-from-selection regn-type form-type cnts)
   (unless (null? cnts)
     (begin
-    (Start-Changing-Select--undoable dynapad)      
+    (Start-Changing-Select--undoable dynapad)
 ;      (let ((form (apply make-pile-with-objs fusing-pile% fusing-frame-container% cnts)))
       (let ((form (make-pile regn-type form-type cnts)))
     (Done-Changing-Select--undoable dynapad)
@@ -430,14 +430,14 @@
 ; (... objs) --> (... objs #f)
     (cond ((null? lst)
        (make-pile pile-class form-class lst #f)); null, treat as objs
-      ((number? (car lst)) 
+      ((number? (car lst))
        (make-pile pile-class form-class #f lst)); coords?
       ((is-a? (car lst) dynaobject%)
        (make-pile pile-class form-class lst #f)); objs?
       (else (error "unknown list type for pile"))))
 ; 2
    ((arg1 arg2)
-    (cond 
+    (cond
     ;(rgn-class form-class)-- generic GUI entry
      ((not (list? arg2))
       (make-pile-from-gui arg1 arg2))
@@ -459,7 +459,7 @@
     (make-pile *default-pile-regn* *default-pile-form*))
    ))
 
-(define make-pile-from-gui 
+(define make-pile-from-gui
   (case-lambda
    ((regn-type form-type)
     (if (not (any-selected?))

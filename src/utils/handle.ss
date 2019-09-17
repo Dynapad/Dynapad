@@ -42,7 +42,7 @@
     (init _original)
     (super-instantiate ())
     (field (_url (send this url _original)))
-    
+
     (define/public url
       (case-lambda
        (() (ensure-string _url))  ;#path issues
@@ -52,7 +52,7 @@
     (cset! _url
            (and path
             (let ((replacement
-               (first-valid 
+               (first-valid
                 *url-alias-alist*
                 (lambda (tuple)
                   (let ((old (car tuple))
@@ -122,7 +122,7 @@
 
     (field (_dir ;.name.pdf subdir where metadata/images are stored
         (get-pdf-metadata-dir url)))
-      
+
     (field (_title-file "title")
        (_title #f)
        (_baseimage-file "firstpage.jpg") ; filename of base image
@@ -179,7 +179,7 @@
               (send o graphic (ic (make-object rect% (send o dynapad))
                       (position old-pos)))))))
     (foreach valids
-         (lambda (i) 
+         (lambda (i)
            (unless (memq i excpts)
                (send i refresh-graphic))))))
 

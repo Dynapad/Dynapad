@@ -19,7 +19,7 @@
 
 
 ; List of places to look for corresponding thumbnail.
-; (findthumb) no longer supports thumbnails in same directory 
+; (findthumb) no longer supports thumbnails in same directory
 ; with images.  This can be adjusted by changing the following
 ; list to include ("" "-125"), for example.
 (define *thumbnail-variants*
@@ -75,7 +75,7 @@
           (show-possible-delay eventPAD
             (when (send (car imagelist) selected?)
                     (set! imagelist (send eventPAD selected)))
-        
+
         (if (andmap (lambda (img) (member img *list_of_hirez_images*)) imagelist)
             (remove-images-from-hires-list *list_of_hirez_images*)
                     ;else
@@ -95,7 +95,7 @@
           (show-possible-delay eventPAD
             (when (send (car imagelist) selected?)
                     (set! imagelist (send eventPAD selected)))
-          
+
         (if (andmap (lambda (img) (member img *list_of_hirez_images*)) imagelist)
             (remove-images-from-hires-list imagelist)
                     ;else

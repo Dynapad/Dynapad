@@ -3,7 +3,7 @@
 
 
 ;; Wrapper class stores dynapad object and an abstract pict struct
-(define dynapict% 
+(define dynapict%
   (class object%
      (init-field _dynaobj)
      (field (_dynapict null)
@@ -12,14 +12,14 @@
         (_z (send _dynaobj z))
             (_a _h) ;; portion of height above top baseline
         (_d 0)) ;; portion of height below bottom baseline
-            
+
      (super-instantiate())
      (when (is-a? _dynaobj text%)
-           (set! _a (get-text-ascent _z)) 
+           (set! _a (get-text-ascent _z))
            (set! _d (get-text-descent _z)))
 
      (set! _dynapict (make-pict 'draw _w _h _a _d '()))
-     
+
 
      (define/public (pict) _dynapict)
      (define/public (dynaobj) _dynaobj)
@@ -101,8 +101,8 @@
              [p (apply func-superimpose picts)]
              )
             (slide-objects-superimpose (cdddr (pict-draw p)) dynapicts)
-            ))))]) 
-  (values 
+            ))))])
+  (values
    (superimpose-objs lt-superimpose)
    (superimpose-objs lb-superimpose)
    (superimpose-objs lc-superimpose)
@@ -126,7 +126,7 @@
          [second (cadr args)]
          [xyxy (parse-pict-draw-append pdraw)])
 
-        (send (send second dynaobj) slide 
+        (send (send second dynaobj) slide
           (+ (- (send first bbe) (send second bbe))
              (- (caddr xyxy) (car xyxy)))
           (+ (- (send first bbs) (send second bbs))
@@ -141,7 +141,7 @@
          [second (cadr args)]
          [xyxy (parse-pict-draw-superimpose pdraw)])
 
-        (send (send second dynaobj) slide 
+        (send (send second dynaobj) slide
           (+ (- (send first bbe) (send second bbe))
              (- (caddr xyxy) (car xyxy)))
           (+ (- (send first bbs) (send second bbs))
@@ -149,7 +149,7 @@
 
         (slide-objects-superimpose (cdr pdraw) (cdr args)))))
 
-         
+
 (define (parse-pict-draw-append pdraw)
   (let* ([fourth (cadddr pdraw)]
      [fifth (cadr (cdddr pdraw))]

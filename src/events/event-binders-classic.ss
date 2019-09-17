@@ -23,7 +23,7 @@
   (class classicpad-event-binder%
      (init argPAD evs-class)
      (super-instantiate (argPAD evs-class))
-     
+
      (bindHyperlink argPAD) ;hyperlink.ss
      (bindDrawMode argPAD) ;draw.ss
      (bindTextMode argPAD) ;text.ss

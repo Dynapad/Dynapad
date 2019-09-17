@@ -49,7 +49,7 @@
      (field (_counter #f))
 
      (super-instantiate ())
-     
+
      (define/public (state->reltime state)
        (let ((diff (make-object reltime% 0 (- state _synchstate))))
      (send _synchtime plus diff)))
@@ -70,7 +70,7 @@
                 (anchor "nw")
                 (findable #f)
                 (sticky #t)))))
-     
+
      (define/public (update-counter state)
        (unless _counter
            (make-counter))

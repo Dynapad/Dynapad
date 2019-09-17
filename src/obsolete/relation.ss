@@ -38,7 +38,7 @@
 ;               `(send obj refer-when-ready
 ;                  ,(send this id) 'members ''add obj)))
            (push! memb _members)))
-     
+
     (define (remove-member memb)
       (deactivate-member memb)
       (send memb delete-callbacks 'remove #f this)
@@ -46,7 +46,7 @@
       (set! _members (remq memb _members)))
 
     (define/public (delete-all) (send this delete))
-    
+
     (define/public (write)  ;at the moment: don't keep track of members;
                             ;  let them include selves in relation
       `(ic (make-object ,(myclass))
@@ -80,13 +80,13 @@
     (() (enable #t))
     ((bool) (send _brush-set enable bool))))
      (define/public (disable) (enable #f))
-      
+
 
      (define/override (activate-member memb)
        (send (brush-set) members 'add memb))
      (define/override (deactivate-member memb)
        (send (brush-set) members 'remove memb))
-     
+
 ))
 
 
@@ -96,4 +96,4 @@
 ;  (class relation%
 ;     (init _name)
 ;     (super-instantiate (_name))
-     
+

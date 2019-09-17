@@ -1,5 +1,5 @@
 (announce-module-loading "graph tools...")
-; Originally adapted from 
+; Originally adapted from
 ; /home/Share/high/dyna/toys/dyna_constraints/dyna_constraints.ss
 ;-----------------------------------------------------------------
 
@@ -79,7 +79,7 @@
                   ((<= (b3 bb_a) (b1 bb_b)) (list b_xc (b1 bb_b)))
                   (else (list b_xc b_yc))))
                )
-          
+
           (send l coords (append a_nearxy b_nearxy))
           (send na xy (car a_nearxy) (cadr a_nearxy))
           (send nb xy (car b_nearxy) (cadr b_nearxy))
@@ -149,7 +149,7 @@
          (let* ((mycrds ;(send this coords))
              (append (xycenter _from) (xycenter _to)))
             (to-bb (send _to bbox)))
-           (bb-crossing mycrds to-bb))) 
+           (bb-crossing mycrds to-bb)))
 ;            (xfract (abs (/ (bbwidth to-bb)
 ;                    (* 2 (bbwidth mycrds)))))
 ;            (yfract (abs (/ (bbheight to-bb)
@@ -206,7 +206,7 @@
                       (list _from _to)))))))
      (when lower-obj
          (send this lower lower-obj))))
-         
+
      (define/public from
        (case-lambda
     (() _from)
@@ -215,7 +215,7 @@
        (case-lambda
     (() _to)
     ((obj) (detach _to) (set! _to obj) (attach _to) (drop) (update))))
-     
+
 
      (define/public fromto
        (case-lambda
@@ -233,7 +233,7 @@
        (detach _from)
        (detach _to)
        (super delete))
-     
+
      (define/override (writeoptions)
        `(,@(super writeoptions)
      (trunc ,_trunc)
@@ -245,12 +245,12 @@
      (when _to (to _to))
 ))
 
-;        c  
+;        c
 ;   ____b|\a   width = b->c (lateral)
 ;        |/    len   = a->b (along)   sweep = a->c (along)
 ;
 
-(define vect->anchor 
+(define vect->anchor
 ;returns the closest non-center anchor corresponding to vector (dx dy)
   (case-lambda
    ((dx dy) (vect->anchor dx dy 2))
@@ -295,7 +295,7 @@
         (send this re-anchor (vect->anchor dx dy 3))
         (set! dx (* dx dd))
         (set! dy (* dy dd))
-        
+
         (send this coords
               (list
                (car  _tip)
@@ -401,7 +401,7 @@
         (send _arrowhead tail (xycenter _from))
         (send _arrowhead pen (send this pen))
         (send _arrowhead raise this)
-        (send _arrowhead update))))    
+        (send _arrowhead update))))
 
     (define/override (delete)
       (send _arrowhead delete)
@@ -416,7 +416,7 @@
 ;    (init dynapad-arg object-arg (label-arg #f))
 ;    (inherit-field _dynapad _object _cptr _deleted?)
 ;    (super-instantiate (dynapad-arg object-arg label-arg))
-;    (define-override 
+;    (define-override
 
 (define (Make-Tie-Between type from to)
   (let ((edge (make-object type (send from dynapad))))

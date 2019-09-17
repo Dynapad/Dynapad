@@ -40,7 +40,7 @@
       obj))
 
 ;--------------------
-; A drag select action may need to "find" different objects in different 
+; A drag select action may need to "find" different objects in different
 ; contexts, depending on where the drag select action was initiated.
 ; The function "choose-appropriate-drag-find-function" can be defined to
 ; determine which find-function to use.  The basic find function is called
@@ -110,11 +110,11 @@
 
      ; Copy/Paste/Cut/Duplicate
      (send argPAD bind "<Control-KeyPress-c>"
-       (lambda (eventPAD e) (set! currentPAD eventPAD) (Copy-Selected)))     
+       (lambda (eventPAD e) (set! currentPAD eventPAD) (Copy-Selected)))
      (send argPAD bind "<Control-KeyPress-v>"
        (lambda (eventPAD e) (set! currentPAD eventPAD) (Paste-From-Copy-Buffer)))
      (send argPAD bind "<Control-KeyPress-x>"
-       (lambda (eventPAD e) (set! currentPAD eventPAD) (Copy-Selected) (send-selected delete)))     
+       (lambda (eventPAD e) (set! currentPAD eventPAD) (Copy-Selected) (send-selected delete)))
      (send argPAD bind "<Control-KeyPress-d>"
        (lambda (eventPAD e) (set! currentPAD eventPAD) (Copy-Selected)(Paste-From-Copy-Buffer)))
      ; Delete

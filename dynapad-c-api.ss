@@ -106,9 +106,9 @@
       maxsize minsize padid pixeldim position
       raise re-anchor recall-coords rendercolor renderimage
       renderitem renderline renderpolygon renderscript rendertext
-      save-coords savealist savelink scale select selected? 
+      save-coords savealist savelink scale select selected?
       select-highlight-func settags
-      slide sticky takegroupevents transparency unfocus unselect 
+      slide sticky takegroupevents transparency unfocus unselect
       update-any-hilights visible?
       width widthheight writable? write write-all writeinits writeoptions
       onetime-writeoptions
@@ -242,7 +242,7 @@
                                  (and key
                                       (cons key results))))
                              newalist)))))
-                                
+
 
     (define (settags newtaglist) (set! _taglist newtaglist))
     (define (gettags) _taglist)
@@ -296,7 +296,7 @@
      ; The result of build will be bound to label,
      ;  which can then be included in each expr to refer to that future copy
      ; Example: (... (lambda (this 'me) (rgstr-obj N me)) ...)
-    
+
     (define alternate-build-fn (get/set _alternate-build-fn))
      ;
      ; This fn can be set to (lambda (obj) ...) which
@@ -402,7 +402,7 @@
 ;       ((wfac hfac) (exec-any-callbacks _resize-callbacks this wfac hfac))
        ((zfac x y)
         (exec-any-callbacks _resize-callbacks this zfac x y))
-       ((xfac yfac x y) 
+       ((xfac yfac x y)
         (exec-any-callbacks _resize-callbacks this xfac yfac x y))))
     (define/public resize-callbacks (callback-accessor-functions _resize-callbacks))
 
@@ -556,7 +556,7 @@
                 (unselect)))))
 
     (define select-highlight-func (get/set _select_highlight_func))
-        
+
     (define (unselect)
       (exec-any-callbacks _select-callbacks this #f)
       (when selected
@@ -727,7 +727,7 @@
        )
       ))
 
- 
+
     ; minsize is (number fraction?)
     (define minsize
       (case-lambda
@@ -831,7 +831,7 @@
 
 )) ;end dynaobject%
 
-(define slowgrow 
+(define slowgrow
   (case-lambda
    ((obj slowness)
     ;slowness 0--> sticky z (constant size)
@@ -853,7 +853,7 @@
 ;           `       /
 ;            `     / - - slowness (slope)
 ;             `.  /
-;               `/  <- - home-sz (y-intercept): 
+;               `/  <- - home-sz (y-intercept):
 ;  obj          /:`.      = rel. sz = apparent sz at zoom=1
 ;apparent      / :  ` .
 ;  size  _____/  :  <- -`-.- - - min-sz
@@ -886,7 +886,7 @@
 
 ; for text labels, try (slowgrow label .3 2 .5)
 
-  
+
 ;----- some help for writing the alist option -----
 
 (define (dynapad-printable? x)
@@ -916,7 +916,7 @@
     ;else
     (begin
       (foreach *filter-alist-functions* (lambda (fncpair)
-        (set! alist 
+        (set! alist
           (apply append (map (lambda (elt) ((car fncpair) object elt)) alist)))
       ))
       alist
@@ -929,7 +929,7 @@
 ;         where foo is (lambda (val) body) --> newval
 (define (make-alist-modifier-function key value-modifier-func)
   (lambda (object elt)
-    (if (eq? (car elt) key) 
+    (if (eq? (car elt) key)
       (list (cons (car elt) (value-modifier-func (cdr elt))))
       (list elt))))
 
@@ -965,7 +965,7 @@
         ((arg1 arg2 arg3) (super update-size arg1 arg2 arg3))
         ((arg1 arg2 arg3 arg4) (super update-size arg1 arg2 arg3))
       ))
-    
+
     (define/override (update-size . args)
       (send/apply this case-super-update-size args)
       (foreach (sch_members cptr)
@@ -1034,7 +1034,7 @@
       (send this delete-callbacks null)
       ;finally, delete remaining members + this
       (for-each (lambda (o) (remove o) (send o delete)) (members))
-      (super delete))      
+      (super delete))
 
     (define (ungroup)
       (send this members '())
@@ -1163,7 +1163,7 @@
       cpanzoom unfocus getfocus padid dynaclass fontnames
       defaultpen defaultpenwidth defaultfill fill? defaultfont background
       select-render-script cursor
-      bbox centerbbox lastcentered layers main-layer status hidden winid 
+      bbox centerbbox lastcentered layers main-layer status hidden winid
       rendertime viewrendertime dissolvespeed refinedissolvespeed desiredframerate
       refinementdelay doublebuffer fastpan
       update writable? winfo
@@ -1425,7 +1425,7 @@
 
     (define (bbox)
       (sch_bbox cptr))
-      
+
     (define winfo
       (case-lambda
         (() (sch_winfo cptr))
@@ -1476,7 +1476,7 @@
         (set! _hidden (make-object layer% this "hidden"))
               (send _hidden visible #f))
       _hidden)
-        
+
     (define (winid)
       (sch_winid cptr))
 
@@ -1740,7 +1740,7 @@
 ;      `(ic (make-object ,(dynaclass) dynapad)
 ;       ,@(writeoptions)
 ;       (saveimagepath)))
-      
+
     (define imagedata
       (case-lambda
         (() idata)

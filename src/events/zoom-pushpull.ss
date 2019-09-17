@@ -69,7 +69,7 @@
          (precompute-closeup-view PAD (list target-obj) target-obj x y)))
       (else target-view) ;else target normally
       )
-  
+
 )))
 
 (define *distant_scale* 0.7) ;used to be .25
@@ -116,7 +116,7 @@
           0
           (/ dy denom))))
     ;returns frac used by update-lerp-zooming
-  
+
 ;---------------------------------------------
 
 ; perhaps this should be a field of evs?
@@ -199,7 +199,7 @@
             (set! *at-zoom-limit?* 0)
             (set! do-zoomlimit-cbs *hit-midfar-zoomlimit-callbacks*)))
       ;else
-      (when (> frac 0) (set! frac 0) 
+      (when (> frac 0) (set! frac 0)
         (unless (eq? *at-zoom-limit?* 0)
             (set! *at-zoom-limit?* 0)
             (set! do-zoomlimit-cbs *hit-midnear-zoomlimit-callbacks*)))

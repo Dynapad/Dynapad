@@ -40,7 +40,7 @@
 (define (construct-unique-filename-seed construct-fn exists-fn increment-fn seed)
   (let ((pair (construct-unique-filename+seed construct-fn exists-fn increment-fn seed)))
     (and pair (cadr pair))))
-  
+
 
 #|
 ; Examples:
@@ -93,7 +93,7 @@
         (set! usename
           (construct-unique-filename-append-number (buildpath dir clumpword)))
         ))
-      (export-container obj dir usename)))      
+      (export-container obj dir usename)))
    ((obj dir filename)
 |#
 

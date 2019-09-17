@@ -102,7 +102,7 @@
 (define-macro (pushq-onto-malist-val-always! key val . alist)
   `(push-onto-malist-val-always! massq ,key ,val ,@alist))
 
-;(..(key ..val..)..) --> (..(key...)..) 
+;(..(key ..val..)..) --> (..(key...)..)
 (define-macro (delete-from-malist-val! massoc-fn del-fn key val . alist)
   `(let* ((key-vals (,massoc-fn ,key (remote-get ,@alist))))
      (if key-vals

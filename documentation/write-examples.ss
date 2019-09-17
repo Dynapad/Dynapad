@@ -44,7 +44,7 @@
     (init _obj)
     (init-field (_color "#00000"))
     (super-instantiate ())
-    
+
     (send this attach-to _obj 'enter)
     (define/public color (get/set _color))
     (send _obj bind "<Enter>"
@@ -57,7 +57,7 @@
     (init _obj)
     (init-field (_color "#ffffff"))
     (super-instantiate ())
-    
+
     (send this attach-to _obj 'leave)
     (define/public color (get/set _color))
     (send _obj bind "<Leave>"

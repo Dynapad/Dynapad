@@ -38,7 +38,7 @@
       (if _within_fnc
         (_within_fnc x y)
         (bbenclosed x y (send this bbox))))
-    
+
     (define/public part-names (get/set _part-names))
     (define/public (named-parts)
       (map (lambda (meth) (eval `(send ,this ,meth))) _part-names))
@@ -54,7 +54,7 @@
     (define/public (remove-part obj)
       (unmark-part obj)
       (when (not (send obj deleted?))
-          (sch_removemember cptr (send obj get-cptr))))    
+          (sch_removemember cptr (send obj get-cptr))))
     (define delete
       (case-lambda
        (()
@@ -156,7 +156,7 @@
     (define/public contents
       (case-lambda
        (() (send _container members))
-       ((lst) 
+       ((lst)
         (let ((new-cnts (list-diff lst (send _container members) memq)))
           (for-each (lambda (o) (send o takegroupevents #t)) new-cnts)
           (send _container members lst)
@@ -182,7 +182,7 @@
 
     (define/override (export dir)
       (let ((subdir (export-container-generic-name dir "clump")))
-        (foreach (send this contents) (lambda (o) (send o export subdir)))))     
+        (foreach (send this contents) (lambda (o) (send o export subdir)))))
 
     (send this rigid (container) #t) ;don't resize container to avoid distorting contents
  ))
@@ -250,7 +250,7 @@
         (send frm afterheight-callbacks 'add
               (lambda (obj h) (send this refresh-titlebox)))
         ))
-        
+
 
     (define/public title
       (case-lambda
@@ -270,7 +270,7 @@
 
     (define/override (export dir)
       (let* ((name (send this title))
-             (subdir 
+             (subdir
               (if name
                   (export-container-custom-name dir name)
                   (export-container-generic-name dir "clump"))))
@@ -365,7 +365,7 @@
     (let ((frame (send this frame))
           (cover (send this cover)))
       (send frame aftercoords-callbacks 'add
-            (lambda (o crds) 
+            (lambda (o crds)
               (send cover coords crds)
               (send this refresh-fusing-size)))
       (send frame afterwidth-callbacks 'add
@@ -380,7 +380,7 @@
 
 ;    (define/override (export dir)
 ;      (let ((subdir (export-container-generic-name dir "pile")))
-;        (foreach (send this contents) (lambda (o) (send o export subdir)))))     
+;        (foreach (send this contents) (lambda (o) (send o export subdir)))))
 ))
 
 ;Usage-example:
@@ -423,7 +423,7 @@
     (inherit dynaclass)
     (super-instantiate (dynaptr))
     (dynaclass 'resizable-image%)
-    
+
     (name-part _image image)
     (image image-arg)
     (name-part _border border)
@@ -444,7 +444,7 @@
                             ; release callback: no effect unless position-callbacks
                             (lambda (brdr) (send this position
                                                  (send this position)))
-                            
+
                             ;#f ;no release callback
                             (is-a? (image) image%))
       (send _border takegroupevents #t)
@@ -530,7 +530,7 @@
     (dynaclass 'titled-resizable-frame-container%)
 
     (name-part _titlebox titlebox)
-    
+
     (define (make-titlebox)
       (let ((frm (send this frame)))
         (ic (make-object text% (send frm dynapad))
@@ -571,7 +571,7 @@
     (inherit dynaclass)
     (super-instantiate (dynaptr))
     (dynaclass 'textblock%)
-    
+
     (name-part _block block)
     (block (make-object rect% dynaptr))
     (name-part _textpart textpart)

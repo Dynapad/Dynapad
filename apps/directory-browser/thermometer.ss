@@ -12,10 +12,10 @@
        (let ((age (- (current-seconds)
              (file-or-directory-modify-seconds (send icon path))))
          (thermo (send icon boundary)))
-     (cond ((< age 86400) 
+     (cond ((< age 86400)
         (send thermo fill _hot)
         (send thermo pen _hot))
-           ((and (>= age 86400) (< age 604800)) 
+           ((and (>= age 86400) (< age 604800))
         (send thermo fill _warm)
         (send thermo pen _warm))
            ((and (>= age 604800) (< age 2592000))
@@ -28,4 +28,4 @@
      ))
 
 ))
-        
+

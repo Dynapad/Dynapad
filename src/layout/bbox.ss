@@ -105,7 +105,7 @@
 ; bbenclosed: Decides if the point {x,y} is enclosed by the bbox.
 (define (bbenclosed x y bbox)
   (and
-   (> x [list-ref bbox 0]) 
+   (> x [list-ref bbox 0])
    (> y [list-ref bbox 1])
    (< x [list-ref bbox 2])
    (< y [list-ref bbox 3])))
@@ -116,7 +116,7 @@
    (>= x (list-ref bbox 0))
    (>= y (list-ref bbox 1))
    (<= x (list-ref bbox 2))
-   (<= y (list-ref bbox 3)))) 
+   (<= y (list-ref bbox 3))))
 
 ;
 ; bbsurrounds
@@ -375,11 +375,11 @@
 ; y-dir is one of:  (default is 'up)
 ;  'up      'down      'up-down
 ;  +-----    +--v--    +-----
-;  |         |  v      |     
+;  |         |  v      |
 ;  |   +-+   |   +-+   | - +-+
 ;  |   L_|   |   L_|   | ^ L_|
-;  |  ^      |         | ^   
-;  L__^__    L_____    L_^__ 
+;  |  ^      |         | ^
+;  L__^__    L_____    L_^__
 (define bb-geometry
   (case-lambda
    (            (ref-bb tgt)  (obj->geometry-list 'up     1 ref-bb tgt))
@@ -422,7 +422,7 @@
 ; suffix may be one of "!" "<" ">"
   (case-lambda
    ((geom)        (bb-geometry->string geom ""))
-   ((geom sffx) 
+   ((geom sffx)
     (format "~a~a" (apply format-geometry-str geom) sffx))))
 ;   ((arg0 arg1 . more)
 ;    (obj->geometry-string

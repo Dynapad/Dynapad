@@ -103,7 +103,7 @@
     (if (not keyval) ;cache for next time
     (remote-push! (list tag val) obj alist))
     val))
-      
+
 
 ; this construction forces regexps to be pre-compiled but scoped locally:
 (define (match-jhead-line-for-tag line tag) #f)
@@ -113,7 +113,7 @@
       (aperture-rexp       (regexp "^Aperture[ \t]+: +f/(.*)$")))
   (set! match-jhead-line-for-tag
     (lambda (line tag)
-      (cond 
+      (cond
         ((eq? tag 'photo-datetime)
          (let ((match (regexp-match photo-datetime-rexp line)))
            (and match
@@ -142,7 +142,7 @@
 (let ((publish-date-rexp (regexp "^CreationDate:[ \t]*(.+)$")))
   (set! match-pdfinfo-line-for-tag
     (lambda (line tag)
-      (cond 
+      (cond
         ((eq? tag 'publish-date)
          (let ((match (regexp-match publish-date-rexp line)))
            (and match
@@ -168,7 +168,7 @@
        (close-output-port (cadr ports))
        (close-input-port (cadddr ports))
        found))))
-    
+
 
 (define (extract-pdf-metadata obj tag)
   (let* ((path (send obj url))
@@ -186,7 +186,7 @@
        (close-output-port (cadr ports))
        (close-input-port (cadddr ports))
        found))))
-    
+
 (define (get-image-date obj)
   (let ((pair
      (get-obj-metadata

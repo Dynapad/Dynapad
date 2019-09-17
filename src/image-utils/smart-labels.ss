@@ -27,7 +27,7 @@
   (let ((slices null)
     (last-slice #f)
     (lvl 0))
-    (while (not (stop-fn 
+    (while (not (stop-fn
          (cset! last-slice (find-list-changes
                     (sublist-slice-at-level sublists (_++ lvl)) eq-fn))))
        (push! last-slice slices))
@@ -35,7 +35,7 @@
 
 (define (boolean->bit bool)
   (if bool 1 0))
-         
+
 (define (diversity changelst)
   (apply + (map boolean->bit changelst)))
 (define (diverse? changelst)
@@ -72,7 +72,7 @@
   (if (null? m1)
       null
       (cons (or (car m1) (car m2))
-        (or-mask (cdr m1) (cdr m2)))))  
+        (or-mask (cdr m1) (cdr m2)))))
 
 (define (and-mask m1 m2)
   (if (null? m1)
@@ -95,7 +95,7 @@
          (widely-diverse?
           (lambda (lvl) (let ((slice (list-ref change-slices lvl)))
                   (> (diversity slice) 2))))
-         (time-vals '(#f #f #f #t #t #t)) ; a mask                  
+         (time-vals '(#f #f #f #t #t #t)) ; a mask
          (last-lvl-kept
           (case first-diverse-lvl
             ((0)   (if (widely-diverse? month-lvl) month-lvl day-lvl))
@@ -110,7 +110,7 @@
                           (or-mask time-vals mymask)))
                (cross-slice change-slices))))
         (cons shared-mask private-masks)))))
-        
+
 (define (dates->labels datelist)
   (date-display-format 'iso-8601)
   (if (null? datelist)

@@ -7,7 +7,7 @@
     (inherit dynaclass)
     (super-instantiate (dynaptr))
     (dynaclass 'icon-container%)
-     
+
     (name-part _image_obj image-obj)
     (name-part _title_obj title-obj)
 ))
@@ -33,12 +33,12 @@
     ;; Imagedata fields
     (field (_icon-data #f)     ;; Icon imagedata
        (_preview-data #f)) ;; Preview imagedata (actual graphic if it exists)
-    
+
     ;; Event handling placeholders
     (field (_enter (lambda() #f))
        (_leave (lambda() #f))
        (_double-click (lambda() #f)))
-    
+
     ;; Get icon imagedata%
     (set! _icon-data (get-id (file-name-from-path _init-path)))
     (image-obj (make-object baseimage% _dynapad _icon-data _init-position))
@@ -57,8 +57,8 @@
     (let* ((bb (send (image-obj) bbox))
        (xc (bxc bb)) (yc (byc bb))
        (dx 32) (dy1 36) (dy2 21))
-      (boundary 
-       (make-object rect% dynaptr (list (- xc dx) (- yc dy1) 
+      (boundary
+       (make-object rect% dynaptr (list (- xc dx) (- yc dy1)
                     (+ xc dx) (+ yc dy2)))))
 
 
@@ -72,22 +72,22 @@
 
 
    ;; -- Event handling methods --
-   (define/public enter 
+   (define/public enter
      (case-lambda
       (() (_enter))
       ((m) (set! _enter m))))
 
-   (define/public leave 
+   (define/public leave
      (case-lambda
       (() (_leave))
       ((m) (set! _leave m))))
 
-   (define/public double-click 
+   (define/public double-click
      (case-lambda
       (() (_double-click))
       ((m) (set! _double-click m))))
 
-   
+
    ;; -- Public Methods --
    (define/public (draw-icon)
      (if (not (image-obj))
@@ -115,7 +115,7 @@
    ; -------------
    ;(draw-icon)
 
-))   
+))
 
 
 ;;Do not use make-object... instead use the make-file-icon constructor method below
@@ -130,7 +130,7 @@
     (field (_path _init_file_path))
 
     (define/public (path) _path)
-    
+
     (inherit image-obj title-obj boundary dynaclass)
     (super-instantiate (dynaptr _init_path _init_title _init_position))
     (dynaclass 'file-icon%)
@@ -139,7 +139,7 @@
     (if (not  _init_title)
     (set! _init_title (file-name-from-path _init_file_path)))
 
-))   
+))
 
 ;; ---------- imagedata% objects ------------
 (define icon-path (build-path->string *dynapad-directory* "apps/directory-browser/icons"))
@@ -175,7 +175,7 @@
     (if a (cadr a) #f)))
 
 ;; ---------- extension assoc. list  ------------
-(define ext-path-alist 
+(define ext-path-alist
   '(("jpg" "image.png")
     ("gif" "image.png")
     ("png" "image.png")
@@ -197,8 +197,8 @@
      (img_path (if a (build-path->string icon-path (cadr a))
                  (build-path->string icon-path "unknown.png")))
      )
-    (when (not ext) 
-      (if (directory-exists? file_path) 
+    (when (not ext)
+      (if (directory-exists? file_path)
           (set! img_path (build-path->string icon-path "folder.png"))
           (set! img_path (build-path->string icon-path "unknown.png"))))
     (make-object file-icon% currentPAD file_path img_path name pos)))

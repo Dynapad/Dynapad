@@ -30,7 +30,7 @@
     (begin
       (set! ux (+ u1x (* (- u2x u1x) (/ (- v oldzoom) (- newzoom oldzoom)))))
       (set! uy (+ u1y (* (- u2y u1y) (/ (- v oldzoom) (- newzoom oldzoom)))))))
-  (list (/ ux v) (/ uy v) v) 
+  (list (/ ux v) (/ uy v) v)
 )
 
 ; slow-in, slow-out lerp

@@ -197,7 +197,7 @@
                  (remq rexp *import-file-filters*))
                ))
        (memq rexp *import-file-filters*)))
-  
+
 (define (checkable-subdirtype-item sb title rexp)
   (add-checkable-menu-item sb title
        (lambda (i) (if (not (send i is-checked?))
@@ -206,7 +206,7 @@
                  (remq rexp *dont-import-subdir-rexps*))
                ))
        (not (memq rexp *dont-import-subdir-rexps*))))
-   
+
 
 (define (make-submenu-Import mb obj)
   (let* ((sb (add-submenu mb "Import")))
@@ -215,7 +215,7 @@
            (lambda () (set! *import-subdir-rexp* #f)
                   (Import-Flatten-and-Arrange-Dirs)))
     (add-menu-item sb "Import Dirs Below..."
-           (lambda () (set! *import-subdir-rexp* 
+           (lambda () (set! *import-subdir-rexp*
                     *dont-import-subdir-rexps*)
                   (Import-Flatten-and-Arrange-Dirs)))
 
