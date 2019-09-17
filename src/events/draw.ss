@@ -14,14 +14,14 @@
 
 (define (cancelDrawObject argPAD)
   (when Draw-object
-      (send Draw-object delete))
+    (send Draw-object delete))
   (set! Draw-object #f)
   (resetDrawPreview)
   )
 
 (define (resetDrawObject argPAD)
   (when Draw-object
-      (undoify-fresh-obj Draw-object)) ;save draw object for undo
+    (undoify-fresh-obj Draw-object)) ;save draw object for undo
   (set! Draw-object #f)
   (resetDrawPreview)
   )
@@ -40,16 +40,16 @@
   (let ((c (send Draw-object coords)))
     (send Draw-preview coords c)
     (send Draw-preview save-coords c))
-)
+  )
 
 (define (degenerate-object? obj)
   (or (not obj)
       (if (is-a? obj text%)
-      (equal? "" (send obj text))
-      (let ((c (send obj coords)))
-        (cond ((is-a? obj polyline%) (< (length c) 4))
-          ((is-a? obj polygon%)  (< (length c) 6))
-          (else (null? c)))))))
+          (equal? "" (send obj text))
+          (let ((c (send obj coords)))
+            (cond ((is-a? obj polyline%) (< (length c) 4))
+                  ((is-a? obj polygon%)  (< (length c) 6))
+                  (else (null? c)))))))
 
 (define (finishDraw argPAD)
   (resetDrawObject argPAD)
@@ -61,70 +61,70 @@
 (define (start-shape-event eventPAD e) ;start new shape (rect%, poly%, text%, etc)
   (set! currentPAD eventPAD)
   (let* ((x (event-x e))
-     (y (event-y e))
-     (objs-here (reverse (send eventPAD find 'overlapping (list x y x y)))))
+         (y (event-y e))
+         (objs-here (reverse (send eventPAD find 'overlapping (list x y x y)))))
     (set! Draw-object (if (null? objs-here) #f (car objs-here)))
     (cond
-     ; maybe edit existing obj (e.g. text%)
-     ((and Draw-object
-       (is-a? Draw-object Draw-class)
-       (eq? Draw-class text%))
-      (edit-text-at-xy Draw-object x y))
+      ; maybe edit existing obj (e.g. text%)
+      ((and Draw-object
+            (is-a? Draw-object Draw-class)
+            (eq? Draw-class text%))
+       (edit-text-at-xy Draw-object x y))
 
-     (else ; make new obj
-      (set! Draw-object (make-object Draw-class eventPAD))
+      (else ; make new obj
+       (set! Draw-object (make-object Draw-class eventPAD))
 
-      (when (has-method? Draw-object 'fill)
-      (send Draw-object fill
-        (if (send eventPAD fill?) (send eventPAD defaultfill) "none")))
+       (when (has-method? Draw-object 'fill)
+         (send Draw-object fill
+               (if (send eventPAD fill?) (send eventPAD defaultfill) "none")))
 
-      (when (has-method? Draw-object 'pen)
-      (send Draw-object pen (send eventPAD defaultpen)))
+       (when (has-method? Draw-object 'pen)
+         (send Draw-object pen (send eventPAD defaultpen)))
 
-      (cond
-        ;edit new text
-       ((subclass? Draw-class text%)
-    (edit-text-at-xy Draw-object x y))
-        ;new polygon/polyline
-       ((or (subclass? Draw-class polygon%)
-        (subclass? Draw-class polyline%))
-    (send Draw-object coords (list x y))
-    (send Draw-object save-coords (list x y))
-    (initDrawPreview eventPAD)
-    (changemode eventPAD "DrawAdd")
-    )
-       ;new rect/oval/line/etc
-       (else
-    (send Draw-object save-coords (list x y)))
-       )))
+       (cond
+         ;edit new text
+         ((subclass? Draw-class text%)
+          (edit-text-at-xy Draw-object x y))
+         ;new polygon/polyline
+         ((or (subclass? Draw-class polygon%)
+              (subclass? Draw-class polyline%))
+          (send Draw-object coords (list x y))
+          (send Draw-object save-coords (list x y))
+          (initDrawPreview eventPAD)
+          (changemode eventPAD "DrawAdd")
+          )
+         ;new rect/oval/line/etc
+         (else
+          (send Draw-object save-coords (list x y)))
+         )))
     ))
 
 (define (drag-shape-vertex-event eventPAD e)  ;move unfixed vertex
   (set! currentPAD eventPAD)
   (when Draw-object ;should always be #t
-      (let*
-          ((c (or (send Draw-object recall-coords) null))
-           (x (event-x e))
-           (y (event-y e))
-       (newc (append c (list x y))))
-    (send Draw-object coords newc)
-    (when Draw-preview
-          (send Draw-preview coords newc)
-          (send Draw-preview save-coords newc))
-    (when (is-a? Draw-object freehand%)
-            (send Draw-object save-coords newc)))))
+    (let*
+        ((c (or (send Draw-object recall-coords) null))
+         (x (event-x e))
+         (y (event-y e))
+         (newc (append c (list x y))))
+      (send Draw-object coords newc)
+      (when Draw-preview
+        (send Draw-preview coords newc)
+        (send Draw-preview save-coords newc))
+      (when (is-a? Draw-object freehand%)
+        (send Draw-object save-coords newc)))))
 
 (define (update-shape-preview-event eventPAD e) ;rubber-band to cursor
   (set! currentPAD eventPAD)
   (let ((c (or (send Draw-preview recall-coords) null))
-    (x (event-x e))
-    (y (event-y e)))
+        (x (event-x e))
+        (y (event-y e)))
     (send Draw-preview coords (append c (list x y)))))
 
 (define (fix-shape-vertex-event eventPAD e) ;fix vertex
   (set! currentPAD eventPAD)
   (send Draw-object save-coords
-    (send Draw-object coords)))
+        (send Draw-object coords)))
 
 (define (add-shape-vertex-event eventPAD e) ;add unfixed vertex
   (set! currentPAD eventPAD)
@@ -136,16 +136,16 @@
 (define (esc-shape-event eventPAD e) ; exit object or mode
   (set! currentPAD eventPAD)
   (cond
-   ((not Draw-object)
-    (finishDraw eventPAD))
-   ((degenerate-object? Draw-object)
-    (cancelDrawObject eventPAD)
-    (changemode eventPAD Draw-mode))
-   (Draw-multiple
-    (resetDrawObject eventPAD)
-    (changemode eventPAD Draw-mode))
-   (else
-    (finishDraw eventPAD))))
+    ((not Draw-object)
+     (finishDraw eventPAD))
+    ((degenerate-object? Draw-object)
+     (cancelDrawObject eventPAD)
+     (changemode eventPAD Draw-mode))
+    (Draw-multiple
+     (resetDrawObject eventPAD)
+     (changemode eventPAD Draw-mode))
+    (else
+     (finishDraw eventPAD))))
 
 (define (bindDrawMode argPAD)
 
@@ -173,4 +173,4 @@
   ;(send argPAD bind "<Draw-ButtonPress-3>"   Zoom-Out-lambda)
   ;(send argPAD bind "<Draw-ButtonRelease-3>" Zoom-Out-Stop-lambda)
 
-)
+  )

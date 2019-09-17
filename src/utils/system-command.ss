@@ -17,15 +17,15 @@
 
   (if (not no-return-value?)
       (do ((line "" (read-line in)))
-      ((eq? line eof))
-    (push! line return-value)))
+          ((eq? line eof))
+        (push! line return-value)))
 
   (close-input-port  in)
   (close-output-port out)
   (close-input-port  err)
 
   return-value
-)
+  )
 
 
 ; execute command and do not wait for program to end
@@ -33,8 +33,8 @@
 ;     reading from error channel causes blocking
 (define (system-application command)
   (thread (lambda ()
-    (let ((p (process command)))
-      (close-input-port  (car    p))
-      (close-output-port (cadr   p))
-      (close-input-port  (cadddr p))) )))
+            (let ((p (process command)))
+              (close-input-port  (car    p))
+              (close-output-port (cadr   p))
+              (close-input-port  (cadddr p))) )))
 

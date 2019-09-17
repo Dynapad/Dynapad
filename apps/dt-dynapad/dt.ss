@@ -2,35 +2,35 @@
 
 (define (table->root coords)
   (if (null? coords) null
-    (let* ((table-width 128.0)
-           (table-height 96.0)
-           (winfo (send dynapad winfo))
-           (root-width (fifth winfo))
-           (root-height (sixth winfo))
-           (table-x (first coords))
-           (table-y (second coords))
-           (root-x (* table-x (/ root-width table-width)))
-           (root-y (* table-y (/ root-height table-height))))
-      (cons root-x (cons root-y
-              (table->root (list-tail coords 2)))))))
+      (let* ((table-width 128.0)
+             (table-height 96.0)
+             (winfo (send dynapad winfo))
+             (root-width (fifth winfo))
+             (root-height (sixth winfo))
+             (table-x (first coords))
+             (table-y (second coords))
+             (root-x (* table-x (/ root-width table-width)))
+             (root-y (* table-y (/ root-height table-height))))
+        (cons root-x (cons root-y
+                           (table->root (list-tail coords 2)))))))
 
 (define (root->dynapad coords)
   (if (null? coords) null
-    (let* ((zoom (send dynapad getzoom))
-           (winfo (send dynapad winfo))
-           (window-origin-x (first winfo))
-           (window-origin-y (second winfo))
-           (dynapad-bbox (send dynapad bbox))
-           (dynapad-west (first dynapad-bbox))
-           (dynapad-north (fourth dynapad-bbox))
-           (root-x (first coords))
-           (root-y (second coords))
-           (dynapad-x (+ dynapad-west
-                         (/ (- root-x window-origin-x) zoom)))
-           (dynapad-y (- dynapad-north
-                         (/ (- root-y window-origin-y) zoom))))
-      (cons dynapad-x (cons dynapad-y
-              (root->dynapad (list-tail coords 2)))))))
+      (let* ((zoom (send dynapad getzoom))
+             (winfo (send dynapad winfo))
+             (window-origin-x (first winfo))
+             (window-origin-y (second winfo))
+             (dynapad-bbox (send dynapad bbox))
+             (dynapad-west (first dynapad-bbox))
+             (dynapad-north (fourth dynapad-bbox))
+             (root-x (first coords))
+             (root-y (second coords))
+             (dynapad-x (+ dynapad-west
+                           (/ (- root-x window-origin-x) zoom)))
+             (dynapad-y (- dynapad-north
+                           (/ (- root-y window-origin-y) zoom))))
+        (cons dynapad-x (cons dynapad-y
+                              (root->dynapad (list-tail coords 2)))))))
 
 (define (table->dynapad coords)
   (root->dynapad (table->root coords)))

@@ -42,8 +42,8 @@
 (define (dt-interpret-event event)
   (let* ((prev-event (event-with-id (dt-event-touch-id event) *dt-prev-events*)))
     (if prev-event
-      (dt-initialize-event-from event prev-event)
-      (dt-initialize-new-event event))
+        (dt-initialize-event-from event prev-event)
+        (dt-initialize-new-event event))
     (dt-dispatch-event event)))
 
 (define (dt-touch-disappeared event)
@@ -55,20 +55,20 @@
   (set-event-obj! event (choose-event-recipient event))
   (set-dt-event-mouse-button! event *dt-mouse-button*)
   (if (dt-double? event)
-    (begin
-      (set-event-type! event "dt-double")
-      (set-dt-event-is-flow! event #t))
-    (begin
-      (set-event-type! event "dt-down")
-      (set-dt-event-is-flow! event #f))))
+      (begin
+        (set-event-type! event "dt-double")
+        (set-dt-event-is-flow! event #t))
+      (begin
+        (set-event-type! event "dt-down")
+        (set-dt-event-is-flow! event #f))))
 
 ; set the values in a dt-event structure with a preceding event
 (define (dt-initialize-event-from event prev-event)
   (set-dt-event-mouse-button! event (dt-event-mouse-button prev-event))
   (set-dt-event-is-flow! event (dt-event-is-flow prev-event))
   (if (dt-event-is-flow event)
-    (set-event-obj! event (choose-event-recipient event))
-    (set-event-obj! event (event-obj prev-event)))
+      (set-event-obj! event (choose-event-recipient event))
+      (set-event-obj! event (event-obj prev-event)))
   (set-event-type! event "dt-move")
   (set! *dt-prev-events* (remove prev-event *dt-prev-events*)))
 
@@ -85,12 +85,12 @@
          (modifier-event-string (string-append "<" mod "-" mouse-type ">"))
          (generic-event-string (string-append "<" mouse-type ">")))
     (append
-      (if bullshit () (bind obj dt-type))  ; dt-event bindings on object
-      (list (lambda (d e) (dt-mouse-lock e)))
-      (if bullshit () (bind obj modifier-event-string))  ; modifier mouse bindings on object
-      (if bullshit () (bind obj generic-event-string))  ; generic mouse bindings on object
-      (if (eq? obj dynapad) ()
-        (append
+     (if bullshit () (bind obj dt-type))  ; dt-event bindings on object
+     (list (lambda (d e) (dt-mouse-lock e)))
+     (if bullshit () (bind obj modifier-event-string))  ; modifier mouse bindings on object
+     (if bullshit () (bind obj generic-event-string))  ; generic mouse bindings on object
+     (if (eq? obj dynapad) ()
+         (append
           (bind dynapad dt-type)  ; dt-event bindings on dynapad
           (bind dynapad modifier-event-string)  ; modifier mouse bindings on dynapad
           (bind dynapad generic-event-string))))))  ; generic mouse bindings on dynapad
@@ -99,8 +99,8 @@
 (define (dt-mouse-lock event)
   (let ((touch-id (dt-event-touch-id event)))
     (if *dt-mouse-touch-id*
-      (eq? touch-id *dt-mouse-touch-id*)
-      (set! *dt-mouse-touch-id* touch-id))))
+        (eq? touch-id *dt-mouse-touch-id*)
+        (set! *dt-mouse-touch-id* touch-id))))
 
 (define (dt-mouse-unlock event)
   (when (eq? (dt-event-touch-id event) *dt-mouse-touch-id*)
@@ -126,16 +126,16 @@
 
 (define (event-with-id touch-id events)
   (if (null? events) #f
-    (let* ((first-event (first events))
-           (first-touch-id (dt-event-touch-id first-event)))
-      (if (equal? touch-id first-touch-id) first-event
-        (event-with-id touch-id (rest events))))))
+      (let* ((first-event (first events))
+             (first-touch-id (dt-event-touch-id first-event)))
+        (if (equal? touch-id first-touch-id) first-event
+            (event-with-id touch-id (rest events))))))
 
 (define (choose-event-recipient event)
   (let ((obj (top-visible-object-at-event event)))
     (if (eq? obj dynapad)
-      dynapad
-      (get-top-group obj))))
+        dynapad
+        (get-top-group obj))))
 
 (define (top-visible-object-at-event event)
   (send dynapad pick (list (event-x event) (event-y event))))
@@ -147,8 +147,8 @@
 
 (define (visible-objects-under-point xy)
   (reverse
-    (filter visible?
-            (send dynapad find 'groupmembers 'overlapping (append xy xy)))))
+   (filter visible?
+           (send dynapad find 'groupmembers 'overlapping (append xy xy)))))
 
 (define (visible? obj)
   (and (not (zero? (send obj transparency)))
@@ -180,14 +180,14 @@
         (if (and (<= (- ms last-ms) *double-tap-ms*)
                  (<= (abs (- table-x last-table-x)) *double-tap-proximity*)
                  (<= (abs (- table-y last-table-y)) *double-tap-proximity*))
-          (begin
-            (set! last-ms 0)
-            #t)
-          (begin
-            (set! last-ms ms)
-            (set! last-table-x table-x)
-            (set! last-table-y table-y)
-            #f))))))
+            (begin
+              (set! last-ms 0)
+              #t)
+            (begin
+              (set! last-ms ms)
+              (set! last-table-x table-x)
+              (set! last-table-y table-y)
+              #f))))))
 
 (define *dt-timer* (make-object timer% dt-read-and-interpret-touches))
 (send *dt-timer* start 33)

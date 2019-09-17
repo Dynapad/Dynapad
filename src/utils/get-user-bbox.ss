@@ -4,7 +4,7 @@
   (class object%
     (init-field _dynapad)
     (init-field _release_callback)
-;width & height: #f --> unconstrained
+    ;width & height: #f --> unconstrained
     (init-field (_dx #f)
                 (_dy #f))
 
@@ -12,9 +12,9 @@
 
     (field (_upperleft_x #f))
     (field (_upperleft_y #f))
-;    (field (_orig_x 0))
-;    (field (_orig_y 0))
-;    (field (_orig_crds 0))
+    ;    (field (_orig_x 0))
+    ;    (field (_orig_y 0))
+    ;    (field (_orig_crds 0))
     (field (_resize_mode 0))
     (field (_rect #f))
 
@@ -42,9 +42,9 @@
                       (penwidth 0))))
 
     (define (GetBBox_TrackOrigin evnt)
-;      (define size (/ 1 (send _dynapad getzoom)))
-;      (if _dx
-;          (send _rect xy (list (event-x evnt) (event-y evnt)))...
+      ;      (define size (/ 1 (send _dynapad getzoom)))
+      ;      (if _dx
+      ;          (send _rect xy (list (event-x evnt) (event-y evnt)))...
       (let* ((dxy (refresh-dxy))
              (dx  (car dxy))
              (dy  (cadr dxy)))
@@ -57,13 +57,13 @@
       )
 
     (define (GetBBox_SetOrigin evnt)
- ;     (define size (/ 1 (send _dynapad getzoom)))
- ;     (set! _upperleft_x (- (event-x evnt) (* _dx size)))
- ;     (set! _upperleft_y (+ (event-y evnt) (* _dy size)))
+      ;     (define size (/ 1 (send _dynapad getzoom)))
+      ;     (set! _upperleft_x (- (event-x evnt) (* _dx size)))
+      ;     (set! _upperleft_y (+ (event-y evnt) (* _dy size)))
       (let ((bb (send _rect coords)))
         (set! _upperleft_x (b0 bb))
         (set! _upperleft_y (b3 bb)))
-   )
+      )
 
     (define (GetBBox_TrackSize evnt)
       ;(define size (/ 100 (send _dynapad getzoom)))
@@ -72,12 +72,12 @@
         (send _rect coords
               (list
                (if _dx (- ex _dx) ;fixed width
-                       _upperleft_x) ;adjustable width
+                   _upperleft_x) ;adjustable width
                ey
                ex
                (if _dy (+ ey _dy) ;fixed height
-                       _upperleft_y) ;adjustable height
-      ))))
+                   _upperleft_y) ;adjustable height
+               ))))
 
     (define (GetBBox_Finish evnt)
       (let ((bb (send _rect bbox)))
@@ -88,8 +88,8 @@
         (send _dynapad bind "<GetBBox-ButtonRelease-1>" #f)
         (pop-event-mode _dynapad)
         (when _release_callback
-               (_release_callback bb))
-      ))
+          (_release_callback bb))
+        ))
 
     (send _dynapad bind "<GetBBox-Motion>"          (lambda (d e)
                                                       (if _upperleft_x ;already set origin?
@@ -111,24 +111,24 @@
                                                               (and _dx _dy))
                                                           (GetBBox_Finish e)
                                                           (GetBBox_SetOrigin e))
-                                                          ))
+                                                      ))
 
     (send _dynapad bind "<GetBBox-KeyPress-Escape>"
-      (lambda (eventPAD e)
-        (pop-event-mode _dynapad)
-        (when _rect (send _rect delete) (set! _rect #f))
-        (when _release_callback
+          (lambda (eventPAD e)
+            (pop-event-mode _dynapad)
+            (when _rect (send _rect delete) (set! _rect #f))
+            (when _release_callback
               (_release_callback #f))))
 
-  ; allow zooming (oldschool) while getting bbox
-;  (send _dynapad bind "<GetBBox-ButtonPress-2>"   Zoom-In-lambda)
-;  (send _dynapad bind "<GetBBox-ButtonRelease-2>" Zoom-In-Stop-lambda)
-;  (send _dynapad bind "<GetBBox-ButtonPress-3>"   Zoom-Out-lambda)
-;  (send _dynapad bind "<GetBBox-ButtonRelease-3>" Zoom-Out-Stop-lambda)
-))
+    ; allow zooming (oldschool) while getting bbox
+    ;  (send _dynapad bind "<GetBBox-ButtonPress-2>"   Zoom-In-lambda)
+    ;  (send _dynapad bind "<GetBBox-ButtonRelease-2>" Zoom-In-Stop-lambda)
+    ;  (send _dynapad bind "<GetBBox-ButtonPress-3>"   Zoom-Out-lambda)
+    ;  (send _dynapad bind "<GetBBox-ButtonRelease-3>" Zoom-Out-Stop-lambda)
+    ))
 
 (define (ask-user-for-bbox argPAD callback . dxy)
-; if dxy supplied, locks bbox size
+  ; if dxy supplied, locks bbox size
   (apply make-object ask-user-for-bbox--event-binder% argPAD callback dxy))
 
 #|

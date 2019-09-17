@@ -62,9 +62,9 @@
 
 (define (chain-foreach next-fn stop-fn next-stop-fn item-fn chn)
   (when (not (stop-fn chn))
-        (begin
-          (item-fn chn)
-          (chain-foreach next-fn next-stop-fn next-stop-fn item-fn (next-fn chn)))))
+    (begin
+      (item-fn chn)
+      (chain-foreach next-fn next-stop-fn next-stop-fn item-fn (next-fn chn)))))
 
 (define (chain-filter next-fn stop-fn next-stop-fn item-fn chn)
   (if (stop-fn chn)

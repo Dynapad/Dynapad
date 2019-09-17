@@ -5,36 +5,36 @@
 (define (handle-popup-event e)
   (define pmenu #f)
   (if (is-a? (event-obj e) dynapad%)
-    (set! pmenu (make-popup-menu #f))
-    (let ((obj (get-top-group (event-obj e))))
-      (when #t ;(send obj findable)
-        (unless (send obj selected?)
+      (set! pmenu (make-popup-menu #f))
+      (let ((obj (get-top-group (event-obj e))))
+        (when #t ;(send obj findable)
+          (unless (send obj selected?)
             (let ((already-selected (send (send obj dynapad) selected)))
               (foreach already-selected (lambda (o) (send o unselect)))
               (send obj select)))
-        (set! pmenu (make-popup-menu obj)))))
+          (set! pmenu (make-popup-menu obj)))))
   (when pmenu (show-popup-function pmenu (event-sx e) (event-sy e)))
-)
+  )
 
 (define show-popup-function (show-popup-lambda dynapad (make-popup-server)))
 
 (define (enable-popups-old-events argPAD)
   (send dynapad bind "<Control-Run-ButtonPress-3>"
-    (lambda (w e) (handle-popup-event e) #f))
+        (lambda (w e) (handle-popup-event e) #f))
   (send dynapad bind "<Control-Select-ButtonPress-3>"
-    (lambda (w e) (handle-popup-event e) #f))
-)
+        (lambda (w e) (handle-popup-event e) #f))
+  )
 
 (define (enable-popups argPAD)
   (set! *popup-menus-enabled?* #t)
-;  (re-map-old-zoom-functions-to-Alt-modifier-versions argPAD)
-; ^NEEDS ATTENTION...
+  ;  (re-map-old-zoom-functions-to-Alt-modifier-versions argPAD)
+  ; ^NEEDS ATTENTION...
 
   (send dynapad bind "<Run-ButtonRelease-3>"
-    (lambda (w e) (handle-popup-event e) #f))
+        (lambda (w e) (handle-popup-event e) #f))
   (send dynapad bind "<Select-ButtonRelease-3>"
-    (lambda (w e) (handle-popup-event e) #f))
-)
+        (lambda (w e) (handle-popup-event e) #f))
+  )
 
 (define (re-map-old-zoom-functions-to-Alt-modifier-versions argPAD)
   (send argPAD bind "<Run-Control-ButtonPress-2>"   Zoom-In-lambda)
@@ -46,7 +46,7 @@
   (send argPAD bind "<Select-Control-ButtonRelease-2>" Select-Zoom-In-Stop-lambda)
   (send argPAD bind "<Select-Control-ButtonPress-3>"   Select-Zoom-Out-lambda)
   (send argPAD bind "<Select-Control-ButtonRelease-3>" Select-Zoom-Out-Stop-lambda)
-)
+  )
 
 ;-----------------------------------------------------------------
 ;
@@ -60,7 +60,7 @@
 
 (define (append-mainmenu-constructor fn)
   (set! *application-mainmenu-constructors*
-    (append *application-mainmenu-constructors* (list fn))))
+        (append *application-mainmenu-constructors* (list fn))))
 
 (define (include-application-mainmenu-constructors popmenu object)
   (for-each (lambda (fn) (fn popmenu object)) *application-mainmenu-constructors*))
@@ -68,33 +68,33 @@
 ; object is dynaobject% or #f (for dynapad%)
 (define (make-popup-menu object)
   (if (and object (send-actor object 'provides-popup?))
-    ;object-specific menu
-    (let ((popmenu (send-actor object 'make-popup-menu)))
-      (unless (send object findable)  ;kludgy, but this allows unfindable objs
-                                  ; to have menus w/o being selected
+      ;object-specific menu
+      (let ((popmenu (send-actor object 'make-popup-menu)))
+        (unless (send object findable)  ;kludgy, but this allows unfindable objs
+          ; to have menus w/o being selected
           (send object unselect))
-      (when popmenu (set! popmenu (car popmenu))) ;in case multiple actors respond
-      popmenu
-    )
-    ;generic/background menu
-    (let ((popmenu (new-popup (main-menu-title object))))
-      (make-submenu-File    popmenu object)
-      (make-submenu-Selector popmenu object) ;in event-state.ss
-      (make-submenu-Edit    popmenu object)
-      (make-submenu-Draw    popmenu object)
-      (make-submenu-Arrange popmenu object)
-      (make-submenu-Object  popmenu object)
-      (make-submenu-Font    popmenu object)
-      (make-submenu-Tools   popmenu object)
+        (when popmenu (set! popmenu (car popmenu))) ;in case multiple actors respond
+        popmenu
+        )
+      ;generic/background menu
+      (let ((popmenu (new-popup (main-menu-title object))))
+        (make-submenu-File    popmenu object)
+        (make-submenu-Selector popmenu object) ;in event-state.ss
+        (make-submenu-Edit    popmenu object)
+        (make-submenu-Draw    popmenu object)
+        (make-submenu-Arrange popmenu object)
+        (make-submenu-Object  popmenu object)
+        (make-submenu-Font    popmenu object)
+        (make-submenu-Tools   popmenu object)
 
-      (include-custom-popup-items popmenu object)
+        (include-custom-popup-items popmenu object)
 
-      (include-application-mainmenu-constructors popmenu object)
+        (include-application-mainmenu-constructors popmenu object)
 
-      popmenu
-    )
+        popmenu
+        )
+      )
   )
-)
 
 
 ;--- an example of object specific menus -------------------------

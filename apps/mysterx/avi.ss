@@ -17,8 +17,8 @@
 
     ;insert an object
     (set! _mp (send _mxdoc insert-object-from-progid
-        "MediaPlayer.MediaPlayer" 300 300))
-))
+                    "MediaPlayer.MediaPlayer" 300 300))
+    ))
 
 (define avi%
   (class oval%
@@ -31,8 +31,8 @@
     (coords '(0 0 50 50))
     (fill "blue")
     (bind "<Run-Double-ButtonPress-1>"
-      (lambda(o e) (send (event-obj e) play)))
-))
+          (lambda(o e) (send (event-obj e) play)))
+    ))
 
 (define mp (make-object mediaplayer%))
 (define highway (make-object avi% dynapad "E:/stanonik/highway.avi" mp))

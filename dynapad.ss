@@ -16,10 +16,10 @@
 (define *home-directory* #f)
 (define *dynapad-directory* (current-load-relative-directory))
 
- (current-library-collection-paths
-   (cons
-     (build-path *dynapad-directory* "collects")
-     (current-library-collection-paths)))
+(current-library-collection-paths
+ (cons
+  (build-path *dynapad-directory* "collects")
+  (current-library-collection-paths)))
 
 ;-----------------------------------------------------------------
 (require (lib "pathhack.ss" "misc"))
@@ -46,11 +46,11 @@
     (send newPAD focus)
 
     (set! *list-of-all-dynapads*
-      (append *list-of-all-dynapads* (list newPAD)))
+          (append *list-of-all-dynapads* (list newPAD)))
 
     newPAD
+    )
   )
-)
 
 ;-----------------------------------------------------------------
 
@@ -80,13 +80,13 @@
 ; load applications after dynapad has started
 (let ((load-on-startup "./apps.ss"))
   (if (file-exists? load-on-startup)
-    (load load-on-startup)
-    ;else
-    (when (getenv "DYNAHOME")
-      (set! load-on-startup (build-path->string (getenv "DYNAHOME") "apps.ss"))
-      (when (file-exists? load-on-startup)
-        (load load-on-startup))
-    )
+      (load load-on-startup)
+      ;else
+      (when (getenv "DYNAHOME")
+        (set! load-on-startup (build-path->string (getenv "DYNAHOME") "apps.ss"))
+        (when (file-exists? load-on-startup)
+          (load load-on-startup))
+        )
+      )
   )
-)
 

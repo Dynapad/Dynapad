@@ -18,8 +18,8 @@
     ;; Override the events method
     (define/override (events)
       (send _mysql web-domain-user-today
-        (send _mysql get-domain-id _domain)
-        (send this user-id)))
+            (send _mysql get-domain-id _domain)
+            (send this user-id)))
     )
   )
 

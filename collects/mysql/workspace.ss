@@ -6,9 +6,9 @@
     (define/public names
       (case-lambda
         (() (map car (select (format "name from name"))))
-    ((name) (select
-      (format "name,nameid from name where name = ~s"
-        (mysql_escape_string name))))))
+        ((name) (select
+                 (format "name,nameid from name where name = ~s"
+                         (mysql_escape_string name))))))
     (super-instantiate())
     (connect "hci" "workspace" "kArumbA")
     (database "workspace")))

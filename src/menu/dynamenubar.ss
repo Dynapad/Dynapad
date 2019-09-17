@@ -12,53 +12,53 @@
 
     ; change all others pads to match mode (?)
     (for-all-pads (lambda (PAD)
-      (if (not (eq? PAD argPAD))
-        (changemode--no-gui PAD mode))))
+                    (if (not (eq? PAD argPAD))
+                        (changemode--no-gui PAD mode))))
 
     (cond ((equal? mode "Run")
-              (for-all-pads (lambda (PAD)
-                (send PAD cursor 12)))
-              (clear-all-menu-buttons)
-              (send btn_run set-label on_run))
+           (for-all-pads (lambda (PAD)
+                           (send PAD cursor 12)))
+           (clear-all-menu-buttons)
+           (send btn_run set-label on_run))
           ((equal? mode "Select")
-              (for-all-pads (lambda (PAD)
-                (send PAD cursor 13)))
-              (clear-all-menu-buttons)
-              (send btn_select set-label on_select))
+           (for-all-pads (lambda (PAD)
+                           (send PAD cursor 13)))
+           (clear-all-menu-buttons)
+           (send btn_select set-label on_select))
           ((equal? mode "CreateLink") #t)
           ((equal? mode "Draw")    (for-all-pads (lambda (PAD) (send argPAD cursor 1))))
           ((equal? mode "Drag")    (for-all-pads (lambda (PAD) (send argPAD cursor 12))))
           ((equal? mode "DrawText")    (for-all-pads (lambda (PAD) (send argPAD cursor 2))))
           ((equal? mode "EditText")    (for-all-pads (lambda (PAD) (send argPAD cursor 2))))
           ((equal? mode "GetBBox") (for-all-pads (lambda (PAD) (send argPAD cursor 1))))
-      (cursor (for-all-pads (lambda (PAD) (send argPAD cursor cursor))))
+          (cursor (for-all-pads (lambda (PAD) (send argPAD cursor cursor))))
           (else
-            ; unrecognized mode
-            (for-all-pads (lambda (PAD) (send argPAD cursor 1))))
+           ; unrecognized mode
+           (for-all-pads (lambda (PAD) (send argPAD cursor 1))))
           )))
 
 (define *time_last_button_press* #f)
 (define (button-double-clicked?)
   (define dt 0)
   (if *time_last_button_press*
-    (begin
-      (set! dt (- (current-milliseconds) *time_last_button_press*))
-      (set! *time_last_button_press* (current-milliseconds))
-      (if (< dt 400) #t #f))
-    ;else
-    (begin
-      (set! *time_last_button_press* (current-milliseconds))
-      #f)))
+      (begin
+        (set! dt (- (current-milliseconds) *time_last_button_press*))
+        (set! *time_last_button_press* (current-milliseconds))
+        (if (< dt 400) #t #f))
+      ;else
+      (begin
+        (set! *time_last_button_press* (current-milliseconds))
+        #f)))
 
 (define (use-bitmap-or-string bitmapfile string)
   (let ((filename (build-path->string *dynapad-directory* bitmapfile)))
     (if (file-exists? filename)
-      (let*((len (string-length bitmapfile))
-            (filetype (string->symbol (substring bitmapfile (- len 3) len)))
-           )
-      (make-object dywx-bitmap% filename filetype)
-      )
-      string)))
+        (let*((len (string-length bitmapfile))
+              (filetype (string->symbol (substring bitmapfile (- len 3) len)))
+              )
+          (make-object dywx-bitmap% filename filetype)
+          )
+        string)))
 
 (define *dynamenubar* (make-object dywx-frame% "Draw Tools" #f #f #f *draw-menu-x* *draw-menu-y*))
 (define *frame* (make-object frame% "Draw Tools" #f #f #f 0 0))
@@ -130,142 +130,142 @@
   (if btn_marquee (send btn_marquee set-label off_marquee  ))
   (if btn_lasso (send btn_lasso set-label off_lasso  ))
   (foreach *guest-button-off-labels*
-       (lambda (pair) (mlet (((btn lbl) pair)) (send btn set-label lbl))))
-)
+           (lambda (pair) (mlet (((btn lbl) pair)) (send btn set-label lbl))))
+  )
 
 (define btn_run
   (make-object dywx-button%
-    off_run
-    runpane
-    (lambda (button event)
-      (clear-all-menu-buttons)
-      (send button set-label on_run)
-      (for-all-pads (lambda (d)
-        (changemode d "Run")))
-      ))
-)
+               off_run
+               runpane
+               (lambda (button event)
+                 (clear-all-menu-buttons)
+                 (send button set-label on_run)
+                 (for-all-pads (lambda (d)
+                                 (changemode d "Run")))
+                 ))
+  )
 (define btn_select
   (make-object dywx-button%
-    off_select
-    runpane
-    (lambda (button event)
-      (clear-all-menu-buttons)
-      (send button set-label on_select)
-      (for-all-pads (lambda (argPAD)
-        (changemode argPAD "Select")))
-      ))
-)
+               off_select
+               runpane
+               (lambda (button event)
+                 (clear-all-menu-buttons)
+                 (send button set-label on_select)
+                 (for-all-pads (lambda (argPAD)
+                                 (changemode argPAD "Select")))
+                 ))
+  )
 
 (define btn_rect
   (make-object dywx-button%
-    off_rect
-    rectpane
-    (lambda (button event)
-      (for-all-pads (lambda (argPAD)
-        (send argPAD fill? #f)))
-      (clear-all-menu-buttons)
-      (send button set-label on_rect)
-      (set! Draw-multiple (button-double-clicked?))
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD rect% "Draw")))))
-)
+               off_rect
+               rectpane
+               (lambda (button event)
+                 (for-all-pads (lambda (argPAD)
+                                 (send argPAD fill? #f)))
+                 (clear-all-menu-buttons)
+                 (send button set-label on_rect)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD rect% "Draw")))))
+  )
 
 (define btn_filledRect
   (make-object dywx-button%
-    off_filledRect
-    rectpane
-    (lambda (button event)
-      (for-all-pads (lambda (argPAD)
-        (send argPAD fill? #t)))
-      (clear-all-menu-buttons)
-      (send button set-label on_filledRect)
-      (set! Draw-multiple (button-double-clicked?))
-      (update-panel-colors)
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD rect% "Draw")))))
-)
+               off_filledRect
+               rectpane
+               (lambda (button event)
+                 (for-all-pads (lambda (argPAD)
+                                 (send argPAD fill? #t)))
+                 (clear-all-menu-buttons)
+                 (send button set-label on_filledRect)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (update-panel-colors)
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD rect% "Draw")))))
+  )
 
 (define btn_oval
   (make-object dywx-button%
-    off_oval
-    ovalpane
-    (lambda (button event)
-      (for-all-pads (lambda (argPAD)
-        (send argPAD fill? #f)))
-      (clear-all-menu-buttons)
-      (send button set-label on_oval)
-      (set! Draw-multiple (button-double-clicked?))
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD oval% "Draw")))))
-)
+               off_oval
+               ovalpane
+               (lambda (button event)
+                 (for-all-pads (lambda (argPAD)
+                                 (send argPAD fill? #f)))
+                 (clear-all-menu-buttons)
+                 (send button set-label on_oval)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD oval% "Draw")))))
+  )
 (define btn_filledOval
   (make-object dywx-button%
-    off_filledOval
-    ovalpane
-    (lambda (button event)
-      (for-all-pads (lambda (argPAD)
-        (send argPAD fill? #t)))
-      (clear-all-menu-buttons)
-      (send button set-label on_filledOval)
-      (set! Draw-multiple (button-double-clicked?))
-      (update-panel-colors)
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD oval% "Draw")))))
-)
+               off_filledOval
+               ovalpane
+               (lambda (button event)
+                 (for-all-pads (lambda (argPAD)
+                                 (send argPAD fill? #t)))
+                 (clear-all-menu-buttons)
+                 (send button set-label on_filledOval)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (update-panel-colors)
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD oval% "Draw")))))
+  )
 
 
 (define btn_line
   (make-object dywx-button%
-    off_line
-    linepane
-    (lambda (button event)
-      (clear-all-menu-buttons)
-      (send button set-label on_Line)
-      (set! Draw-multiple (button-double-clicked?))
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD line% "Draw")))))
-)
+               off_line
+               linepane
+               (lambda (button event)
+                 (clear-all-menu-buttons)
+                 (send button set-label on_Line)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD line% "Draw")))))
+  )
 
 (define btn_polyline
   (make-object dywx-button%
-    off_polyline
-    linepane
-    (lambda (button event)
-      (clear-all-menu-buttons)
-      (send button set-label on_PolyLine)
-      (set! Draw-multiple (button-double-clicked?))
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD polyline% "Draw")))))
-)
+               off_polyline
+               linepane
+               (lambda (button event)
+                 (clear-all-menu-buttons)
+                 (send button set-label on_PolyLine)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD polyline% "Draw")))))
+  )
 
 (define btn_portal
   (make-object dywx-button%
-    off_portal
-    hyperpane
-    (lambda (button event)
-      (for-all-pads (lambda (argPAD)
-        (send argPAD fill? #f)))
-      (clear-all-menu-buttons)
-      (send button set-label on_portal)
-      (set! Draw-multiple (button-double-clicked?))
-      (printf "portals not migrated yet~%")
-      ))
-)
+               off_portal
+               hyperpane
+               (lambda (button event)
+                 (for-all-pads (lambda (argPAD)
+                                 (send argPAD fill? #f)))
+                 (clear-all-menu-buttons)
+                 (send button set-label on_portal)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (printf "portals not migrated yet~%")
+                 ))
+  )
 
 (define btn_hyperlink
   (make-object dywx-button%
-    off_hyperlink
-    hyperpane
-    (lambda (button event)
-      (for-all-pads (lambda (argPAD)
-        (send argPAD fill? #f)))
-      (clear-all-menu-buttons)
-      (send button set-label on_hyperlink)
-      (set! Draw-multiple (button-double-clicked?))
-      (for-all-pads (lambda (argPAD)
-        (initCreateLink argPAD)))
-      ))
-)
+               off_hyperlink
+               hyperpane
+               (lambda (button event)
+                 (for-all-pads (lambda (argPAD)
+                                 (send argPAD fill? #f)))
+                 (clear-all-menu-buttons)
+                 (send button set-label on_hyperlink)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (for-all-pads (lambda (argPAD)
+                                 (initCreateLink argPAD)))
+                 ))
+  )
 
 (define btn_marquee #f)
 (define btn_lasso #f)
@@ -273,105 +273,105 @@
 ; not shown in the default.  see event-binders.ss
 (define (enable-marquee-and-lasso)
   (set! btn_marquee
-    (make-object dywx-button%
-      off_marquee
-      selectpane
-      (lambda (button event)
-        (for-all-pads (lambda (argPAD)
-          (send argPAD fill? #f)))
-        (clear-all-menu-buttons)
-        (send button set-label on_marquee)
-        (printf "marquee select not available yet~%") )))
+        (make-object dywx-button%
+                     off_marquee
+                     selectpane
+                     (lambda (button event)
+                       (for-all-pads (lambda (argPAD)
+                                       (send argPAD fill? #f)))
+                       (clear-all-menu-buttons)
+                       (send button set-label on_marquee)
+                       (printf "marquee select not available yet~%") )))
 
   (set! btn_lasso
-    (make-object dywx-button%
-      off_lasso
-      selectpane
-      (lambda (button event)
-        (for-all-pads (lambda (argPAD)
-          (send argPAD fill? #f)))
-        (clear-all-menu-buttons)
-        (send button set-label on_lasso)
-        (printf "lasso select not available yet~%") )))
-)
+        (make-object dywx-button%
+                     off_lasso
+                     selectpane
+                     (lambda (button event)
+                       (for-all-pads (lambda (argPAD)
+                                       (send argPAD fill? #f)))
+                       (clear-all-menu-buttons)
+                       (send button set-label on_lasso)
+                       (printf "lasso select not available yet~%") )))
+  )
 
 (define btn_poly
   (make-object dywx-button%
-    off_poly
-    polypane
-    (lambda (button event)
-      (for-all-pads (lambda (argPAD)
-        (send argPAD fill? #f)))
-      (clear-all-menu-buttons)
-      (send button set-label on_Poly)
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD polygon% "Draw")))))
-)
+               off_poly
+               polypane
+               (lambda (button event)
+                 (for-all-pads (lambda (argPAD)
+                                 (send argPAD fill? #f)))
+                 (clear-all-menu-buttons)
+                 (send button set-label on_Poly)
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD polygon% "Draw")))))
+  )
 
 (define btn_filledPoly
   (make-object dywx-button%
-    off_filledPoly
-    polypane
-    (lambda (button event)
-      (for-all-pads (lambda (argPAD)
-        (send argPAD fill? #t)))
-      (clear-all-menu-buttons)
-      (send button set-label on_filledPoly)
-      (set! Draw-multiple (button-double-clicked?))
-      (update-panel-colors)
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD polygon% "Draw")))))
-)
+               off_filledPoly
+               polypane
+               (lambda (button event)
+                 (for-all-pads (lambda (argPAD)
+                                 (send argPAD fill? #t)))
+                 (clear-all-menu-buttons)
+                 (send button set-label on_filledPoly)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (update-panel-colors)
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD polygon% "Draw")))))
+  )
 
 (define btn_freehand
   (make-object dywx-button%
-    off_freehand
-    freetextpane
-    (lambda (button event)
-      (clear-all-menu-buttons)
-      (send button set-label on_freehand)
-      (set! Draw-multiple (button-double-clicked?))
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD freehand% "Draw")))))
-)
+               off_freehand
+               freetextpane
+               (lambda (button event)
+                 (clear-all-menu-buttons)
+                 (send button set-label on_freehand)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD freehand% "Draw")))))
+  )
 
 (define btn_text
   (make-object dywx-button%
-    off_text
-    freetextpane
-    (lambda (button event)
-      (clear-all-menu-buttons)
-      (send button set-label on_text)
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD text% "DrawText")))))
-)
+               off_text
+               freetextpane
+               (lambda (button event)
+                 (clear-all-menu-buttons)
+                 (send button set-label on_text)
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD text% "DrawText")))))
+  )
 
 (define imagefontpane (make-object dywx-horizontal-pane% *dynamenubar*))
 
 (make-object dywx-button% "Image" imagefontpane
-  (lambda (button event) (Load-Image)))
+             (lambda (button event) (Load-Image)))
 
 (make-object dywx-button% "Font" imagefontpane
-  (lambda (b e)
-    (let ((restore-callback (make-restore-font-callback-all-pads)))
-    (Get-Font-Name-For-Selected apply-new-font-to-all-pads restore-callback))))
+             (lambda (b e)
+               (let ((restore-callback (make-restore-font-callback-all-pads)))
+                 (Get-Font-Name-For-Selected apply-new-font-to-all-pads restore-callback))))
 
 (define (apply-new-font-to-all-pads newfont)
   (for-all-pads (lambda (PAD)
-    (send PAD defaultfont newfont)
-    (foreach (send PAD selected) (lambda (obj)
-      (if (has-method? obj 'font)
-        (send obj font newfont)))))))
+                  (send PAD defaultfont newfont)
+                  (foreach (send PAD selected) (lambda (obj)
+                                                 (if (has-method? obj 'font)
+                                                     (send obj font newfont)))))))
 
 (define (make-restore-font-callback-all-pads)
   (let ((op-list ()))
     (for-all-pads (lambda (PAD)
-      (let ((oldfont (send PAD defaultfont)))
-        (push! (lambda() (send PAD defaultfont oldfont)) op-list))
-      (foreach (send PAD selected) (lambda (obj)
-        (if (has-method? obj 'font)
-          (let ((oldfont (send obj font)))
-            (push!  (lambda () (send obj font oldfont)) op-list)))))))
+                    (let ((oldfont (send PAD defaultfont)))
+                      (push! (lambda() (send PAD defaultfont oldfont)) op-list))
+                    (foreach (send PAD selected) (lambda (obj)
+                                                   (if (has-method? obj 'font)
+                                                       (let ((oldfont (send obj font)))
+                                                         (push!  (lambda () (send obj font oldfont)) op-list)))))))
     (lambda () (foreach op-list (lambda (op) (op))))))
 
 ;--- Pen color and Fill color buttons and indicators -------------
@@ -381,28 +381,28 @@
     (let ((tclcolor 0))
       (update-panel-colors)
       (cond ((null? args) (set! tclcolor (pengetcolor)))
-             (else
-               (set! tclcolor "none")
-               (for-all-pads (lambda (argPAD) (send argPAD defaultpen "none")))))
+            (else
+             (set! tclcolor "none")
+             (for-all-pads (lambda (argPAD) (send argPAD defaultpen "none")))))
       (update-panel-colors)
       (for-all-pads (lambda (argPAD)
-        (foreach (send argPAD selected)
-          (lambda (o)
-            (if (has-method? o 'pen) (send o pen tclcolor)))))) )))
+                      (foreach (send argPAD selected)
+                               (lambda (o)
+                                 (if (has-method? o 'pen) (send o pen tclcolor)))))) )))
 
 (define (fill-command . args)
   (lambda (button event)
     (let ((tclcolor 0))
       (update-panel-colors)
       (cond ((null? args) (set! tclcolor (fillgetcolor)))
-             (else
-               (set! tclcolor "none")
-               (for-all-pads (lambda (argPAD) (send argPAD defaultfill "none")))))
+            (else
+             (set! tclcolor "none")
+             (for-all-pads (lambda (argPAD) (send argPAD defaultfill "none")))))
       (update-panel-colors)
       (for-all-pads (lambda (argPAD)
-        (foreach (send argPAD selected)
-          (lambda (o)
-            (if (has-method? o 'fill) (send o fill tclcolor)))))) )))
+                      (foreach (send argPAD selected)
+                               (lambda (o)
+                                 (if (has-method? o 'fill) (send o fill tclcolor)))))) )))
 
 
 (define fillpane (make-object dywx-horizontal-pane% *dynamenubar*))
@@ -422,18 +422,18 @@
 (define (update-panel-colors)
   (let ((penclr (send dynapad defaultpen))
         (fillclr (send dynapad defaultfill)))
-  (send color-ellipse pencolor penclr)
-  (send color-ellipse fillcolor fillclr)
-))
+    (send color-ellipse pencolor penclr)
+    (send color-ellipse fillcolor fillclr)
+    ))
 
 ;--- (end) Pen color and Fill color buttons and indicators -------
 
 (define (createlinkdialog l)
   (let
-    ((dialog #f)
-     (looppane #f)
-     (loop? #f)
-     (cancelokpane #f))
+      ((dialog #f)
+       (looppane #f)
+       (loop? #f)
+       (cancelokpane #f))
 
     (define (loopcb cbo e)
       (set! loop? (send cbo get-value)))
@@ -448,26 +448,26 @@
     (send cancelokpane stretchable-height #f)
 
     (make-object button% "Cancel" cancelokpane
-      (lambda (button event)
-        (send dialog show #f)))
+                 (lambda (button event)
+                   (send dialog show #f)))
     (make-object button% "Ok" cancelokpane
-      (lambda (button event)
-        (let loop
-          ((first (car l)) (l l))
-          (cond
-            ((null? (cdr l)) (if loop? (send (car l) link first)))
-        (else
-          (send (car l) link (cadr l))
-          (loop first (cdr l)))))
-        (send dialog show #f)))
+                 (lambda (button event)
+                   (let loop
+                       ((first (car l)) (l l))
+                     (cond
+                       ((null? (cdr l)) (if loop? (send (car l) link first)))
+                       (else
+                        (send (car l) link (cadr l))
+                        (loop first (cdr l)))))
+                   (send dialog show #f)))
     (send dialog show #t)))
 
 (define (deletelinkdialog o)
   (let
-    ((dialog #f)
-     (followpane #f)
-     (follow? #f)
-     (cancelokpane #f))
+      ((dialog #f)
+       (followpane #f)
+       (follow? #f)
+       (cancelokpane #f))
 
     (define (followcb cbo e)
       (set! follow? (send cbo get-value)))
@@ -482,33 +482,33 @@
     (send cancelokpane stretchable-height #f)
 
     (make-object button% "Cancel" cancelokpane
-      (lambda (button event)
-        (send dialog show #f)))
+                 (lambda (button event)
+                   (send dialog show #f)))
     (make-object button% "Ok" cancelokpane
-      (lambda (button event)
-        (let loop
-      ((o o))
-      (let ((next (send o link)))
-        (send o link #f)
-        (if (and follow? next) (loop next))))
-        (send dialog show #f)))
+                 (lambda (button event)
+                   (let loop
+                       ((o o))
+                     (let ((next (send o link)))
+                       (send o link #f)
+                       (if (and follow? next) (loop next))))
+                   (send dialog show #f)))
     (send dialog show #t)))
 
 (define (Resize-Selected-all-pads)
   (for-all-pads (lambda (PAD)
-    (Resize-Selected PAD))))
+                  (Resize-Selected PAD))))
 
 (define (Reshape-Selected-all-pads)
   (for-all-pads (lambda (PAD)
-    (Reshape-Selected PAD))))
+                  (Reshape-Selected PAD))))
 
 (define (Raise-Selected-all-pads)
   (for-all-pads (lambda (PAD)
-    (Raise-Selected PAD))))
+                  (Raise-Selected PAD))))
 
 (define (Lower-Selected-all-pads)
   (for-all-pads (lambda (PAD)
-    (Lower-Selected PAD))))
+                  (Lower-Selected PAD))))
 
 (define resizereshapepane (make-object dywx-horizontal-pane% *dynamenubar*))
 (make-object dywx-button% "Resize" resizereshapepane (lambda (b e) (Resize-Selected-all-pads)))
@@ -555,12 +555,12 @@
 (define (repos-menubar)
   (send *dynamenubar* update-all)
   (let ((xy (bbnw (send currentPAD bbox))))
-         (send *dynamenubar* xy (car xy) (cadr xy)))
-)
+    (send *dynamenubar* xy (car xy) (cadr xy)))
+  )
 
 
 (for-all-pads (lambda (argPAD)
-  (changemode argPAD "Run")))
+                (changemode argPAD "Run")))
 (send *dynamenubar* show #t)
 (update-panel-colors)
 

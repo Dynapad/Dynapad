@@ -128,7 +128,7 @@
         (display subdir-boxes)
         (newline)
         (do ((subdir-boxes subdir-boxes (cdr subdir-boxes)))
-          ((null? subdir-boxes) null)
+            ((null? subdir-boxes) null)
           ;;(set! rect (make-object rect% dynapad (send (car subdir-boxes) coords)))
           ;;(send rect fill "yellow")
           (display "subdir box coords: ")
@@ -144,7 +144,7 @@
         (display (send bbox coords))
         (newline)
         (do ((sorted-file-icons sorted-file-icons (cdr sorted-file-icons)))
-          ((null? sorted-file-icons) null)
+            ((null? sorted-file-icons) null)
           (display "icon coords: ")
           (display (send (car sorted-file-icons) bbox))
           (newline))
@@ -298,7 +298,7 @@
   ;;Remove the slash from the directory path to convert it from an absolute pathname to a relative pathname
   (set! directory (substring directory 1 (string-length directory)))
   (do ((file-list file-list (cdr file-list)))
-    ((null? file-list) null)
+      ((null? file-list) null)
     ;;fix: uncomment
     ;;(system (string-append "cp /home/alvin/dynapad/pad/images/padicon.gif" (build-path->string thumbnails-path directory (car file-list))))
     ;;(system (string-append "./KPreviewer 300 " (build-path->string directory (car file-list))
@@ -341,7 +341,7 @@
 
       ;;append the directory path to all the filenames
       (set! file-list (map (lambda (file)
-                           (build-path->string directory file)) file-list))
+                             (build-path->string directory file)) file-list))
 
       ;;append the directory path to all the subdirectory names
       (set! directories (map (lambda (relative-dir)
@@ -349,12 +349,12 @@
 
       ;;sum the sizes of all the files in the directory
       (do ((file-list file-list (cdr file-list)))
-        ((null? file-list) sum)
+          ((null? file-list) sum)
         (set! sum (+ sum (file-size (car file-list)))))
 
       ;;recursively sum the sizes of all the subdirectories in the directory
       (do ((directories directories (cdr directories)))
-        ((null? directories) sum)
+          ((null? directories) sum)
         (set! sum (dir-size-helper (car directories) sum)))))
 
   (dir-size-helper directory 0))
@@ -368,7 +368,7 @@
         (counter 0))    ;;counts off every three characters of the string
 
     (do ((i (- (string-length number-string) 1) (- i 1)))
-      ((< i 0) new-string)
+        ((< i 0) new-string)
       (set! counter (+ counter 1))
       (set! new-string (string-append (substring number-string i (+ i 1)) new-string))
       (if (and (equal? (modulo counter 3) 0) (not (equal? i 0)))
@@ -385,7 +385,7 @@
     (system (string-append "mkdir -p " thumbnails-path))
     (draw-subdirectories-helper directory "grey" "light grey")
     (send dynapad moveto
-         (list (car save-view) (cadr save-view) (caddr save-view )))))   ;;fix: missing 0.75 factor
+          (list (car save-view) (cadr save-view) (caddr save-view )))))   ;;fix: missing 0.75 factor
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Arguments:   directory: the absolute path of the directory, dir-color: the color of the directory box, ;;
@@ -418,12 +418,12 @@
 
           ;;a list of all the subdirectories in the directory
           (directories (filter
-                              (lambda (item)
-                               (directory-exists?
-                                 (build-path->string directory item )))  ;;build-path->string concatenates paths together
-                               (directory-list->string directory )))
+                        (lambda (item)
+                          (directory-exists?
+                           (build-path->string directory item )))  ;;build-path->string concatenates paths together
+                        (directory-list->string directory )))
 
-                       (image-names (hires-list directory ))    ;;returns a list of the images in the directory
+          (image-names (hires-list directory ))    ;;returns a list of the images in the directory
 
           ;;a list of all the files in all the subdirectories of the directory
           (subdir-files (map (lambda (subdir)
@@ -436,165 +436,165 @@
                                   (and (not (member file image-names)) (not (member file subdir-files))  (not (member file directories))))
                                 (directory-list->string directory))))
 
-          ;;fill in the directory box
-          (send box fill dir-color)
-          (send box pen dir-color)
+    ;;fill in the directory box
+    (send box fill dir-color)
+    (send box pen dir-color)
 
-          ;;create an image object list from the list of image names in the directory
-          (for-each
-           (lambda (image)
-                    (set! ilist (cons
-                                 (make-object image% dynapad
-                                   (build-path->string directory image ))
-                                 ilist )))
-             image-names)
+    ;;create an image object list from the list of image names in the directory
+    (for-each
+     (lambda (image)
+       (set! ilist (cons
+                    (make-object image% dynapad
+                                 (build-path->string directory image ))
+                    ilist )))
+     image-names)
 
-           ;;create a box for each of the subdirectories in the directory
-           (for-each
-            (lambda (dir )
-              (set! subdir-boxes (cons
+    ;;create a box for each of the subdirectories in the directory
+    (for-each
+     (lambda (dir )
+       (set! subdir-boxes (cons
                            (make-object rect% dynapad
-                             (send dynapad bbox ))subdir-boxes )))
-              directories)
+                                        (send dynapad bbox ))subdir-boxes )))
+     directories)
 
-         ;;color all the subdirectory boxes
-         (do ((subdir-boxes subdir-boxes (cdr subdir-boxes)))
-           ((null? subdir-boxes) subdir-boxes)
-           (send (car subdir-boxes) pen subdir-color)
-           (send (car subdir-boxes) fill subdir-color))
+    ;;color all the subdirectory boxes
+    (do ((subdir-boxes subdir-boxes (cdr subdir-boxes)))
+        ((null? subdir-boxes) subdir-boxes)
+      (send (car subdir-boxes) pen subdir-color)
+      (send (car subdir-boxes) fill subdir-color))
 
-         ;;create a thumbnail for each of the non-image files in the directory
-         (create-thumbnails directory non-image-file-list)
+    ;;create a thumbnail for each of the non-image files in the directory
+    (create-thumbnails directory non-image-file-list)
 
-         ;;create an icon for each of the non-image files in the directory
-         (do ((non-image-file-list non-image-file-list (cdr non-image-file-list)))
-           ((null? non-image-file-list) null)
-           (set! file-box (make-object rect% dynapad (send dynapad bbox)))
-           (send file-box fill "#0096ff")
-           (send file-box pen "#0096ff")
-           ;;(set! path-icon-list (append path-icon-list (list (cons (build-path->string directory (car non-image-file-list)) file-box))))
-           (set! file-icons (append file-icons (list file-box))))
+    ;;create an icon for each of the non-image files in the directory
+    (do ((non-image-file-list non-image-file-list (cdr non-image-file-list)))
+        ((null? non-image-file-list) null)
+      (set! file-box (make-object rect% dynapad (send dynapad bbox)))
+      (send file-box fill "#0096ff")
+      (send file-box pen "#0096ff")
+      ;;(set! path-icon-list (append path-icon-list (list (cons (build-path->string directory (car non-image-file-list)) file-box))))
+      (set! file-icons (append file-icons (list file-box))))
 
-         ;;arrange file icons and subdirectory boxes onto the directory box
-         ;;note: text objects are not arranged with the file icons but are attached to the icons after they've been arranged
-         (if (or (not (null? subdir-boxes))
-                 (not (null? ilist))
-                 (not (null? file-icons)))
-             (arrange-in-grid-onto-object-with-spread (append subdir-boxes ilist file-icons) box 1.25))
+    ;;arrange file icons and subdirectory boxes onto the directory box
+    ;;note: text objects are not arranged with the file icons but are attached to the icons after they've been arranged
+    (if (or (not (null? subdir-boxes))
+            (not (null? ilist))
+            (not (null? file-icons)))
+        (arrange-in-grid-onto-object-with-spread (append subdir-boxes ilist file-icons) box 1.25))
 
-         ;;create a shadow for each subdirectory box by drawing a blackened copy of the subdirectory box behind the subdirectory box
-         ;;and slightly offset southeast of the subdirectory box
-         (do ((subdir-boxes subdir-boxes (cdr subdir-boxes)))
-           ((null? subdir-boxes) null)
-           (set! shadow (make-object rect% dynapad))
-           (send shadow fill "black")
-           (send shadow pen "black")
-           (set! coord-list (send (car subdir-boxes) coords))
+    ;;create a shadow for each subdirectory box by drawing a blackened copy of the subdirectory box behind the subdirectory box
+    ;;and slightly offset southeast of the subdirectory box
+    (do ((subdir-boxes subdir-boxes (cdr subdir-boxes)))
+        ((null? subdir-boxes) null)
+      (set! shadow (make-object rect% dynapad))
+      (send shadow fill "black")
+      (send shadow pen "black")
+      (set! coord-list (send (car subdir-boxes) coords))
 
-           ;;the shadow-offset is two percent of the width of the directory box
-           (set! shadow-offset (* (- (third coord-list) (first coord-list)) shadow-offset-fraction))
-           (send shadow coords (list (+ (first coord-list) shadow-offset) (- (second coord-list) shadow-offset)
-                                     (+ (third coord-list) shadow-offset) (- (fourth coord-list) shadow-offset)))
-           (set! subdir-box-group (make-object group% dynapad (list (car subdir-boxes) shadow))))
+      ;;the shadow-offset is two percent of the width of the directory box
+      (set! shadow-offset (* (- (third coord-list) (first coord-list)) shadow-offset-fraction))
+      (send shadow coords (list (+ (first coord-list) shadow-offset) (- (second coord-list) shadow-offset)
+                                (+ (third coord-list) shadow-offset) (- (fourth coord-list) shadow-offset)))
+      (set! subdir-box-group (make-object group% dynapad (list (car subdir-boxes) shadow))))
 
-         ;;fix: uncomment this line
-         ;;(set! icon-text-groups (append icon-text-groups (list (make-object icon% subdir-box-group null null)))))
+    ;;fix: uncomment this line
+    ;;(set! icon-text-groups (append icon-text-groups (list (make-object icon% subdir-box-group null null)))))
 
-         ;;Beneath each non-image file icon, draw various file attributes
-         (do ((non-image-file-list non-image-file-list (cdr non-image-file-list))
-              (file-icons file-icons (cdr file-icons)))
-           ((null? non-image-file-list) null)
+    ;;Beneath each non-image file icon, draw various file attributes
+    (do ((non-image-file-list non-image-file-list (cdr non-image-file-list))
+         (file-icons file-icons (cdr file-icons)))
+        ((null? non-image-file-list) null)
 
-           ;;draw the absolute path of the file
-           (set! icon-bbox (send (car file-icons) bbox))
-           (set! file-path (make-object text% dynapad (build-path->string directory (car non-image-file-list))))
+      ;;draw the absolute path of the file
+      (set! icon-bbox (send (car file-icons) bbox))
+      (set! file-path (make-object text% dynapad (build-path->string directory (car non-image-file-list))))
 
-           ;;the absolute path is scaled to the width of the file icon
-           (set! text-zoomf (/ (bbwidth icon-bbox) (bbwidth (send file-path bbox ))))
-           (send file-path position (list (car (send (car file-icons) bbox ))
-                   (cadr icon-bbox) text-zoomf))
+      ;;the absolute path is scaled to the width of the file icon
+      (set! text-zoomf (/ (bbwidth icon-bbox) (bbwidth (send file-path bbox ))))
+      (send file-path position (list (car (send (car file-icons) bbox ))
+                                     (cadr icon-bbox) text-zoomf))
 
-           ;;draw the last modified time of the file
-           (set! modify-text (make-object text% dynapad (modify-time (build-path->string directory (car non-image-file-list)))))
-           (send modify-text position (list 0 0 text-zoomf))
-           (center-text modify-text (car icon-bbox) (third icon-bbox) (second (send file-path bbox)) text-zoomf)
+      ;;draw the last modified time of the file
+      (set! modify-text (make-object text% dynapad (modify-time (build-path->string directory (car non-image-file-list)))))
+      (send modify-text position (list 0 0 text-zoomf))
+      (center-text modify-text (car icon-bbox) (third icon-bbox) (second (send file-path bbox)) text-zoomf)
 
-           ;;draw the size of the file
-           (set! file-size-text (make-object text% dynapad (string-append (insert-commas (expr->string (file-size (build-path->string directory (car non-image-file-list)))))
-                                                                          " bytes")))
-           (send file-size-text position (list 0 0 text-zoomf))
-           (center-text file-size-text (car icon-bbox) (third icon-bbox) (second (send modify-text bbox)) text-zoomf)
+      ;;draw the size of the file
+      (set! file-size-text (make-object text% dynapad (string-append (insert-commas (expr->string (file-size (build-path->string directory (car non-image-file-list)))))
+                                                                     " bytes")))
+      (send file-size-text position (list 0 0 text-zoomf))
+      (center-text file-size-text (car icon-bbox) (third icon-bbox) (second (send modify-text bbox)) text-zoomf)
 
 
-           (set! icon-text-groups (append icon-text-groups (list (make-object icon% (car file-icons) file-path (list file-size-text modify-text)))))
-           (set! file-paths (append file-paths (list file-path))))
+      (set! icon-text-groups (append icon-text-groups (list (make-object icon% (car file-icons) file-path (list file-size-text modify-text)))))
+      (set! file-paths (append file-paths (list file-path))))
 
-          ;;Beneath each image icon, draw various file attributes
-          (do ((image-names image-names (cdr image-names))
-               (ilist ilist (cdr ilist)))
-            ((null? image-names) null)
+    ;;Beneath each image icon, draw various file attributes
+    (do ((image-names image-names (cdr image-names))
+         (ilist ilist (cdr ilist)))
+        ((null? image-names) null)
 
-            ;;draw the absolute path of the file
-            (set! file-path (make-object text% dynapad (send (car ilist) hirespath)))
-            (set! icon-bbox (send (car ilist) bbox))
-            (set! text-zoomf (/ (bbwidth icon-bbox) (bbwidth (send file-path bbox ))))
-            (send file-path position (list (car (send (car ilist) bbox ))
-                   (cadr (send (car ilist) bbox ))
-                   text-zoomf))
+      ;;draw the absolute path of the file
+      (set! file-path (make-object text% dynapad (send (car ilist) hirespath)))
+      (set! icon-bbox (send (car ilist) bbox))
+      (set! text-zoomf (/ (bbwidth icon-bbox) (bbwidth (send file-path bbox ))))
+      (send file-path position (list (car (send (car ilist) bbox ))
+                                     (cadr (send (car ilist) bbox ))
+                                     text-zoomf))
 
-            ;;draw the last modified time of the file
-            (set! modify-text (make-object text% dynapad (modify-time (send (car ilist) hirespath))))
-            (send modify-text position (list 0 0 text-zoomf))
-            (center-text modify-text (car icon-bbox) (third icon-bbox) (second (send file-path bbox)) text-zoomf)
+      ;;draw the last modified time of the file
+      (set! modify-text (make-object text% dynapad (modify-time (send (car ilist) hirespath))))
+      (send modify-text position (list 0 0 text-zoomf))
+      (center-text modify-text (car icon-bbox) (third icon-bbox) (second (send file-path bbox)) text-zoomf)
 
-            ;;draw the size of the file
-            (set! file-size-text (make-object text% dynapad (string-append (insert-commas (expr->string (file-size (send (car ilist) hirespath))))
-                                                                          " bytes")))
-            (send file-size-text position (list 0 0 text-zoomf))
-            (center-text file-size-text (car icon-bbox) (third icon-bbox) (second (send modify-text bbox)) text-zoomf)
+      ;;draw the size of the file
+      (set! file-size-text (make-object text% dynapad (string-append (insert-commas (expr->string (file-size (send (car ilist) hirespath))))
+                                                                     " bytes")))
+      (send file-size-text position (list 0 0 text-zoomf))
+      (center-text file-size-text (car icon-bbox) (third icon-bbox) (second (send modify-text bbox)) text-zoomf)
 
-            (set! file-icons (append file-icons (list (car ilist))))
-            (set! icon-text-groups (append icon-text-groups (list (make-object icon% (car ilist) file-path (list file-size-text modify-text)))))
-            ;;(set! path-icon-list (append path-icon-list (list (cons (send (car ilist) hirespath) (car ilist)))))
-            (set! file-paths (append file-paths (list file-path))))
+      (set! file-icons (append file-icons (list (car ilist))))
+      (set! icon-text-groups (append icon-text-groups (list (make-object icon% (car ilist) file-path (list file-size-text modify-text)))))
+      ;;(set! path-icon-list (append path-icon-list (list (cons (send (car ilist) hirespath) (car ilist)))))
+      (set! file-paths (append file-paths (list file-path))))
 
-         ;;position the name of the path starting at the bottom left of the directory box below its shadow and
-         ;;scale the width of the path so that its length is equal to the width of the directory box
-         (set! coord-list (send box bbox))
-         (set! shadow-offset (* (- (third coord-list) (first coord-list)) shadow-offset-fraction))
-         (set! text-zoomf (/ (bbwidth (send box bbox ))(bbwidth (send path bbox ))))
-         (send path position
+    ;;position the name of the path starting at the bottom left of the directory box below its shadow and
+    ;;scale the width of the path so that its length is equal to the width of the directory box
+    (set! coord-list (send box bbox))
+    (set! shadow-offset (* (- (third coord-list) (first coord-list)) shadow-offset-fraction))
+    (set! text-zoomf (/ (bbwidth (send box bbox ))(bbwidth (send path bbox ))))
+    (send path position
           (list
-               (car (send box bbox))
-               (- (cadr (send box bbox)) shadow-offset)
-               (/ (bbwidth (send box bbox ))(bbwidth (send path bbox )))))
-         (set! file-paths (append file-paths (list path)))
+           (car (send box bbox))
+           (- (cadr (send box bbox)) shadow-offset)
+           (/ (bbwidth (send box bbox ))(bbwidth (send path bbox )))))
+    (set! file-paths (append file-paths (list path)))
 
-         ;;draw the last modified time of the directory
-         (set! modify-text (make-object text% dynapad (modify-time directory)))
-         (send modify-text position (list 0 0 text-zoomf))
-         (center-text modify-text (car coord-list) (third coord-list) (second (send path bbox)) text-zoomf)
+    ;;draw the last modified time of the directory
+    (set! modify-text (make-object text% dynapad (modify-time directory)))
+    (send modify-text position (list 0 0 text-zoomf))
+    (center-text modify-text (car coord-list) (third coord-list) (second (send path bbox)) text-zoomf)
 
-         ;;draw the size of the directory
-         (set! file-size-text (make-object text% dynapad (string-append (insert-commas (expr->string (directory-size directory))) " bytes")))
-         (send file-size-text position (list 0 0 text-zoomf))
-         (center-text file-size-text (car coord-list) (third coord-list) (second (send modify-text bbox)) text-zoomf)
+    ;;draw the size of the directory
+    (set! file-size-text (make-object text% dynapad (string-append (insert-commas (expr->string (directory-size directory))) " bytes")))
+    (send file-size-text position (list 0 0 text-zoomf))
+    (center-text file-size-text (car coord-list) (third coord-list) (second (send modify-text bbox)) text-zoomf)
 
-         ;;fix: uncommenting these lines of code causes all file icons to disappear!
-         ;;(set! icon-text-groups (append icon-text-groups (list (make-object icon% box path (list modify-text)))))
+    ;;fix: uncommenting these lines of code causes all file icons to disappear!
+    ;;(set! icon-text-groups (append icon-text-groups (list (make-object icon% box path (list modify-text)))))
 
-         ;;(set! dir-icon (make-object icon% box path (list file-size-text modify-text)))
-         (set! file-paths (append file-paths (list path file-size-text modify-text)))
+    ;;(set! dir-icon (make-object icon% box path (list file-size-text modify-text)))
+    (set! file-paths (append file-paths (list path file-size-text modify-text)))
 
-         ;;add the directory object for this directory to the directory object list
-         (set! dir-obj-list (append dir-obj-list (list (make-object dir-object% directory directories subdir-boxes box file-paths
-                                                         icon-text-groups dir-icon dir-color))))
+    ;;add the directory object for this directory to the directory object list
+    (set! dir-obj-list (append dir-obj-list (list (make-object dir-object% directory directories subdir-boxes box file-paths
+                                                               icon-text-groups dir-icon dir-color))))
 
-          ;;recursively draw all the subdirectories
-          (for-each (lambda (dir box )
-                      (send box center 1 #f .5 .5 1.0)   ;;center the view on a subdirectory
-                      (draw-subdirectories-helper (build-path->string directory dir)  (alternate-color dir-color) (alternate-color subdir-color) ))
-                    directories subdir-boxes)
+    ;;recursively draw all the subdirectories
+    (for-each (lambda (dir box )
+                (send box center 1 #f .5 .5 1.0)   ;;center the view on a subdirectory
+                (draw-subdirectories-helper (build-path->string directory dir)  (alternate-color dir-color) (alternate-color subdir-color) ))
+              directories subdir-boxes)
     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -615,13 +615,13 @@
 ;; Postcondition: Returns the directory object with name dir-name from dir-obj-list               ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define (find-dir-obj dir-name dir-obj-list)
-   (if (null? dir-obj-list)
-       null
-       ;;Return the directory object if it's at the head of the directory object list.
-       ;;Otherwise go to the next element
-       (if (equal? dir-name (send (car dir-obj-list) get-dir-name))
-           (car dir-obj-list)
-           (find-dir-obj dir-name (cdr dir-obj-list)))))
+  (if (null? dir-obj-list)
+      null
+      ;;Return the directory object if it's at the head of the directory object list.
+      ;;Otherwise go to the next element
+      (if (equal? dir-name (send (car dir-obj-list) get-dir-name))
+          (car dir-obj-list)
+          (find-dir-obj dir-name (cdr dir-obj-list)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Arguments:   The absolute path of the file concatenated with the name of the file, ;;
@@ -633,32 +633,32 @@
          (dir-obj null)
          (file-paths null))
 
-         ;;remove the last slash from the directory path
-         (set! directory (substring directory 0 (- (string-length directory) 1)))
+    ;;remove the last slash from the directory path
+    (set! directory (substring directory 0 (- (string-length directory) 1)))
 
-         (set! dir-obj (find-dir-obj directory dir-obj-list))
+    (set! dir-obj (find-dir-obj directory dir-obj-list))
 
-         ;;find the icon to delete
-         (set! icon-to-delete (find-file-icon file-path dir-obj))
+    ;;find the icon to delete
+    (set! icon-to-delete (find-file-icon file-path dir-obj))
 
-         (if (null? icon-to-delete)
-             (display "Error: unable to delete file icon \n")
-             (begin
-             (send icon-to-delete delete)))
+    (if (null? icon-to-delete)
+        (display "Error: unable to delete file icon \n")
+        (begin
+          (send icon-to-delete delete)))
 
-         ;;remove the file icon from the set of file icons in the directory object
-         (send dir-obj set-icon-text-groups (remove icon-to-delete (send dir-obj get-icon-text-groups) equal?))
+    ;;remove the file icon from the set of file icons in the directory object
+    (send dir-obj set-icon-text-groups (remove icon-to-delete (send dir-obj get-icon-text-groups) equal?))
 
-         #|
-         (set! file-paths (send dir-obj get-text-objs))
+    #|
+    (set! file-paths (send dir-obj get-text-objs))
 
-         ;;search the list of file paths in the directory object and find the right file path
-         ;;text object to delete
-         (do ((file-paths file-paths (cdr file-paths)))
-             ((null? file-paths) null)
-             (if (equal? file-path (send (car file-paths) text))
-                 (send (car file-paths) delete)))
-         |#
+    ;;search the list of file paths in the directory object and find the right file path
+    ;;text object to delete
+    (do ((file-paths file-paths (cdr file-paths)))
+    ((null? file-paths) null)
+    (if (equal? file-path (send (car file-paths) text))
+    (send (car file-paths) delete)))
+    |#
     ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -682,14 +682,14 @@
           ;;delete all the file icons in the directory
           (set! file-icons (send dir-obj get-icon-text-groups))
           (do ((file-icons file-icons (cdr file-icons)))
-            ((null? file-icons) null)
+              ((null? file-icons) null)
             (send (car file-icons) delete))
 
           ;;delete all the subdirectory boxes
           ;;fix: this doesn't work
           (set! subdir-boxes (send dir-obj get-subdir-boxes))
           (do ((subdir-boxes subdir-boxes (cdr subdir-boxes)))
-            ((null? subdir-boxes) null)
+              ((null? subdir-boxes) null)
             (display "subdir coords: ")
             (display (send (car subdir-boxes) coords))
             (newline)
@@ -711,7 +711,7 @@
             (send box2 fill erase-color)
             (set! shadow-offset (send dir-obj get-shadow-offset))
             (send box2 coords (list (+ (first coord-list) shadow-offset) (- (second coord-list) shadow-offset)
-                                     (+ (third coord-list) shadow-offset) (- (fourth coord-list) shadow-offset))))
+                                    (+ (third coord-list) shadow-offset) (- (fourth coord-list) shadow-offset))))
 
           (send (send dir-obj get-bbox) delete)  ;;fix: this doesn't work
           ;;(send (send dir-obj get-dir-icon) delete)  ;;fix: uncomment when dir-icon is initialized
@@ -719,7 +719,7 @@
           ;;delete all the file path text objects
           (set! file-paths (send dir-obj get-text-objs))
           (do ((file-paths file-paths (cdr file-paths)))
-            ((null? file-paths) null)
+              ((null? file-paths) null)
             (send (car file-paths) delete))
 
           ;;remove the directory object corresponding to the directory from the dir-obj-list
@@ -728,7 +728,7 @@
           ;;recursively delete all subdirectories
           (set! subdirectories (send dir-obj get-subdirs))
           (do ((subdirectories subdirectories (cdr subdirectories)))
-            ((null? subdirectories) null)
+              ((null? subdirectories) null)
             (delete-directory-icon (build-path->string directory (car subdirectories))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -740,11 +740,11 @@
          (bbox null))
     (if (not (null? dir-obj))
         (begin
-        ;;delete the directory and redraw it to include any new changes in the directory
-        (set! bbox (make-object rect% dynapad (send (send dir-obj get-bbox) coords)))
-        (delete-directory-icon directory)
-        (send bbox center 1 #f .5 .5 1.0)    ;;center the view on the directory box
-        (draw-subdirectories directory)))))
+          ;;delete the directory and redraw it to include any new changes in the directory
+          (set! bbox (make-object rect% dynapad (send (send dir-obj get-bbox) coords)))
+          (delete-directory-icon directory)
+          (send bbox center 1 #f .5 .5 1.0)    ;;center the view on the directory box
+          (draw-subdirectories directory)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Arguments:     Two bounding boxes                                                  ;;
@@ -763,13 +763,13 @@
 (define (update-file-browser directory)
   (let ((objects (send dynapad objects)))
     (do ((objects objects (cdr objects)))
-      ((null? objects) null)
+        ((null? objects) null)
       (send (car objects) delete))
     (draw-subdirectories directory)))
 
 (define (display-times path-icon-list)
   (do ((path-icon-list path-icon-list (cdr path-icon-list)))
-    ((null? path-icon-list) null)
+      ((null? path-icon-list) null)
     (display (file-or-directory-modify-seconds (car (car path-icon-list))))
     (newline))
   (newline)
@@ -777,49 +777,49 @@
 
 ;;When the mouse button 1 is double clicked on a file or directory icon, the file or directory icon is centered in the view
 (send dynapad bind "<Run-Shift-ButtonPress-1>"
- (lambda(dynapad e)
-    (let
-      ((x (event-x e))
-       (y (event-y e))
-       (dir-box null)
-       (boxes-clicked null)
-       (smallest-box-clicked null)
-       (file-icons null)
-       (icon-box null))
+      (lambda(dynapad e)
+        (let
+            ((x (event-x e))
+             (y (event-y e))
+             (dir-box null)
+             (boxes-clicked null)
+             (smallest-box-clicked null)
+             (file-icons null)
+             (icon-box null))
 
-      (send dynapad set!-prev_x x)
-      (send dynapad set!-prev_y y)
+          (send dynapad set!-prev_x x)
+          (send dynapad set!-prev_y y)
 
-      ;;Find all directory boxes that were clicked and add them to the boxes-clicked list
-      (do ((dir-obj-list dir-obj-list (cdr dir-obj-list)))
-        ((null? dir-obj-list) null)
-        (set! dir-box (send (car dir-obj-list) get-bbox))
-        (set! file-icons (send (car dir-obj-list) get-file-icons))
+          ;;Find all directory boxes that were clicked and add them to the boxes-clicked list
+          (do ((dir-obj-list dir-obj-list (cdr dir-obj-list)))
+              ((null? dir-obj-list) null)
+            (set! dir-box (send (car dir-obj-list) get-bbox))
+            (set! file-icons (send (car dir-obj-list) get-file-icons))
 
-        ;;Test if any of the file icons within the directory box were clicked
-        (do ((file-icons file-icons (cdr file-icons)))
-          ((null? file-icons) null)
-          (set! icon-box (send (car file-icons) bbox))
-          (if (bbenclosed x y icon-box)
-            (set! boxes-clicked (append boxes-clicked (list (car file-icons))))))
+            ;;Test if any of the file icons within the directory box were clicked
+            (do ((file-icons file-icons (cdr file-icons)))
+                ((null? file-icons) null)
+              (set! icon-box (send (car file-icons) bbox))
+              (if (bbenclosed x y icon-box)
+                  (set! boxes-clicked (append boxes-clicked (list (car file-icons))))))
 
-        ;;Check if the position of the mouse click is enclosed by the bounding box of the directory box
-        (if (bbenclosed x y (send dir-box bbox))
-            (set! boxes-clicked (append boxes-clicked (list dir-box)))))
+            ;;Check if the position of the mouse click is enclosed by the bounding box of the directory box
+            (if (bbenclosed x y (send dir-box bbox))
+                (set! boxes-clicked (append boxes-clicked (list dir-box)))))
 
-      ;;Find the smallest directory box that was clicked
-      (do ((boxes-clicked boxes-clicked (cdr boxes-clicked)))
-        ((null? boxes-clicked) null)
-        (if (or (null? smallest-box-clicked) (bbox-smaller-than? (send (car boxes-clicked) bbox) (send smallest-box-clicked bbox)))
-            (set! smallest-box-clicked (car boxes-clicked))))
+          ;;Find the smallest directory box that was clicked
+          (do ((boxes-clicked boxes-clicked (cdr boxes-clicked)))
+              ((null? boxes-clicked) null)
+            (if (or (null? smallest-box-clicked) (bbox-smaller-than? (send (car boxes-clicked) bbox) (send smallest-box-clicked bbox)))
+                (set! smallest-box-clicked (car boxes-clicked))))
 
-      ;;Center the view on the smallest box that was clicked
-      (if (not (null? smallest-box-clicked))
-          (begin
-            ;;(send transparent-box coords (list 0 0 0 0))
-            ;;(send transparent-box delete)
-          (send dynapad center smallest-box-clicked 2000 #f)))
-      )))
+          ;;Center the view on the smallest box that was clicked
+          (if (not (null? smallest-box-clicked))
+              (begin
+                ;;(send transparent-box coords (list 0 0 0 0))
+                ;;(send transparent-box delete)
+                (send dynapad center smallest-box-clicked 2000 #f)))
+          )))
 
 ;;Converts a floating point number to an integer
 (define (float->int x)
@@ -849,26 +849,26 @@
 (send time-text position (list (+ (first time-bbox) text-side-margin) (fourth time-bbox) time-zoomf))
 (define sort-menu null)
 ;;(make-object group% dynapad (list name-rect size-rect time-rect
-                                    ;;name-sort-text size-text time-text)))
+;;name-sort-text size-text time-text)))
 
 (send dynapad bind "<Run-Shift-ButtonPress-2>"
-  (lambda(dynapad e)
-    (let*
-      ((x (event-x e))
-       (y (event-y e)))
-       (display x)
-       (display " ")
-       (display y)
-       (newline)
-       (send name-rect slide x y)
-       (send size-rect slide x y)
-       (send time-rect slide x y)
-       (send name-text slide x y)
-       (send size-text slide x y)
-       (send time-text slide x y)
-       (set! sort-menu (make-object group% dynapad (list name-rect size-rect time-rect
-                                                    name-text size-text time-text)))
-       )))
+      (lambda(dynapad e)
+        (let*
+            ((x (event-x e))
+             (y (event-y e)))
+          (display x)
+          (display " ")
+          (display y)
+          (newline)
+          (send name-rect slide x y)
+          (send size-rect slide x y)
+          (send time-rect slide x y)
+          (send name-text slide x y)
+          (send size-text slide x y)
+          (send time-text slide x y)
+          (set! sort-menu (make-object group% dynapad (list name-rect size-rect time-rect
+                                                            name-text size-text time-text)))
+          )))
 
 |#
 
@@ -876,70 +876,70 @@
 
 (define sort-pane (make-object vertical-pane% frame))
 (make-object button% "size sort" sort-pane
-  (lambda(button event)
-    (display button)
-    (display event)
-    (newline)))
+             (lambda(button event)
+               (display button)
+               (display event)
+               (newline)))
 (make-object button% "name sort" sort-pane
-  (lambda(button event)
-    (display button)
-    (display event)
-    (newline)))
+             (lambda(button event)
+               (display button)
+               (display event)
+               (newline)))
 (make-object button% "time sort" sort-pane
-  (lambda(button event)
-    (display button)
-    (display event)
-    (newline)))
+             (lambda(button event)
+               (display button)
+               (display event)
+               (newline)))
 
 ;;(send frame show #t)
 
 (send dynapad bind "<Run-Shift-ButtonPress-2>"
-  (lambda(dynapad e)
-    (let*
-      ((x (float->int (event-x e)))
-       (y (float->int (event-y e))))
-      (set! frame (make-object frame% "" #f #f #f x y))
-      (send frame show #t))))
+      (lambda(dynapad e)
+        (let*
+            ((x (float->int (event-x e)))
+             (y (float->int (event-y e))))
+          (set! frame (make-object frame% "" #f #f #f x y))
+          (send frame show #t))))
 
 (send dynapad bind "<Run-Shift-ButtonPress-3>"
-  (lambda(dynapad e)
-    (let*
-      ((x (event-x e))
-       (y (event-y e))
-       (dir-box null)
-       (smallest-dir-clicked null)
-       (smallest-box-clicked null)
-       (dirs-clicked null)
-       (boxes-clicked null))
+      (lambda(dynapad e)
+        (let*
+            ((x (event-x e))
+             (y (event-y e))
+             (dir-box null)
+             (smallest-dir-clicked null)
+             (smallest-box-clicked null)
+             (dirs-clicked null)
+             (boxes-clicked null))
 
-      (display "shift click")
-      (newline)
-      (send dynapad set!-prev_x x)
-      (send dynapad set!-prev_y  y)
-      ;;Find all directory boxes that were clicked and add them to the boxes-clicked list
-      (do ((dir-obj-list dir-obj-list (cdr dir-obj-list)))
-        ((null? dir-obj-list) null)
-        (set! dir-box (send (car dir-obj-list) get-bbox))
+          (display "shift click")
+          (newline)
+          (send dynapad set!-prev_x x)
+          (send dynapad set!-prev_y  y)
+          ;;Find all directory boxes that were clicked and add them to the boxes-clicked list
+          (do ((dir-obj-list dir-obj-list (cdr dir-obj-list)))
+              ((null? dir-obj-list) null)
+            (set! dir-box (send (car dir-obj-list) get-bbox))
 
-        ;;Check if the position of the mouse click is enclosed by the bounding box of the directory box
-        (if (bbenclosed x y (send dir-box bbox))
-            (begin
-            (set! boxes-clicked (append boxes-clicked (list dir-box)))
-            (set! dirs-clicked (append dirs-clicked (list (car dir-obj-list))))))
+            ;;Check if the position of the mouse click is enclosed by the bounding box of the directory box
+            (if (bbenclosed x y (send dir-box bbox))
+                (begin
+                  (set! boxes-clicked (append boxes-clicked (list dir-box)))
+                  (set! dirs-clicked (append dirs-clicked (list (car dir-obj-list))))))
 
-      ;;Find the smallest directory box that was clicked
-      (do ((boxes-clicked boxes-clicked (cdr boxes-clicked))
-           (dirs-clicked dirs-clicked (cdr dirs-clicked)))
-        ((null? boxes-clicked) null)
-        (if (or (null? smallest-box-clicked) (bbox-smaller-than? (send (car boxes-clicked) bbox) (send smallest-box-clicked bbox)))
-            (begin
-            (set! smallest-box-clicked (car boxes-clicked))
-            (set! smallest-dir-clicked (car dirs-clicked)))))
+            ;;Find the smallest directory box that was clicked
+            (do ((boxes-clicked boxes-clicked (cdr boxes-clicked))
+                 (dirs-clicked dirs-clicked (cdr dirs-clicked)))
+                ((null? boxes-clicked) null)
+              (if (or (null? smallest-box-clicked) (bbox-smaller-than? (send (car boxes-clicked) bbox) (send smallest-box-clicked bbox)))
+                  (begin
+                    (set! smallest-box-clicked (car boxes-clicked))
+                    (set! smallest-dir-clicked (car dirs-clicked)))))
 
-      ;;sort the files in the directory by the time they were last modified
-      (if (not (null? smallest-dir-clicked))
-            (send smallest-dir-clicked arrange-icons-by-time))
-      ))))
+            ;;sort the files in the directory by the time they were last modified
+            (if (not (null? smallest-dir-clicked))
+                (send smallest-dir-clicked arrange-icons-by-time))
+            ))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Arguments:     x and y coordinates of mouse click                                       ;;
@@ -951,34 +951,34 @@
         (file-icons null)
         (icon-box null))
 
-      ;;Iterate through all the directory boxes and all the file icons within each directory box
-      (do ((dir-obj-list dir-obj-list (cdr dir-obj-list)))
+    ;;Iterate through all the directory boxes and all the file icons within each directory box
+    (do ((dir-obj-list dir-obj-list (cdr dir-obj-list)))
         ;;((and (null? dir-obj-list) (not (null? icon-clicked))) null)
         ((null? dir-obj-list) null)
-        (set! file-icons (send (car dir-obj-list) get-icon-text-groups))
+      (set! file-icons (send (car dir-obj-list) get-icon-text-groups))
 
-        ;;Test if any of the file icons within the directory box were clicked
-        (do ((file-icons file-icons (cdr file-icons)))
+      ;;Test if any of the file icons within the directory box were clicked
+      (do ((file-icons file-icons (cdr file-icons)))
           ;;((and (null? file-icons) (not (null? icon-clicked))) null)
           ((null? file-icons) null)
-          (set! icon-box (send (car file-icons) bbox))
-          (if (bbenclosed x y icon-box)
-              (set! icon-clicked (car file-icons)))))
+        (set! icon-box (send (car file-icons) bbox))
+        (if (bbenclosed x y icon-box)
+            (set! icon-clicked (car file-icons)))))
 
     icon-clicked))
 
 ;;When the first mouse button is double clicked on a file, the appropriate application is loaded with the file that
 ;;was double clicked
 (send dynapad bind "<Run-Double-ButtonPress-1>"
-  (lambda(dynapad e)
-    (let*
-      ((x (event-x e))
-       (y (event-y e))
-       (icon (icon-clicked x y)))
+      (lambda(dynapad e)
+        (let*
+            ((x (event-x e))
+             (y (event-y e))
+             (icon (icon-clicked x y)))
 
-      ;;If an icon was double clicked, open the file associated with the icon
-      (if (not (null? icon))
-          (open-app-with-file (send (send icon get-file-path) text))))))
+          ;;If an icon was double clicked, open the file associated with the icon
+          (if (not (null? icon))
+              (open-app-with-file (send (send icon get-file-path) text))))))
 
 ;;(draw-subdirectories "/home/alvin/backups")
 ;;(draw-subdirectories "/home/alvin/dynapad/pad")
@@ -998,19 +998,19 @@
 
 #|
 DISCARDED CODE:
- (display "text-width: ")
-    (display text-width)
-    (newline)
-    (display "boundary-width: ")
-    (display boundary-width)
-    (newline)
-    (display "left-x: ")
-    (display left-x)
-    (newline)
-    (display "start-x: ")
-    (display start-x)
-    (newline)
-    (newline)
+(display "text-width: ")
+(display text-width)
+(newline)
+(display "boundary-width: ")
+(display boundary-width)
+(newline)
+(display "left-x: ")
+(display left-x)
+(newline)
+(display "start-x: ")
+(display start-x)
+(newline)
+(newline)
 
 TEST NOTES:
 delete-file seems to work
@@ -1074,15 +1074,15 @@ cvs update
 make
 
 DISCARDED CODE:
-          (display "file-icons: ")
-          (display file-icons)
-          (newline)
-          (display "null: ")
-          (display (null? file-icons))
-          (newline)
-          (display "condition: ")
-          (display (and (null? file-icons) (not (null? icon-clicked))))
-          (newline)
+(display "file-icons: ")
+(display file-icons)
+(newline)
+(display "null: ")
+(display (null? file-icons))
+(newline)
+(display "condition: ")
+(display (and (null? file-icons) (not (null? icon-clicked))))
+(newline)
 
 SORT BUG:
 

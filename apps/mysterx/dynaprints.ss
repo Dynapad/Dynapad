@@ -30,8 +30,8 @@
     (set! url-dx (+ url-dx 10))
     (set! url-dy (+ url-dy 10))
     (send new bind "<Run-Double-ButtonPress>"
-      (lambda(o e)
-        (send (event-obj e) goto)))
+          (lambda(o e)
+            (send (event-obj e) goto)))
     (set! urls (append urls (list new)))))
 
 (com-register-event-handler ie "DocumentComplete" ie-document-complete)

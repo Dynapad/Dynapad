@@ -15,22 +15,22 @@
 #|
 (define (bindText argPAD)
   (let ((enter-text-fn
-    (lambda (eventPAD e) (set! currentPAD eventPAD)
-      (let*
-        ((x (event-x e))
-         (y (event-y e))
-         (pos (list x y (/ 1.0 (send eventPAD getzoom))))
-         (lst (reverse (send eventPAD find 'overlapping (list x y x y))))
-         (obj (if (null? lst) #f (car lst))))
+         (lambda (eventPAD e) (set! currentPAD eventPAD)
+                 (let*
+                     ((x (event-x e))
+                      (y (event-y e))
+                      (pos (list x y (/ 1.0 (send eventPAD getzoom))))
+                      (lst (reverse (send eventPAD find 'overlapping (list x y x y))))
+                      (obj (if (null? lst) #f (car lst))))
 
-        (cond
-          ((is-a? obj text%)
-            (send obj focus)
-            (text-move-point-to-xy obj x y))
-          (else
-        (changemode eventPAD "EditText")
-            (set! obj (make-object text% eventPAD "" pos))
-            (send obj focus)))))))
+                   (cond
+                     ((is-a? obj text%)
+                      (send obj focus)
+                      (text-move-point-to-xy obj x y))
+                     (else
+                      (changemode eventPAD "EditText")
+                      (set! obj (make-object text% eventPAD "" pos))
+                      (send obj focus)))))))
     #f
     ;(send argPAD bind "<DrawText-ButtonPress-1>" enter-text-fn)
     ))
@@ -55,106 +55,106 @@
 (define (start-text-event eventPAD e)
   (set! currentPAD eventPAD)
   (let* ((x (event-x e))
-     (y (event-y e))
+         (y (event-y e))
          (pos (list x y (/ 1.0 (send eventPAD getzoom))))
-     (objs-here (reverse (send eventPAD find 'overlapping (list x y x y))))
-     (target (if (null? objs-here) #f (car objs-here))))
+         (objs-here (reverse (send eventPAD find 'overlapping (list x y x y))))
+         (target (if (null? objs-here) #f (car objs-here))))
     (unless (and target
-         (is-a? target text%))
-    ; make new text:
-        (set! target (make-object text% eventPAD "" pos)))
-     ;   (set! Draw-object target))
+                 (is-a? target text%))
+      ; make new text:
+      (set! target (make-object text% eventPAD "" pos)))
+    ;   (set! Draw-object target))
     (edit-text-at-xy eventPAD target x y)))
 
 (define (bindTextMode argPAD)
   (send argPAD bind "<DrawText-ButtonPress-1>" start-text-event)
   (send argPAD bind "<DrawText-KeyPress-Escape>" esc-shape-event)
   (send argPAD bind "<EditText-ButtonPress-1>"     esc-shape-event)
-)
+  )
 
 (define (add-Text-Bindings o)
   (send o bind "<Double-ButtonPress-1>"
-    (lambda (eventPAD e)
-      (edit-text-at-xy eventPAD o (event-x e) (event-y e))
-      #f
-    ))
+        (lambda (eventPAD e)
+          (edit-text-at-xy eventPAD o (event-x e) (event-y e))
+          #f
+          ))
 
   (send o bind "<EditText-KeyPress>"
-    (lambda (eventPAD e)
-      (let ((str (event-key e)))
-      (when (> (string-length str) 0)
-    (send o insert str)))))
+        (lambda (eventPAD e)
+          (let ((str (event-key e)))
+            (when (> (string-length str) 0)
+              (send o insert str)))))
 
   (send o bind "<EditText-KeyPress-Escape>"
-    esc-shape-event)
+        esc-shape-event)
 
   (send o bind "<EditText-KeyPress-Right>"
-    (lambda (eventPAD e) (send (event-obj e) forward) #f))
+        (lambda (eventPAD e) (send (event-obj e) forward) #f))
 
   (send o bind "<EditText-Control-KeyPress-f>"
-    (lambda (eventPAD e) (send (event-obj e) forward) #f))
+        (lambda (eventPAD e) (send (event-obj e) forward) #f))
 
   (send o bind "<EditText-KeyPress-Left>"
-    (lambda (eventPAD e) (send (event-obj e) backward) #f))
+        (lambda (eventPAD e) (send (event-obj e) backward) #f))
 
   (send o bind "<EditText-Control-KeyPress-b>"
-    (lambda (eventPAD e) (send (event-obj e) backward) #f))
+        (lambda (eventPAD e) (send (event-obj e) backward) #f))
 
   (send o bind "<EditText-KeyPress-Down>"
-    (lambda (eventPAD e) (send (event-obj e) next) #f))
+        (lambda (eventPAD e) (send (event-obj e) next) #f))
 
   (send o bind "<EditText-Control-KeyPress-n>"
-    (lambda (eventPAD e) (send (event-obj e) next) #f))
+        (lambda (eventPAD e) (send (event-obj e) next) #f))
 
   (send o bind "<EditText-KeyPress-Up>"
-    (lambda (eventPAD e) (send (event-obj e) previous) #f))
+        (lambda (eventPAD e) (send (event-obj e) previous) #f))
 
   (send o bind "<EditText-Control-KeyPress-p>"
-    (lambda (eventPAD e) (send (event-obj e) previous) #f))
+        (lambda (eventPAD e) (send (event-obj e) previous) #f))
 
   (send o bind "<EditText-KeyPress-BackSpace>"
-    (lambda (eventPAD e) (send (event-obj e) delete-backward)))
+        (lambda (eventPAD e) (send (event-obj e) delete-backward)))
 
   (send o bind "<EditText-KeyPress-Delete>"
-    (lambda (eventPAD e) (send (event-obj e) delete-forward)))
+        (lambda (eventPAD e) (send (event-obj e) delete-forward)))
 
   (send o bind "<EditText-Control-KeyPress-d>"
-    (lambda (eventPAD e) (send (event-obj e) delete-forward)))
+        (lambda (eventPAD e) (send (event-obj e) delete-forward)))
 
   (send o bind "<EditText-Control-KeyPress-e>"
-    (lambda (eventPAD e)
-      (send (event-obj e) setpoint "point lineend")
-      #f))
+        (lambda (eventPAD e)
+          (send (event-obj e) setpoint "point lineend")
+          #f))
 
   (send o bind "<EditText-Control-KeyPress-a>"
-    (lambda (eventPAD e)
-      (send (event-obj e) setpoint "point linestart")
-      #f))
+        (lambda (eventPAD e)
+          (send (event-obj e) setpoint "point linestart")
+          #f))
 
   (send o bind "<EditText-Alt-KeyPress-f>"
-    (lambda (eventPAD e)
-      (send (event-obj e) setpoint "point + 1 char wordend")
-      #f))
+        (lambda (eventPAD e)
+          (send (event-obj e) setpoint "point + 1 char wordend")
+          #f))
 
   (send o bind "<EditText-Alt-KeyPress-b>"
-    (lambda (eventPAD e)
-      (send (event-obj e) setpoint "point - 1 char wordstart")
-      #f))
+        (lambda (eventPAD e)
+          (send (event-obj e) setpoint "point - 1 char wordstart")
+          #f))
 
 
   (send o bind "<EditText-ButtonPress-1>"
-   (lambda (eventPAD e)
-     (let ((x (event-x e))
-       (y (event-y e)))
-       (text-move-point-to-xy o x y)
-       #f)))
-;       (if (bbenclosedoron x y (send (event-obj e) bbox))
-;       (text-move-point-to-xy o x y)
-;       (begin
-;         (say "outside")
-;         (send eventPAD focus))))
-;     #f))
+        (lambda (eventPAD e)
+          (let ((x (event-x e))
+                (y (event-y e)))
+            (text-move-point-to-xy o x y)
+            #f)))
+  ;       (if (bbenclosedoron x y (send (event-obj e) bbox))
+  ;       (text-move-point-to-xy o x y)
+  ;       (begin
+  ;         (say "outside")
+  ;         (send eventPAD focus))))
+  ;     #f))
 
 
-)
+  )
 

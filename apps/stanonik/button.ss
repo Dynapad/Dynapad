@@ -35,21 +35,21 @@
     (findable #f)
 
     (bind "<Mod1-ButtonPress-1>"
-      (lambda(o e)
-        (findable (if (findable) #f #t))))))
+          (lambda(o e)
+            (findable (if (findable) #f #t))))))
 
 (define r (make-object button% dynapad))
 (send r position '(-100 100 1))
 (send r fill "red")
 (send r bind "<ButtonPress-1>"
-  (lambda(o e)
-    (changemode dynapad "Run")
-    #f))
+      (lambda(o e)
+        (changemode dynapad "Run")
+        #f))
 
 (define g (make-object button% dynapad))
 (send g position '(-50 100 1))
 (send g fill "green")
 (send g bind "<ButtonPress-1>"
-  (lambda(o e)
-    (changemode dynapad "Select")
-    #f))
+      (lambda(o e)
+        (changemode dynapad "Select")
+        #f))

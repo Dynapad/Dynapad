@@ -15,7 +15,7 @@
 
     (super-instantiate ())
     (abstract-objects-callbacks 'add
-       (lambda () (list this)) this) ;includes this in things to be saved
+                                (lambda () (list this)) this) ;includes this in things to be saved
 
     (define/public (delete-all)
       (send this delete))
@@ -31,6 +31,6 @@
       (track-duplicates-of-objs obj)
       )
 
-))
+    ))
 
 ;(with ... (ic () ...) ... (send obj refer- "#grp" 'members ''add obj)

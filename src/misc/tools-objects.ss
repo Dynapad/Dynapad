@@ -9,25 +9,25 @@
 ;   (send obj msg val) for setting
 (define-macro remote-get
   (case-lambda
-   ((var) var)
-   ((obj msg) `(send ,obj ,msg))))
+    ((var) var)
+    ((obj msg) `(send ,obj ,msg))))
 
 (define-macro remote-set!
   (case-lambda
-   ((var val)
-    `(set! ,var ,val))
-   ((obj msg val)
-    `(send ,obj ,msg ,val))))
+    ((var val)
+     `(set! ,var ,val))
+    ((obj msg val)
+     `(send ,obj ,msg ,val))))
 
 (define-macro (remote-push! atom . lst)
   `(remote-set! ,@lst (cons ,atom (remote-get ,@lst))))
 
 (define-macro remote-append!
   (case-lambda
-   ((var-lst tail-lst)
-    `(set-append! ,var-lst ,tail-lst))
-   ((obj msg lst)
-    `(send ,obj ,msg (append (send ,obj ,msg) ,lst)))))
+    ((var-lst tail-lst)
+     `(set-append! ,var-lst ,tail-lst))
+    ((obj msg lst)
+     `(send ,obj ,msg (append (send ,obj ,msg) ,lst)))))
 
 ;Accessing fields from outside object (bypassing methods)
 (define-macro (getf object class field)    ;access fields of any object
@@ -44,8 +44,8 @@
 
 (define-macro (access-2fields f1 f2)
   `(case-lambda
-;     (() (values ,f1 ,f2))
-    (() (list ,f1 ,f2))
-    ((n1 n2)
+     ;     (() (values ,f1 ,f2))
+     (() (list ,f1 ,f2))
+     ((n1 n2)
       (set! ,f1 n1)
       (set! ,f2 n2))))

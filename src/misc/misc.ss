@@ -5,15 +5,15 @@
 (define-syntax push!
   (syntax-rules ()
     ((_ val lst)
-       (set! lst (cons val lst)))))
+     (set! lst (cons val lst)))))
 
 (define-syntax pop!
   (syntax-rules ()
     ((_ lst)
-       (and (not (null? lst))
-        (let ((val (car lst)))
-          (set! lst (cdr lst))
-          val)))))
+     (and (not (null? lst))
+          (let ((val (car lst)))
+            (set! lst (cdr lst))
+            val)))))
 
 (define (foreach elements body) (for-each body elements))
 (define (mforeach elements body) (mfor-each body elements))
@@ -36,16 +36,16 @@
   (syntax-rules ()
     ((_ var_name)
      (case-lambda
-        (() var_name)
-        ((new_val) (set! var_name new_val))) )))
+       (() var_name)
+       ((new_val) (set! var_name new_val))) )))
 
 
 (define (find pred list)
   (if (null? list)
       #f
       (if (pred (car list))
-      (car list)
-      (find pred (cdr list)))))
+          (car list)
+          (find pred (cdr list)))))
 (define (cadr-equal? lst match)
   (if (or (null? lst) (null? (cdr lst))) #f
       (equal? (cadr lst) match)))
@@ -55,83 +55,83 @@
 (define-syntax callback-accessor-functions
   (syntax-rules ()
     ((_ callback_list)
-      (case-lambda
-        ; 0
-        (() callback_list)
-        ; 1
-        ((new_list)
-            (set! callback_list new_list)
-            (when (not (list? new_list))
-              (set! callback_list '())
-              (error "callback must be a list or null -->" new_list)))
-        ; 2
-        ((cmd new_fnc)
-          (when (equal? cmd 'add)
-            (when (not (member (list new_fnc) callback_list))
-              (push! (list new_fnc) callback_list)))
-      (when (equal? cmd 'add-last)
-        (when (not (member (list new_fnc) callback_list))
-          (endpush! callback_list (list new_fnc))))
-          (when (equal? cmd 'remove)
-            (set! callback_list (remove (list new_fnc) callback_list))) )
-        ; 3
-        ((cmd new_fnc name)
-     (case cmd
-       ((add)
-          (push! (list new_fnc name) callback_list))
-       ((add-last)
-          (endpush! callback_list
-            (list new_fnc name)))
-       ((find)
-          (find (lambda (x) (cadr-equal? x name)) callback_list))
-       ((remove)
-          (set! callback_list (apply append
-            (map
-         (lambda (p)
-           (if (and (not (null? (cdr p))) (equal? (cadr p) name))
-               '() ;
-               (list p)))
-         callback_list))))
-      ((remq)
-            (set! callback_list (apply append
-              (map
-                (lambda (p)
-                  (if (and (not (null? (cdr p))) (eq? (cadr p) name))
-                    '() ;
-                    (list p)))
-                callback_list))))
-      )
-     )))))
+     (case-lambda
+       ; 0
+       (() callback_list)
+       ; 1
+       ((new_list)
+        (set! callback_list new_list)
+        (when (not (list? new_list))
+          (set! callback_list '())
+          (error "callback must be a list or null -->" new_list)))
+       ; 2
+       ((cmd new_fnc)
+        (when (equal? cmd 'add)
+          (when (not (member (list new_fnc) callback_list))
+            (push! (list new_fnc) callback_list)))
+        (when (equal? cmd 'add-last)
+          (when (not (member (list new_fnc) callback_list))
+            (endpush! callback_list (list new_fnc))))
+        (when (equal? cmd 'remove)
+          (set! callback_list (remove (list new_fnc) callback_list))) )
+       ; 3
+       ((cmd new_fnc name)
+        (case cmd
+          ((add)
+           (push! (list new_fnc name) callback_list))
+          ((add-last)
+           (endpush! callback_list
+                     (list new_fnc name)))
+          ((find)
+           (find (lambda (x) (cadr-equal? x name)) callback_list))
+          ((remove)
+           (set! callback_list (apply append
+                                      (map
+                                       (lambda (p)
+                                         (if (and (not (null? (cdr p))) (equal? (cadr p) name))
+                                             '() ;
+                                             (list p)))
+                                       callback_list))))
+          ((remq)
+           (set! callback_list (apply append
+                                      (map
+                                       (lambda (p)
+                                         (if (and (not (null? (cdr p))) (eq? (cadr p) name))
+                                             '() ;
+                                             (list p)))
+                                       callback_list))))
+          )
+        )))))
 
 (define-syntax exec-any-callbacks
   (syntax-rules ()
     ((_ callback_list obj ...)
      (when (not (null? callback_list))
        (for-each
-         (lambda (callback-fn-pair) ((car callback-fn-pair) obj ...))
-         callback_list)) )))
+        (lambda (callback-fn-pair) ((car callback-fn-pair) obj ...))
+        callback_list)) )))
 ;--- end callbacks ------
 
 ; send msg to friend class
 (define-syntax sendf
   (syntax-rules ()
     ((_ obj friend msg args ...)
-       (send (send obj friend) msg args ...))))
+     (send (send obj friend) msg args ...))))
 ;see also senda (for actors) in actor.ss
 
 (define-syntax friend (syntax-rules ()
-  ((_ method-name field-name) (friend method-name field-name #f))
-  ((_ method-name field-name init)
-    (begin
-      (field (field-name init))
-      (define/public method-name (get/set field-name))))))
+                        ((_ method-name field-name) (friend method-name field-name #f))
+                        ((_ method-name field-name init)
+                         (begin
+                           (field (field-name init))
+                           (define/public method-name (get/set field-name))))))
 
 (define-syntax public-field (syntax-rules ()
-  ((_ method-name field-name) (public-field method-name field-name #f))
-  ((_ method-name field-name init)
-    (begin
-      (field (field-name init))
-      (define/public method-name (get/set field-name))))))
+                              ((_ method-name field-name) (public-field method-name field-name #f))
+                              ((_ method-name field-name init)
+                               (begin
+                                 (field (field-name init))
+                                 (define/public method-name (get/set field-name))))))
 
 (define (has-method? obj m)
   (cond ((method-in-interface? m (object-interface obj)) obj) (else #f)))
@@ -139,46 +139,46 @@
 (define-syntax send-selected
   (syntax-rules ()
     ((_ msg args ...)
-       (for-each (lambda (obj) (send obj msg args ...))
-                 (send currentPAD selected)))))
+     (for-each (lambda (obj) (send obj msg args ...))
+               (send currentPAD selected)))))
 
 (define-syntax send-tag
   (syntax-rules ()
     ((_ tag msg args ...)
-       (for-each (lambda (obj) (send obj msg args ...))
-                 (send currentPAD find 'withtag tag)))))
+     (for-each (lambda (obj) (send obj msg args ...))
+               (send currentPAD find 'withtag tag)))))
 
 ; send if C++ object is not deleted
 (define-syntax send-nd
   (syntax-rules ()
     ((_ obj msg args ...)
-      (if (not (send obj deleted?))
-        (send obj msg args ...)) )))
+     (if (not (send obj deleted?))
+         (send obj msg args ...)) )))
 
 ; send to object list, but only those with non-deleted C++ objects
 (define-syntax send-nd-objs
   (syntax-rules ()
     ((_ lst msg args ...)
-       (send-nd-objs-aux lst 'msg args ...))))
+     (send-nd-objs-aux lst 'msg args ...))))
 (define (send-nd-objs-aux lst msg . args)
   (for-each
-    (lambda (x)
-      (when (not (send x deleted?))
-        (eval `(send/apply ,x ,msg ',args))))
-    lst))
+   (lambda (x)
+     (when (not (send x deleted?))
+       (eval `(send/apply ,x ,msg ',args))))
+   lst))
 
 ; cset! returns the value, in the fashion of C assignments  x = (y=42);
 (define-syntax cset!
   (syntax-rules ()
     ((_ var val)
      ; in case var is an expression, using another var prevents eval'ing twice
-       (let ((id val)) (set! var id) id))))
+     (let ((id val)) (set! var id) id))))
 
 (define-syntax mlet
   (syntax-rules ()
     ((_ ((vars lst)) body ...)
      (let-values ((vars (apply values lst))) body ...))
-))
+    ))
 
 ;some helper functions
 (define (any-objects?)  (not (null? (send currentPAD objects))))
@@ -191,13 +191,13 @@
 (define-syntax set-append!
   (syntax-rules ()
     ((_ var lst)
-       (set! var (append var lst)))))
+     (set! var (append var lst)))))
 
 ;push one atom to the end of a list variable
 (define-syntax endpush!
   (syntax-rules ()
     ((_ var val)
-       (set! var (append var (list val))))))
+     (set! var (append var (list val))))))
 
 ; ic = "item config"
 ; usage:
@@ -211,7 +211,7 @@
   (syntax-rules ()
     ((_ obj) obj)
     ((_ obj msgs ...)
-         (let ((id obj)) (send* id msgs ...) id))))
+     (let ((id obj)) (send* id msgs ...) id))))
 
 ; with is like a simplified let:
 ;  bind the second arg to the symbol in the first, for use within the third,
@@ -223,22 +223,22 @@
 (define-syntax with
   (syntax-rules ()
     ((_ obj-label ic-clause also ...)
-       (let ((obj-label ic-clause))
-     also ... ;ops which may refer to obj-label
-     obj-label))))  ;return obj
+     (let ((obj-label ic-clause))
+       also ... ;ops which may refer to obj-label
+       obj-label))))  ;return obj
 
 (define-syntax dotimes
   (syntax-rules ()
     ((_ (index maxval) body ...)
      (do ((index 0 (+ index 1)))
-       ((= index maxval))
+         ((= index maxval))
        body ...))))
 
 (define-syntax while (syntax-rules ()
-  ((_ test body ...)
-   (do ()
-     ((not test))
-     body ...))))
+                       ((_ test body ...)
+                        (do ()
+                            ((not test))
+                          body ...))))
 
 ; (define-macro (while cnd . dos)
 ;   `(letrec
@@ -253,8 +253,8 @@
 
 ;this should probably move to bbox.ss:
 (define center-of-view (case-lambda
-  ((PAD) (let ((l (send PAD view))) (list (car l)(cadr l)(/ 1.0 (caddr l)))))
-  ((PAD x y) (list x y (/ 1.0 (send PAD getzoom))))))
+                         ((PAD) (let ((l (send PAD view))) (list (car l)(cadr l)(/ 1.0 (caddr l)))))
+                         ((PAD x y) (list x y (/ 1.0 (send PAD getzoom))))))
 
 
 (define-syntax !=
@@ -266,61 +266,61 @@
 (define-syntax ++
   (syntax-rules ()
     ((_ var)
-       (cset! var (+ var 1)))))
+     (cset! var (+ var 1)))))
 (define-syntax ++_
   (syntax-rules ()
     ((_ var)
-       (begin (set! var (+ var 1)) var))))
+     (begin (set! var (+ var 1)) var))))
 (define-syntax --_
   (syntax-rules ()
     ((_ var)
-       (begin (set! var (- var 1)) var))))
+     (begin (set! var (- var 1)) var))))
 
 (define-syntax +=
   (syntax-rules ()
     ((_ var amount)
-       (begin (set! var (+ var amount)) var)) ))
+     (begin (set! var (+ var amount)) var)) ))
 
 (define-syntax -=
   (syntax-rules ()
     ((_ var amount)
-       (begin (set! var (- var amount)) var)) ))
+     (begin (set! var (- var amount)) var)) ))
 
 ; post-increment/decrement
 (define-syntax _++
   (syntax-rules ()
     ((_ var)
-       (let ((old var)) (set! var (+ var 1)) old))))
+     (let ((old var)) (set! var (+ var 1)) old))))
 
 (define-syntax _--
   (syntax-rules ()
     ((_ var)
-       (let ((old var)) (set! var (- var 1)) old))))
+     (let ((old var)) (set! var (- var 1)) old))))
 
 ; #f-safe versions of min and max; treat #f as minimal value
 (define (safemax . args)
   (let ((non#f (filter (lambda (x) x) args)))
     (if (null? non#f)
-    #f
-    (apply max non#f))))
+        #f
+        (apply max non#f))))
 
 (define (safemin . args)
   (let ((alltrue? (andmap (lambda (x) x) args)))
     (if alltrue?
-    (apply min args)
-    #f)))
+        (apply min args)
+        #f)))
 
 (define (ensure-number str)
   (cond ((not str) 0)
-    ((equal? "" str) 0)
-    ((string? str) (string->number str))
-    (else str)))
+        ((equal? "" str) 0)
+        ((string? str) (string->number str))
+        (else str)))
 
 (define (ensure-string str)
   (cond ((string? str) str)
-    ((number? str) (number->string str))
-    ((path? str) (path->string str))
-    (else str)))
+        ((number? str) (number->string str))
+        ((path? str) (path->string str))
+        (else str)))
 
 ;use this instead of regexp-match if there's any chance that path is a
 ; #path obj (plt-299 and later) instead of a string
@@ -336,12 +336,12 @@
 (define (list-diffq L l2) (filter (lambda (o) (not (memq o l2))) L))
 
 (define (list-head? a b eq-fn)
-;if a matches head of b, returns tail of b after a
-;when a=b, returns null
+  ;if a matches head of b, returns tail of b after a
+  ;when a=b, returns null
   (cond ((null? a) b)
-    ((null? b) #f)
-    ((not (eq-fn (car a) (car b))) #f)
-    (else (list-head? (cdr a) (cdr b) eq-fn))))
+        ((null? b) #f)
+        ((not (eq-fn (car a) (car b))) #f)
+        (else (list-head? (cdr a) (cdr b) eq-fn))))
 
 (define (find-layer argPAD name)
   (let ((ret (filter (lambda (lyr) (if (equal? name (send lyr name)) lyr #f))
@@ -350,13 +350,13 @@
 
 (define-syntax getfield
   (syntax-rules ()
-      ((_ object class field)
-        ((class-field-accessor class field) object)) ))
+    ((_ object class field)
+     ((class-field-accessor class field) object)) ))
 
 (define-syntax setfield
   (syntax-rules ()
-      ((_ object class field val)
-        ((class-field-mutator class field) object val)) ))
+    ((_ object class field val)
+     ((class-field-mutator class field) object val)) ))
 
 
 ; OBSOLETE: subsumed by (send dynapad order objs)

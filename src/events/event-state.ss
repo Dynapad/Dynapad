@@ -11,8 +11,8 @@
     ; lasso? and box? are exclusive
     (define/public box?
       (case-lambda
-       (() (not (lasso?)))
-       ((bool) (lasso? (not bool)))))
+        (() (not (lasso?)))
+        ((bool) (lasso? (not bool)))))
 
     (public-field obj0 _obj0) ;object receiving B1-down
 
@@ -25,25 +25,25 @@
     (define/public (pad) _pad)
 
     (define/public set-last-xy (case-lambda
-      ((xy) (set-last-xy (car xy) (cadr xy)))
-      ((x y) (set! _lastx x) (set! _lasty y))
-    ))
+                                 ((xy) (set-last-xy (car xy) (cadr xy)))
+                                 ((x y) (set! _lastx x) (set! _lasty y))
+                                 ))
 
     (public-field sx0 _sx0)
     (public-field sy0 _sy0)
 
-;    (public-field lastsx _lastsx)
-;    (public-field lastsy _lastsy)
+    ;    (public-field lastsx _lastsx)
+    ;    (public-field lastsy _lastsy)
 
-;    (define/public set-last-sxy (case-lambda
-;      ((sxy) (set-last-sxy (car sxy) (cadr sxy)))
-;      ((sx sy) (set! _lastsx sx) (set! _lastsy sy))
-;    ))
+    ;    (define/public set-last-sxy (case-lambda
+    ;      ((sxy) (set-last-sxy (car sxy) (cadr sxy)))
+    ;      ((sx sy) (set! _lastsx sx) (set! _lastsy sy))
+    ;    ))
 
     (define/public set-sx0sy0 (case-lambda
-      ((sxsy) (set-sx0sy0 (car sxsy) (cadr sxsy)))
-      ((sx sy) (set! _sx0 sx) (set! _sy0 sy))
-    ))
+                                ((sxsy) (set-sx0sy0 (car sxsy) (cadr sxsy)))
+                                ((sx sy) (set! _sx0 sx) (set! _sy0 sy))
+                                ))
 
     (define/public (moved-far-enough? e)
       (or (> (abs (- _sx0 (event-sx e))) 20)
@@ -55,7 +55,7 @@
 
     (define/public (update-selector e)
       (when _selector
-            (send _selector update e))
+        (send _selector update e))
       _selector)
 
     (define/public (selector-contains)
@@ -75,7 +75,7 @@
         ))
 
     (public-field selector-color _selector-color "white")
-))
+    ))
 
 (define selectrect%
   (class rect%
@@ -99,8 +99,8 @@
              (dx (abs (- x _x0)))
              (dy (abs (- y _y0))))
         (unless _switched? ;if not already switched, check
-                (set! _switched? (or (< dx (* .5 _lastdx))
-                                     (< dy (* .5 _lastdy)))))
+          (set! _switched? (or (< dx (* .5 _lastdx))
+                               (< dy (* .5 _lastdy)))))
         (set! _lastdx (max _lastdx dx))
         (set! _lastdy (max _lastdy dy))
 
@@ -146,12 +146,12 @@
             (x  (event-x evnt))
             (y  (event-y evnt)))
         (when ;moved far enough?
-         (or (> (abs (- sx _lastsx)) _minjump)
-             (> (abs (- sy _lastsy)) _minjump))
-         (set! _lastsx sx)
-         (set! _lastsy sy)
-         (send this save-coords
-               (append (send this recall-coords) (list x y))))
+            (or (> (abs (- sx _lastsx)) _minjump)
+                (> (abs (- sy _lastsy)) _minjump))
+          (set! _lastsx sx)
+          (set! _lastsy sy)
+          (send this save-coords
+                (append (send this recall-coords) (list x y))))
         ; always:
         (send this coords
               (append (send this recall-coords) (list x y)))))
@@ -179,8 +179,8 @@
                     (if polybounded
                         (list-intersect locals polybounded memq)
                         null)))))
-            (send poly delete)
-            keep))
+        (send poly delete)
+        keep))
 
     (define default-containment-fn
       (lambda (obj) (objects-in-poly obj)))
@@ -200,13 +200,13 @@
 ;
 (define (make-submenu-Selector mb object)
   (unless object
-          (let* ((sb (add-submenu mb "Selector")))
-            (add-checkable-menu-item sb "Box"
-               (lambda (i) (sendf dynapad evs box? (send i is-checked?)))
-               (sendf dynapad evs box?))
-            (add-checkable-menu-item sb "Lasso"
-               (lambda (i) (sendf dynapad evs lasso? (send i is-checked?)))
-               (sendf dynapad evs lasso?))
+    (let* ((sb (add-submenu mb "Selector")))
+      (add-checkable-menu-item sb "Box"
+                               (lambda (i) (sendf dynapad evs box? (send i is-checked?)))
+                               (sendf dynapad evs box?))
+      (add-checkable-menu-item sb "Lasso"
+                               (lambda (i) (sendf dynapad evs lasso? (send i is-checked?)))
+                               (sendf dynapad evs lasso?))
       )))
 
 (define combo-event-state% ;combines bbox and lasso
@@ -219,16 +219,16 @@
     (field (_box? #t))
     (define/override box?
       (case-lambda
-       (() _box?)
-       ((bool) (set! _box? bool)
-               (unless bool (lasso? #t)))))
+        (() _box?)
+        ((bool) (set! _box? bool)
+                (unless bool (lasso? #t)))))
 
     (inherit-field _lasso?)
     (define/override lasso?
       (case-lambda
-       (() _lasso?)
-       ((bool) (set! _lasso? bool)
-               (unless bool (box? #t)))))
+        (() _lasso?)
+        ((bool) (set! _lasso? bool)
+                (unless bool (box? #t)))))
     (lasso? #t)
 
     (define/override (selector . args) #f)
@@ -239,20 +239,20 @@
 
     (define/override (update-selector e)
       (when _box
-            (send _box update e))
+        (send _box update e))
       (when _lasso
-            (send _lasso update e))
+        (send _lasso update e))
       (when (and _lasso _box (send _box switched?))
-            (send _box delete)
-            (set! _box-gone? #t)
-            (set! _box #f))
+        (send _box delete)
+        (set! _box-gone? #t)
+        (set! _box #f))
       (or _box _lasso))
 
     (define/override (selector-contains)
       (cond ;_box gets priority
-       (_box   (send _box contained-objects _obj0))
-       (_lasso (send _lasso contained-objects _obj0))
-       (else #f)))
+        (_box   (send _box contained-objects _obj0))
+        (_lasso (send _lasso contained-objects _obj0))
+        (else #f)))
 
     (define/override (selector-delete)
       (when _box (send _box delete) (set! _box #f))
@@ -262,9 +262,9 @@
 
     (define/override (if-not-exists-make-selector-from-lastxy)
       (unless _box-gone?
-         (when (and _box? (not _box))
-               (set! _box (make-object selectrect% _pad _lastx _lasty))))
+        (when (and _box? (not _box))
+          (set! _box (make-object selectrect% _pad _lastx _lasty))))
       (when (and _lasso? (not _lasso))
-            (set! _lasso (make-object lasso%    _pad _lastx _lasty _sx0 _sy0)))
+        (set! _lasso (make-object lasso%    _pad _lastx _lasty _sx0 _sy0)))
       )
-))
+    ))

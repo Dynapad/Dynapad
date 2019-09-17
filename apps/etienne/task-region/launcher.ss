@@ -14,9 +14,9 @@
       (define r (list))
 
       (if (not return)
-      (do ((line "" (read-line i)))
-          ((eq? line eof))
-        (push! line r)))
+          (do ((line "" (read-line i)))
+              ((eq? line eof))
+            (push! line r)))
 
       (close-input-port  i)
       (close-output-port o)
