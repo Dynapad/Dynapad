@@ -95,7 +95,7 @@
                linepane
                (lambda (button event)
                  (clear-all-menu-buttons)
-                 (send button set-label on_Line)
+                 (send button set-label on_line)
                  (set! Draw-multiple (button-double-clicked?))
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD line% "Draw")))))
@@ -107,7 +107,7 @@
                linepane
                (lambda (button event)
                  (clear-all-menu-buttons)
-                 (send button set-label on_PolyLine)
+                 (send button set-label on_polyline)
                  (set! Draw-multiple (button-double-clicked?))
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD polyline% "Draw")))))
@@ -120,7 +120,7 @@
                  (for-all-pads (lambda (argPAD)
                                  (send argPAD fill? #f)))
                  (clear-all-menu-buttons)
-                 (send button set-label on_Poly)
+                 (send button set-label on_poly)
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD polygon% "Draw")))))
   )
