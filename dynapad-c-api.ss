@@ -1829,11 +1829,11 @@
     (define (writeoptions)
       (filter (lambda (opt) opt)
               `(,@(super writeoptions)
-                (hirespath ,(hirespath))
+                (hirespath (string->path ,(path->string (hirespath))))
                 ,(if (not _use_bbox) #f `(bbox ',(bbox)))
                 )))
     (define/override (writeinits)
-      (list (hirespath)))
+      (list `(string->path ,(path->string (hirespath)))))
 
     #|
     (define/override (write)
