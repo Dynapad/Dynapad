@@ -68,8 +68,8 @@
     (send this findable #f)
     (send this anchor "sw")
 
-    (let ((pairs (sort (lambda (p1 p2) (logid<? (cadr p1) (cadr p2)))
-                       (gather-log-transitions _dir _treename))))
+    (let ((pairs (sort (gather-log-transitions _dir _treename)
+                       (lambda (p1 p2) (logid<? (cadr p1) (cadr p2))))))
       (map (lambda (pair)
              (mlet (((preid nextid) pair))
                    (let* ((prevbranch (send this logbranch-with-logid preid))

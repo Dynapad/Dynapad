@@ -333,7 +333,7 @@
 
 (define (make-submenu-Cliques mb obj relation)
   (let* ((sb (add-submenu mb "Cliques...")))
-    (foreach (sort ensure-string<? (send relation brushed-keys))
+    (foreach (sort (send relation brushed-keys) ensure-string<?)
              (lambda (key) (make-submenu-CliqueBrushStyles sb obj relation key)))))
 
 (define (make-submenu-Relations mb obj)

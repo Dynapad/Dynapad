@@ -20,18 +20,19 @@
        ;((regexp-match thumb_rexp x) #f)
        ((sch_imagep (build-path->string dir x)) x)
        (else #f)))
-   (sort (lambda (a b)
+   (sort (directory-list->string dir)
+         (lambda (a b)
            (or (< (string-length a) (string-length b))
-               (string<? a b)))
-         (directory-list->string dir))))
+               (string<? a b))))))
 
 (define (hires-list-by-size dir)
   (let ((img-files (filter
                     (lambda (f) (sch_imagep (build-path->string dir f)))
                     (directory-list->string dir))))
-    (sort (lambda (a b)
-            (> (file-size (build-path->string dir a)) (file-size (build-path->string dir b))))
-          img-files)))
+    (sort img-files
+          (lambda (a b)
+            (> (file-size (build-path->string dir a))
+               (file-size (build-path->string dir b)))))))
 
 ; image-dir-callbacks allow functions to be called after (arrangedir dir).
 ; callbacks take two args:  dir-fullpath and imagelist
@@ -193,7 +194,7 @@
       (set! _images
             (map (lambda(x) (dotpath x))
                  (filter (lambda(file) (regexp-match image_regexp file))
-                         (sort string<? (directory-list->string _dotdir)))))
+                         (sort (directory-list->string _dotdir) string<?))))
       )
 
     (define composite_regexp (regexp "composite-[0-9][0-9][0-9].[jJ][pP][gG]"))
@@ -202,7 +203,7 @@
       (set! _composites
             (map (lambda(x) (dotpath x))
                  (filter (lambda(file) (regexp-match composite_regexp file))
-                         (sort string<? (directory-list->string _dotdir)))))
+                         (sort (directory-list->string _dotdir) string<?))))
       )
 
     (super-instantiate(initpad))
@@ -221,10 +222,10 @@
      (and
       (regexp-match pdf_rexp x)
       (file-exists? (build-path->string dir x))))
-   (sort (lambda (a b)
+   (sort (directory-list->string dir)
+         (lambda (a b)
            (or (< (string-length a) (string-length b))
-               (string<? a b)))
-         (directory-list->string dir))))
+               (string<? a b))))))
 
 (define (make-pdf-at-position file x y zfac)
   (make-object pdf% dynapad file (list x y zfac)))

@@ -35,9 +35,9 @@
   ;lst is ((0 x1 x2...) (1 x3 x4...) ...)
   ; returns appended list of all 0's, then 1's, etc
   (let ((phases (sort
+                 lst
                  (lambda (phase-a phase-b)
-                   (< (car phase-a) (car phase-b)))
-                 lst)))
+                   (< (car phase-a) (car phase-b))))))
     (apply append (map cdr phases))
     ))
 

@@ -2,8 +2,6 @@
 (require scheme/gui)
 (require compatibility/mlist)
 
-(require (lib "compat.ss")); needed for sort
-
 (current-eventspace (make-eventspace))
 
 (define (announce-module-loading name) #f)

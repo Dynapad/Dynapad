@@ -238,7 +238,7 @@
   )
 
 (define (object-sort lst fnc cmp-fnc)
-  (sort (lambda (a b) (cmp-fnc (fnc a)(fnc b))) lst))
+  (sort lst (lambda (a b) (cmp-fnc (fnc a)(fnc b)))))
 
 (define pi (* 4 (atan 1)))
 
@@ -459,8 +459,8 @@
 
   (when (pair? objects)
     (set! bblist (map (lambda (o) (send o bbox)) objects))
-    (set! maxw (sort > (map bbwidth bblist)))
-    (set! maxh (sort > (map bbheight bblist)))
+    (set! maxw (sort (map bbwidth bblist) >))
+    (set! maxh (sort (map bbheight bblist) >))
     ;skip the first outliers
     (when (> (length maxw) 10) (set! maxw (cdddr maxw)))
     (when (> (length maxh) 10) (set! maxh (cdddr maxh)))

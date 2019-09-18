@@ -2106,7 +2106,7 @@
                                         (let ((y1 (send pt1 y))
                                               (y2 (send pt2 y)))
                                           (> y1 y2)))))))
-    (sort sort-fn pts)))
+    (sort pts sort-fn)))
 
 (define (index-intersections-by-parent pts)
   ;returns alist of intersection-pts keyed by both parent edges/segs
