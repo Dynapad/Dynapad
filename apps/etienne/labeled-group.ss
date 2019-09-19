@@ -24,8 +24,8 @@
     (define/public (single-click)
       ;; center on the object
       (send dynapad center _label 500))
-      ;; make all the contents take group events
-      ;; (for-each (lambda (item) (send item takegroupevents #t)) (send this contents)))
+    ;; make all the contents take group events
+    ;; (for-each (lambda (item) (send item takegroupevents #t)) (send this contents)))
 
     ;; Override add so it automatically makes objects
     ;;   take group events and lower them behind the label

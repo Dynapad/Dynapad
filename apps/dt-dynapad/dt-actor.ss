@@ -15,5 +15,5 @@
     (define down-function (get/set down-lambda))
     (define move-function (get/set move-lambda))
     (define up-function (get/set up-lambda))
+    )
   )
-)

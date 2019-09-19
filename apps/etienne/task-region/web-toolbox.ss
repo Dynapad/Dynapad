@@ -5,10 +5,10 @@
     (init __task-region)
 
     (field (_dynaptr     __dynaptr)
-	   (_task-region __task-region)
-	   (_task-area   (send __task-region area))
-	   (_task-panel  (send __task-region panel))
-	   (_history     (make-object mysql-history%)))
+           (_task-region __task-region)
+           (_task-area   (send __task-region area))
+           (_task-panel  (send __task-region panel))
+           (_history     (make-object mysql-history%)))
 
     (field (_working-events '()))
     (field (_working-icons  '()))
@@ -38,9 +38,9 @@
     (define/public (maintenance)
       (for-each
        (lambda (icon)
-	 (if (send icon deleted?)
-	     (set! _working-icons
-		   (remq icon _working-icons))))
+         (if (send icon deleted?)
+             (set! _working-icons
+                   (remq icon _working-icons))))
        _working-icons))
 
 
@@ -68,20 +68,20 @@
 
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ;; Builds all the working icons from the working events. 
+    ;; Builds all the working icons from the working events.
     (define/public (build-working-icons)
       ;; remove our old working icons
       (for-each
        (lambda (icon)
-	 (send _task-region remove icon)
-	 (send icon delete))
+         (send _task-region remove icon)
+         (send icon delete))
        _working-icons)
       (set! _working-icons '())
 
       ;; build our new working events
       (for-each
        (lambda (event)
-	 (build-working-icon event))
+         (build-working-icon event))
        _working-events))
 
 
@@ -111,7 +111,7 @@
 
       ;; get the right query
       (cond ((string=? keyword "today")
-	     (set! query (query-today))))
+             (set! query (query-today))))
 
       ;; query the db
       (set! result (send _history select query))
@@ -119,7 +119,7 @@
       ;; build event list
       (for-each
        (lambda (row)
-	 (push! (car row) events))
+         (push! (car row) events))
        result)
 
       ;; build the events and icons
@@ -146,14 +146,14 @@
       ;; Organize our working icons by domain internally
       (for-each
        (lambda (icon)
-	 (define url           (get-object-keyval icon    'url))
-	 (define event         (get-object-keyval icon    'event))
-	 (define domain        (cadr (regexp-match domain-from-url url)))
-	 (define domain-symbol (string->symbol domain))
-	 (define domain-list   (get-alist-keyval domains domain-symbol '()))
+         (define url           (get-object-keyval icon    'url))
+         (define event         (get-object-keyval icon    'event))
+         (define domain        (cadr (regexp-match domain-from-url url)))
+         (define domain-symbol (string->symbol domain))
+         (define domain-list   (get-alist-keyval domains domain-symbol '()))
 
-	 (push! icon domain-list)
-	 (set! domains (set-alist-keyval domains domain-symbol domain-list)))
+         (push! icon domain-list)
+         (set! domains (set-alist-keyval domains domain-symbol domain-list)))
        _working-icons)
 
       ;; number of rows and cols
@@ -164,48 +164,48 @@
 
       ;; Build the text objects as labeled-groups with
       ;;  the icons as members
-      (for-each 
+      (for-each
        (lambda (domain-list)
-	 (define domain  (symbol->string (car domain-list)))
-	 (define icons   (cadr domain-list))
-	 (define rectobj (make-object rect% _dynaptr (list 0 0 colw rowh)))
-	 (define lgroup  (make-object labeled-group% _dynaptr rectobj))
+         (define domain  (symbol->string (car domain-list)))
+         (define icons   (cadr domain-list))
+         (define rectobj (make-object rect% _dynaptr (list 0 0 colw rowh)))
+         (define lgroup  (make-object labeled-group% _dynaptr rectobj))
 
-	 (say "domain: " domain " is " (/ (length icons) (length _working-icons)) "%")
+         (say "domain: " domain " is " (/ (length icons) (length _working-icons)) "%")
 
-	 (push! lgroup labels)
+         (push! lgroup labels)
 
-	 (for-each
-	  (lambda (icon)
-	    (send _task-region remove icon)
-	    (send lgroup add icon))
-	  icons)
+         (for-each
+          (lambda (icon)
+            (send _task-region remove icon)
+            (send lgroup add icon))
+          icons)
 
-	 ;; add the lgroup to the region
-	 (send _task-region add lgroup)
+         ;; add the lgroup to the region
+         (send _task-region add lgroup)
 
-	 ;; have the lgroup take group events
-	 (send lgroup takegroupevents #t)
+         ;; have the lgroup take group events
+         (send lgroup takegroupevents #t)
 
-	 ;; arrange icons behind the label
-	 (arrange-in-grid-onto-object icons lgroup 1 1))
+         ;; arrange icons behind the label
+         (arrange-in-grid-onto-object icons lgroup 1 1))
        domains)
 
       ;; arrange the labels in the workspace
       (let ((x (car (send _task-area bbox)))
-	    (y (cadr (send _task-area bbox)))
-	    (r 0)
-	    (c 0))
-	(for-each
-	 (lambda (g)
-	   (send g bbox (list (+ x (* c colw))      (+ y (* r rowh))
-			      (+ x colw (* c colw)) (+ y rowh (* r rowh))))
-	   (if (>= c (- cols 1))
-	       (begin
-		 (set! c 0)
-		 (set! r (+ r 1)))
-	       (set! c (+ c 1))))
-	 labels))
+            (y (cadr (send _task-area bbox)))
+            (r 0)
+            (c 0))
+        (for-each
+         (lambda (g)
+           (send g bbox (list (+ x (* c colw))      (+ y (* r rowh))
+                              (+ x colw (* c colw)) (+ y rowh (* r rowh))))
+           (if (>= c (- cols 1))
+               (begin
+                 (set! c 0)
+                 (set! r (+ r 1)))
+               (set! c (+ c 1))))
+         labels))
 
       )
     )

@@ -4,7 +4,7 @@
 
 (define (make-bucket argPAD bbox cnts)
   (let* ((rect (make-object rect% argPAD bbox))
-	 (form (make-object titled-resizable-frame-container% argPAD rect)))
+         (form (make-object titled-resizable-frame-container% argPAD rect)))
     (send form contents cnts)
     (send form title "hello")
     form
@@ -15,9 +15,9 @@
 
 (send b alternate-build-fn
       (lambda (obj)
-	`(make-bucket dynapad
-		      ,(cons 'list (send obj bbox))
-		      ,(map (lambda (c) (send c write)) (send obj contents)))))
+        `(make-bucket dynapad
+                      ,(cons 'list (send obj bbox))
+                      ,(map (lambda (c) (send c write)) (send obj contents)))))
 (pretty-print (send b write))
 
 
@@ -44,27 +44,27 @@
     (init _obj)
     (init-field (_color "#00000"))
     (super-instantiate ())
-    
+
     (send this attach-to _obj 'enter)
     (define/public color (get/set _color))
     (send _obj bind "<Enter>"
-	  (lambda (eventPAD e) (send (event-obj e) fill _color)))
+          (lambda (eventPAD e) (send (event-obj e) fill _color)))
     (send _obj post-build-ops 'add
-	  (lambda (o label)  `(make-object enter-color-actor% ,label ,_color)))
-))
+          (lambda (o label)  `(make-object enter-color-actor% ,label ,_color)))
+    ))
 (define leave-color-actor%
   (class named-actor%
     (init _obj)
     (init-field (_color "#ffffff"))
     (super-instantiate ())
-    
+
     (send this attach-to _obj 'leave)
     (define/public color (get/set _color))
     (send _obj bind "<Leave>"
-	  (lambda (eventPAD e) (send (event-obj e) fill _color)))
+          (lambda (eventPAD e) (send (event-obj e) fill _color)))
     (send _obj post-build-ops 'add
-	  (lambda (o label)  `(make-object leave-color-actor% ,label ,_color)))
-))
+          (lambda (o label)  `(make-object leave-color-actor% ,label ,_color)))
+    ))
 
 (make-object leave-color-actor% sq "blue")
 (make-object enter-color-actor% sq "red")

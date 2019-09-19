@@ -21,22 +21,22 @@
 (define (mk-slash bbox)
   (let ((bb (bbstretch bbox 0.5))(crds ()))
     (set! crds
-      (list
-        (+ (* 0.9 (b0 bb)) (* 0.1 (b2 bb))) (b1  bb)
-        (b2  bb) (+ (* 0.9 (b3 bb)) (* 0.1 (b1 bb)))
-        (+ (* 0.9 (b2 bb)) (* 0.1 (b0 bb))) (b3  bb)
-        (b0  bb) (+ (* 0.1 (b3 bb)) (* 0.9 (b1 bb)))
-      )
-    )
+          (list
+           (+ (* 0.9 (b0 bb)) (* 0.1 (b2 bb))) (b1  bb)
+           (b2  bb) (+ (* 0.9 (b3 bb)) (* 0.1 (b1 bb)))
+           (+ (* 0.9 (b2 bb)) (* 0.1 (b0 bb))) (b3  bb)
+           (b0  bb) (+ (* 0.1 (b3 bb)) (* 0.9 (b1 bb)))
+           )
+          )
     (make-object polygon% dynapad crds)
+    )
   )
-)
 
 (define (dist p1 p2)
   (define dx (- (car p1) (car p2)))
   (define dy (- (cadr p1) (cadr p2)))
   (sqrt (+ (* dx dx)(* dy dy)))
-)
+  )
 
 (define (pen-modify-bb bbox)
   (def d (dist (list (b0 bbox)(b1 bbox)) (list (b2 bbox)(b3 bbox))))
@@ -44,40 +44,40 @@
   (if (< f 1) (set! f 1))
   (set! f (/ (- f 100) 100.0))
   (bbstretch bbox f)
-)
+  )
 
 (define *old-pen* #f)
 (define (mk-pen bbox)
-  (let ((bb 
-          (bbstretch bbox 0.5)
-          ;(pen-modify-bb bbox)
-        )
+  (let ((bb
+         (bbstretch bbox 0.5)
+         ;(pen-modify-bb bbox)
+         )
         (bbc (bbcenter bbox))
         (bll (list (b0 bbox)(b1 bbox)))
         (bur (list (b2 bbox)(b3 bbox)))
         (crds ()))
     (if *old-pen*
-      (begin
-        (if (< (dist (car *old-pen*) bbc) 100)
-          (begin
-            ;draw it
-		    (set! crds (apply append (cadr *old-pen*) (caddr *old-pen*) (list bur bll)))
-            (set! *old-pen* (list bbc bll bur))
-		    (make-object polygon% dynapad crds)
+        (begin
+          (if (< (dist (car *old-pen*) bbc) 100)
+              (begin
+                ;draw it
+                (set! crds (apply append (cadr *old-pen*) (caddr *old-pen*) (list bur bll)))
+                (set! *old-pen* (list bbc bll bur))
+                (make-object polygon% dynapad crds)
+                )
+              (begin
+                (set! *old-pen* #f)
+                (make-object polygon% dynapad (apply append bll bur bll))
+                )
+              )
           )
-          (begin
-            (set! *old-pen* #f)
-            (make-object polygon% dynapad (apply append bll bur bll))
+        (begin
+          (set! *old-pen* (list bbc bll bur))
+          (make-object polygon% dynapad (apply append bll bur bll))
           )
         )
-      )
-      (begin
-        (set! *old-pen* (list bbc bll bur))
-        (make-object polygon% dynapad (apply append bll bur bll))
-      )
     )
   )
-)
 
 (def *brush-functions* (list mk-oval mk-pen mk-rect mk-slash))
 (def *user-brush-list* (list->vector (list 0 0 0 0)))
@@ -85,26 +85,26 @@
 (define (toggle-users-brush user-id)
   (define old-brush (vector-ref *user-brush-list* user-id))
   (vector-set! *user-brush-list* user-id
-	  (case old-brush
-	    ((0) 1)
-	    ((1) 2)
-	    ((2) 3)
-	    ((3) 0)
-	    (else 0)
-	  )
+               (case old-brush
+                 ((0) 1)
+                 ((1) 2)
+                 ((2) 3)
+                 ((3) 0)
+                 (else 0)
+                 )
+               )
+  ;  (if (eq? (vector-ref *user-brush-list* user-id) mk-oval)
+  ;    (vector-set! *user-brush-list* user-id mk-pen)
+  ;    (vector-set! *user-brush-list* user-id mk-oval))
   )
-;  (if (eq? (vector-ref *user-brush-list* user-id) mk-oval)
-;    (vector-set! *user-brush-list* user-id mk-pen)
-;    (vector-set! *user-brush-list* user-id mk-oval))
-)
 
 (define (dt-draw-oval pad event)
   (let* ((user-id (dt-event-user-id event))
          (color (dt-user-color user-id)))
     (dt-user-ovals 'push user-id
-      (ic ((list-ref *brush-functions* (vector-ref *user-brush-list* user-id)) (dt-event-bbox event))
-          (pen color)
-          (fill color) ))))
+                   (ic ((list-ref *brush-functions* (vector-ref *user-brush-list* user-id)) (dt-event-bbox event))
+                       (pen color)
+                       (fill color) ))))
 
 (bind dynapad "dt-down" dt-draw-oval)
 (bind dynapad "dt-move" dt-draw-oval)
@@ -122,59 +122,59 @@
 
 (define *dt-colormap-image*
   (ic
-    (make-object image% dynapad "colormap.png")
-    (re-anchor "sw")
-    (position (first (send dynapad bbox)) (second (send dynapad bbox)) 1)
-    (re-anchor "nw")
-    (sticky #t)
-    (layer *dt-tool-layer*)))
+   (make-object image% dynapad "colormap.png")
+   (re-anchor "sw")
+   (position (first (send dynapad bbox)) (second (send dynapad bbox)) 1)
+   (re-anchor "nw")
+   (sticky #t)
+   (layer *dt-tool-layer*)))
 
 ; make grey bars on left and top sides, and a round red delete button
 (let* ((cibb (send *dt-colormap-image* bbox))
        (dbb (send dynapad bbox))
        (left-bar
-         (ic
-           (make-object rect% dynapad (list (first cibb) (fourth cibb)
-                                            (third cibb) (fourth dbb)))
-           (sticky #t)
-           (layer *dt-tool-layer*)
-           (fill "grey")))
+        (ic
+         (make-object rect% dynapad (list (first cibb) (fourth cibb)
+                                          (third cibb) (fourth dbb)))
+         (sticky #t)
+         (layer *dt-tool-layer*)
+         (fill "grey")))
        (bottom-bar
-         (ic
-           (make-object rect% dynapad (list (third cibb) (second cibb)
-                                            (third dbb) (fourth cibb)))
-           (sticky #t)
-           (layer *dt-tool-layer*)
-           (fill "grey")))
+        (ic
+         (make-object rect% dynapad (list (third cibb) (second cibb)
+                                          (third dbb) (fourth cibb)))
+         (sticky #t)
+         (layer *dt-tool-layer*)
+         (fill "grey")))
        (change-brush-button
-             (ic
-               (make-object oval% dynapad
-                            (bbstretch (bbslide cibb 0 (bbheight cibb)) -0.25))
-               (fill "blue")
-               (sticky #t)
-               (layer *dt-tool-layer*)
-               (slide 0 200)
-               )
-           )
+        (ic
+         (make-object oval% dynapad
+                      (bbstretch (bbslide cibb 0 (bbheight cibb)) -0.25))
+         (fill "blue")
+         (sticky #t)
+         (layer *dt-tool-layer*)
+         (slide 0 200)
+         )
+        )
        (change-brush-touch-id #4(#f))
        (delete-button
-             (ic
-               (make-object oval% dynapad
-                            (bbstretch (bbslide cibb 0 (bbheight cibb)) -0.25))
-               (fill "red")
-               (sticky #t)
-               (layer *dt-tool-layer*)
-               )
-           )
+        (ic
+         (make-object oval% dynapad
+                      (bbstretch (bbslide cibb 0 (bbheight cibb)) -0.25))
+         (fill "red")
+         (sticky #t)
+         (layer *dt-tool-layer*)
+         )
+        )
        (delete-text
-             (ic
-               (make-object text% dynapad "Delete")
-               (re-anchor "c")
-               (position (append (bbcenter (bbstretch (bbslide cibb 0 (bbheight cibb)) -0.25)) (list 1)))
-               (pen "black")
-               (sticky #t)
-               (layer *dt-tool-layer*))
-           )
+        (ic
+         (make-object text% dynapad "Delete")
+         (re-anchor "c")
+         (position (append (bbcenter (bbstretch (bbslide cibb 0 (bbheight cibb)) -0.25)) (list 1)))
+         (pen "black")
+         (sticky #t)
+         (layer *dt-tool-layer*))
+        )
        (delete-touch-id #4(#f)))
   (bind delete-button "dt-down"
         (lambda (pad event)
@@ -201,13 +201,13 @@
                         (vector-ref change-brush-touch-id (dt-event-user-id event)))
             (dt-change-brush (dt-event-user-id event) change-brush-button))
           #f))
-)
+  )
 
 (define (dt-change-brush user-id bttn)
   (toggle-users-brush user-id)
   (if (string=? (send bttn fill) "blue")
-    (send bttn fill "green")
-    (send bttn fill "blue")))
+      (send bttn fill "green")
+      (send bttn fill "blue")))
 
 (define (dt-color-from-object event)
   (dt-user-color (dt-event-user-id event)
@@ -218,17 +218,17 @@
 ; make a swatch and bind appropriate procedures to it
 (define (dt-make-swatch user-id)
   (let ((swatch
-          (ic
-            (make-object rect% dynapad (send *dt-colormap-image* bbox))
-            (re-anchor "sw")
-            (position (+ (first (send dynapad bbox))
-                         (* 1.3 (+ 1 user-id) (send *dt-colormap-image* width)))
-                      (second (send dynapad bbox))
-                      1)
-            (sticky #t)
-            (layer *dt-tool-layer*)
-            (fill (list-ref *user-colors* user-id))
-            ))
+         (ic
+          (make-object rect% dynapad (send *dt-colormap-image* bbox))
+          (re-anchor "sw")
+          (position (+ (first (send dynapad bbox))
+                       (* 1.3 (+ 1 user-id) (send *dt-colormap-image* width)))
+                    (second (send dynapad bbox))
+                    1)
+          (sticky #t)
+          (layer *dt-tool-layer*)
+          (fill (list-ref *user-colors* user-id))
+          ))
         (swatch-touch-id #4(#f)))
 
     (bind swatch "dt-down"
@@ -273,24 +273,24 @@
     (when (bbenclosed x y (send *dt-colormap-image* bbox))
       (set! xpixel (- x (first pos)))
       (set! ypixel (- (second pos) y))
-      (set! xpixel 
-        (* (/ xpixel (send *dt-colormap-image* width))
-           (first *dt-colormap-dimensions*)))
+      (set! xpixel
+            (* (/ xpixel (send *dt-colormap-image* width))
+               (first *dt-colormap-dimensions*)))
       (set! ypixel
-        (* (/ ypixel (send *dt-colormap-image* height))
-           (second *dt-colormap-dimensions*)))
-      (set! rgb 
-        (sch_imagedata_rgb (send *dt-colormap-imagedata* get-cptr)
-                           (inexact->exact (floor ypixel))
-                           (inexact->exact (floor xpixel))))
+            (* (/ ypixel (send *dt-colormap-image* height))
+               (second *dt-colormap-dimensions*)))
+      (set! rgb
+            (sch_imagedata_rgb (send *dt-colormap-imagedata* get-cptr)
+                               (inexact->exact (floor ypixel))
+                               (inexact->exact (floor xpixel))))
 
       (dt-user-color (dt-event-user-id event)
-        (format "#~a~x~a~x~a~x" (if (< (first rgb) 16) "0" "") (first rgb)
-                (if (< (second  rgb) 16) "0" "") (second rgb)
-                (if (< (third rgb) 16) "0" "") (third rgb)))
+                     (format "#~a~x~a~x~a~x" (if (< (first rgb) 16) "0" "") (first rgb)
+                             (if (< (second  rgb) 16) "0" "") (second rgb)
+                             (if (< (third rgb) 16) "0" "") (third rgb)))
+      )
     )
   )
-)
 
 ; bind procedures to the colormap image
 (let ((colormap-touch-id #4(#f)))

@@ -22,11 +22,11 @@
 
 (define (has-tag xtree tagname)
   (equal? (car xtree) tagname)
-)
+  )
 
 (define (get-xtree-attr xtree attr)
   (assq attr (attr-list xtree))
-)
+  )
 (define (get-xtree-attr-value xtree attr . fail)
   (set! fail (if (pair? fail) (car fail) #f))
   (let ((val (assq attr (attr-list xtree))))
@@ -35,8 +35,8 @@
 (define (has-xtree-attrval xtree attr val)
   (let ((p (assq attr (attr-list xtree))))
     (if (and p (equal? val (cadr p))) p #f)
+    )
   )
-)
 
 (define (clear-xtree-attrlist xtree)
   (set-car! (cdr xtree) ()))
@@ -55,45 +55,45 @@
 
 (define (get-xtree-elements-by-fnc xtree match-fnc)
   (if (not xtree)
-    ()
-    (filter (lambda (elt) (match-fnc elt)) (elem-list xtree))
+      ()
+      (filter (lambda (elt) (match-fnc elt)) (elem-list xtree))
+      )
   )
-)
 
 (define (get-xtree-elements-by-tag xtree tagname)
   (if (not xtree)
-    ()
-    (filter (lambda (elt) (eq? (car elt) tagname)) (elem-list xtree))
+      ()
+      (filter (lambda (elt) (eq? (car elt) tagname)) (elem-list xtree))
+      )
   )
-)
 
 (define (get-xtree-elements-by-tag-attr xtree tagname attr)
   (if (not xtree)
-    ()
-    (filter (lambda (elt) (and (eq? (car elt) tagname) (get-xtree-attr elt attr))) (elem-list xtree))
+      ()
+      (filter (lambda (elt) (and (eq? (car elt) tagname) (get-xtree-attr elt attr))) (elem-list xtree))
+      )
   )
-)
 
 (define (get-xtree-elements-by-tag-attrval xtree tagname attr val)
   (let ((ret ()))
     (foreach (elem-list xtree) (lambda (elt)
-      (if (and (eq? (car elt) tagname) (has-xtree-attrval elt attr val))
-	(set! ret (append ret (list elt))))))
+                                 (if (and (eq? (car elt) tagname) (has-xtree-attrval elt attr val))
+                                     (set! ret (append ret (list elt))))))
     ret
+    )
   )
-)
 
 (define (has-xtree-element xtree fnc)
   (call/cc (lambda (return)
-    (foreach (elem-list xtree) (lambda (elt)
-      (if (fnc elt) (return elt))))
-    #f
-    )))
+             (foreach (elem-list xtree) (lambda (elt)
+                                          (if (fnc elt) (return elt))))
+             #f
+             )))
 
 (define (make-xtree tagname . attr-val-pairs)
   (define xtree (list tagname ()))
   (foreach attr-val-pairs (lambda (av)
-    (set-xtree-attrval xtree (car av) (cadr av))))
+                            (set-xtree-attrval xtree (car av) (cadr av))))
   xtree)
 
 ;--- functions for xtrees in situ on dynaobjects -----------------
@@ -107,25 +107,25 @@
   (if (not xtree) (set! xtree (list 'xatree ())))
   (set-xtree-attrval xtree attr val)
   (set-object-keyval obj 'xatree xtree)
-)
+  )
 
 (define (xrem-object-attrval obj attr)
   (define xtree (get-xtree obj))
   (when xtree
     (rem-xtree-attr xtree attr)
     (set-object-keyval obj 'xatree xtree)
+    )
   )
-)
 
 (define (xget-object-attrval obj attr . fail_value)
   (define xtree (get-xtree obj))
   (if xtree
-    (let ((val (get-xtree-attr xtree attr)))
-      (if val (cadr val) (if (null? fail_value) #f (car fail_value))))
-    ;else
-    #f
+      (let ((val (get-xtree-attr xtree attr)))
+        (if val (cadr val) (if (null? fail_value) #f (car fail_value))))
+      ;else
+      #f
+      )
   )
-)
 
 (define (xadd-object-element obj element)
   (define xtree (get-xtree obj))
@@ -133,54 +133,54 @@
   (add-xtree-element xtree element)
   (set-object-keyval obj 'xatree xtree)
   element
-)
+  )
 
 (define (xget-object-element-attrval obj tagname attr val)
   (define xtree (get-xtree obj))
   (if (not xtree)
-    #f
-    (let ((e 0)(elts ())(found #f))
-      (set! elts (elem-list xtree))
-      (if (null? elts) #f
-	(do ((i 0 (+ 1 i))) ((or found (>= i (length elts))) (if found e #f))
-	  (set! e (list-ref elts i))
-	  (when (and (eq? (car e) tagname)
-		   (has-xtree-attrval e attr val))
-	    (set! found #t))
-	)
+      #f
+      (let ((e 0)(elts ())(found #f))
+        (set! elts (elem-list xtree))
+        (if (null? elts) #f
+            (do ((i 0 (+ 1 i))) ((or found (>= i (length elts))) (if found e #f))
+              (set! e (list-ref elts i))
+              (when (and (eq? (car e) tagname)
+                         (has-xtree-attrval e attr val))
+                (set! found #t))
+              )
+            )
+        )
       )
-    )
   )
-)
 
 (define (xrem-object-element obj elem)
   (define xtree (get-xtree obj))
-  (if xtree 
-    (rem-xtree-element xtree elem))
-)
+  (if xtree
+      (rem-xtree-element xtree elem))
+  )
 
 (define (x-removematching-object-element-by-fnc obj proc)
   (define xtree (get-xtree obj))
   (if (not xtree)
-    #f
-    (let ((e 0)(elts ())(remlist ())(ret #f))
-      (set! elts (elem-list xtree))
-      (if (null? elts)
-        #f
-        (begin
-          (foreach elts
-            (lambda (e)
-              (if (proc e) (set! remlist (cons e remlist)))))
-          (foreach remlist
-            (lambda (e)
-              (set! elts (remove e elts))))
-          (set-mcdr! (cdr xtree) elts)
-          (not (null? remlist))
-	)
+      #f
+      (let ((e 0)(elts ())(remlist ())(ret #f))
+        (set! elts (elem-list xtree))
+        (if (null? elts)
+            #f
+            (begin
+              (foreach elts
+                       (lambda (e)
+                         (if (proc e) (set! remlist (cons e remlist)))))
+              (foreach remlist
+                       (lambda (e)
+                         (set! elts (remove e elts))))
+              (set-mcdr! (cdr xtree) elts)
+              (not (null? remlist))
+              )
+            )
+        )
       )
-    )
   )
-)
 
 ;-----
 
@@ -188,55 +188,55 @@
   (if (file-exists? filename) (delete-file filename))
   (call-with-output-file filename
     (lambda (fp) (prettyprint-xsml-aux fp "" tree))
+    )
   )
-)
 (define (prettyprint-xsml-aux fp indent tree )
   (let ((newindent (string-append "  " indent))(needindent #f))
-      (display indent fp)
-      (display "(" fp)
+    (display indent fp)
+    (display "(" fp)
 
-      ; write the tag of this tree
-      (write (car tree) fp)
+    ; write the tag of this tree
+    (write (car tree) fp)
 
-      ; write the attributes of this tree
-      (if (<= (length (cadr tree)) 3)
-	(begin (display " " fp) (write (cadr tree) fp))
-	;else put attributes in a column
-	(begin
-	  (newline fp)
-	  (display newindent fp)
-	  (display "(" fp)
-	  (newline fp)
-	    (foreach (cadr tree)
-	      (lambda (att)
-		(display newindent fp)
-		(display "  " fp)
-		(write att fp)(newline fp)
-	      )
-	    )
+    ; write the attributes of this tree
+    (if (<= (length (cadr tree)) 3)
+        (begin (display " " fp) (write (cadr tree) fp))
+        ;else put attributes in a column
+        (begin
+          (newline fp)
+          (display newindent fp)
+          (display "(" fp)
+          (newline fp)
+          (foreach (cadr tree)
+                   (lambda (att)
+                     (display newindent fp)
+                     (display "  " fp)
+                     (write att fp)(newline fp)
+                     )
+                   )
 
-	  (display newindent fp)
-	  (display ")" fp)
-	  (newline fp)
-	  (set! needindent #t)
-	)
-      )
+          (display newindent fp)
+          (display ")" fp)
+          (newline fp)
+          (set! needindent #t)
+          )
+        )
 
-      ; write the elements of this tree
-      (if (not (null? (cddr tree)))
-	(begin
-	  (newline fp)  ; conclude attributes line
-	  (foreach (cddr tree)
-	    (lambda (element)
-	      (prettyprint-xsml-aux fp newindent element)))
-	  (set! needindent #t)
-	)
-      )
-      (if needindent (display indent fp))
-      (display ")" fp)
-      (newline fp)
+    ; write the elements of this tree
+    (if (not (null? (cddr tree)))
+        (begin
+          (newline fp)  ; conclude attributes line
+          (foreach (cddr tree)
+                   (lambda (element)
+                     (prettyprint-xsml-aux fp newindent element)))
+          (set! needindent #t)
+          )
+        )
+    (if needindent (display indent fp))
+    (display ")" fp)
+    (newline fp)
+    )
   )
-)
 
 ;-----
 (define (xhelp)
@@ -281,7 +281,7 @@
   (printf "(object-in-category? obj categname)\n")
   (printf "(rem-object-from-category obj categname)\n")
   (printf "(find-objects-in-category categname object_list)\n")
-)
+  )
 
 ;--- element collections -----------------------------------------
 
@@ -314,7 +314,7 @@
 (define (add-feature-to-obj obj feature)
   (xadd-object-element obj feature)
   feature
-)
+  )
 
 ; (get-features-of-obj obj (lambda (elt) (and (eq? (car elt) 'feature)
 ;                                             (has-xtree-attrval elt 'type 'anno))))
@@ -322,38 +322,38 @@
   (let ((xtree (get-xtree obj)))
     (if (not xtree)
         ()
-	;else
-	(begin
-	  (set! xtree xtree)
+        ;else
+        (begin
+          (set! xtree xtree)
           (get-xtree-elements-by-fnc xtree match-fnc)
-	)
+          )
+        )
     )
   )
-)
 
 ; (has-object-feature obj (lambda (elt) (and (eq? (car elt) 'feature)
 ;                                             (has-xtree-attrval elt 'type 'anno))))
 (define (has-object-feature obj match-fnc)
   (let ((xtree (get-xtree obj)))
     (if xtree
-      (has-xtree-element xtree match-fnc)
-      ;else
-      #f
+        (has-xtree-element xtree match-fnc)
+        ;else
+        #f
+        )
     )
   )
-)
 
 (define (show-features-of-obj obj)
   (let ((flist (get-features-of-obj obj (lambda (elt) (eq? (car elt) 'feature)))))
     (foreach flist
-      (lambda (f) (printf "~a~%" f))
+             (lambda (f) (printf "~a~%" f))
+             )
     )
   )
-)
 
 (define (remove-feature-from-obj fptr obj)
   (xrem-object-element obj fptr)
-)
+  )
 
 ; build category functions on top of feature functions
 
@@ -361,48 +361,48 @@
 (define (add-object-to-category obj categname)
   (if (string? categname) (set! categname (string->symbol categname)))
   (if (not (object-in-category? obj categname))
-    (add-feature-to-obj obj (make-feature 'categ `(name ,categname))))
-)
+      (add-feature-to-obj obj (make-feature 'categ `(name ,categname))))
+  )
 
 ; (object-in-category? obj 'mostly_white)
 (define (object-in-category? obj categname)
   (if (string? categname) (set! categname (string->symbol categname)))
   (has-object-feature obj (lambda (elt) (and (eq? (car elt) 'feature)
-                                              (has-xtree-attrval elt 'type 'categ)
-                                              (has-xtree-attrval elt 'name categname))))
-)
+                                             (has-xtree-attrval elt 'type 'categ)
+                                             (has-xtree-attrval elt 'name categname))))
+  )
 
 (define (get-categories-of-obj obj)
   (get-features-of-obj obj
-    (lambda (elt) (and (eq? (car elt) 'feature)
-		       (has-xtree-attrval elt 'type 'categ))))
-)
+                       (lambda (elt) (and (eq? (car elt) 'feature)
+                                          (has-xtree-attrval elt 'type 'categ))))
+  )
 
 (define (show-categories-of-obj obj)
   (define flist (get-categories-of-obj obj))
   (foreach flist (lambda (f) (printf "~a~%" f)))
-)
+  )
 
 ; (rem-object-from-category obj 'mostly_white)
 (define (rem-object-from-category obj categname)
   (if (string? categname) (set! categname (string->symbol categname)))
   (let ((fptr (object-in-category? obj categname)))
     (remove-feature-from-obj fptr obj)
+    )
   )
-)
 
 ; (find-objects-in-category 'mostly_white (send dynapad objects))
 (define (find-objects-in-category categname object_list)
   (filter
-    (lambda (obj)
-      (has-object-feature obj
-         (lambda (elt) (and (eq? (car elt) 'feature)
-                            (has-xtree-attrval elt 'type 'categ)
-                            (has-xtree-attrval elt 'name categname))))
-    )
-    object_list
+   (lambda (obj)
+     (has-object-feature obj
+                         (lambda (elt) (and (eq? (car elt) 'feature)
+                                            (has-xtree-attrval elt 'type 'categ)
+                                            (has-xtree-attrval elt 'name categname))))
+     )
+   object_list
+   )
   )
-)
 
 
 

@@ -9,7 +9,7 @@
     (init __obj __username)
 
     (field (_formation __obj)
-	   (_username  (if __username __username (getenv "USER"))))
+           (_username  (if __username __username (getenv "USER"))))
 
     (super-instantiate (__obj))
 
@@ -18,7 +18,7 @@
 
     (field (_mysql (make-object mysql-history%)))
     (field (_timer (make-object timer%
-				(lambda () (send this refresh-pile)) 60000)))
+                                (lambda () (send this refresh-pile)) 60000)))
 
     (field (_user-id     (send _mysql get-user-id _username)))
     (field (_image-depot "/home/Share/.dynalog/image_depot"))
@@ -53,13 +53,13 @@
     ;; Bindbox methods
     (define/public bindbox
       (case-lambda
-       (()  _bindbox)
-       ((b)
-	(set! _bindbox b)
-	(for-each
-	 (lambda (object)
-	   (send _bindbox set-bindings object))
-	 (send this contents)))))
+        (()  _bindbox)
+        ((b)
+         (set! _bindbox b)
+         (for-each
+          (lambda (object)
+            (send _bindbox set-bindings object))
+          (send this contents)))))
     ;;
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -79,26 +79,26 @@
       ;; Remove the old events and their objects
       (for-each
        (lambda (object)
-	 (define event-id (get-object-keyval object 'event -1))
-	 (if (member event-id old-events)
-	     (send this remove object)))
+         (define event-id (get-object-keyval object 'event -1))
+         (if (member event-id old-events)
+             (send this remove object)))
        (send this contents))
 
       ;; Add the new events and their objects
       (for-each
        (lambda (event-string)
-	 (define event-id (string->number event-string))
-	 (define path     (format "~a/~a.jpg" _image-depot event-id))
-	 (define image    (make-object image% dynapad path))
-	 (if (file-exists? path)
-	     (send this receive image)
-	     (say "screenshot not found:" event-id)))
+         (define event-id (string->number event-string))
+         (define path     (format "~a/~a.jpg" _image-depot event-id))
+         (define image    (make-object image% dynapad path))
+         (if (file-exists? path)
+             (send this receive image)
+             (say "screenshot not found:" event-id)))
        new-events)
 
       (say "contents post receive: " (send this contents))
       (for-each
        (lambda (o)
-	 (send o scale 0.1))
+         (send o scale 0.1))
        (send this contents))
 
       ;; arrange the contents into a spiral

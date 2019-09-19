@@ -17,7 +17,7 @@
 
 (define popup-server%
   (class canvas%  (parent)
-    
+
     (inherit popup-menu)
     (define/override
       (on-focus on?) (say on?))
@@ -36,9 +36,9 @@
 
 (define (Xscreen-xy argPAD sx sy)
   (let* ((bb (send argPAD bbox))
-          (winfo (send argPAD winfo))
-          (Xsx (+ (car winfo) (/ (caddr winfo) 2) sx))
-          (Xsy (- (+ (cadr winfo) (/ (cadddr winfo) 2)) sy)))
+         (winfo (send argPAD winfo))
+         (Xsx (+ (car winfo) (/ (caddr winfo) 2) sx))
+         (Xsy (- (+ (cadr winfo) (/ (cadddr winfo) 2)) sy)))
     (values (inexact->exact (floor Xsx)) (inexact->exact (floor Xsy))) ))
 
 (define *last-Xscreen-xy* '(100 100))
@@ -49,20 +49,20 @@
   (lambda (pmenu sx sy)
     (let-values (((sx sy) (Xscreen-xy argPAD sx sy)))
       (set! *last-Xscreen-xy* (list sx sy))
-;      (send popserver makepup pmenu sx sy))))
+      ;      (send popserver makepup pmenu sx sy))))
       (send argPAD makepup pmenu sx sy))))
 
 ;---
 
 (define (new-popup title)
   (make-object popup-menu% title
-    (lambda (m e)
-      (unless (is-a? m popup-menu%)
-        (error "bad menu object"))
-      (unless
-        (and (is-a? e control-event%)
-             (memq (send e get-event-type) '(menu-popdown menu-popdown-none)))
-        (error "bad event object")))))
+               (lambda (m e)
+                 (unless (is-a? m popup-menu%)
+                   (error "bad menu object"))
+                 (unless
+                     (and (is-a? e control-event%)
+                          (memq (send e get-event-type) '(menu-popdown menu-popdown-none)))
+                   (error "bad event object")))))
 
 (define (add-submenu _menu _label . args)
   (define sb (make-object menu% _label _menu))
@@ -79,7 +79,7 @@
 
 (define (add-checkable-menu-item menu label func checked? . enabled?)
   (let ((cmi (make-object checkable-menu-item% label menu
-			  (lambda (i e) (func i)) #f #f void checked?)))
+                          (lambda (i e) (func i)) #f #f void checked?)))
     (when (not (null? enabled?)) (send cmi enable (car enabled?)))
     cmi))
 
@@ -95,8 +95,8 @@
     (define/public (new-item item) (push! item _items))
     (define/public (uncheck-others exception)
       (foreach _items (lambda (i) (unless (eq? i exception)
-					  (if (send i is-checked?)
-					      (send i check #f))))))
+                                    (if (send i is-checked?)
+                                        (send i check #f))))))
     ))
 
 (define (add-exclusive-checkable-item-set menu)
@@ -104,12 +104,12 @@
 
 (define (add-exclusive-checkable-menu-item checkable-set label funct)
   (let* ((menu (send checkable-set menu))
-	 (full-funct (lambda (item evnt)
-		       (unless (send item is-checked?) ;already checked?
-			       (send checkable-set uncheck-others item)
-			       (send item check #t)
-			       (funct))))
-	 (newitem (make-object checkable-menu-item% label menu full-funct)))
+         (full-funct (lambda (item evnt)
+                       (unless (send item is-checked?) ;already checked?
+                         (send checkable-set uncheck-others item)
+                         (send item check #t)
+                         (funct))))
+         (newitem (make-object checkable-menu-item% label menu full-funct)))
     (send checkable-set new-item newitem)
     newitem))
 |#
@@ -126,7 +126,7 @@
 ;example
 ; assume S1 is an object with method (state . newval)
 ;  (add-checkable-menu-item popmenu
-;    "Current Object State" 
+;    "Current Object State"
 ;    (lambda (mi) (send S1 state (send mi is-checked?)) )
 ;    (send S1 state))
 
@@ -139,19 +139,19 @@
         (menubar 0)
         )
     (set! topmenu_frame (make-object frame% title #f
-                            (caddr winfo) 0 (car winfo) (cadr winfo)
-                            '()))
+                                     (caddr winfo) 0 (car winfo) (cadr winfo)
+                                     '()))
     (send topmenu_frame show #t)
     (set! menubar (make-object menu-bar% topmenu_frame))
     menubar
+    )
   )
-)
 
 (define (hide-wintopmenu menu) (send (send menu get-frame) show #f))
 (define (show-wintopmenu argPAD menu)
   (let ((winfo (send argPAD winfo))
         (height (send (send menu get-frame) get-height))
-       )
+        )
     (send (send menu get-frame) show #t)
     (send (send menu get-frame) move (car winfo) (cadr winfo))
     (send (send menu get-frame) resize (caddr winfo) height)))

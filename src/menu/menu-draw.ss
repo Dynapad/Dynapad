@@ -33,146 +33,146 @@
 
 (define btn_rect
   (make-object button%
-    off_rect
-    rectpane
-    (lambda (button event)
-      (for-all-pads (lambda (argPAD)
-        (send argPAD fill? #f)))
-      (clear-all-menu-buttons)
-      (send button set-label on_rect)
-      (set! Draw-multiple (button-double-clicked?))
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD rect% "Draw")))))
-)
+               off_rect
+               rectpane
+               (lambda (button event)
+                 (for-all-pads (lambda (argPAD)
+                                 (send argPAD fill? #f)))
+                 (clear-all-menu-buttons)
+                 (send button set-label on_rect)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD rect% "Draw")))))
+  )
 
 (define btn_filledRect
   (make-object button%
-    off_filledRect
-    rectpane
-    (lambda (button event)
-      (for-all-pads (lambda (argPAD)
-        (send argPAD fill? #t)))
-      (clear-all-menu-buttons)
-      (send button set-label on_filledRect)
-      (set! Draw-multiple (button-double-clicked?))
-      (update-panel-colors)
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD rect% "Draw")))))
-)
+               off_filledRect
+               rectpane
+               (lambda (button event)
+                 (for-all-pads (lambda (argPAD)
+                                 (send argPAD fill? #t)))
+                 (clear-all-menu-buttons)
+                 (send button set-label on_filledRect)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (update-panel-colors)
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD rect% "Draw")))))
+  )
 
 (define btn_oval
   (make-object button%
-    off_oval
-    ovalpane
-    (lambda (button event)
-      (for-all-pads (lambda (argPAD)
-        (send argPAD fill? #f)))
-      (clear-all-menu-buttons)
-      (send button set-label on_oval)
-      (set! Draw-multiple (button-double-clicked?))
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD oval% "Draw")))))
-)
+               off_oval
+               ovalpane
+               (lambda (button event)
+                 (for-all-pads (lambda (argPAD)
+                                 (send argPAD fill? #f)))
+                 (clear-all-menu-buttons)
+                 (send button set-label on_oval)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD oval% "Draw")))))
+  )
 (define btn_filledOval
   (make-object button%
-    off_filledOval
-    ovalpane
-    (lambda (button event)
-      (for-all-pads (lambda (argPAD)
-        (send argPAD fill? #t)))
-      (clear-all-menu-buttons)
-      (send button set-label on_filledOval)
-      (set! Draw-multiple (button-double-clicked?))
-      (update-panel-colors)
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD oval% "Draw")))))
-)
+               off_filledOval
+               ovalpane
+               (lambda (button event)
+                 (for-all-pads (lambda (argPAD)
+                                 (send argPAD fill? #t)))
+                 (clear-all-menu-buttons)
+                 (send button set-label on_filledOval)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (update-panel-colors)
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD oval% "Draw")))))
+  )
 
 
 (define btn_line
   (make-object button%
-    off_line
-    linepane
-    (lambda (button event)
-      (clear-all-menu-buttons)
-      (send button set-label on_line)
-      (set! Draw-multiple (button-double-clicked?))
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD line% "Draw")))))
-)
+               off_line
+               linepane
+               (lambda (button event)
+                 (clear-all-menu-buttons)
+                 (send button set-label on_line)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD line% "Draw")))))
+  )
 
 (define btn_polyline
   (make-object button%
-    off_polyline
-    linepane
-    (lambda (button event)
-      (clear-all-menu-buttons)
-      (send button set-label on_polyline)
-      (set! Draw-multiple (button-double-clicked?))
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD polyline% "Draw")))))
-)
+               off_polyline
+               linepane
+               (lambda (button event)
+                 (clear-all-menu-buttons)
+                 (send button set-label on_polyline)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD polyline% "Draw")))))
+  )
 (define btn_poly
   (make-object button%
-    off_poly
-    polypane
-    (lambda (button event)
-      (for-all-pads (lambda (argPAD)
-        (send argPAD fill? #f)))
-      (clear-all-menu-buttons)
-      (send button set-label on_poly)
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD polygon% "Draw")))))
-)
+               off_poly
+               polypane
+               (lambda (button event)
+                 (for-all-pads (lambda (argPAD)
+                                 (send argPAD fill? #f)))
+                 (clear-all-menu-buttons)
+                 (send button set-label on_poly)
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD polygon% "Draw")))))
+  )
 
 (define btn_filledPoly
   (make-object button%
-    off_filledPoly
-    polypane
-    (lambda (button event)
-      (for-all-pads (lambda (argPAD)
-        (send argPAD fill? #t)))
-      (clear-all-menu-buttons)
-      (send button set-label on_filledPoly)
-      (set! Draw-multiple (button-double-clicked?))
-      (update-panel-colors)
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD polygon% "Draw")))))
-)
+               off_filledPoly
+               polypane
+               (lambda (button event)
+                 (for-all-pads (lambda (argPAD)
+                                 (send argPAD fill? #t)))
+                 (clear-all-menu-buttons)
+                 (send button set-label on_filledPoly)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (update-panel-colors)
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD polygon% "Draw")))))
+  )
 
 (define btn_text
   (make-object button%
-    off_text
-    freetextpane
-    (lambda (button event)
-      (clear-all-menu-buttons)
-      (send button set-label on_text)
-      (set! Draw-multiple (button-double-clicked?))
-      (for-all-pads (lambda (argPAD)
-	(initDraw argPAD text% "DrawText")))))
-)
+               off_text
+               freetextpane
+               (lambda (button event)
+                 (clear-all-menu-buttons)
+                 (send button set-label on_text)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD text% "DrawText")))))
+  )
 
 (define btn_freehand
   (make-object button%
-    off_freehand
-    freetextpane
-    (lambda (button event)
-      (clear-all-menu-buttons)
-      (send button set-label on_freehand)
-      (set! Draw-multiple (button-double-clicked?))
-      (for-all-pads (lambda (argPAD)
-        (initDraw argPAD freehand% "Draw")))))
-)
+               off_freehand
+               freetextpane
+               (lambda (button event)
+                 (clear-all-menu-buttons)
+                 (send button set-label on_freehand)
+                 (set! Draw-multiple (button-double-clicked?))
+                 (for-all-pads (lambda (argPAD)
+                                 (initDraw argPAD freehand% "Draw")))))
+  )
 
 (set! *draw-button-off-labels*
-  (list
-   (list btn_rect        off_rect)
-   (list btn_filledRect  off_filledRect )
-   (list btn_oval        off_oval       )
-   (list btn_filledOval  off_filledOval )
-   (list btn_line        off_line       )
-   (list btn_polyline    off_polyline   )
-   (list btn_poly        off_poly       )
-   (list btn_filledPoly  off_filledPoly )
-   (list btn_text        off_text       )
-   (list btn_freehand    off_freehand   )))
+      (list
+       (list btn_rect        off_rect)
+       (list btn_filledRect  off_filledRect )
+       (list btn_oval        off_oval       )
+       (list btn_filledOval  off_filledOval )
+       (list btn_line        off_line       )
+       (list btn_polyline    off_polyline   )
+       (list btn_poly        off_poly       )
+       (list btn_filledPoly  off_filledPoly )
+       (list btn_text        off_text       )
+       (list btn_freehand    off_freehand   )))

@@ -11,16 +11,16 @@
 (define (dynaload-force file)
   (define fullpath (dynaload-find-file file))
   (if fullpath
-    (begin
-      (load fullpath)
-      (set! *dynaload-list* (cons file *dynaload-list*)) )
-    ;else
-    (error "dynaload can't find file:" file 'in *dynapad-directory*) ))
+      (begin
+        (load fullpath)
+        (set! *dynaload-list* (cons file *dynaload-list*)) )
+      ;else
+      (error "dynaload can't find file:" file 'in *dynapad-directory*) ))
 
 (define (file-if-exists? filename)
   (if (file-exists? filename)
-    filename
-    #f))
+      filename
+      #f))
 
 (define (dynaload-find-file file)
   (cond
@@ -47,5 +47,5 @@
                       (string-append dirname ".ss")))
   (define filename (build-path->string *dynapad-directory* "apps" dirname appname ))
   (if (file-exists? filename)
-    (begin (load filename) #t)
-    (error "can't find app:" filename)))
+      (begin (load filename) #t)
+      (error "can't find app:" filename)))

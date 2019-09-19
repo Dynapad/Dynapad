@@ -5,7 +5,7 @@
   [+ (* t high) (* (- 1 t) low) ])
 
 (define (lerp-project x l1 h1 l2 h2)
-; converts x, relative to range l1-h1, to corresponding range l2-h2
+  ; converts x, relative to range l1-h1, to corresponding range l2-h2
   (when (= l1 h1) (error "lerp source range is 0"))
   (let ((fract (/ (- x l1) (- h1 l1))))
     (lerp fract l2 h2)))
@@ -22,16 +22,16 @@
   (def uy)
 
   (if (let ((rat (/ oldzoom newzoom))) (and (> rat 0.95)(< rat 1.05)) )
-    ; oldzoom and newzoom are nearly similar, simply lerp across slide
-    (begin
-      (set! ux (lerp f u1x u2x))
-      (set! uy (lerp f u1y u2y)))
-    ;else
-    (begin
-      (set! ux (+ u1x (* (- u2x u1x) (/ (- v oldzoom) (- newzoom oldzoom)))))
-      (set! uy (+ u1y (* (- u2y u1y) (/ (- v oldzoom) (- newzoom oldzoom)))))))
-  (list (/ ux v) (/ uy v) v) 
-)
+      ; oldzoom and newzoom are nearly similar, simply lerp across slide
+      (begin
+        (set! ux (lerp f u1x u2x))
+        (set! uy (lerp f u1y u2y)))
+      ;else
+      (begin
+        (set! ux (+ u1x (* (- u2x u1x) (/ (- v oldzoom) (- newzoom oldzoom)))))
+        (set! uy (+ u1y (* (- u2y u1y) (/ (- v oldzoom) (- newzoom oldzoom)))))))
+  (list (/ ux v) (/ uy v) v)
+  )
 
 ; slow-in, slow-out lerp
 (define (siso_lerp t)
@@ -47,6 +47,6 @@
   (def t2 (- 1 (* (- 1 tpositive) (- 1 tpositive))))
   (def l (lerp tpositive t1 t2))
   (if (< t 0)
-    (- (lerp l t1 t2))
-       (lerp l t1 t2)))
+      (- (lerp l t1 t2))
+      (lerp l t1 t2)))
 

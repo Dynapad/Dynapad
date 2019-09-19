@@ -1,37 +1,37 @@
-  
+
 (define Select-Zoom-In-lambda
   (lambda (eventPAD e) (set! currentPAD eventPAD)
-      (sendf eventPAD evs set-last-xy (event-x e) (event-y e))
-      (if (and (not (null? (send eventPAD selected))) *cowboy-zoom-on-objects*)
-          (send (send eventPAD stimer) start 1 (send eventPAD zinterval))
-          (send (send eventPAD ztimer) start 1 (send eventPAD zinterval)))))
+          (sendf eventPAD evs set-last-xy (event-x e) (event-y e))
+          (if (and (not (null? (send eventPAD selected))) *cowboy-zoom-on-objects*)
+              (send (send eventPAD stimer) start 1 (send eventPAD zinterval))
+              (send (send eventPAD ztimer) start 1 (send eventPAD zinterval)))))
 
 (define Select-Zoom-In-Stop-lambda
   (lambda (eventPAD e) (set! currentPAD eventPAD)
-      (send (send eventPAD stimer) stop)
-      (send (send eventPAD ztimer) stop)))
+          (send (send eventPAD stimer) stop)
+          (send (send eventPAD ztimer) stop)))
 
 (define Select-Zoom-Out-lambda
   (lambda (eventPAD e) (set! currentPAD eventPAD)
-      (sendf eventPAD evs set-last-xy (event-x e) (event-y e))
-      (if (and (not (null? (send eventPAD selected))) *cowboy-zoom-on-objects*)
-        (send (send eventPAD stimer) start -1 (send eventPAD zinterval))
-        (send (send eventPAD ztimer) start -1 (send eventPAD zinterval)))))
+          (sendf eventPAD evs set-last-xy (event-x e) (event-y e))
+          (if (and (not (null? (send eventPAD selected))) *cowboy-zoom-on-objects*)
+              (send (send eventPAD stimer) start -1 (send eventPAD zinterval))
+              (send (send eventPAD ztimer) start -1 (send eventPAD zinterval)))))
 
 (define Select-Zoom-Out-Stop-lambda
   (lambda (eventPAD e) (set! currentPAD eventPAD)
-      (send (send eventPAD stimer) stop)
-      (send (send eventPAD ztimer) stop)))
+          (send (send eventPAD stimer) stop)
+          (send (send eventPAD ztimer) stop)))
 
 
 ; must call bindZoom first to create ztimer and zinterval
 (define (bindZoomSelection argPAD)
   (define scaleproc (lambda (argPAD zmult)
-    (let
-      ((x (sendf argPAD evs lastx))
-      (y (sendf argPAD evs lasty))
-      (scalefac zmult))
-      (map (lambda (o) (send o scale scalefac x y)) (send argPAD selected)))))
+                      (let
+                          ((x (sendf argPAD evs lastx))
+                           (y (sendf argPAD evs lasty))
+                           (scalefac zmult))
+                        (map (lambda (o) (send o scale scalefac x y)) (send argPAD selected)))))
 
   (send argPAD stimer (make-object zoomtimer% argPAD scaleproc))
 
@@ -44,4 +44,4 @@
   (send argPAD setvar 'Select-Zoom-In-Stop-lambda  Select-Zoom-In-Stop-lambda)
   (send argPAD setvar 'Select-Zoom-Out-lambda      Select-Zoom-Out-lambda)
   (send argPAD setvar 'Select-Zoom-Out-Stop-lambda Select-Zoom-Out-Stop-lambda)
-)
+  )

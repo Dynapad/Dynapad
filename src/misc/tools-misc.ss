@@ -14,7 +14,7 @@
      (apply + wts)))
 
 (define-macro (increment-mean mean n x)
-  `(cset! ,mean 
+  `(cset! ,mean
           (if (zero? ,n)
               (begin
                 (++_ ,n)
@@ -35,7 +35,7 @@
       b
       a))
 
-; x is a variable, toggles between vals a and b 
+; x is a variable, toggles between vals a and b
 (define-macro (toggle x eq-fn a b)
   `(set! ,x (other ,x ,eq-fn ,a ,b)))
 
@@ -62,9 +62,9 @@
 
 (define (chain-foreach next-fn stop-fn next-stop-fn item-fn chn)
   (when (not (stop-fn chn))
-        (begin
-          (item-fn chn)
-          (chain-foreach next-fn next-stop-fn next-stop-fn item-fn (next-fn chn)))))
+    (begin
+      (item-fn chn)
+      (chain-foreach next-fn next-stop-fn next-stop-fn item-fn (next-fn chn)))))
 
 (define (chain-filter next-fn stop-fn next-stop-fn item-fn chn)
   (if (stop-fn chn)
@@ -154,7 +154,7 @@
 
 
 ;a,b,p are coord pairs '(xa ya)...
-;returns #t iff p lies in box  with corners a,b 
+;returns #t iff p lies in box  with corners a,b
 (define (pt-in-bbox? p a b)
   (and (between? (car a) (car p) (car b))
        (between? (cadr a) (cadr p) (cadr b))))
@@ -197,7 +197,7 @@
                              (> this max-ahead))
                          this)
                         (else max-ahead)))))))
-                           
+
 (define (limit-between! x a b)
   (let ((lo (minfinity a b))
         (hi (maxfinity a b)))

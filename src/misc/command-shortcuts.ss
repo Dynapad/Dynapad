@@ -26,7 +26,7 @@
 ;---
 (define (updir path)
   (let-values (((base name dir?) (split-path->string path)))
-      base))
+    base))
 
 (define *onedot-path-rexp* (regexp "^[.]/(.*)"))
 (define *twodot-path-rexp* (regexp "^[.][.]/(.*)"))
@@ -55,21 +55,21 @@
 
 (define (ls-dir dir . re)                    ; -- version with name matching
   (if (null? re)                             ;  eg. (ls "jpg" "gif" "2.*jpg")
-    (directory-list->string dir)
-    ;else
-    (begin
-      (set! re (apply string-append
-        (cons
-          (string-append ".*" (car re) ".*")
-          (map (lambda (r) (string-append "|.*" r ".*")) (cdr re)))))
-      (filter (lambda (f) (regexp-match re f)) (directory-list->string dir)))))
+      (directory-list->string dir)
+      ;else
+      (begin
+        (set! re (apply string-append
+                        (cons
+                         (string-append ".*" (car re) ".*")
+                         (map (lambda (r) (string-append "|.*" r ".*")) (cdr re)))))
+        (filter (lambda (f) (regexp-match re f)) (directory-list->string dir)))))
 
 (define (ls . res)
   (apply ls-dir (current-directory) res))
 
 ;an experiment, not ready for use:
 (define (uber-ls . res)         ; -- includes non-local directories, pattern matches
-                                      ;  eg. (ls "jpg" "gif" "2.*jpg")
+  ;  eg. (ls "jpg" "gif" "2.*jpg")
   (if (null? res)
       (directory-list->string (current-directory))
       ;else
@@ -88,33 +88,33 @@
 (define (show-method-names obj . arg)
   (let ((re (if (null? arg) #f (regexp (car arg))))
         (names (interface->method-names (object-interface obj))))
-  (when re
-    (set! names
-      (filter
-        (lambda (n) (if (regexp-match re (symbol->string n)) n #f))
-        names)))
-  (foreach (reverse names) (lambda (n) (say n)))))
+    (when re
+      (set! names
+            (filter
+             (lambda (n) (if (regexp-match re (symbol->string n)) n #f))
+             names)))
+    (foreach (reverse names) (lambda (n) (say n)))))
 
 ; show-methods that match RE (no quotes needed)
 (define-syntax meths
   (syntax-rules ()
-      ((_ obj args ...)
-        (if (null? (list 'args ...))
-          (show-method-names obj)
-          (let ((re (car (list 'args ...))))
-            (show-method-names obj (string-append ".*" (symbol->string re) ".*")))))))
+    ((_ obj args ...)
+     (if (null? (list 'args ...))
+         (show-method-names obj)
+         (let ((re (car (list 'args ...))))
+           (show-method-names obj (string-append ".*" (symbol->string re) ".*")))))))
 
 ;---
 
 (define-syntax getfield
   (syntax-rules ()
-      ((_ object class field)
-        ((class-field-accessor class field) object)) ))
+    ((_ object class field)
+     ((class-field-accessor class field) object)) ))
 
 (define-syntax setfield
   (syntax-rules ()
-      ((_ object class field val)
-        ((class-field-mutator class field) object val)) ))
+    ((_ object class field val)
+     ((class-field-mutator class field) object val)) ))
 
 
 ;---
@@ -149,29 +149,29 @@
 ;           (close-input-port (fourth ports))
 ;           (and (not (eq? eof try)) try)))
 ;))
-           
+
 ; TODO: this was "plthome.ss", is this a safe choice of replacement..?
 (require-for-syntax (lib "dirs.ss" "setup"))
- (define-syntax (this-expression-source-path stx)
-   (syntax-case stx ()
-     [(_)
-      (let* ([source (syntax-source stx)]
-             [local (lambda ()
-                      (or (current-load-relative-directory)
-                          (current-directory)))]
-             [dir (plthome-ify
-                   (or (and source (string? source) (file-exists? source)
-                            (let-values ([(base file dir?) (split-path->string source)])
-                              (and (string? base)
-                                   (path->complete-path
-                                    base
-                                    (or (current-load-relative-directory)
-                                        (current-directory))))))
-                       (local)))])
-        (if (and (pair? dir) (eq? 'plthome (car dir)))
-          (with-syntax ([d dir])
-            (syntax (un-plthome-ify 'd)))
-          (datum->syntax-object (quote-syntax here) source stx)))]))
+(define-syntax (this-expression-source-path stx)
+  (syntax-case stx ()
+    [(_)
+     (let* ([source (syntax-source stx)]
+            [local (lambda ()
+                     (or (current-load-relative-directory)
+                         (current-directory)))]
+            [dir (plthome-ify
+                  (or (and source (string? source) (file-exists? source)
+                           (let-values ([(base file dir?) (split-path->string source)])
+                             (and (string? base)
+                                  (path->complete-path
+                                   base
+                                   (or (current-load-relative-directory)
+                                       (current-directory))))))
+                      (local)))])
+       (if (and (pair? dir) (eq? 'plthome (car dir)))
+           (with-syntax ([d dir])
+             (syntax (un-plthome-ify 'd)))
+           (datum->syntax-object (quote-syntax here) source stx)))]))
 
 ;(define-syntax (this-expression-source-path stx)
 ;   (syntax-case stx ()
@@ -180,6 +180,6 @@
 
 ;terser version:
 (define-syntax (this-expression-source-path stx)
-   (datum->syntax-object stx (syntax-source stx)))
+  (datum->syntax-object stx (syntax-source stx)))
 
 

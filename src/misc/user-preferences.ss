@@ -19,7 +19,7 @@
     (cond
       ((not home) (error "no home directory"))
       ((string-ci=? home "C:\\")
-        (message-box "HOME" "home not set, Using C:\\" #f '(ok-cancel))))
+       (message-box "HOME" "home not set, Using C:\\" #f '(ok-cancel))))
     (when home
       (set! *home-directory* home))
     (when home
@@ -28,7 +28,7 @@
 
 (define (setup-dynapad-subdirectory . args)
   (unless *home-directory*
-          (error "No *home-directory* in which to create" args))
+    (error "No *home-directory* in which to create" args))
   (let ((path (apply build-path->string *home-directory* ".dynapad" args)))
     (make-directory* path)
     path))
@@ -41,5 +41,5 @@
   (send argPAD defaultpen *saved-pen*)
   (send argPAD defaultpenwidth *saved-penwidth*)
   (send argPAD background *saved-background*)
-)
+  )
 
