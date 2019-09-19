@@ -25,7 +25,7 @@
           (+ ctr-y ry))))
 
 (define (normalize-bb bb)
-;ensures that bb is in lo->hi form
+  ;ensures that bb is in lo->hi form
   (list (b0 bb) (b1 bb) (b2 bb) (b3 bb)))
 
 (define (bb-diag bbox) ;returns length of diagonal/hypotenuse
@@ -35,32 +35,32 @@
 ; 9 functions to return points on the bbox
 ;
 (define (bbsw bbox)
-    (list [list-ref bbox 0] [list-ref bbox 1]))
+  (list [list-ref bbox 0] [list-ref bbox 1]))
 
 (define (bbw bbox)
-    (list [list-ref bbox 0] [* 0.5 (+ [list-ref bbox 1] [list-ref bbox 3])] ))
+  (list [list-ref bbox 0] [* 0.5 (+ [list-ref bbox 1] [list-ref bbox 3])] ))
 
 (define (bbnw bbox)
-    (list [list-ref bbox 0] [list-ref bbox 3]))
+  (list [list-ref bbox 0] [list-ref bbox 3]))
 
 (define (bbn bbox)
-    (list [* 0.5 (+ [list-ref bbox 0] [list-ref bbox 2])] [list-ref bbox 3]))
+  (list [* 0.5 (+ [list-ref bbox 0] [list-ref bbox 2])] [list-ref bbox 3]))
 
 (define (bbne bbox)
-    (list [list-ref bbox 2] [list-ref bbox 3]))
+  (list [list-ref bbox 2] [list-ref bbox 3]))
 
 (define (bbe bbox)
-    (list [list-ref bbox 2] [* 0.5 (+ [list-ref bbox 1] [list-ref bbox 3])]))
+  (list [list-ref bbox 2] [* 0.5 (+ [list-ref bbox 1] [list-ref bbox 3])]))
 
 (define (bbse bbox)
-    (list [list-ref bbox 2] [list-ref bbox 1]))
+  (list [list-ref bbox 2] [list-ref bbox 1]))
 
 (define (bbs bbox)
-    (list [* 0.5 (+ [list-ref bbox 0] [list-ref bbox 2])] [list-ref bbox 1]))
+  (list [* 0.5 (+ [list-ref bbox 0] [list-ref bbox 2])] [list-ref bbox 1]))
 
 (define (bbcenter bbox)
-    (list [* 0.5 (+ [list-ref bbox 0] [list-ref bbox 2])]
-          [* 0.5 (+ [list-ref bbox 1] [list-ref bbox 3])]))
+  (list [* 0.5 (+ [list-ref bbox 0] [list-ref bbox 2])]
+        [* 0.5 (+ [list-ref bbox 1] [list-ref bbox 3])]))
 
 ;slightly safer access to bbox coords
 ;(define (b0 bbox) (min (list-ref bbox 0) (list-ref bbox 2)))
@@ -97,15 +97,15 @@
 ; bbcenter: Returns the center (x y) of a bounding box
 (define (bbcenter bbox)
   (list
-    [* 0.5 (+ [list-ref bbox 0] [list-ref bbox 2])]
-    [* 0.5 (+ [list-ref bbox 1] [list-ref bbox 3])]))
+   [* 0.5 (+ [list-ref bbox 0] [list-ref bbox 2])]
+   [* 0.5 (+ [list-ref bbox 1] [list-ref bbox 3])]))
 
 ;--- bbox predicates ---------------------------------------------
 
 ; bbenclosed: Decides if the point {x,y} is enclosed by the bbox.
 (define (bbenclosed x y bbox)
   (and
-   (> x [list-ref bbox 0]) 
+   (> x [list-ref bbox 0])
    (> y [list-ref bbox 1])
    (< x [list-ref bbox 2])
    (< y [list-ref bbox 3])))
@@ -116,7 +116,7 @@
    (>= x (list-ref bbox 0))
    (>= y (list-ref bbox 1))
    (<= x (list-ref bbox 2))
-   (<= y (list-ref bbox 3)))) 
+   (<= y (list-ref bbox 3))))
 
 ;
 ; bbsurrounds
@@ -143,7 +143,7 @@
 ;                                ...but not (bbunion bbox1)
 ;
 (define (bbunion bboxes . args)
-    (if (null? args)
+  (if (null? args)
       (list (apply min (map (lambda (box) (car box)) bboxes))
             (apply min (map (lambda (box) (cadr box)) bboxes))
             (apply max (map (lambda (box) (caddr box)) bboxes))
@@ -160,28 +160,28 @@
 ;
 (define (bbunion-objects objectlist)
   (if (not (null? objectlist))
-    (let* ((bb (send (car objectlist) bbox))
-           (x0 (car  bb))
-           (y1 (cadr  bb))
-           (x2 (caddr  bb))
-           (y3 (cadddr  bb))
-           (bbo 0)
-          )
-      (for-each
-        (lambda (obj)
-          (set! bbo (send obj bbox))
-          (set! x0 (min x0 (car bbo)))
-          (set! y1 (min y1 (cadr bbo)))
-          (set! x2 (max x2 (caddr bbo)))
-          (set! y3 (max y3 (cadddr bbo)))
+      (let* ((bb (send (car objectlist) bbox))
+             (x0 (car  bb))
+             (y1 (cadr  bb))
+             (x2 (caddr  bb))
+             (y3 (cadddr  bb))
+             (bbo 0)
+             )
+        (for-each
+         (lambda (obj)
+           (set! bbo (send obj bbox))
+           (set! x0 (min x0 (car bbo)))
+           (set! y1 (min y1 (cadr bbo)))
+           (set! x2 (max x2 (caddr bbo)))
+           (set! y3 (max y3 (cadddr bbo)))
+           )
+         (cdr objectlist)
+         )
+        (list x0 y1 x2 y3)
         )
-        (cdr objectlist)
+      '(0 0 1 1)
       )
-      (list x0 y1 x2 y3)
-    )
-    '(0 0 1 1)
   )
-)
 
 ;
 ; bbintersection: Returns the bbox of overlap of bbox1, bbox2, or #f if none
@@ -208,10 +208,10 @@
 ; else #f
 (define (bboutermost . bboxes)
   (let* ((union (bbunion bboxes))
-        (result (filter (lambda (outer) (if (bbsurrounds? outer union)
-                                            outer
-                                            #f))
-                        bboxes)))
+         (result (filter (lambda (outer) (if (bbsurrounds? outer union)
+                                             outer
+                                             #f))
+                         bboxes)))
     (if (null? result)
         #f
         (car result))))
@@ -330,12 +330,12 @@
 ; | =>  | to |
 ; +-----+----+
 (define (make-bb-transform from-bb to-bb)
-; computes a transformation T=(t0 t1 t2 t3) which
-;  encodes to-bb relative to from-bb;
-; i.e. to-bb = T(from-bb)
-; Applying transformation to a new-bb
-;  produces the corresponding bbox relative to new-bb
-;  that to-bb is relative to from-bb
+  ; computes a transformation T=(t0 t1 t2 t3) which
+  ;  encodes to-bb relative to from-bb;
+  ; i.e. to-bb = T(from-bb)
+  ; Applying transformation to a new-bb
+  ;  produces the corresponding bbox relative to new-bb
+  ;  that to-bb is relative to from-bb
   (let* ((x0 (b0 from-bb))
          (y0 (b1 from-bb))
          (dx (- (b2 from-bb) x0))
@@ -375,55 +375,55 @@
 ; y-dir is one of:  (default is 'up)
 ;  'up      'down      'up-down
 ;  +-----    +--v--    +-----
-;  |         |  v      |     
+;  |         |  v      |
 ;  |   +-+   |   +-+   | - +-+
 ;  |   L_|   |   L_|   | ^ L_|
-;  |  ^      |         | ^   
-;  L__^__    L_____    L_^__ 
+;  |  ^      |         | ^
+;  L__^__    L_____    L_^__
 (define bb-geometry
   (case-lambda
-   (            (ref-bb tgt)  (obj->geometry-list 'up     1 ref-bb tgt))
-   (      (scale ref-bb tgt)  (obj->geometry-list 'up scale ref-bb tgt))
-   ((y-dir scale ref-bb tgt)
-    (let* ((tgt-bb (if (list? tgt)
-                       tgt
-                       (send tgt bbox)))
-           (xoffset (- (b0 tgt-bb) (b0 ref-bb)))
-           (yoffset
-            (case y-dir
-              ((down)    (- (b3 ref-bb) (b3 tgt-bb)))
-              ((up)      (- (b1 tgt-bb) (b1 ref-bb)))
-              ((up-down) (- (b3 tgt-bb) (b1 ref-bb)))
-              (else (error "y-dir must be 'up, 'down, or 'up-down"))
-              )))
-      (map (lambda (n) (* scale n))
-           (list (bbwidth tgt-bb) (bbheight tgt-bb)
-                 xoffset yoffset))))
-))
+    (            (ref-bb tgt)  (obj->geometry-list 'up     1 ref-bb tgt))
+    (      (scale ref-bb tgt)  (obj->geometry-list 'up scale ref-bb tgt))
+    ((y-dir scale ref-bb tgt)
+     (let* ((tgt-bb (if (list? tgt)
+                        tgt
+                        (send tgt bbox)))
+            (xoffset (- (b0 tgt-bb) (b0 ref-bb)))
+            (yoffset
+             (case y-dir
+               ((down)    (- (b3 ref-bb) (b3 tgt-bb)))
+               ((up)      (- (b1 tgt-bb) (b1 ref-bb)))
+               ((up-down) (- (b3 tgt-bb) (b1 ref-bb)))
+               (else (error "y-dir must be 'up, 'down, or 'up-down"))
+               )))
+       (map (lambda (n) (* scale n))
+            (list (bbwidth tgt-bb) (bbheight tgt-bb)
+                  xoffset yoffset))))
+    ))
 
 
 (define format-geometry-str
   ; generates an X-Windows-compatible string "WxH{+-}X{+-}Y"
   (case-lambda
-   ((w h)
-      (format "~ax~a" (round-to-int w) (round-to-int h)))
-   ((w h x y) (let ((xint (round-to-int x))
-                    (yint (round-to-int y)))
-                (string-append (format-geometry-str w h)
-                               (format "~a~a~a~a"
-                                       (if (negative? xint) "" "+")
-                                       xint
-                                       (if (negative? yint) "" "+")
-                                       yint))))
-   ))
+    ((w h)
+     (format "~ax~a" (round-to-int w) (round-to-int h)))
+    ((w h x y) (let ((xint (round-to-int x))
+                     (yint (round-to-int y)))
+                 (string-append (format-geometry-str w h)
+                                (format "~a~a~a~a"
+                                        (if (negative? xint) "" "+")
+                                        xint
+                                        (if (negative? yint) "" "+")
+                                        yint))))
+    ))
 
 (define bb-geometry->string
-;geom may be (W H) or (W H X Y);
-; suffix may be one of "!" "<" ">"
+  ;geom may be (W H) or (W H X Y);
+  ; suffix may be one of "!" "<" ">"
   (case-lambda
-   ((geom)        (bb-geometry->string geom ""))
-   ((geom sffx) 
-    (format "~a~a" (apply format-geometry-str geom) sffx))))
+    ((geom)        (bb-geometry->string geom ""))
+    ((geom sffx)
+     (format "~a~a" (apply format-geometry-str geom) sffx))))
 ;   ((arg0 arg1 . more)
 ;    (obj->geometry-string
 ;     (apply obj->geometry-list arg0 arg1 more)))))

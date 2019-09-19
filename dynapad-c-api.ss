@@ -14,21 +14,21 @@
 ;;; (load-relative-extension (path-replace-suffix "build/libdynapad" (system-type 'so-suffix)))
 
 (let
-  ([libdynapad-path (getenv "LIBDYNAPAD_PATH")])
+    ([libdynapad-path (getenv "LIBDYNAPAD_PATH")])
   (if libdynapad-path
-    (load-relative-extension libdynapad-path)
-    (load-relative-extension "build/libdynapad.so")))
+      (load-relative-extension libdynapad-path)
+      (load-relative-extension "build/libdynapad.so")))
 
 (define padthread
   (let
       ((new-es (make-eventspace)))
 
     (parameterize
-     ((current-eventspace new-es))
-     (thread
-      (lambda ()
-          (wish)
-          (display "bye"))))))
+        ((current-eventspace new-es))
+      (thread
+       (lambda ()
+         (wish)
+         (display "bye"))))))
 
 (define-struct event (x y type key obj sx sy))
 (define-struct (tablet-event event) (xid p tiltx tilty state button))
@@ -60,71 +60,71 @@
     (init (initposition #f) (initanchor #f))
     (init-field (initlink #f))
     (field
-      (prev_coords #f)
-      (selected #f)
-      (_hilights null) ;includes selected; list of (...(hl-obj name)...)
-                       ;                 where hl-obj is hilight% and name is optional
-      (_dynaclass #f)
-      ;(_oldid #f) (_id #f)  ;now in superclass
-      (actor_list null)
-      (_alist null)
-      (_taglist null)
-      (_deleted? #f)
-      (_writable #t)
-      (_deletable #t)
-      (_takegroupevents #f)
-      (_layer-stack '())
-      (_select_highlight_func #f)
-      (_post-build-ops null)
-      (_onetime-writeoptions null)
-      (_alternate-build-fn #f)
-      (_dependents-fn #f)
+     (prev_coords #f)
+     (selected #f)
+     (_hilights null) ;includes selected; list of (...(hl-obj name)...)
+     ;                 where hl-obj is hilight% and name is optional
+     (_dynaclass #f)
+     ;(_oldid #f) (_id #f)  ;now in superclass
+     (actor_list null)
+     (_alist null)
+     (_taglist null)
+     (_deleted? #f)
+     (_writable #t)
+     (_deletable #t)
+     (_takegroupevents #f)
+     (_layer-stack '())
+     (_select_highlight_func #f)
+     (_post-build-ops null)
+     (_onetime-writeoptions null)
+     (_alternate-build-fn #f)
+     (_dependents-fn #f)
 
-      (_delete-callbacks   '()) (_afterdelete-callbacks   '())
-      (_slide-callbacks    '()) (_afterslide-callbacks    '())
-      (_position-callbacks '()) (_afterposition-callbacks '())
-      (_scale-callbacks    '()) (_afterscale-callbacks    '())
-      (_width-callbacks    '()) (_afterwidth-callbacks    '())
-      (_height-callbacks   '()) (_afterheight-callbacks   '())
-      (_select-callbacks   '())
-      (_reposition-callbacks '())   (_resize-callbacks '())
-      (_physics? #f)
-      (_mass 1)
-      (_force (list 0 0))
-      (_velocity (list 0 0))
-      (_prevxy (list 0 0))
-      )
+     (_delete-callbacks   '()) (_afterdelete-callbacks   '())
+     (_slide-callbacks    '()) (_afterslide-callbacks    '())
+     (_position-callbacks '()) (_afterposition-callbacks '())
+     (_scale-callbacks    '()) (_afterscale-callbacks    '())
+     (_width-callbacks    '()) (_afterwidth-callbacks    '())
+     (_height-callbacks   '()) (_afterheight-callbacks   '())
+     (_select-callbacks   '())
+     (_reposition-callbacks '())   (_resize-callbacks '())
+     (_physics? #f)
+     (_mass 1)
+     (_force (list 0 0))
+     (_velocity (list 0 0))
+     (_prevxy (list 0 0))
+     )
 
     (public (mybind bind)
-      above actors add-actor addtag alist dependents-fn alternate-build-fn
-      alwaysrender anchor
-      bbox below center post-build-ops delete-all ;delete now in superclass
-      deletable? deleted? deletetag dtag dynaclass dynapad
-      events export faderange findable fix focus get-cptr getgroup
-      gettags hastag hilights height boundable
-      layer layer-stack link loadalist lower
-      maxsize minsize padid pixeldim position
-      raise re-anchor recall-coords rendercolor renderimage
-      renderitem renderline renderpolygon renderscript rendertext
-      save-coords savealist savelink scale select selected? 
-      select-highlight-func settags
-      slide sticky takegroupevents transparency unfocus unselect 
-      update-any-hilights visible?
-      width widthheight writable? write write-all writeinits writeoptions
-      onetime-writeoptions
-      xy z zoomaction
+            above actors add-actor addtag alist dependents-fn alternate-build-fn
+            alwaysrender anchor
+            bbox below center post-build-ops delete-all ;delete now in superclass
+            deletable? deleted? deletetag dtag dynaclass dynapad
+            events export faderange findable fix focus get-cptr getgroup
+            gettags hastag hilights height boundable
+            layer layer-stack link loadalist lower
+            maxsize minsize padid pixeldim position
+            raise re-anchor recall-coords rendercolor renderimage
+            renderitem renderline renderpolygon renderscript rendertext
+            save-coords savealist savelink scale select selected?
+            select-highlight-func settags
+            slide sticky takegroupevents transparency unfocus unselect
+            update-any-hilights visible?
+            width widthheight writable? write write-all writeinits writeoptions
+            onetime-writeoptions
+            xy z zoomaction
 
-      select-callbacks      ;currently no after-select callbacks needed
-      delete-callbacks    afterdelete-callbacks
-      slide-callbacks     afterslide-callbacks
-      position-callbacks  afterposition-callbacks
-      scale-callbacks     afterscale-callbacks
-      width-callbacks     afterwidth-callbacks
-      height-callbacks    afterheight-callbacks
+            select-callbacks      ;currently no after-select callbacks needed
+            delete-callbacks    afterdelete-callbacks
+            slide-callbacks     afterslide-callbacks
+            position-callbacks  afterposition-callbacks
+            scale-callbacks     afterscale-callbacks
+            width-callbacks     afterwidth-callbacks
+            height-callbacks    afterheight-callbacks
 
-         ; all callbacks, if provided, use syntax (callback-fn object args...)
-         ; where args are the arguments to the original fn (i.e. slide, scale, etc)
-      )
+            ; all callbacks, if provided, use syntax (callback-fn object args...)
+            ; where args are the arguments to the original fn (i.e. slide, scale, etc)
+            )
 
     (define/public physics?
       (case-lambda
@@ -137,24 +137,24 @@
       (case-lambda
         (() _mass)
         ((v)
-          (if (mass? v)
-            (set! _mass v)
-            (error "not a mass" v)))))
+         (if (mass? v)
+             (set! _mass v)
+             (error "not a mass" v)))))
 
     (define (force? v)
       (and
-        (list? v)
-        (= (length v) 2)
-        (number? (list-ref v 0))
-        (number? (list-ref v 1))))
+       (list? v)
+       (= (length v) 2)
+       (number? (list-ref v 0))
+       (number? (list-ref v 1))))
 
     (define/public force
       (case-lambda
         (() _force)
         ((v)
-          (if (force? v)
-            (set! _force v)
-            (error "not a force" v)))))
+         (if (force? v)
+             (set! _force v)
+             (error "not a force" v)))))
 
     (define/public fx
       (case-lambda
@@ -168,18 +168,18 @@
 
     (define (velocity? v)
       (and
-        (list? v)
-        (= (length v) 2)
-        (number? (list-ref v 0))
-        (number? (list-ref v 1))))
+       (list? v)
+       (= (length v) 2)
+       (number? (list-ref v 0))
+       (number? (list-ref v 1))))
 
     (define/public velocity
       (case-lambda
         (() _velocity)
         ((v)
-          (if (velocity? v)
-            (set! _velocity v)
-            (error "not a velocity" v)))))
+         (if (velocity? v)
+             (set! _velocity v)
+             (error "not a velocity" v)))))
 
     (define/public vx
       (case-lambda
@@ -193,18 +193,18 @@
 
     (define (prevxy? v)
       (and
-        (list? v)
-        (= (length v) 2)
-        (number? (list-ref v 0))
-        (number? (list-ref v 1))))
+       (list? v)
+       (= (length v) 2)
+       (number? (list-ref v 0))
+       (number? (list-ref v 1))))
 
     (define/public prevxy
       (case-lambda
         (() _prevxy)
         ((v)
-          (if (prevxy? v)
-            (set! _prevxy v)
-            (error "not a prevxy" v)))))
+         (if (prevxy? v)
+             (set! _prevxy v)
+             (error "not a prevxy" v)))))
 
     (define/public prevx
       (case-lambda
@@ -223,8 +223,8 @@
 
     (define (savealist)
       (filter (lambda (p) (dynapad-printable? p))
-        (filter-alist this (alist))
-        ))
+              (filter-alist this (alist))
+              ))
 
     (define (loadalist newalist)
       ;newlist is (...(key v0 v1 ...) ...)
@@ -232,17 +232,17 @@
       ; if key is #f, entire tuple is omitted (after possible side effects from vs)
       ; else replaced w. (key v0' v1'...)
       (alist (append _alist
-                (filter (lambda (term) term)
-                        (map (lambda (keyval)
-                               (let* ((key (car keyval))
-                                      (vals (cdr keyval))
-                                      (results (map (lambda (val)
-                                                      (if (list? val) (eval val) val))
-                                                    vals)))
-                                 (and key
-                                      (cons key results))))
-                             newalist)))))
-                                
+                     (filter (lambda (term) term)
+                             (map (lambda (keyval)
+                                    (let* ((key (car keyval))
+                                           (vals (cdr keyval))
+                                           (results (map (lambda (val)
+                                                           (if (list? val) (eval val) val))
+                                                         vals)))
+                                      (and key
+                                           (cons key results))))
+                                  newalist)))))
+
 
     (define (settags newtaglist) (set! _taglist newtaglist))
     (define (gettags) _taglist)
@@ -289,29 +289,29 @@
     ; Example (lambda (obj) (send obj members))  includes group members in write-all
 
     (define post-build-ops (callback-accessor-functions _post-build-ops))
-     ;
-     ; lambda (this label)
-     ; which returns list of commands, appended to write expression,
-     ;  to apply to this after build.
-     ; The result of build will be bound to label,
-     ;  which can then be included in each expr to refer to that future copy
-     ; Example: (... (lambda (this 'me) (rgstr-obj N me)) ...)
-    
+    ;
+    ; lambda (this label)
+    ; which returns list of commands, appended to write expression,
+    ;  to apply to this after build.
+    ; The result of build will be bound to label,
+    ;  which can then be included in each expr to refer to that future copy
+    ; Example: (... (lambda (this 'me) (rgstr-obj N me)) ...)
+
     (define alternate-build-fn (get/set _alternate-build-fn))
-     ;
-     ; This fn can be set to (lambda (obj) ...) which
-     ;  returns a build-expr which replaces its default (ic (make-object...))
-     ;   or #f, which keeps the default.
-     ; Example: (lambda (obj) (if (is-a? obj image%)
-     ;                            `(ic (make-object rect% dynapad) ...)
-     ;                            #f))
-     ;   This saves all images as rectangles.
-     ; In all cases, the build-expr is suffixed with operations
-     ;   returned by the _post-build-ops
+    ;
+    ; This fn can be set to (lambda (obj) ...) which
+    ;  returns a build-expr which replaces its default (ic (make-object...))
+    ;   or #f, which keeps the default.
+    ; Example: (lambda (obj) (if (is-a? obj image%)
+    ;                            `(ic (make-object rect% dynapad) ...)
+    ;                            #f))
+    ;   This saves all images as rectangles.
+    ; In all cases, the build-expr is suffixed with operations
+    ;   returned by the _post-build-ops
 
     (define (write)
       (define my-label 'obj) ; any _post-build-ops use my-label to refer to
-                             ; the future clone of this
+      ; the future clone of this
       (onetime-writeoptions null)
       (let* ((suffixes (map (lambda (fn) ((car fn) this my-label))
                             _post-build-ops))
@@ -323,7 +323,7 @@
         (if (null? suffixes)
             build-expr
             `(with ,my-label ,build-expr ,@suffixes))))
-;      (error "dynaobject% write: need write method in " _dynaclass)
+    ;      (error "dynaobject% write: need write method in " _dynaclass)
 
 
     ;hopefully, this is now obsolete:
@@ -335,21 +335,21 @@
     ; position anchor oldid
     (define (writeoptions)
       (filter (lambda (opt) opt)
-      `(
-        (id ,(send this id)) ;generates id if not one already
-        ,(if (string=? (anchor) "center")     #f `(anchor ,(anchor)))
-        (position ,@(position))
-        ,(if (equal? (minsize) '( 0.0 #f)) #f `(minsize ',(minsize)))
-        ,(if (equal? (maxsize) '(-1.0 #f)) #f `(maxsize ',(maxsize)))  ; maxsize isn't 10000
-        ,(if (and (> (faderange) 0.3) (< (faderange) 0.3001))
-                                              #f `(faderange ,(faderange)))
-        ,(if (= (transparency) 1.0)           #f `(transparency ,(transparency)))
-        ,(if (not (sticky))                   #f `(sticky ,(sticky)))
-        ;(oldid ,(padid))
-        ,(if (null? (alist))                  #f `(loadalist ',(savealist)))
-        ,(if (null? (gettags))                #f `(settags ',(gettags)))
-        ,(and (savelink))
-        )))
+              `(
+                (id ,(send this id)) ;generates id if not one already
+                ,(if (string=? (anchor) "center")     #f `(anchor ,(anchor)))
+                (position ,@(position))
+                ,(if (equal? (minsize) '( 0.0 #f)) #f `(minsize ',(minsize)))
+                ,(if (equal? (maxsize) '(-1.0 #f)) #f `(maxsize ',(maxsize)))  ; maxsize isn't 10000
+                ,(if (and (> (faderange) 0.3) (< (faderange) 0.3001))
+                     #f `(faderange ,(faderange)))
+                ,(if (= (transparency) 1.0)           #f `(transparency ,(transparency)))
+                ,(if (not (sticky))                   #f `(sticky ,(sticky)))
+                ;(oldid ,(padid))
+                ,(if (null? (alist))                  #f `(loadalist ',(savealist)))
+                ,(if (null? (gettags))                #f `(settags ',(gettags)))
+                ,(and (savelink))
+                )))
 
     ; args to include on (make-object...) line of write string
     (define (writeinits) null) ;overridden in subclasses
@@ -369,8 +369,8 @@
 
     (define (update-any-hilights)
       (when (not (null? _hilights))
-          (let ((n 0))
-            (foreach _hilights (lambda (hl) (send (car hl) update (_++ n)))))))
+        (let ((n 0))
+          (foreach _hilights (lambda (hl) (send (car hl) update (_++ n)))))))
 
     (define (get-cptr)
       cptr)
@@ -381,8 +381,8 @@
       (sch_getgroup cptr))
 
     (define takegroupevents (case-lambda
-      (() _takegroupevents)
-      ((bool) (set! _takegroupevents bool)) ))
+                              (() _takegroupevents)
+                              ((bool) (set! _takegroupevents bool)) ))
 
     (define actors (case-lambda (() actor_list) ((l) (set! actor_list l))))
     (define (add-actor a) (set! actor_list (append actor_list (list a))))
@@ -394,16 +394,16 @@
       prev_coords)
 
     (define/public (update-position dx dy)
-        (exec-any-callbacks _reposition-callbacks this dx dy))
+      (exec-any-callbacks _reposition-callbacks this dx dy))
     (define/public reposition-callbacks (callback-accessor-functions _reposition-callbacks))
     (define/public update-size
       (case-lambda
-;       ((zfac) (exec-any-callbacks _resize-callbacks this zfac))
-;       ((wfac hfac) (exec-any-callbacks _resize-callbacks this wfac hfac))
-       ((zfac x y)
-        (exec-any-callbacks _resize-callbacks this zfac x y))
-       ((xfac yfac x y) 
-        (exec-any-callbacks _resize-callbacks this xfac yfac x y))))
+        ;       ((zfac) (exec-any-callbacks _resize-callbacks this zfac))
+        ;       ((wfac hfac) (exec-any-callbacks _resize-callbacks this wfac hfac))
+        ((zfac x y)
+         (exec-any-callbacks _resize-callbacks this zfac x y))
+        ((xfac yfac x y)
+         (exec-any-callbacks _resize-callbacks this xfac yfac x y))))
     (define/public resize-callbacks (callback-accessor-functions _resize-callbacks))
 
     (define position
@@ -421,7 +421,7 @@
            (exec-any-callbacks _position-callbacks this l)
            (update-position (- (car l) (car xyz)) (- (cadr l) (cadr xyz)))
            (unless (= zfac 1)
-                   (update-size zfac (car l) (cadr l)))
+             (update-size zfac (car l) (cadr l)))
            (sch_position cptr l)
            (exec-any-callbacks _afterposition-callbacks this l)
            (send this update-any-hilights)))))
@@ -431,23 +431,23 @@
 
     (define xy
       (case-lambda
-       (() (let ((xyz (sch_position cptr)))
-             (list (car xyz) (cadr xyz))))
-       ((x y)  (xy (list x y)))
-       ((new-xy)
-          (send/apply this update-position (map - new-xy (xy)))
-          (sch_position cptr (append new-xy (list (z))))
-          (send this update-any-hilights)
-          )))
+        (() (let ((xyz (sch_position cptr)))
+              (list (car xyz) (cadr xyz))))
+        ((x y)  (xy (list x y)))
+        ((new-xy)
+         (send/apply this update-position (map - new-xy (xy)))
+         (sch_position cptr (append new-xy (list (z))))
+         (send this update-any-hilights)
+         )))
 
     (define z
       (case-lambda
-       (() (caddr (position)))
-       ((new-z) (let ((xy (xy))
-                      (z  (z)))
-                (send/apply this update-size (/ new-z z) xy)
-                (sch_position cptr (append xy (list new-z)))
-                (send this update-any-hilights)))))
+        (() (caddr (position)))
+        ((new-z) (let ((xy (xy))
+                       (z  (z)))
+                   (send/apply this update-size (/ new-z z) xy)
+                   (sch_position cptr (append xy (list new-z)))
+                   (send this update-any-hilights)))))
 
     (define (slide dx dy)
       (exec-any-callbacks _slide-callbacks this dx dy)
@@ -462,11 +462,11 @@
       (case-lambda
         ((fac) (send/apply this scale fac (xy)))
         ((fac x y)
-          ;(exec-any-callbacks _scale-callbacks this fac x y)
-          (update-size fac x y)
-          (sch_scale cptr fac x y)
-          ;(exec-any-callbacks _afterscale-callbacks this fac x y)
-          (send this update-any-hilights))
+         ;(exec-any-callbacks _scale-callbacks this fac x y)
+         (update-size fac x y)
+         (sch_scale cptr fac x y)
+         ;(exec-any-callbacks _afterscale-callbacks this fac x y)
+         (send this update-any-hilights))
         ; x,y may be scaled independently:
         ((xfac yfac) (send/apply this scale xfac yfac (xy)))
         ((xfac yfac x y)
@@ -513,61 +513,61 @@
     ; the C code that computes this value can only run during a render, so it's duplicated here
     (define (pixeldim)
       (max
-        (* (send _dynapad getzoom) (sch_height cptr))
-        (* (send _dynapad getzoom) (sch_width cptr))))
+       (* (send _dynapad getzoom) (sch_height cptr))
+       (* (send _dynapad getzoom) (sch_width cptr))))
 
     (define (widthheight arg1 . args)
       (let ((w 1)(h 1))
-         (if (null? args)
-           (begin (set! w (car arg1)) (set! h (cadr arg1)))
-           ;else
-           (begin (set! w arg1) (set! h (car args)))
-         )
-         (exec-any-callbacks _width-callbacks this w)
-         (exec-any-callbacks _height-callbacks this h)
-         (send/apply this update-size (/ w (width)) (/ h (height)) (xy))
-         (sch_width cptr w)
-         (sch_height cptr h)
-         (exec-any-callbacks _afterwidth-callbacks this w)
-         (exec-any-callbacks _afterheight-callbacks this h)
-         (send this update-any-hilights)
-      ))
+        (if (null? args)
+            (begin (set! w (car arg1)) (set! h (cadr arg1)))
+            ;else
+            (begin (set! w arg1) (set! h (car args)))
+            )
+        (exec-any-callbacks _width-callbacks this w)
+        (exec-any-callbacks _height-callbacks this h)
+        (send/apply this update-size (/ w (width)) (/ h (height)) (xy))
+        (sch_width cptr w)
+        (sch_height cptr h)
+        (exec-any-callbacks _afterwidth-callbacks this w)
+        (exec-any-callbacks _afterheight-callbacks this h)
+        (send this update-any-hilights)
+        ))
     (define layer-stack
       (case-lambda
-       (() _layer-stack)
-       ((new-stck) (set! _layer-stack new-stck))))
+        (() _layer-stack)
+        ((new-stck) (set! _layer-stack new-stck))))
 
     (define select
       (case-lambda
-       (()
-        (when (not _deleted?)
-              (exec-any-callbacks _select-callbacks this #t)
-              (when (not selected)
-                    (if _select_highlight_func
-                      (set! selected (_select_highlight_func _dynapad this))
-                      (set! selected (make-object select% _dynapad this)) )
-                    )))
-;		    (when (and *selection-layer* (*selection-layer-filter-fn* this))
-;			  (push! (send this layer) _layer-stack)
-;			  (send this layer *selection-layer*)))))
-       ;allows syntax (send this select #t/#f)
-       ((val)
-        (if val (select)
-                (unselect)))))
+        (()
+         (when (not _deleted?)
+           (exec-any-callbacks _select-callbacks this #t)
+           (when (not selected)
+             (if _select_highlight_func
+                 (set! selected (_select_highlight_func _dynapad this))
+                 (set! selected (make-object select% _dynapad this)) )
+             )))
+        ;            (when (and *selection-layer* (*selection-layer-filter-fn* this))
+        ;              (push! (send this layer) _layer-stack)
+        ;              (send this layer *selection-layer*)))))
+        ;allows syntax (send this select #t/#f)
+        ((val)
+         (if val (select)
+             (unselect)))))
 
     (define select-highlight-func (get/set _select_highlight_func))
-        
+
     (define (unselect)
       (exec-any-callbacks _select-callbacks this #f)
       (when selected
-            (let ((old-lyr (if (null? _layer-stack)
-                               #f
-                               (car _layer-stack))))
-              (when old-lyr
-                    (send this layer old-lyr)
-                    (set! _layer-stack (cdr _layer-stack))))
-            (send selected delete)
-            (set! selected #f)))
+        (let ((old-lyr (if (null? _layer-stack)
+                           #f
+                           (car _layer-stack))))
+          (when old-lyr
+            (send this layer old-lyr)
+            (set! _layer-stack (cdr _layer-stack))))
+        (send selected delete)
+        (set! selected #f)))
 
     (define select-callbacks (callback-accessor-functions _select-callbacks))
 
@@ -578,18 +578,18 @@
     (define (padid)
       (if cptr (sch_padid cptr) #f))
 
-;    (define id
-;      (case-lambda
-;       (() _id)
-;       ((new) (set! new (import-id new))
-;	      ;(if _id (error "ID overwrite: " _id new)
-;		  (begin
-;		    (set! _id new)
-;		    (push! (list new this) *id->obj-index*)))));)
-;    (define id
-;      (case-lambda
-;       (() _id)
-;       ((x) #t)))  ;dummy funct during debug
+    ;    (define id
+    ;      (case-lambda
+    ;       (() _id)
+    ;       ((new) (set! new (import-id new))
+    ;          ;(if _id (error "ID overwrite: " _id new)
+    ;          (begin
+    ;            (set! _id new)
+    ;            (push! (list new this) *id->obj-index*)))));)
+    ;    (define id
+    ;      (case-lambda
+    ;       (() _id)
+    ;       ((x) #t)))  ;dummy funct during debug
 
     (define (focus)
       (sch_focus cptr #t)
@@ -606,20 +606,20 @@
       (case-lambda
         (() (sch_anchor cptr))
         ((newanchor)
-          (sch_anchor cptr newanchor)
-          (send this update-any-hilights))))
+         (sch_anchor cptr newanchor)
+         (send this update-any-hilights))))
 
     (define (re-anchor newanchor)
       (let ((oldbb (send this bbox)))
         (sch_anchor cptr newanchor)
         ;use sch_slide instead of (send this slide...) to bypass callbks
         (sch_slide cptr (- (b0 oldbb) (b0 (send this bbox)))
-                        (- (b1 oldbb) (b1 (send this bbox))))
+                   (- (b1 oldbb) (b1 (send this bbox))))
         (send this update-any-hilights)
+        )
       )
-    )
 
-  (define zoomaction
+    (define zoomaction
       (case-lambda
         (() (sch_zoomaction cptr this))
         ((size grow shrink) (sch_zoomaction cptr this size grow shrink))))
@@ -654,36 +654,36 @@
     (define link
       (case-lambda
         (()
-          (and
-            initlink
-            (is-a? initlink dynaobject%)
-            (send initlink deleted?)
-            (set! initlink #f))
-          initlink)
+         (and
+          initlink
+          (is-a? initlink dynaobject%)
+          (send initlink deleted?)
+          (set! initlink #f))
+         initlink)
         ((newlink)
-          (cond
-            ((eq? newlink #f)
-              (set! initlink #f))
-            ((and (list? newlink) (eq? (length newlink) 3)
-                (andmap (lambda (x) (if (number? x) x #f)) newlink))
-              (set! initlink newlink))
-            ((is-a? newlink dynaobject%)
-              (set! initlink newlink))
-            (else
-              (error "link expects dynaobject% or view, given " newlink)))
-          (link-hook this))))
+         (cond
+           ((eq? newlink #f)
+            (set! initlink #f))
+           ((and (list? newlink) (eq? (length newlink) 3)
+                 (andmap (lambda (x) (if (number? x) x #f)) newlink))
+            (set! initlink newlink))
+           ((is-a? newlink dynaobject%)
+            (set! initlink newlink))
+           (else
+            (error "link expects dynaobject% or view, given " newlink)))
+         (link-hook this))))
 
     (define savelink
       (case-lambda
         (()
-          (cond
-            ((eq? initlink #f) #f)
-            ((list? initlink) `(savelink ',initlink))
-            ((is-a? initlink dynaobject%) ;(send initlink padid))
-;	       `(refer-when-ready 'savelink ,(obj->id initlink)))
-             `(defer-send (savelink ,(export-objs initlink))))
-            (else
-              (error "savelink expects dynaobject% or view, given " initlink))))
+         (cond
+           ((eq? initlink #f) #f)
+           ((list? initlink) `(savelink ',initlink))
+           ((is-a? initlink dynaobject%) ;(send initlink padid))
+            ;           `(refer-when-ready 'savelink ,(obj->id initlink)))
+            `(defer-send (savelink ,(export-objs initlink))))
+           (else
+            (error "savelink expects dynaobject% or view, given " initlink))))
         ((newlink) (link newlink))))
 
     (define (fix alist)
@@ -698,44 +698,44 @@
         (() _dynaclass)
         ((newclass) (set! _dynaclass newclass))))
 
-;    (define oldid
-;      (case-lambda
-;        (() _oldid)
-;	((new_oldid) (set! _oldid new_oldid))))
+    ;    (define oldid
+    ;      (case-lambda
+    ;        (() _oldid)
+    ;    ((new_oldid) (set! _oldid new_oldid))))
 
     (define bbox (case-lambda
-      (() (sch_bbox cptr))
-      ((bb)
-       ; any subset of bb elements may be #f (i.e. "free" side)
-       (cond ((andmap (lambda (b) b) bb)
-           ;all sides constrained; must set width/height
-              (send this width (bbwidth bb))
-              (send this height (bbheight bb)))
-           ;else at least one #f (free side), so use scale instead:
-             ((and (b0 bb) (b2 bb)) ;fixed x's; scale by width
-              (send this scale (/ (bbwidth bb) (send this width))))
-             ((and (b1 bb) (b3 bb)) ;fixed y's; scale by height
-              (send this scale (/ (bbheight bb) (send this height)))))
-       ; may fall through w/o meeting any cond if multiple #f's
-       (slide
-        (cond ((b0 bb) (- (b0 bb) (b0 (send this bbox))))
-              ((b2 bb) (- (b2 bb) (b2 (send this bbox))))
-              (else 0))
-        (cond ((b1 bb) (- (b1 bb) (b1 (send this bbox))))
-              ((b3 bb) (- (b3 bb) (b3 (send this bbox))))
-              (else 0)))
-       )
-      ))
+                   (() (sch_bbox cptr))
+                   ((bb)
+                    ; any subset of bb elements may be #f (i.e. "free" side)
+                    (cond ((andmap (lambda (b) b) bb)
+                           ;all sides constrained; must set width/height
+                           (send this width (bbwidth bb))
+                           (send this height (bbheight bb)))
+                          ;else at least one #f (free side), so use scale instead:
+                          ((and (b0 bb) (b2 bb)) ;fixed x's; scale by width
+                           (send this scale (/ (bbwidth bb) (send this width))))
+                          ((and (b1 bb) (b3 bb)) ;fixed y's; scale by height
+                           (send this scale (/ (bbheight bb) (send this height)))))
+                    ; may fall through w/o meeting any cond if multiple #f's
+                    (slide
+                     (cond ((b0 bb) (- (b0 bb) (b0 (send this bbox))))
+                           ((b2 bb) (- (b2 bb) (b2 (send this bbox))))
+                           (else 0))
+                     (cond ((b1 bb) (- (b1 bb) (b1 (send this bbox))))
+                           ((b3 bb) (- (b3 bb) (b3 (send this bbox))))
+                           (else 0)))
+                    )
+                   ))
 
- 
+
     ; minsize is (number fraction?)
     (define minsize
       (case-lambda
         (() (sch_minsize cptr))
         ((size)
-          (if (pair? size)
-            (sch_minsize cptr size)
-            (sch_minsize cptr (list size #f))))
+         (if (pair? size)
+             (sch_minsize cptr size)
+             (sch_minsize cptr (list size #f))))
         ((size flag) (sch_minsize cptr (list size flag)))))
 
     ; maxsize is (number fraction?)
@@ -743,9 +743,9 @@
       (case-lambda
         (() (sch_maxsize cptr))
         ((size)
-          (if (pair? size)
-            (sch_maxsize cptr size)
-            (sch_maxsize cptr (list size #f))))
+         (if (pair? size)
+             (sch_maxsize cptr size)
+             (sch_maxsize cptr (list size #f))))
         ((size flag) (maxsize (list size flag)))))
 
     (define faderange
@@ -757,17 +757,17 @@
       (case-lambda
         (() (sch_raise cptr))
         ((abovethis)
-          (if (or (equal? abovethis "one") (equal? abovethis 'one))
-            (sch_raise cptr "one")
-            (sch_raise cptr (send abovethis get-cptr))))))
+         (if (or (equal? abovethis "one") (equal? abovethis 'one))
+             (sch_raise cptr "one")
+             (sch_raise cptr (send abovethis get-cptr))))))
 
     (define lower
       (case-lambda
         (() (sch_lower cptr))
         ((belowthis)
-          (if (or (equal? belowthis "one") (equal? belowthis 'one))
-            (sch_lower cptr "one")
-            (sch_lower cptr (send belowthis get-cptr))))))
+         (if (or (equal? belowthis "one") (equal? belowthis 'one))
+             (sch_lower cptr "one")
+             (sch_lower cptr (send belowthis get-cptr))))))
 
     (define (visible?)
       (sch_visiblep cptr))
@@ -782,7 +782,7 @@
         (() (sch_sticky cptr))
         ((newsticky) (sch_sticky cptr newsticky)
                      (when selected
-                         (send selected sticky newsticky)))))
+                       (send selected sticky newsticky)))))
 
     (define findable
       (case-lambda
@@ -793,9 +793,9 @@
       (case-lambda
         (() (sch_boundable cptr))
         ((bool)
-          (sch_boundable cptr bool)
-          ; should update select box here
-          )))
+         (sch_boundable cptr bool)
+         ; should update select box here
+         )))
 
     (define (export dir) (export-stub dir (dynaclass)))
     ; In general: creates a file-system analog of the object
@@ -821,72 +821,72 @@
       (case-lambda
         (() (sch_layer cptr))
         ((newlayer)
-          (sch_layer cptr (send newlayer get-cptr))
-          (send this update-any-hilights))))
+         (sch_layer cptr (send newlayer get-cptr))
+         (send this update-any-hilights))))
 
     (super-instantiate ())
     ;(findable #t); CHANGED default to #t; see line 346 in pad/generic/object.cpp
     (when initposition (position initposition))
     (when initanchor (anchor initanchor))
 
-)) ;end dynaobject%
+    )) ;end dynaobject%
 
-(define slowgrow 
+(define slowgrow
   (case-lambda
-   ((obj slowness)
-    ;slowness 0--> sticky z (constant size)
-    ;slowness 1--> normal zooming
-    ;        >1--> faster than view
-    (slowgrow obj slowness
-              (or (not slowness)
-                  (let ((padz (send (send obj dynapad) getzoom)))
-                    (* (send obj z)
-                       (expt padz slowness))))))
-   ((obj slowness home-sz)
-      (slowgrow obj slowness home-sz 0))
-;      (Obj-z = relative size; Apparent size = obj-z * pad-z)
-; Need 3 params to describe a line plus threshold.
-;
-;
-; obj-z   `
-;          `
-;           `       /
-;            `     / - - slowness (slope)
-;             `.  /
-;               `/  <- - home-sz (y-intercept): 
-;  obj          /:`.      = rel. sz = apparent sz at zoom=1
-;apparent      / :  ` .
-;  size  _____/  :  <- -`-.- - - min-sz
-;                :          `  .
-;   0            1                 `  -   _
-;      out  <--zoom-->  in                    "    -    .
-;
-   ((obj slowness home-sz min-sz)
-    ;home-sz is obj's z when dynapad zoom=1
-    ; min-sz sets minimum size (fraction of home-sz)
-    (if (not slowness)
-        (send obj renderscript #f) ;normal zooming
-          ;else slowed zooming:
-        (let* ((mypad (send obj dynapad))
-               (set-z-script
-                (lambda (o)
-                  (let* ((padz (send mypad getzoom))
-                         (newz (* home-sz (expt padz (- slowness 1))))
-                         (minz (/ min-sz padz)))
-                    (send o z (max minz newz))))))
-          ;(send obj z (/ home-sz (send mypad getzoom)))
-          (send obj renderscript
-                (lambda (o)
-                  (set-z-script o)
-                  (send o renderitem)))
-          ;run set-z-script now, to set the correct intial z
-          (set-z-script obj)
-          )))))
+    ((obj slowness)
+     ;slowness 0--> sticky z (constant size)
+     ;slowness 1--> normal zooming
+     ;        >1--> faster than view
+     (slowgrow obj slowness
+               (or (not slowness)
+                   (let ((padz (send (send obj dynapad) getzoom)))
+                     (* (send obj z)
+                        (expt padz slowness))))))
+    ((obj slowness home-sz)
+     (slowgrow obj slowness home-sz 0))
+    ;      (Obj-z = relative size; Apparent size = obj-z * pad-z)
+    ; Need 3 params to describe a line plus threshold.
+    ;
+    ;
+    ; obj-z   `
+    ;          `
+    ;           `       /
+    ;            `     / - - slowness (slope)
+    ;             `.  /
+    ;               `/  <- - home-sz (y-intercept):
+    ;  obj          /:`.      = rel. sz = apparent sz at zoom=1
+    ;apparent      / :  ` .
+    ;  size  _____/  :  <- -`-.- - - min-sz
+    ;                :          `  .
+    ;   0            1                 `  -   _
+    ;      out  <--zoom-->  in                    "    -    .
+    ;
+    ((obj slowness home-sz min-sz)
+     ;home-sz is obj's z when dynapad zoom=1
+     ; min-sz sets minimum size (fraction of home-sz)
+     (if (not slowness)
+         (send obj renderscript #f) ;normal zooming
+         ;else slowed zooming:
+         (let* ((mypad (send obj dynapad))
+                (set-z-script
+                 (lambda (o)
+                   (let* ((padz (send mypad getzoom))
+                          (newz (* home-sz (expt padz (- slowness 1))))
+                          (minz (/ min-sz padz)))
+                     (send o z (max minz newz))))))
+           ;(send obj z (/ home-sz (send mypad getzoom)))
+           (send obj renderscript
+                 (lambda (o)
+                   (set-z-script o)
+                   (send o renderitem)))
+           ;run set-z-script now, to set the correct intial z
+           (set-z-script obj)
+           )))))
 
 
 ; for text labels, try (slowgrow label .3 2 .5)
 
-  
+
 ;----- some help for writing the alist option -----
 
 (define (dynapad-printable? x)
@@ -897,8 +897,8 @@
       (null? x)
       (number? x)
       (and (pair? x)
-        (dynapad-printable? (car x))
-        (dynapad-printable? (cdr x))) ))
+           (dynapad-printable? (car x))
+           (dynapad-printable? (cdr x))) ))
 
 ; global list for functions that want to filter alists before saving.
 ; applications can push filters onto the list using:
@@ -912,33 +912,33 @@
 
 (define (filter-alist object alist)
   (if (null? *filter-alist-functions*)
-    alist
-    ;else
-    (begin
-      (foreach *filter-alist-functions* (lambda (fncpair)
-        (set! alist 
-          (apply append (map (lambda (elt) ((car fncpair) object elt)) alist)))
-      ))
       alist
-    )
+      ;else
+      (begin
+        (foreach *filter-alist-functions* (lambda (fncpair)
+                                            (set! alist
+                                                  (apply append (map (lambda (elt) ((car fncpair) object elt)) alist)))
+                                            ))
+        alist
+        )
+      )
   )
-)
 
 ; a little utility for simple alist modifers
 ; usage:  (alist-filters 'add (make-alist-modifier-function 'keyname foo))
 ;         where foo is (lambda (val) body) --> newval
 (define (make-alist-modifier-function key value-modifier-func)
   (lambda (object elt)
-    (if (eq? (car elt) key) 
-      (list (cons (car elt) (value-modifier-func (cdr elt))))
-      (list elt))))
+    (if (eq? (car elt) key)
+        (list (cons (car elt) (value-modifier-func (cdr elt))))
+        (list elt))))
 
 ;Another version which takes not a single key but a lambda on key-vals tuple:
 (define (make-alist-modifier-function-general match-fn value-modifier-func)
   (lambda (object elt)
     (if (match-fn elt)
-      (list (cons (car elt) (value-modifier-func (cdr elt))))
-      (list elt))))
+        (list (cons (car elt) (value-modifier-func (cdr elt))))
+        (list elt))))
 ;EX:
 ;Replace any alist-val which is an object with its ID:
 ;(make-alist-modifier-function-general
@@ -960,17 +960,17 @@
 
     (define/public case-super-update-size
       (case-lambda
-;       ((arg) (super update-size arg))
-;       ((arg1 arg2) (super update-size arg1 arg2))
+        ;       ((arg) (super update-size arg))
+        ;       ((arg1 arg2) (super update-size arg1 arg2))
         ((arg1 arg2 arg3) (super update-size arg1 arg2 arg3))
         ((arg1 arg2 arg3 arg4) (super update-size arg1 arg2 arg3))
-      ))
-    
+        ))
+
     (define/override (update-size . args)
       (send/apply this case-super-update-size args)
       (foreach (sch_members cptr)
                (lambda (m) (send/apply m update-size args))))
-))
+    ))
 
 (define group%
   (class base-group%
@@ -983,13 +983,13 @@
 
     (define members
       (case-lambda
-       (() (sch_members cptr))
-       ((some . more)
-        (let ((newmembers (if (list? some)
-                              (append some more)
-                              (cons some more))))
-          (sch_members cptr (map (lambda (o) (send o get-cptr)) newmembers))
-          (send this update-any-hilights)))))
+        (() (sch_members cptr))
+        ((some . more)
+         (let ((newmembers (if (list? some)
+                               (append some more)
+                               (cons some more))))
+           (sch_members cptr (map (lambda (o) (send o get-cptr)) newmembers))
+           (send this update-any-hilights)))))
 
     (define (member? o)
       (eq? this (send o getgroup)))
@@ -1034,7 +1034,7 @@
       (send this delete-callbacks null)
       ;finally, delete remaining members + this
       (for-each (lambda (o) (remove o) (send o delete)) (members))
-      (super delete))      
+      (super delete))
 
     (define (ungroup)
       (send this members '())
@@ -1048,8 +1048,8 @@
 
     (define/override (select . args)
       (if (null? args) (super select)
-        (when (not selected)
-          (set! selected (make-object select% _dynapad this (car args))))
+          (when (not selected)
+            (set! selected (make-object select% _dynapad this (car args))))
           ))
 
     (super-instantiate (dynaptr)); (sch_makegroup (send _dynapad get-cptr) this)))
@@ -1069,26 +1069,26 @@
     (field (savemembers null))
 
     (define anchor (case-lambda
-      (() (super anchor))
-      ((newanchor) (super anchor "sw")) ))
+                     (() (super anchor))
+                     ((newanchor) (super anchor "sw")) ))
 
     (define (re-anchor newanchor) (super re-anchor "sw"))
 
     (define (fill color) (sch_panelsetfill (send this get-cptr) color))
 
     (define coords (case-lambda
-      (() (send this bbox))
-      ((crds)
-        (send this width (bbwidth crds))
-        (send this height (bbheight crds))
-        (send this xy (car crds) (cadr crds)) )))
+                     (() (send this bbox))
+                     ((crds)
+                      (send this width (bbwidth crds))
+                      (send this height (bbheight crds))
+                      (send this xy (car crds) (cadr crds)) )))
 
     (define members
       (case-lambda
         (() (sch_members cptr))
         ((newmembers)
-          (sch_members cptr (map (lambda (o) (send o get-cptr)) newmembers))
-          (send this update-any-hilights))))
+         (sch_members cptr (map (lambda (o) (send o get-cptr)) newmembers))
+         (send this update-any-hilights))))
 
     (define save
       (case-lambda
@@ -1126,8 +1126,8 @@
 
     (define/override (select . args)
       (if (null? args) (super select)
-              (when (not selected)
-                (set! selected (make-object select% _dynapad this (car args))))))
+          (when (not selected)
+            (set! selected (make-object select% _dynapad this (car args))))))
 
     (super-instantiate (_dynapad (sch_makepanel (send _dynapad get-cptr) this)))
     (dynaclass 'panel%)
@@ -1138,44 +1138,44 @@
   (class frame% ;object%
     (init (name ".dynapad"))
     (field (cptr #f) (_selectlist '()) (_event-state-object #f) (path #f)
-      (_ztimer #f) (_stimer #f) (_zinterval 10)
-      (_dynaclass #f) (_defaultpen "white") (_defaultpenwidth 1) (_defaultfill "none")
-      (_defaultfont "Times") (_fill? #f)
-      (_select_render_script #f) (_lastcentered #f)
-      (_main-layer #f) (_status #f) (_hidden #f) (_writable #t)
-      (_afterzoom-callbacks '())
-      (_afterdrag-callbacks '()) (_beforedrag-callbacks '())
-      ; [LIST->MLIST] was: (_varlist `((this ,this)) )
-      (_varlist (mlist (mcons 'this this)))
-      (_eventModeStack null) ;(list "Run"))
-      (_drag_and_drop_object #f)
-      (_reject-save-filters '())
-      )
+           (_ztimer #f) (_stimer #f) (_zinterval 10)
+           (_dynaclass #f) (_defaultpen "white") (_defaultpenwidth 1) (_defaultfill "none")
+           (_defaultfont "Times") (_fill? #f)
+           (_select_render_script #f) (_lastcentered #f)
+           (_main-layer #f) (_status #f) (_hidden #f) (_writable #t)
+           (_afterzoom-callbacks '())
+           (_afterdrag-callbacks '()) (_beforedrag-callbacks '())
+           ; [LIST->MLIST] was: (_varlist `((this ,this)) )
+           (_varlist (mlist (mcons 'this this)))
+           (_eventModeStack null) ;(list "Run"))
+           (_drag_and_drop_object #f)
+           (_reject-save-filters '())
+           )
     (override
      center focus warp-pointer)
     (public
-      moveto view getzoom setzoom zoom
-      xinputdevices (mybind bind) bindtags modifier get-cptr find pick
-      write get-path set!-path
-      evs zinterval ztimer stimer
-      add-selected del-selected selected
-      objects order unfindable visible idle?
-      cpanzoom unfocus getfocus padid dynaclass fontnames
-      defaultpen defaultpenwidth defaultfill fill? defaultfont background
-      select-render-script cursor
-      bbox centerbbox lastcentered layers main-layer status hidden winid 
-      rendertime viewrendertime dissolvespeed refinedissolvespeed desiredframerate
-      refinementdelay doublebuffer fastpan
-      update writable? winfo
-      afterzoom-callbacks
-      afterdrag-callbacks do-afterdrag-callbacks init-drag do-duringdrag
-      beforedrag-callbacks do-beforedrag-callbacks
-      eventModeStack
-      getvar setvar
-      reject-save-filters
-      xftenable
-      debugevent
-      )
+     moveto view getzoom setzoom zoom
+     xinputdevices (mybind bind) bindtags modifier get-cptr find pick
+     write get-path set!-path
+     evs zinterval ztimer stimer
+     add-selected del-selected selected
+     objects order unfindable visible idle?
+     cpanzoom unfocus getfocus padid dynaclass fontnames
+     defaultpen defaultpenwidth defaultfill fill? defaultfont background
+     select-render-script cursor
+     bbox centerbbox lastcentered layers main-layer status hidden winid
+     rendertime viewrendertime dissolvespeed refinedissolvespeed desiredframerate
+     refinementdelay doublebuffer fastpan
+     update writable? winfo
+     afterzoom-callbacks
+     afterdrag-callbacks do-afterdrag-callbacks init-drag do-duringdrag
+     beforedrag-callbacks do-beforedrag-callbacks
+     eventModeStack
+     getvar setvar
+     reject-save-filters
+     xftenable
+     debugevent
+     )
 
     (define getvar
       (case-lambda
@@ -1185,8 +1185,8 @@
     (define (setvar varname val)
       (let ((elmt (massq varname _varlist)))
         (if elmt
-          (set-mcdr! elmt (mlist val))
-          (set-mcdr! _varlist (mcons (mlist varname val) (mcdr _varlist))))))
+            (set-mcdr! elmt (mlist val))
+            (set-mcdr! _varlist (mcons (mlist varname val) (mcdr _varlist))))))
 
     (define moveto
       (case-lambda
@@ -1196,8 +1196,8 @@
         ((xyzoom animtime twostep) (sch_moveto cptr xyzoom animtime twostep))))
 
     (define view (case-lambda
-      (() (sch_getview cptr))
-      ((x y z) (moveto (list x y z) 200 #t))))
+                   (() (sch_getview cptr))
+                   ((x y z) (moveto (list x y z) 200 #t))))
 
     (define (getzoom) (caddr (view)))
 
@@ -1211,21 +1211,21 @@
         (() (printf "should be: (send _dynapad zoom zfac [animtime [x y]])~%"))
         ((zfac) (zoom zfac 0))
         ((zfac animtime)
-          (let*
-            ((v (view))
-             (x (car v))
-             (y (cadr v)))
-          (zoom zfac animtime x y)))
+         (let*
+             ((v (view))
+              (x (car v))
+              (y (cadr v)))
+           (zoom zfac animtime x y)))
         ((zfac animtime x y)
-          (sch_zoom cptr zfac animtime x y)
-          (exec-any-callbacks _afterzoom-callbacks this x y zfac))
+         (sch_zoom cptr zfac animtime x y)
+         (exec-any-callbacks _afterzoom-callbacks this x y zfac))
         ))
     (define afterzoom-callbacks (callback-accessor-functions _afterzoom-callbacks))
 
     (define (do-afterdrag-callbacks evnt obj-list)
       (when _drag_and_drop_object
         (set! obj-list
-          (send _drag_and_drop_object respond-to-drop evnt obj-list)))
+              (send _drag_and_drop_object respond-to-drop evnt obj-list)))
       (when _afterdrag-callbacks
         (exec-any-callbacks _afterdrag-callbacks this evnt obj-list)))
 
@@ -1253,7 +1253,7 @@
     (define eventModeStack
       (case-lambda
         (() _eventModeStack)
-              ((newstack) (set! _eventModeStack newstack))))
+        ((newstack) (set! _eventModeStack newstack))))
 
     (define (xinputdevices)
       (sch_xinputdevices cptr))
@@ -1282,8 +1282,8 @@
 
     (define pick
       (case-lambda
-       ((xy) (send/apply this pick xy))
-       ((x y) (sch_pick cptr x y))))
+        ((xy) (send/apply this pick xy))
+        ((x y) (sch_pick cptr x y))))
 
     (define (write) #f)
 
@@ -1319,13 +1319,13 @@
 
     (define (add-selected o)
       (if (list? o)
-        (set! _selectlist (append _selectlist o))
-        (set! _selectlist (append _selectlist (list o)))))
+          (set! _selectlist (append _selectlist o))
+          (set! _selectlist (append _selectlist (list o)))))
 
     (define (del-selected o)
       (if (list? o)
-        (set! _selectlist (remq* o _selectlist))
-        (set! _selectlist (remq o _selectlist))))
+          (set! _selectlist (remq* o _selectlist))
+          (set! _selectlist (remq o _selectlist))))
 
     (define selected
       (case-lambda
@@ -1333,12 +1333,12 @@
         ((newset)
          (for-each (lambda (o) (send o unselect)) _selectlist)
          (for-each (lambda (o) (send o select)) newset))))
-;This version may or may not be faster:
-;	 (let* ((now _selectlist)
-;		(outs (list-diffq now newset))
-;		(ins  (list-diffq newset now)))
-;	   (for-each (lambda (o) (send o unselect)) outs)
-;	   (for-each (lambda (o) (send o select)) ins))
+    ;This version may or may not be faster:
+    ;     (let* ((now _selectlist)
+    ;        (outs (list-diffq now newset))
+    ;        (ins  (list-diffq newset now)))
+    ;       (for-each (lambda (o) (send o unselect)) outs)
+    ;       (for-each (lambda (o) (send o select)) ins))
 
     (define cpanzoom
       (case-lambda
@@ -1365,7 +1365,7 @@
 
     (define (fontnames)
       (let loop
-        ((l (quicksort (cons "Times" (sch_fontnames cptr)) string<?)))
+          ((l (quicksort (cons "Times" (sch_fontnames cptr)) string<?)))
         (cond
           ((null? l) null)
           ((null? (cdr l)) null)
@@ -1397,8 +1397,8 @@
     (define defaultpenwidth
       (case-lambda
         (()
-          (let ((zoom (caddr (view))))
-            (/ _defaultpenwidth zoom)))
+         (let ((zoom (caddr (view))))
+           (/ _defaultpenwidth zoom)))
         ((newdefaultpenwidth) (set! _defaultpenwidth newdefaultpenwidth))))
 
     (define defaultfont
@@ -1425,7 +1425,7 @@
 
     (define (bbox)
       (sch_bbox cptr))
-      
+
     (define winfo
       (case-lambda
         (() (sch_winfo cptr))
@@ -1439,12 +1439,12 @@
         ((l anim twostep?) (center l anim twostep? 0.5 0.5))
         ((l anim twostep? x y) (center l anim twostep? x y 0.85))
         ((l anim twostep? x y zoom)
-          (when (eq? l 'all) (set! l (send this objects)))
-          (set! _lastcentered (if (list? l) #f l))
-          (let*
-            ((l (if (list? l) l (list l)))
-             (cptrlist (map (lambda (o)(send o get-cptr)) l)))
-          (sch_center cptr cptrlist anim twostep? x y zoom)))))
+         (when (eq? l 'all) (set! l (send this objects)))
+         (set! _lastcentered (if (list? l) #f l))
+         (let*
+             ((l (if (list? l) l (list l)))
+              (cptrlist (map (lambda (o)(send o get-cptr)) l)))
+           (sch_center cptr cptrlist anim twostep? x y zoom)))))
 
     (define centerbbox
       (case-lambda
@@ -1453,7 +1453,7 @@
         ((l anim twostep?) (centerbbox l anim twostep? 0.5 0.5))
         ((l anim twostep? x y) (centerbbox l anim twostep? x y 0.85))
         ((l anim twostep? x y zoom)
-          (sch_centerbbox cptr l anim twostep? x y zoom))))
+         (sch_centerbbox cptr l anim twostep? x y zoom))))
 
     (define lastcentered
       (case-lambda
@@ -1474,9 +1474,9 @@
     (define (hidden)
       (when (not _hidden)
         (set! _hidden (make-object layer% this "hidden"))
-              (send _hidden visible #f))
+        (send _hidden visible #f))
       _hidden)
-        
+
     (define (winid)
       (sch_winid cptr))
 
@@ -1537,7 +1537,7 @@
     (set! cptr (sch_makedynapad name this))
     (background "black")
     (select-render-script ;default select-box appearance:
-      (lambda (cptr obj) (sch_pen cptr "red") (sch_penwidth cptr 0)))
+     (lambda (cptr obj) (sch_pen cptr "red") (sch_penwidth cptr 0)))
     (dynaclass 'dynapad%)
     (main-layer)
     (status)
@@ -1557,12 +1557,12 @@
 
     (define (coords . args)
       (if (null? args)
-        (sch_coords cptr)
-        (let ((points (if (null? (cdr args)) (car args) args)))
-          (exec-any-callbacks _coords-callbacks this points)
-          (sch_coords cptr points)
-          (exec-any-callbacks _aftercoords-callbacks this points)
-          (send this update-any-hilights))))
+          (sch_coords cptr)
+          (let ((points (if (null? (cdr args)) (car args) args)))
+            (exec-any-callbacks _coords-callbacks this points)
+            (sch_coords cptr points)
+            (exec-any-callbacks _aftercoords-callbacks this points)
+            (send this update-any-hilights))))
     (define coords-callbacks (callback-accessor-functions _coords-callbacks))
     (define aftercoords-callbacks (callback-accessor-functions _aftercoords-callbacks))
 
@@ -1574,12 +1574,12 @@
     (define savepenwidth
       (case-lambda
         (()
-          (let*
-            ((pw (penwidth))
-             (abs? (abslinestyle?))
-             (s (caddr (position)))
-             (savepw (if abs? pw (* pw s))))
-            (list savepw abs?)))))
+         (let*
+             ((pw (penwidth))
+              (abs? (abslinestyle?))
+              (s (caddr (position)))
+              (savepw (if abs? pw (* pw s))))
+           (list savepw abs?)))))
 
     (define (abslinestyle?)
       (sch_abslinestyle cptr))
@@ -1592,16 +1592,16 @@
 
     (define (writeoptions)
       (filter (lambda (opt) opt)
-      `(,@(super writeoptions)
-        (coords ,@(coords))
-        (pen ,(pen))
-        ,(if
-          (and
-            (= (penwidth) 1.0)
-            (not (abslinestyle?)))
-          #f
-          `(penwidth ,@(savepenwidth)))
-        )))
+              `(,@(super writeoptions)
+                (coords ,@(coords))
+                (pen ,(pen))
+                ,(if
+                  (and
+                   (= (penwidth) 1.0)
+                   (not (abslinestyle?)))
+                  #f
+                  `(penwidth ,@(savepenwidth)))
+                )))
 
     (super-instantiate (_dynapad (makeproc (send _dynapad get-cptr) this)))
     (when (send _dynapad defaultpen) (pen (send _dynapad defaultpen)))
@@ -1617,11 +1617,11 @@
 
 ; two dummy classes, just to clean up Draw event handling
 (define freehand% (class line%
-    (super-instantiate())
-    (send this dynaclass 'freehand%)))
+                    (super-instantiate())
+                    (send this dynaclass 'freehand%)))
 (define polyline% (class line%
-    (super-instantiate())
-    (send this dynaclass 'polyline%)))
+                    (super-instantiate())
+                    (send this dynaclass 'polyline%)))
 
 (define baserect%
   (class baseline%
@@ -1718,8 +1718,8 @@
       (case-lambda
         (() (if idata (send idata imagepath) #f))
         ((newimagepath)
-          (when newimagepath
-            (imagedata (make-object imagedata% initdynapad newimagepath))))))
+         (when newimagepath
+           (imagedata (make-object imagedata% initdynapad newimagepath))))))
 
     (define/override (export dir)
       (let ((myname (file-name-from-path (saveimagepath))))
@@ -1728,33 +1728,33 @@
     (define (writeoptions)
       `(,@(super writeoptions)))
 
-#|
+    #|
     (define/override (write)
-      `(let ((obj (make-object ,(dynaclass) dynapad)))
-         (send* obj
-           ,@(writeoptions)
-           (saveimagepath ,(saveimagepath)))
-         obj))
-|#
-;    (define/override (write)
-;      `(ic (make-object ,(dynaclass) dynapad)
-;	   ,@(writeoptions)
-;	   (saveimagepath)))
-      
+    `(let ((obj (make-object ,(dynaclass) dynapad)))
+    (send* obj
+    ,@(writeoptions)
+    (saveimagepath ,(saveimagepath)))
+    obj))
+    |#
+    ;    (define/override (write)
+    ;      `(ic (make-object ,(dynaclass) dynapad)
+    ;       ,@(writeoptions)
+    ;       (saveimagepath)))
+
     (define imagedata
       (case-lambda
         (() idata)
         ((data)
-          (cond
-            ((is-a? data imagedata%)
-              (sch_imagedata cptr (send data get-cptr))
-              (send this update-any-hilights))
-            ((eq? data #f)
-              (unselect)
-              (sch_imagedata cptr #f))
-            (else
-              (error "image% imagedata expects imagedata, given " data)))
-          (set! idata data))))
+         (cond
+           ((is-a? data imagedata%)
+            (sch_imagedata cptr (send data get-cptr))
+            (send this update-any-hilights))
+           ((eq? data #f)
+            (unselect)
+            (sch_imagedata cptr #f))
+           (else
+            (error "image% imagedata expects imagedata, given " data)))
+         (set! idata data))))
 
     (when (not (is-a? initdynapad dynapad%))
       (error "instantiate: image% expects type dynapad% as 1st argument, given " initdynapad))
@@ -1796,29 +1796,29 @@
     (define (free-hiresdata)
       ; works only when thumb already in view; call (thumb) first
       (when (and _thumbdata (eq? _thumbdata (imagedata)))
-            (when _hiresdata
-                (send _hiresdata free))
-            (set! _hiresdata #f)))
+        (when _hiresdata
+          (send _hiresdata free))
+        (set! _hiresdata #f)))
 
     (define (thumb)
       (when (and _thumbdata (eq? (imagedata) _hiresdata))
-            (let ((w (send this width))
-                  (h (send this height)))
-              (imagedata _thumbdata)
-              (send this widthheight w h)
-              (unless (send _dynapad getvar 'cache-image-hiresdata)
-                      (free-hiresdata))))
+        (let ((w (send this width))
+              (h (send this height)))
+          (imagedata _thumbdata)
+          (send this widthheight w h)
+          (unless (send _dynapad getvar 'cache-image-hiresdata)
+            (free-hiresdata))))
       _thumbdata)
 
     (define/override width (case-lambda
-      (() (super width))
-      ((new) (set! _use_bbox #t) (super width new))
-    ))
+                             (() (super width))
+                             ((new) (set! _use_bbox #t) (super width new))
+                             ))
 
     (define/override height (case-lambda
-      (() (super height))
-      ((new) (set! _use_bbox #t) (super height new))
-    ))
+                              (() (super height))
+                              ((new) (set! _use_bbox #t) (super height new))
+                              ))
 
     (define/override (export dir)
       (let ((myname (file-name-from-path (hirespath))))
@@ -1828,43 +1828,43 @@
     ; so super-writeoptions must be last
     (define (writeoptions)
       (filter (lambda (opt) opt)
-      `(,@(super writeoptions)
-        (hirespath ,(hirespath))
-        ,(if (not _use_bbox) #f `(bbox ',(bbox)))
-        )))
+              `(,@(super writeoptions)
+                (hirespath (string->path ,(path->string (hirespath))))
+                ,(if (not _use_bbox) #f `(bbox ',(bbox)))
+                )))
     (define/override (writeinits)
-      (list (hirespath)))
+      (list `(string->path ,(path->string (hirespath)))))
 
-#|
+    #|
     (define/override (write)
-      `(let ((obj (make-object ,(dynaclass) dynapad)))
-         (send* obj
-           ,@(writeoptions))
-         obj))
-|#
-;    (define/override (write)
-;      `(ic (make-object ,(dynaclass) dynapad ,(hirespath))
-;	   ,@(writeoptions)))
-;      (let* ((suffixes (map (lambda (fn) ((car fn) this)) _post-build-ops))
-;	     (alter-bld (and _alternate-build-fn (_alternate-build-fn this)))
-;	     (build-expr (or alter-bld
-;			     `(ic (make-object ,(dynaclass) dynapad)
-;				  ,@(writeoptions)))))
-;	(if (null? suffixes)
-;	    build-expr
-;	    `(with obj ,build-expr ,@suffixes))))
+    `(let ((obj (make-object ,(dynaclass) dynapad)))
+    (send* obj
+    ,@(writeoptions))
+    obj))
+    |#
+    ;    (define/override (write)
+    ;      `(ic (make-object ,(dynaclass) dynapad ,(hirespath))
+    ;       ,@(writeoptions)))
+    ;      (let* ((suffixes (map (lambda (fn) ((car fn) this)) _post-build-ops))
+    ;         (alter-bld (and _alternate-build-fn (_alternate-build-fn this)))
+    ;         (build-expr (or alter-bld
+    ;                 `(ic (make-object ,(dynaclass) dynapad)
+    ;                  ,@(writeoptions)))))
+    ;    (if (null? suffixes)
+    ;        build-expr
+    ;        `(with obj ,build-expr ,@suffixes))))
 
     (define hirespath
       (case-lambda
         (() _hirespath)
         ((newhirespath)
-          (set! _hirespath newhirespath)
-          (let ((thumbpath (findthumb _hirespath)))
-            (when thumbpath
-              (set! _thumbdata (make-object imagedata% _dynapad thumbpath))))
-          (if _thumbdata
-            (imagedata _thumbdata)
-            (hires)))))
+         (set! _hirespath newhirespath)
+         (let ((thumbpath (findthumb _hirespath)))
+           (when thumbpath
+             (set! _thumbdata (make-object imagedata% _dynapad thumbpath))))
+         (if _thumbdata
+             (imagedata _thumbdata)
+             (hires)))))
 
     (define (delete)
       (imagedata #f)
@@ -1894,7 +1894,7 @@
 
     ;(init-image-bindings this)  ; see events.ss
     (when *image-aftermake-callbacks*
-        (exec-any-callbacks *image-aftermake-callbacks* this))
+      (exec-any-callbacks *image-aftermake-callbacks* this))
     ))
 
 (define basetext%
@@ -1904,7 +1904,7 @@
     (inherit-field cptr selected)
     (override writeoptions)
     (public text insert forward backward next previous
-      setpoint delete-backward delete-forward font pen)
+            setpoint delete-backward delete-forward font pen)
 
     (define text
       (case-lambda
@@ -1923,11 +1923,11 @@
     (define insert
       (case-lambda
         ((str)
-          (sch_inserttext cptr "point" str)
-          (send this update-any-hilights))
+         (sch_inserttext cptr "point" str)
+         (send this update-any-hilights))
         ((index str)
-          (sch_inserttext cptr index str)
-          (send this update-any-hilights))))
+         (sch_inserttext cptr index str)
+         (send this update-any-hilights))))
 
     (define (setpoint pt)
       (when (number? pt) (set! pt (number->string pt)))
@@ -1966,8 +1966,8 @@
       (case-lambda
         (() (sch_font cptr))
         ((newfont)
-          (sch_font cptr newfont)
-          (send this update-any-hilights))))
+         (sch_font cptr newfont)
+         (send this update-any-hilights))))
 
     (define pen
       (case-lambda
@@ -1989,7 +1989,7 @@
     (init _dynapad initname)
     (field (cptr #f) (_dynaclass #f) (savemembers null) (_writable #t))
     (public get-cptr delete name members dynaclass
-      lower raise save write writeoptions visible writable?)
+            lower raise save write writeoptions visible writable?)
 
     (define (get-cptr)
       cptr)
@@ -2016,10 +2016,10 @@
 
     (define (fix alist)
       (for-each
-        (lambda (oldid)
-          (let ((o (assq oldid alist)))
-            (send o layer this)))
-        savemembers))
+       (lambda (oldid)
+         (let ((o (assq oldid alist)))
+           (send o layer this)))
+       savemembers))
 
     (define save
       (case-lambda
@@ -2044,17 +2044,17 @@
       (case-lambda
         (() (sch_raiselayer cptr))
         ((abovethis)
-          (if (or (equal? abovethis "one") (equal? abovethis 'one))
-            (sch_raiselayer cptr 1)
-            (sch_raiselayer cptr (send abovethis get-cptr))))))
+         (if (or (equal? abovethis "one") (equal? abovethis 'one))
+             (sch_raiselayer cptr 1)
+             (sch_raiselayer cptr (send abovethis get-cptr))))))
 
     (define lower
       (case-lambda
         (() (sch_lowerlayer cptr))
         ((belowthis)
-          (if (or (equal? belowthis "one") (equal? belowthis 'one))
-            (sch_lowerlayer cptr 1)
-            (sch_lowerlayer cptr (send belowthis get-cptr))))))
+         (if (or (equal? belowthis "one") (equal? belowthis 'one))
+             (sch_lowerlayer cptr 1)
+             (sch_lowerlayer cptr (send belowthis get-cptr))))))
 
     (super-instantiate ())
     (dynaclass 'layer%)
@@ -2065,7 +2065,7 @@
     (field (_ballast (ic (make-object group% _dynapad)
                          (findable #f)
                          (layer this))))
-))
+    ))
 
 (define bind
   (case-lambda
@@ -2073,15 +2073,15 @@
     ((obj event) (sch_bind (send obj get-cptr) event))
     ((obj event callback) (bind obj event callback #f))
     ((obj event callback save?)
-      (let ((bindings (bind obj event)))
-        (cond
-            ; don't forget to update *writelist* when removing bindings
-          ((not callback) (set! bindings null)) ; grandfather #f to mean null
-          ((list? callback) (set! bindings callback))
-          (else
-            (set! bindings (list callback))
-            (when save? (make-object bind/write% obj event callback))))
-        (sch_bind (send obj get-cptr) event bindings)))))
+     (let ((bindings (bind obj event)))
+       (cond
+         ; don't forget to update *writelist* when removing bindings
+         ((not callback) (set! bindings null)) ; grandfather #f to mean null
+         ((list? callback) (set! bindings callback))
+         (else
+          (set! bindings (list callback))
+          (when save? (make-object bind/write% obj event callback))))
+       (sch_bind (send obj get-cptr) event bindings)))))
 
 (define (addbinding PAD evnt fnc)
   (send PAD bind evnt (cons fnc (send PAD bind evnt))))
@@ -2091,16 +2091,16 @@
     ((pad tag) (sch_bind_to_tag (send pad get-cptr) tag))
     ((pad tag event) (sch_bind_to_tag (send pad get-cptr) tag event))
     ((pad tag event callback)
-      (let ((bindings (bind_to_tag pad tag event)))
-        (cond
-          ((not callback) (set! bindings null)) ; grandfather #f to mean null
-          ((list? callback) (set! bindings callback))
-          (else (set! bindings (list callback))))
-        (sch_bind_to_tag
-          (send pad get-cptr)
-          tag
-          event
-          bindings)))))
+     (let ((bindings (bind_to_tag pad tag event)))
+       (cond
+         ((not callback) (set! bindings null)) ; grandfather #f to mean null
+         ((list? callback) (set! bindings callback))
+         (else (set! bindings (list callback))))
+       (sch_bind_to_tag
+        (send pad get-cptr)
+        tag
+        event
+        bindings)))))
 
 (define *writelist* null)
 
@@ -2111,12 +2111,12 @@
     (define/public (write)
       (cond
         ((annotated-proc? callback)
-          (list 'make-object 'bind/write% (send obj padid) event
-            (apply list 'lambda (procedure-args callback)
-              (procedure-body callback))))
+         (list 'make-object 'bind/write% (send obj padid) event
+               (apply list 'lambda (procedure-args callback)
+                      (procedure-body callback))))
         (else
-          (list 'make-object 'bind/write% (send obj padid) event
-            (object-name callback)))))
+         (list 'make-object 'bind/write% (send obj padid) event
+               (object-name callback)))))
 
     (define/public (fix alist)
       (set! obj (cadr (assq obj alist)))

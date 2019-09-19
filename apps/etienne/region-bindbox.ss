@@ -3,7 +3,7 @@
   (class object%
     (init __name __function)
     (field (_name     __name)
-	   (_function __function))
+           (_function __function))
     (super-instantiate ())
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Methods
@@ -27,8 +27,8 @@
     ;; Pile the binbox belongs to
     (define/public region
       (case-lambda
-       (()  _region)
-       ((r) (set! _region r))))
+        (()  _region)
+        ((r) (set! _region r))))
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Shortcut methods
@@ -56,24 +56,24 @@
       ;; Replace the list of pile-object-bindings for this event
       ;;  to the list of bindings for this bindbox%
       (cond ((string=? type "region")
-	     (replace-else-push-onto-malist!
-	      assoc event bindings _region-bindings))
-	    ((string=? type "object")
-	     (replace-else-push-onto-malist!
-	      assoc event bindings _object-bindings))
-	    (else null)))
+             (replace-else-push-onto-malist!
+              assoc event bindings _region-bindings))
+            ((string=? type "object")
+             (replace-else-push-onto-malist!
+              assoc event bindings _object-bindings))
+            (else null)))
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Get the binding list for an event
     (define/public (get-bindings type event)
       (define w (cond ((string=? type "region") _region-bindings)
-		      ((string=? type "object") _object-bindings)
-		      (else null)))
+                      ((string=? type "object") _object-bindings)
+                      (else null)))
       (define x (assoc event w))
       (if x (cdr x) null))
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-    ;; Remove a binding object from a list of 
+    ;; Remove a binding object from a list of
     ;;  region or object bindings
     (define/public (remove-binding type event name)
       ;; Get the bindings for this event.
@@ -82,8 +82,8 @@
       ;; Remove the binding object
       (for-each
        (lambda (event-binding)
-	 (if (string=? (send event-binding name) name)
-	     (set! event-bindings (remq event-binding event-bindings))))
+         (if (string=? (send event-binding name) name)
+             (set! event-bindings (remq event-binding event-bindings))))
        event-bindings)
       ;;
       ;; Update the bindings for this event
@@ -97,12 +97,12 @@
       ;;
       ;; With the new event-bindings
       (let ((event-bindings (get-bindings type event)))
-	;;
-	;; Add the new named-binding% to the list
-	(push! binding event-bindings)
-	;;
-	;; Update the bindings for this event
-	(update-event-bindings type event event-bindings)))
+        ;;
+        ;; Add the new named-binding% to the list
+        (push! binding event-bindings)
+        ;;
+        ;; Update the bindings for this event
+        (update-event-bindings type event event-bindings)))
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Set the bindings of a given object
@@ -112,36 +112,36 @@
       ;; First set the object bindings.
       (for-each
        (lambda (event)
-	 (define event-list (get-object-bindings event))
-	 (for-each
-	  (lambda (binding)
-	    (send object bind event (send binding function)))
-	  event-list))
+         (define event-list (get-object-bindings event))
+         (for-each
+          (lambda (binding)
+            (send object bind event (send binding function)))
+          event-list))
        (map car _object-bindings))
 
       (say "set-bindings object")
 
       ;; Then set the region bindings.
       (if (not (null? _region))
-	  (for-each
-	   (lambda (event)
-	     (define event-list (get-region-bindings event))
-	     (for-each
-	      (lambda (binding)
-		(cond ((string=? event "<Abandon>")
-		       (send _region abandon-actions 'add
-			     (send binding function)))
-		      ((string=? event "<Enter>")
-		       (send _region enter-actions 'add
-			     (send binding function)))
-		      ((string=? event "<Leave>")
-		       (send _region leave-actions 'add
-			     (send binding function)))
-		      ((string=? event "<Remove>")
-		       (send _region remove-actions 'add
-			     (send binding function)))))
-	      event-list))
-	   (map car _region-bindings))))
+          (for-each
+           (lambda (event)
+             (define event-list (get-region-bindings event))
+             (for-each
+              (lambda (binding)
+                (cond ((string=? event "<Abandon>")
+                       (send _region abandon-actions 'add
+                             (send binding function)))
+                      ((string=? event "<Enter>")
+                       (send _region enter-actions 'add
+                             (send binding function)))
+                      ((string=? event "<Leave>")
+                       (send _region leave-actions 'add
+                             (send binding function)))
+                      ((string=? event "<Remove>")
+                       (send _region remove-actions 'add
+                             (send binding function)))))
+              event-list))
+           (map car _region-bindings))))
     ))
 
 
@@ -159,12 +159,12 @@
        named-binding%
        "go-to-url"
        (lambda (d e)
-	 (define object (event-obj e))
-	 (define event  (get-object-keyval object 'event -1))
-	 (if (> event 0)
-	     (let ((url (send _mysql get-meta-value event 2)))
-	       (send _launcher web-browser url)
-	     null)))))
+         (define object (event-obj e))
+         (define event  (get-object-keyval object 'event -1))
+         (if (> event 0)
+             (let ((url (send _mysql get-meta-value event 2)))
+               (send _launcher web-browser url)
+               null)))))
 
     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
     ;; Region bindings
@@ -173,21 +173,21 @@
        named-binding%
        "make-new-pile"
        (lambda (obj)
-	 (define coordinates (send obj xy))
-	 (define pile (make-pile event-pile% "etienne" ()))
-	 (define polygon (send pile poly))
-	 (define duplicate (clone-object obj))
-	 (say "one")
-	 ;; place new pile and add object to the new object
-	 (send polygon xy coordinates)
-	 (say "two")
-	 (send pile receive duplicate)
-	 (say "three")
-	 (send pile finish)
-	 (say "four")
-	 ;; now delete the original
-	 (send _region remove obj #t)
-	 (say "five"))
+         (define coordinates (send obj xy))
+         (define pile (make-pile event-pile% "etienne" ()))
+         (define polygon (send pile poly))
+         (define duplicate (clone-object obj))
+         (say "one")
+         ;; place new pile and add object to the new object
+         (send polygon xy coordinates)
+         (say "two")
+         (send pile receive duplicate)
+         (say "three")
+         (send pile finish)
+         (say "four")
+         ;; now delete the original
+         (send _region remove obj #t)
+         (say "five"))
        ))
 
 
@@ -196,7 +196,7 @@
 
     ;; Set region bindings
     (add-region-binding "<Remove>" make-new-pile)
-	     
+
     )
   )
 

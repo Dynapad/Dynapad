@@ -22,7 +22,7 @@
                             (pen "red")
                             (coords _lastxy)))
         ))
-            
+
     (define minjump 7) ;min spacing between points (reduces vtx density)
 
     (define (Lasso_ButtonMotion e)
@@ -33,36 +33,36 @@
             (sy (event-sy e)))
         (when (or (> (abs (- sx (car _lastsxy))) minjump)
                   (> (abs (- sy (cadr _lastsxy))) minjump))
-              (begin
-                (set! _lastxy (list x y))
-                (set! _lastsxy (list sx sy))
-                (send _freehand coords (append c _lastxy))
-                ))))
+          (begin
+            (set! _lastxy (list x y))
+            (set! _lastsxy (list sx sy))
+            (send _freehand coords (append c _lastxy))
+            ))))
 
     (define (Lasso_ButtonRelease e)
       (let ((crds (send _freehand coords)))
         (send _freehand delete) (set! _freehand #f)
-;        (send _dynapad bind "<GetLasso-Motion>"          #f)
+        ;        (send _dynapad bind "<GetLasso-Motion>"          #f)
         (send _dynapad bind "<GetLasso-ButtonPress-1>"   #f)
         (send _dynapad bind "<GetLasso-B1-Motion>"       #f)
         (send _dynapad bind "<GetLasso-ButtonRelease-1>" #f)
         (pop-event-mode _dynapad)
         (when _release_callback
-              (_release_callback crds))))
+          (_release_callback crds))))
 
- ;   (send _dynapad bind "<GetLasso-Motion>"          (lambda (d e) (Lasso_Motion e)))
+    ;   (send _dynapad bind "<GetLasso-Motion>"          (lambda (d e) (Lasso_Motion e)))
     (send _dynapad bind "<GetLasso-ButtonPress-1>"   (lambda (d e) (Lasso_ButtonPress e)))
     (send _dynapad bind "<GetLasso-B1-Motion>"       (lambda (d e) (Lasso_ButtonMotion e) #f))
     (send _dynapad bind "<GetLasso-ButtonRelease-1>" (lambda (d e) (Lasso_ButtonRelease e)))
 
     (send _dynapad bind "<GetLasso-KeyPress-Escape>"
-      (lambda (eventPAD e)
-        (pop-event-mode _dynapad)
-        (when _freehand (send _freehand delete) 
-                        (set! _freehand #f))
-        (when _release_callback
+          (lambda (eventPAD e)
+            (pop-event-mode _dynapad)
+            (when _freehand (send _freehand delete)
+                  (set! _freehand #f))
+            (when _release_callback
               (_release_callback #f))))
-))
+    ))
 
 
 (define (ask-user-for-lasso argPAD callback)
@@ -77,9 +77,9 @@
 (define (lasso-contained-objects poly)
   (def bbox (send poly bbox))
   (def intruders (send dynapad find 'groupmembers 'overlapping bbox))
-    (filter (lambda (it) (and (not (eq? it poly))
-                              (contained-in-lasso? it poly)))
-            intruders))
+  (filter (lambda (it) (and (not (eq? it poly))
+                            (contained-in-lasso? it poly)))
+          intruders))
 
 (define (make-selection-from-coords crds)
   (if crds

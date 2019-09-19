@@ -19,7 +19,7 @@
 
       (set! l (append l (list (* radius (calc-x as)) (* radius (calc-y as)))))
       (do ((i as (+ i 10)))
-        ((> i ae))
+          ((> i ae))
         (set! l (append l (list (* radius (calc-x i)) (* radius (calc-y i))))))
       (set! l (append l (list (* radius (calc-x ae)) (* radius (calc-y ae)))))
       l)

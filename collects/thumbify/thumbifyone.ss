@@ -10,7 +10,7 @@
   (require "thumbify.ss")
 
   (let*
-    ((l (vector->list (current-command-line-arguments)))
-     (file (if (null? l) null (car l)))
-     (res (if (> (length l) 1) (string->number (cadr l)) 125)))
+      ((l (vector->list (current-command-line-arguments)))
+       (file (if (null? l) null (car l)))
+       (res (if (> (length l) 1) (string->number (cadr l)) 125)))
     (thumbify file res)))

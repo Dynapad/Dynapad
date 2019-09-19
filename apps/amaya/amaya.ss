@@ -10,15 +10,15 @@
     ((string-ci=? gesture "SC")    "#00c4c4")  ;sea green
     ((string-ci=? gesture "NB")    "#9cff9c")  ;light green
     (else
-      (printf "no color for ~a" gesture)
-      "black")))
+     (printf "no color for ~a" gesture)
+     "black")))
 
 (define (min:sec->sec time)
   (let*
-    ((rexp "(.*):(.*)")
-     (parsed (cdr (regexp-match rexp time)))
-     (min (string->number (car parsed)))
-     (sec (string->number (cadr parsed))))
+      ((rexp "(.*):(.*)")
+       (parsed (cdr (regexp-match rexp time)))
+       (min (string->number (car parsed)))
+       (sec (string->number (cadr parsed))))
     (+ (* 60 min) sec)))
 
 (define entry%
@@ -60,12 +60,12 @@
         (cond
           ((eq? line eof) ())
           (else
-            (cons
-	      (let*
+           (cons
+            (let*
                 ((rexp "(.*)\t(.*)\t(.*)\t(.*)\t(.*)\t(.*)\t(.*)")
                  (parsed (cdr (regexp-match rexp line))))
-                (apply make-object entry% dynapad parsed))
-              (proc port))))))
+              (apply make-object entry% dynapad parsed))
+            (proc port))))))
     (field (_entries (call-with-input-file _path proc)))
     (super-instantiate())))
 

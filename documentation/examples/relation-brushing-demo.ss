@@ -80,10 +80,10 @@
 ;  and gives it a private brush.
 ; Another way of doing this would be to create a new relation, as in:
 #|
- (define primes (make-object clique-relation%))
- (send primes add-objs-with-key (list two three five) 'foo) ;<-- only one clique, so
-                                                            ;  key could be anything
- (send primes brush-style box-brush% #t "purple")
+(define primes (make-object clique-relation%))
+(send primes add-objs-with-key (list two three five) 'foo) ;<-- only one clique, so
+;  key could be anything
+(send primes brush-style box-brush% #t "purple")
 |#
 ; These two methods behave the same when both brushes are on,
 ;  but differently when the primes brush is off:

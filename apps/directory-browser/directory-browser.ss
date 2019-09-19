@@ -18,7 +18,7 @@
   (filter
    (lambda (item)
      (not (is-hidden? item)))
-     (directory-list->string directory)))
+   (directory-list->string directory)))
 
 (define (is-hidden? item)
   (char=? (car (string->list item)) #\.))
@@ -28,7 +28,7 @@
 (define (generate-random-pos . args)
   (define zfac (if (null? args) #f (car args)))
   (let* ((max (expt 2 15))
-	 (xp (random max))
-	 (yp (random max))
-	 (zp (if zfac zfac (random max))))
+         (xp (random max))
+         (yp (random max))
+         (zp (if zfac zfac (random max))))
     (list xp yp zp)))

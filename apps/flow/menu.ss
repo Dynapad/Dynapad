@@ -9,47 +9,47 @@
 
     (define (octant x y)
       (let*
-        ((cen (send outer position))
-         (x (- x (car cen)))
-         (y (- y (cadr cen))))
+          ((cen (send outer position))
+           (x (- x (car cen)))
+           (y (- y (cadr cen))))
         (cond
           ((and (>= x 0) (>= y 0))
-            (cond
-              ((>= x y) 0)
-              (else 1)))
+           (cond
+             ((>= x y) 0)
+             (else 1)))
           ((and (< x 0) (> y 0))
-            (cond
-              ((<= (- x) y) 2)
-	      (else 3)))
+           (cond
+             ((<= (- x) y) 2)
+             (else 3)))
           ((and (<= x 0) (<= y 0))
-            (cond
-              ((>= (- x) (- y)) 4)
-              (else 5)))
+           (cond
+             ((>= (- x) (- y)) 4)
+             (else 5)))
           ((and (> x 0) (< y 0))
-            (cond
-              ((<= x (- y)) 6)
-	      (else 7))))))
+           (cond
+             ((<= x (- y)) 6)
+             (else 7))))))
 
     (define (octantbbox oct)
       (let*
-        ((bbox (send outer bbox))
-         (llx (car bbox))
-         (lly (cadr bbox))
-         (urx (caddr bbox))
-         (ury (cadddr bbox))
-         (zx (/ (+ llx urx) 2))
-         (zy (/ (+ lly ury) 2))
-         (a (/ (- urx llx) 4)))
-         (case oct
-           ((0) (list (- urx a) zy urx (- ury a)))
-           ((1) (list zx (- ury a) (- urx a) ury))
-           ((2) (list (+ llx a) (- ury a) zx ury))
-           ((3) (list llx zy (+ llx a) (- ury a)))
-           ((4) (list llx (+ lly a) (+ llx a) zy))
-           ((5) (list (+ llx a) lly zx (+ lly a)))
-           ((6) (list zx lly (- urx a) (+ lly a)))
-           ((7) (list (- urx a) (+ lly a) urx zy))
-           (else (error "octantbbox: oct not between 0 and 7, given " oct)))))
+          ((bbox (send outer bbox))
+           (llx (car bbox))
+           (lly (cadr bbox))
+           (urx (caddr bbox))
+           (ury (cadddr bbox))
+           (zx (/ (+ llx urx) 2))
+           (zy (/ (+ lly ury) 2))
+           (a (/ (- urx llx) 4)))
+        (case oct
+          ((0) (list (- urx a) zy urx (- ury a)))
+          ((1) (list zx (- ury a) (- urx a) ury))
+          ((2) (list (+ llx a) (- ury a) zx ury))
+          ((3) (list llx zy (+ llx a) (- ury a)))
+          ((4) (list llx (+ lly a) (+ llx a) zy))
+          ((5) (list (+ llx a) lly zx (+ lly a)))
+          ((6) (list zx lly (- urx a) (+ lly a)))
+          ((7) (list (- urx a) (+ lly a) urx zy))
+          (else (error "octantbbox: oct not between 0 and 7, given " oct)))))
 
     (define indicator%
       (class rect%
@@ -63,50 +63,50 @@
           (lower))
         (define/public (off)
           (let*
-            ((pos (send outer position))
-	     (x (car pos))
-	     (y (cadr pos)))
+              ((pos (send outer position))
+               (x (car pos))
+               (y (cadr pos)))
             (coords (list x y x y))))
-	(define/override (write) #f)
+        (define/override (write) #f)
         (super-instantiate (pad))
-	(dynaclass 'indicator%)))
+        (dynaclass 'indicator%)))
 
-      (field (indicator (make-object indicator% pad)))
-      (send indicator fill "purple")
-      (send indicator transparency 0.5)
+    (field (indicator (make-object indicator% pad)))
+    (send indicator fill "purple")
+    (send indicator transparency 0.5)
 
     (field (outer (make-object oval% pad '(-100 -100 100 100))))
     (send outer bind "<Enter>"
-      (lambda(o e)
-        (if flag
-          (let ((oct (octant (event-x e) (event-y e))))
-            (when flag
-	      (send indicator coords (octantbbox oct))
-              (set! choice oct)
-	      (let*
-	        ((ent (vector-ref (car octstack) choice))
-		 (outcb (and ent (caddr ent))))
-		(when outcb
-		  (outcb this)))))
-        (set! choice #f))))
+          (lambda(o e)
+            (if flag
+                (let ((oct (octant (event-x e) (event-y e))))
+                  (when flag
+                    (send indicator coords (octantbbox oct))
+                    (set! choice oct)
+                    (let*
+                        ((ent (vector-ref (car octstack) choice))
+                         (outcb (and ent (caddr ent))))
+                      (when outcb
+                        (outcb this)))))
+                (set! choice #f))))
     (send outer bind "<ButtonPress-1>"
-      (lambda(o e)
-        (when choice
-          (send indicator coords (octantbbox choice))
-          (let*
-	    ((ent (vector-ref (car octstack) choice))
-	     (incb (and ent (cadr ent))))
-            (when incb
-	      (incb this)))
-          (when _debug (printf "choice ~a~%" choice)))
-	#f))
+          (lambda(o e)
+            (when choice
+              (send indicator coords (octantbbox choice))
+              (let*
+                  ((ent (vector-ref (car octstack) choice))
+                   (incb (and ent (cadr ent))))
+                (when incb
+                  (incb this)))
+              (when _debug (printf "choice ~a~%" choice)))
+            #f))
     (send outer bind "<Motion>"
-      (lambda(o e)
-        (let ((oct (octant (event-x e) (event-y e))))
-          (when (and flag (not (eq? choice oct)))
-	    (when _debug (printf "~a -> ~a~%" choice oct))
-	    (send indicator coords (octantbbox oct))
-            (set! choice oct)))))
+          (lambda(o e)
+            (let ((oct (octant (event-x e) (event-y e))))
+              (when (and flag (not (eq? choice oct)))
+                (when _debug (printf "~a -> ~a~%" choice oct))
+                (send indicator coords (octantbbox oct))
+                (set! choice oct)))))
     (send outer transparency 0.1)
     (send outer fill "black")
     (send outer anchor "center")
@@ -118,74 +118,74 @@
 
     (define (fitfac oct label)
       (let*
-        ((octbbox (octantbbox oct))
-	 (octw (- (caddr octbbox) (car octbbox)))
-	 (octh (- (cadddr octbbox) (cadr octbbox)))
-         (labbbox (send label bbox))
-	 (labw (- (caddr labbbox) (car labbbox)))
-	 (labh (- (cadddr labbbox) (cadr labbbox)))
-	 (facw (/ octw labw))
-	 (fach (/ octh labh))
-	 (fac (min facw fach)))
-	 fac))
+          ((octbbox (octantbbox oct))
+           (octw (- (caddr octbbox) (car octbbox)))
+           (octh (- (cadddr octbbox) (cadr octbbox)))
+           (labbbox (send label bbox))
+           (labw (- (caddr labbbox) (car labbbox)))
+           (labh (- (cadddr labbbox) (cadr labbbox)))
+           (facw (/ octw labw))
+           (fach (/ octh labh))
+           (fac (min facw fach)))
+        fac))
 
     (define textfac 1)
 
     (define (bindoct oct label)
       (let*
-        ((bbox (octantbbox oct))
-         (llx (car bbox))
-         (lly (cadr bbox))
-         (urx (caddr bbox))
-         (ury (cadddr bbox))
-         (x (/ (+ llx urx) 2))
-         (y (/ (+ lly ury) 2))
-	 (z (caddr (send label position))))
+          ((bbox (octantbbox oct))
+           (llx (car bbox))
+           (lly (cadr bbox))
+           (urx (caddr bbox))
+           (ury (cadddr bbox))
+           (x (/ (+ llx urx) 2))
+           (y (/ (+ lly ury) 2))
+           (z (caddr (send label position))))
 
         (send label anchor "center")
         (send label position (list x y z))
-	(if (is-a? label text%)
-	  (send label scale textfac)
-	  (send label scale (fitfac oct label)))
+        (if (is-a? label text%)
+            (send label scale textfac)
+            (send label scale (fitfac oct label)))
         (send label layer (send pad main-layer))
         (add label)
         (send label lower)))
-  
+
     (define (bindvec v)
       (when (not (eq? (vector-length v) 8))
         (error "flow vector length must be 8, given " v))
       (let*
-        ((ents (filter (lambda(ent) (and ent (is-a? (car ent) text%))) (vector->list v)))
-	 (facs (map (lambda(ent) (fitfac 0 (car ent))) ents)))
-	(when (not (null? facs))
-	  (set! textfac (apply min facs))))
+          ((ents (filter (lambda(ent) (and ent (is-a? (car ent) text%))) (vector->list v)))
+           (facs (map (lambda(ent) (fitfac 0 (car ent))) ents)))
+        (when (not (null? facs))
+          (set! textfac (apply min facs))))
       (do
-        ((i 0 (+ i 1)))
-        ((= i 8))
+          ((i 0 (+ i 1)))
+          ((= i 8))
         (let*
-          ((ent (vector-ref v i))
-           (label (and ent (car ent))))
+            ((ent (vector-ref v i))
+             (label (and ent (car ent))))
           (when label
-	    (when _debug (printf "~a~%" ent))
+            (when _debug (printf "~a~%" ent))
             (bindoct i label)))))
 
     (field (octstack (list (make-vector 8 #f))))
 
     (define/public (hide-oct v)
       (do
-        ((i 0 (+ i 1)))
-        ((= i 8))
+          ((i 0 (+ i 1)))
+          ((= i 8))
         (let*
-          ((ent (vector-ref v i))
-           (label (and ent (car ent))))
+            ((ent (vector-ref v i))
+             (label (and ent (car ent))))
           (when label
-	    (let ((g (send label getgroup)))
-	      (when g (send g remove label)))
-	    (send* label
-	      (layer (send dynapad hidden))
-	      (findable #f)
-	      (writable? #f)
-	      (deletable? #f))))))
+            (let ((g (send label getgroup)))
+              (when g (send g remove label)))
+            (send* label
+              (layer (send dynapad hidden))
+              (findable #f)
+              (writable? #f)
+              (deletable? #f))))))
 
     (define/public (push v)
       (hide-oct (car octstack))
@@ -211,31 +211,31 @@
 
     (send dynapad bind "<Run-Double-ButtonPress-1>" #f)
     (send dynapad bind "<Double-ButtonPress-1>"
-      (lambda(o e)
-        (let
-	  ((x (event-x e))
-	   (y (event-y e))
-	   (z (caddr (position))))
-	  (position (list x y z))
-	  (popup))))
+          (lambda(o e)
+            (let
+                ((x (event-x e))
+                 (y (event-y e))
+                 (z (caddr (position))))
+              (position (list x y z))
+              (popup))))
 
     (super-instantiate(pad))
     (dynaclass 'flow%)
     (members (list indicator inner outer))
     (for-each
-      (lambda(x)
-        (send* x
-	  (writable? #f)
-	  (deletable? #f)))
-      (cons this (members)))
+     (lambda(x)
+       (send* x
+         (writable? #f)
+         (deletable? #f)))
+     (cons this (members)))
     (sticky "z")
     (raise)))
 
 (define (make-menu menu . octlist)
   (let ((v (make-vector 8 #f))(label 0))
     (foreach octlist (lambda (entry)
-      (set! label (cadr entry))
-      (when (string? label) (set! label (make-object text% dynapad label)))
-      (vector-set! v (car entry) (list label (caddr entry) #f))))
+                       (set! label (cadr entry))
+                       (when (string? label) (set! label (make-object text% dynapad label)))
+                       (vector-set! v (car entry) (list label (caddr entry) #f))))
     (send menu hide-oct v)
     v))

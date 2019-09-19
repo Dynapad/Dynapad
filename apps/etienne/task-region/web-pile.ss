@@ -13,15 +13,15 @@
     (init __obj __dynaptr __domain)
 
     (field (_formation      __obj)
-	   (_dynaptr   __dynaptr)
+           (_dynaptr   __dynaptr)
            (_domain    __domain))
 
     (super-instantiate (__obj))
 
     (field (_id     0)
-	   (_events (list))
-	   (_icons  (list))
-	   (_poly   (send _formation frame)))
+           (_events (list))
+           (_icons  (list))
+           (_poly   (send _formation frame)))
 
     (field (_clock (make-object clock%)))
     (field (_mysql (make-object web-mysql%)))
@@ -45,11 +45,11 @@
     ;; Accessor methods
     (define/public domain
       (case-lambda
-       (()  _domain)
-       ((d)
-	(set! _domain d)
-	(set! _id (send _mysql get-domain-id _domain))
-	(refresh-pile))))
+        (()  _domain)
+        ((d)
+         (set! _domain d)
+         (set! _id (send _mysql get-domain-id _domain))
+         (refresh-pile))))
 
     (define/public (domain-id) _id)
     (define/public (events)    _events)
@@ -61,17 +61,17 @@
     (define/public (refresh-pile)
       ;; Fetch all event ids from the database.
       (define _all (send _mysql get-domain-events-between
-		       (send _clock today) (send _clock tomorrow) _id))
+                         (send _clock today) (send _clock tomorrow) _id))
 
       ;; Update _icons by adding only new _events
       (for-each
        (lambda (e)
-	 (if (not (member e _events))  ;= (unless (member e _events) ...)
-	     (let ((p (format "/home/etienne/.dynalog/image_depot/~a.jpg" e)))
-	       (if (file-exists? p)
-		   (let ((i (make-object image% _dynaptr p)))
-		     (push! e _events)
-		     (push! i _icons))))))
+         (if (not (member e _events))  ;= (unless (member e _events) ...)
+             (let ((p (format "/home/etienne/.dynalog/image_depot/~a.jpg" e)))
+               (if (file-exists? p)
+                   (let ((i (make-object image% _dynaptr p)))
+                     (push! e _events)
+                     (push! i _icons))))))
        _all)
 
       ;; *Objs should be moved to correct position before adding to pile*
@@ -79,7 +79,7 @@
       ;; Arrange the images into a spiral
       (arrange-objs-in-pile _icons (send _poly bbox) 0.9)  ;arrange-...-spiral looks better
 
-      ;; Now refresh contents to be _icons 
+      ;; Now refresh contents to be _icons
       (send this contents _icons)
       ;; Tell the region to finish -- marking the end of a batch
       ;;  to tell the pile to redraw zone

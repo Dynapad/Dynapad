@@ -3,7 +3,7 @@
   (require (lib "process.ss"))
 
   (provide im/resize im/flip im/flop im/rotate im/identify
-    im/convert im/mogrify im/composite im/montage)
+           im/convert im/mogrify im/composite im/montage)
 
   (define identify (find-executable-path "identify" #f))
   (if (not identify) (error "can't find identify"))
@@ -13,30 +13,30 @@
   (if (not convert) (error "can't find convert"))
   (define (im/convert . args)
     (if (null? args) #f
-      (apply system* convert args)))
+        (apply system* convert args)))
 
   (define mogrify (find-executable-path "mogrify" #f))
   (if (not mogrify) (error "can't find mogrify"))
   (define (im/mogrify . args)
     (if (null? args) #f
-      (apply system* mogrify args)))
+        (apply system* mogrify args)))
 
   (define composite (find-executable-path "composite" #f))
   (if (not composite) (error "can't find composite"))
   (define (im/composite . args)
     (if (null? args) #f
-      (apply system* composite args)))
+        (apply system* composite args)))
 
   (define montage (find-executable-path "montage" #f))
   (if (not montage) (error "can't find montage"))
   (define (im/montage . args)
     (if (null? args) #f
-      (apply system* montage args)))
+        (apply system* montage args)))
 
   (define (im/resize src dst res)
     (apply system*
-      (list convert "-geometry" (format "~ax~a" res res)
-        "-filter" "Lanczos" src dst)))
+           (list convert "-geometry" (format "~ax~a" res res)
+                 "-filter" "Lanczos" src dst)))
 
   (define (im/flip src dst)
     (apply system* (list convert "-flip" src dst)))
@@ -49,20 +49,20 @@
 
   (define (im/identify src)
     (let*
-      ((l (apply process* (list identify "-format" "%w %h %m" src)))
-       (stdout (list-ref l 0))
-       (stdin  (list-ref l 1))
-       (pid    (list-ref l 2))
-       (stderr (list-ref l 3))
-       (proc (list-ref l 4))
-       (result #f))
+        ((l (apply process* (list identify "-format" "%w %h %m" src)))
+         (stdout (list-ref l 0))
+         (stdin  (list-ref l 1))
+         (pid    (list-ref l 2))
+         (stderr (list-ref l 3))
+         (proc (list-ref l 4))
+         (result #f))
       (proc 'wait)
       (if (eq? (proc 'status) 'done-ok)
-        (let
-	  ((width (read stdout))
-	   (height (read stdout))
-	   (type (read stdout)))
-	  (set! result (list width height type))))
+          (let
+              ((width (read stdout))
+               (height (read stdout))
+               (type (read stdout)))
+            (set! result (list width height type))))
       (close-input-port stdout)
       (close-output-port stdin)
       (close-input-port stderr)

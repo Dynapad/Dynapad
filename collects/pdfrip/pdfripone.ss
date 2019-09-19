@@ -10,6 +10,6 @@
   (require "pdfrip.ss")
 
   (let*
-    ((l (vector->list (current-command-line-arguments)))
-     (file (if (null? l) null (car l))))
+      ((l (vector->list (current-command-line-arguments)))
+       (file (if (null? l) null (car l))))
     (pdfrip file)))

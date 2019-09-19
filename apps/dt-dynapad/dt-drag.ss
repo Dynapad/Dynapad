@@ -6,7 +6,7 @@
   (define ay-minus-gy #f)  ; anchor y coordinate minus grab y coordinate
   (define orig-z #f)
   (define (grab touch)
-;   (when (not grabbed-by-touch)
+    ;   (when (not grabbed-by-touch)
     (send (get-top-group object) raise)
     (set! grabbed-by-touch (dt-touch-id touch))
     (let* ((pos (send (get-top-group object) position)))
