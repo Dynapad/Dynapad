@@ -99,7 +99,7 @@ Pad_XRenderer::Pad_XRenderer(Pad_Display *dpy, Pad_Win *win)
     _concave = Complex;
     _transparency = 1.0;
     _ptIndex = 0;
-    _ptNum = 1000;	 	    // Initial number of points
+    _ptNum = 1000;                     // Initial number of points
     _point = new XPoint[_ptNum];
     _flags = RENDERER_NO_FLAGS;
     _viewAppliedToTransform = FALSE;
@@ -111,12 +111,12 @@ Pad_XRenderer::~Pad_XRenderer()
 {
     Pad_Transform *transform;
 
-				// Should free up fonts here
+                                // Should free up fonts here
     Pad_renderers.Remove(this);
     delete [] _point;
     _point = NULL;
     while ((transform = (Pad_Transform *)_transform.Pop())) {
-	delete transform;
+        delete transform;
     }
 }
 
@@ -133,14 +133,14 @@ Pad_XRenderer::Set_device(Pad_RenderContext *c)
     {
         int screen_num;
         screen_num = DefaultScreen(_display);
-	if (_xftdraw) XftDrawDestroy(_xftdraw);
+        if (_xftdraw) XftDrawDestroy(_xftdraw);
         _xftdraw  = XftDrawCreate(_display, _drawable,
             DefaultVisual(_display, screen_num),
-	    DefaultColormap(_display, screen_num));
-	if (!_xftdraw) {
-	    fprintf(stderr, "XftDrawCreate failed\n");
-	    exit(1);
-	}
+            DefaultColormap(_display, screen_num));
+        if (!_xftdraw) {
+            fprintf(stderr, "XftDrawCreate failed\n");
+            exit(1);
+        }
     }
 }
 
@@ -151,9 +151,9 @@ void
 Pad_XRenderer::Get_color(Pad_String &name)
 {
     if (_color) {
-	_color->Get(name);
+        _color->Get(name);
     } else {
-	name = "none";
+        name = "none";
     }
 }
 
@@ -170,21 +170,21 @@ Pad_XRenderer::Set_color(Pad_Color *color)
     _color = color;
 
     if (!color) {
-	return;
+        return;
     }
 
     xcol = (XColor*)color->Find(_dpy);
 
-				// Set color
+                                // Set color
     XSetForeground(_display, _fgGC, xcol->pixel);
 
-				// Set transparency (stipple pattern)
+                                // Set transparency (stipple pattern)
     pixmap = _Get_transparency_stipple(Get_transparency());
     if (pixmap) {
-	XSetFillStyle(_display, _fgGC, FillStippled);
-	XSetStipple(_display, _fgGC, pixmap);
+        XSetFillStyle(_display, _fgGC, FillStippled);
+        XSetStipple(_display, _fgGC, pixmap);
     } else {
-	XSetFillStyle(_display, _fgGC, FillSolid);
+        XSetFillStyle(_display, _fgGC, FillSolid);
     }
 }
 
@@ -194,14 +194,14 @@ Pad_XRenderer::_Get_transparency_stipple(float trans)
     Pixmap pixmap;
 
     if (!Pad_prc) {
-	fprintf(stderr, "_Get_transparency_stipple called with NULL Pad_RenderContext\n");
-	return(None);
+        fprintf(stderr, "_Get_transparency_stipple called with NULL Pad_RenderContext\n");
+        return(None);
     }
 
     if (trans == 1.0) {
-	pixmap = None;
+        pixmap = None;
     } else {
-	pixmap = Pad_prc->dpy->ditherStipples[(int)(trans * 16)];
+        pixmap = Pad_prc->dpy->ditherStipples[(int)(trans * 16)];
     }
 
     return(pixmap);
@@ -216,9 +216,9 @@ Pad_XRenderer::Set_border(Pad_Border *border)
 {
     _border = border;
     if (border) {
-	_3dborder = (Pad_3DBorder)border->Find(_dpy);
+        _3dborder = (Pad_3DBorder)border->Find(_dpy);
     } else {
-	_3dborder = NULL;
+        _3dborder = NULL;
     }
 }
 
@@ -230,9 +230,9 @@ void
 Pad_XRenderer::Get_border(Pad_String &name)
 {
     if (_border) {
-	_border->Get(name);
+        _border->Get(name);
     } else {
-	name = "none";
+        name = "none";
     }
 }
 
@@ -249,47 +249,47 @@ Pad_XRenderer::_Update_border_gc(void)
     GC bgGC, darkGC, lightGC;
 
     if (Pad_prc) {
-	bgGC    = Pad_3DBorderGC(_dpy, _3dborder, PAD_3D_FLAT_GC);
-	darkGC  = Pad_3DBorderGC(_dpy, _3dborder, PAD_3D_DARK_GC);
-	lightGC = Pad_3DBorderGC(_dpy, _3dborder, PAD_3D_LIGHT_GC);
+        bgGC    = Pad_3DBorderGC(_dpy, _3dborder, PAD_3D_FLAT_GC);
+        darkGC  = Pad_3DBorderGC(_dpy, _3dborder, PAD_3D_DARK_GC);
+        lightGC = Pad_3DBorderGC(_dpy, _3dborder, PAD_3D_LIGHT_GC);
 
-	trans = Pad_renderer->Get_transparency();
-	if (trans == 1.0) {
-	    pixmap = None;
-	} else {
-	    pixmap = _dpy->ditherStipples[(int)(trans * 16)];
-	}
+        trans = Pad_renderer->Get_transparency();
+        if (trans == 1.0) {
+            pixmap = None;
+        } else {
+            pixmap = _dpy->ditherStipples[(int)(trans * 16)];
+        }
 
-				// Repeat this mess for each GC
-	if (bgGC) {
-	    XCopyGC(_display, _win->fgGC, GCClipMask, bgGC);
-	    if (pixmap == None) {
-		XSetFillStyle(_display, bgGC, FillSolid);
-	    } else {
-		XSetFillStyle(_display, bgGC, FillStippled);
-		XSetStipple(_display, bgGC, pixmap);
-	    }
-	}
+                                // Repeat this mess for each GC
+        if (bgGC) {
+            XCopyGC(_display, _win->fgGC, GCClipMask, bgGC);
+            if (pixmap == None) {
+                XSetFillStyle(_display, bgGC, FillSolid);
+            } else {
+                XSetFillStyle(_display, bgGC, FillStippled);
+                XSetStipple(_display, bgGC, pixmap);
+            }
+        }
 
-	if (darkGC) {
-	    XCopyGC(_display, _win->fgGC, GCClipMask, darkGC);
-	    if (pixmap == None) {
-		XSetFillStyle(_display, darkGC, FillSolid);
-	    } else {
-		XSetFillStyle(_display, darkGC, FillStippled);
-		XSetStipple(_display, darkGC, pixmap);
-	    }
-	}
+        if (darkGC) {
+            XCopyGC(_display, _win->fgGC, GCClipMask, darkGC);
+            if (pixmap == None) {
+                XSetFillStyle(_display, darkGC, FillSolid);
+            } else {
+                XSetFillStyle(_display, darkGC, FillStippled);
+                XSetStipple(_display, darkGC, pixmap);
+            }
+        }
 
-	if (lightGC) {
-	    XCopyGC(_display, _win->fgGC, GCClipMask, lightGC);
-	    if (pixmap == None) {
-		XSetFillStyle(_display, lightGC, FillSolid);
-	    } else {
-		XSetFillStyle(_display, lightGC, FillStippled);
-		XSetStipple(_display, lightGC, pixmap);
-	    }
-	}
+        if (lightGC) {
+            XCopyGC(_display, _win->fgGC, GCClipMask, lightGC);
+            if (pixmap == None) {
+                XSetFillStyle(_display, lightGC, FillSolid);
+            } else {
+                XSetFillStyle(_display, lightGC, FillStippled);
+                XSetStipple(_display, lightGC, pixmap);
+            }
+        }
     }
 }
 
@@ -302,17 +302,17 @@ Pad_XRenderer::_Restore_border_gc(void)
     GC bgGC, darkGC, lightGC;
 
     if (Pad_prc) {
-	bgGC    = Pad_3DBorderGC(_dpy, _3dborder, PAD_3D_FLAT_GC);
-	darkGC  = Pad_3DBorderGC(_dpy, _3dborder, PAD_3D_DARK_GC);
-	lightGC = Pad_3DBorderGC(_dpy, _3dborder, PAD_3D_LIGHT_GC);
+        bgGC    = Pad_3DBorderGC(_dpy, _3dborder, PAD_3D_FLAT_GC);
+        darkGC  = Pad_3DBorderGC(_dpy, _3dborder, PAD_3D_DARK_GC);
+        lightGC = Pad_3DBorderGC(_dpy, _3dborder, PAD_3D_LIGHT_GC);
 
-	XSetClipMask(_display, bgGC, None);
-	XSetClipMask(_display, darkGC, None);
-	XSetClipMask(_display, lightGC, None);
+        XSetClipMask(_display, bgGC, None);
+        XSetClipMask(_display, darkGC, None);
+        XSetClipMask(_display, lightGC, None);
 
-	XSetFillStyle(_display, bgGC, FillSolid);
-	XSetFillStyle(_display, darkGC, FillSolid);
-	XSetFillStyle(_display, lightGC, FillSolid);
+        XSetFillStyle(_display, bgGC, FillSolid);
+        XSetFillStyle(_display, darkGC, FillSolid);
+        XSetFillStyle(_display, lightGC, FillSolid);
     }
 }
 
@@ -342,7 +342,7 @@ Pad_XRenderer::_Draw_3d_rectangle(Pad_Point &mn, Pad_Point &mx, float borderWidt
     Pad_Point min, max;
 
     if (!_border) {
-	return;
+        return;
     }
 
     min = mn;
@@ -355,23 +355,23 @@ Pad_XRenderer::_Draw_3d_rectangle(Pad_Point &mn, Pad_Point &mx, float borderWidt
     height = y1 - y2 + 1;
     iBorderWidth = (int)(borderWidth * transform.Get_scale());
 
-				// Keep border width above minimum
+                                // Keep border width above minimum
     switch (relief) {
       case PAD_RELIEF_RIDGE:
       case PAD_RELIEF_GROOVE:
-	iBorderWidth = MAX(iBorderWidth, 2);
-	break;
+        iBorderWidth = MAX(iBorderWidth, 2);
+        break;
       case PAD_RELIEF_RAISED:
       case PAD_RELIEF_SUNKEN:
-	iBorderWidth = MAX(iBorderWidth, 1);
-	break;
+        iBorderWidth = MAX(iBorderWidth, 1);
+        break;
     }
 
     _Update_border_gc();
     if (filled) {
-	Pad_Fill3DRectangle(_dpy, _drawable, _3dborder, x1, y2, width, height, iBorderWidth, relief);
+        Pad_Fill3DRectangle(_dpy, _drawable, _3dborder, x1, y2, width, height, iBorderWidth, relief);
     } else {
-	Pad_Draw3DRectangle(_dpy, _drawable, _3dborder, x1, y2, width, height, iBorderWidth, relief);
+        Pad_Draw3DRectangle(_dpy, _drawable, _3dborder, x1, y2, width, height, iBorderWidth, relief);
     }
     _Restore_border_gc();
 }
@@ -404,7 +404,7 @@ Pad_XRenderer::_Draw_3d_polygon(Pad_PList &points, float polyBorderWidth, int le
     Pad_Point pt;
 
     if (!_border) {
-	return;
+        return;
     }
 
     Get_transform(transform);
@@ -412,30 +412,30 @@ Pad_XRenderer::_Draw_3d_polygon(Pad_PList &points, float polyBorderWidth, int le
     npoints = points.Length();
     ipoints = new XPoint[npoints];
     DOTIMES(i, npoints) {
-	pt = points.Nth(i);
-	_Transform_point(&transform, pt, x, y);
-	ipoints[i].x = x;
-	ipoints[i].y = y;
+        pt = points.Nth(i);
+        _Transform_point(&transform, pt, x, y);
+        ipoints[i].x = x;
+        ipoints[i].y = y;
     }
     iPolyBorderWidth = (int)(polyBorderWidth * transform.Get_scale());
 
-				// Keep border width above minimum
+                                // Keep border width above minimum
     switch (leftRelief) {
       case PAD_RELIEF_RIDGE:
       case PAD_RELIEF_GROOVE:
-	iPolyBorderWidth = MAX(iPolyBorderWidth, 2);
-	break;
+        iPolyBorderWidth = MAX(iPolyBorderWidth, 2);
+        break;
       case PAD_RELIEF_RAISED:
       case PAD_RELIEF_SUNKEN:
-	iPolyBorderWidth = MAX(iPolyBorderWidth, 1);
-	break;
+        iPolyBorderWidth = MAX(iPolyBorderWidth, 1);
+        break;
     }
 
     _Update_border_gc();
     if (filled) {
-	Pad_Fill3DPolygon(_dpy, _drawable, _3dborder, ipoints, npoints, iPolyBorderWidth, leftRelief);
+        Pad_Fill3DPolygon(_dpy, _drawable, _3dborder, ipoints, npoints, iPolyBorderWidth, leftRelief);
     } else {
-	Pad_Draw3DPolygon(_dpy, _drawable, _3dborder, ipoints, npoints, iPolyBorderWidth, leftRelief);
+        Pad_Draw3DPolygon(_dpy, _drawable, _3dborder, ipoints, npoints, iPolyBorderWidth, leftRelief);
     }
     _Restore_border_gc();
 
@@ -452,7 +452,7 @@ Pad_XRenderer::Draw_3d_vertical_bevel(Pad_Point &min, Pad_Point &max, Pad_Bool l
     Pad_Transform transform;
 
     if (!_border) {
-	return;
+        return;
     }
 
     Get_transform(transform);
@@ -471,13 +471,13 @@ Pad_XRenderer::Draw_3d_vertical_bevel(Pad_Point &min, Pad_Point &max, Pad_Bool l
 //
 void
 Pad_XRenderer::Draw_3d_horizontal_bevel(Pad_Point &min, Pad_Point &max, Pad_Bool leftIn, Pad_Bool rightIn,
-					Pad_Bool topBevel, int relief)
+                                        Pad_Bool topBevel, int relief)
 {
     int x1, y1, x2, y2, width, height;
     Pad_Transform transform;
 
     if (!_border) {
-	return;
+        return;
     }
 
     Get_transform(transform);
@@ -514,10 +514,10 @@ Pad_XRenderer::Set_abs_line_width(float width)
     _lineWidth = (int)width;
 
     if (_lineWidth <= 1) {
-	_lineWidth = 0;	// Zero width X lines are most efficient
+        _lineWidth = 0;        // Zero width X lines are most efficient
     }
-				// Needs attention - BBB
-				// fgGC should move into renderer
+                                // Needs attention - BBB
+                                // fgGC should move into renderer
     XSetLineAttributes(_display, _fgGC, _lineWidth, LineSolid, _capStyle, _joinStyle);
 }
 
@@ -527,13 +527,13 @@ Pad_XRenderer::Set_cap_style(const char *capStyle)
     unsigned char cap;
 
     if (!strcmp(capStyle, "butt")) {
-	cap = CapButt;
+        cap = CapButt;
     } else if (!strcmp(capStyle, "projecting")) {
-	cap = CapProjecting;
+        cap = CapProjecting;
     } else if (!strcmp(capStyle, "round")) {
-	cap = CapRound;
+        cap = CapRound;
     } else {
-	return;
+        return;
     }
 
     Set_cap_style(cap);
@@ -559,14 +559,14 @@ Pad_XRenderer::Get_cap_style_name(void)
 
     switch(_capStyle) {
       case CapButt:
-	name = "butt";
-	break;
+        name = "butt";
+        break;
       case CapProjecting:
-	name = "projecting";
-	break;
+        name = "projecting";
+        break;
       case CapRound:
-	name = "round";
-	break;
+        name = "round";
+        break;
     }
 
     return(name);
@@ -579,13 +579,13 @@ Pad_XRenderer::Set_join_style(char *joinStyle)
     unsigned char join;
 
     if (!strcmp(joinStyle, "bevel")) {
-	join = JoinBevel;
+        join = JoinBevel;
     } else if (!strcmp(joinStyle, "miter")) {
-	join = JoinMiter;
+        join = JoinMiter;
     } else if (!strcmp(joinStyle, "round")) {
-	join = JoinRound;
+        join = JoinRound;
     } else {
-	return;
+        return;
     }
 
     Set_join_style(join);
@@ -611,14 +611,14 @@ Pad_XRenderer::Get_join_style_name(void)
 
     switch(_joinStyle) {
       case JoinBevel:
-	name = "bevel";
-	break;
+        name = "bevel";
+        break;
       case JoinMiter:
-	name = "miter";
-	break;
+        name = "miter";
+        break;
       case JoinRound:
-	name = "round";
-	break;
+        name = "round";
+        break;
     }
 
     return(name);
@@ -626,7 +626,7 @@ Pad_XRenderer::Get_join_style_name(void)
 
 void
 Pad_XRenderer::Set_line_style(float width, unsigned char cap_style, unsigned char joinStyle,
-	Pad_Bool absLineStyle)
+        Pad_Bool absLineStyle)
 {
     if (absLineStyle)
       Set_abs_line_style(width, cap_style, joinStyle);
@@ -642,7 +642,7 @@ Pad_XRenderer::Set_abs_line_style(float width, unsigned char cap_style, unsigned
     _joinStyle = joinStyle;
 
     if (_lineWidth <= 1) {
-	_lineWidth = 0;	// Zero width X lines are most efficient
+        _lineWidth = 0;        // Zero width X lines are most efficient
     }
     XSetLineAttributes(_display, _fgGC, _lineWidth, LineSolid, _capStyle, _joinStyle);
 }
@@ -671,7 +671,7 @@ Pad_XRenderer::Init_transform_stack(void)
     Pad_Transform *transform;
 
     while ((transform = (Pad_Transform *)_transform.Pop())) {
-	delete transform;
+        delete transform;
     }
     transform = new Pad_Transform();
     _transform.Push(transform);
@@ -696,16 +696,16 @@ void
 Pad_XRenderer::Swap_buffers(int speed)
 {
     if (!Pad_prc) {
-	fprintf(stderr, "Swap_buffers called with NULL Pad_RenderContext\n");
-	return;
+        fprintf(stderr, "Swap_buffers called with NULL Pad_RenderContext\n");
+        return;
     }
     if (speed > 0 && Pad_prc->win->effect) {
         _Dissolve_buffers(speed);
     } else {
-	XCopyArea(_display, _drawable, Pad_prc->win->id,
-		  Pad_prc->win->copyGC, 0, 0, _width, _height,
-		  0, 0);
-	XSync(_display, FALSE);
+        XCopyArea(_display, _drawable, Pad_prc->win->id,
+                  Pad_prc->win->copyGC, 0, 0, _width, _height,
+                  0, 0);
+        XSync(_display, FALSE);
     }
 }
 
@@ -722,12 +722,12 @@ Pad_XRenderer::Draw_clip_region(Pad_Restorer *restorer)
     l = 255 - l;
     XSetFillStyle(Pad_prc->dpy->display, Pad_prc->win->fgGC, FillStippled);
     XSetStipple(Pad_prc->dpy->display, Pad_prc->win->fgGC,
-		Pad_prc->dpy->ditherStipples[GRAY_50_STIPPLE]);
+                Pad_prc->dpy->ditherStipples[GRAY_50_STIPPLE]);
     XSetForeground(Pad_prc->dpy->display, Pad_prc->win->fgGC,
-		   (cc->Get_pixel(l, l, l)));
+                   (cc->Get_pixel(l, l, l)));
 
     XFillRectangle(restorer->win->dpy->display, restorer->win->id, restorer->win->fgGC,
-		   0, 0, (unsigned int)restorer->win->width, (unsigned int)restorer->win->height);
+                   0, 0, (unsigned int)restorer->win->width, (unsigned int)restorer->win->height);
 
     XSetFillStyle(restorer->win->dpy->display, restorer->win->fgGC, FillSolid);
 }
@@ -746,8 +746,8 @@ void
 Pad_XRenderer::_Dissolve_buffers(int speed)
 {
     if (!Pad_prc) {
-	fprintf(stderr, "_Dissolve_buffers called with NULL Pad_RenderContext\n");
-	return;
+        fprintf(stderr, "_Dissolve_buffers called with NULL Pad_RenderContext\n");
+        return;
     }
     // This operation is expensive so we find out what area of the window is
     // being swapped and then dissolve just that...
@@ -756,7 +756,7 @@ Pad_XRenderer::_Dissolve_buffers(int speed)
     Pad_prc->win->activeRestorer->Get_clip_box(x, y, width, height);
 
     Pad_prc->win->effect->Dissolve(_drawable, x, y, width, height, x, y,
-				 speed, is_interrupted);
+                                 speed, is_interrupted);
 }
 
 //
@@ -781,10 +781,10 @@ Pad_XRenderer::Pop_transform(void)
     Pad_Transform *transform;
 
     if (_transform.Is_empty()) {
-	cerr << "Pop_transform: popped too many transforms" << endl;
+        cerr << "Pop_transform: popped too many transforms" << endl;
     } else {
-	transform = (Pad_Transform *)_transform.Pop();
-	delete transform;
+        transform = (Pad_Transform *)_transform.Pop();
+        delete transform;
     }
 }
 
@@ -803,11 +803,11 @@ void
 Pad_XRenderer::Pop_view(void)
 {
     if (_views.Is_empty()) {
-	cerr << "Pop_view: popped too many views" << endl;
+        cerr << "Pop_view: popped too many views" << endl;
     } else {
-	_views.Pop();
-	_objects.Pop();
-	_viewAppliedToTransform = TRUE;
+        _views.Pop();
+        _objects.Pop();
+        _viewAppliedToTransform = TRUE;
     }
 }
 
@@ -826,12 +826,12 @@ Pad_XRenderer::Get_transform(Pad_Transform &transform)
 
     transform = (Pad_Transform *)_transform.First();
     if (!_viewAppliedToTransform && !_views.Is_empty()) {
-				// Get top view from view stack
-	view = (Pad_View *)_views.First();
-	view->Get_bbox(bb);
-	transform.Translate((- view->xview * view->zoom) + bb.Xctr(),
-			    (- view->yview * view->zoom) + bb.Yctr());
-	transform.Scale(view->zoom);
+                                // Get top view from view stack
+        view = (Pad_View *)_views.First();
+        view->Get_bbox(bb);
+        transform.Translate((- view->xview * view->zoom) + bb.Xctr(),
+                            (- view->yview * view->zoom) + bb.Yctr());
+        transform.Scale(view->zoom);
     }
 }
 
@@ -851,37 +851,37 @@ Pad_XRenderer::Push_object(Pad_Object *obj)
     Pad_BBox bb;
 
     newTransform = &obj->transform;
-				// Access info from transforms
+                                // Access info from transforms
     newTransform->Get_offset(xoffset, yoffset);
     scale = newTransform->Get_scale();
 
-				// Compute transformation based on new specified
-				// transformation combined with current view.
-				// It is important to combine them here rather
-				// pushing the view first and then the transformation
-				// because that way, there is a floating point explosion
-				// because when pushing the view, you must calculate
-				// (zoom * xview) which can become too large.
+                                // Compute transformation based on new specified
+                                // transformation combined with current view.
+                                // It is important to combine them here rather
+                                // pushing the view first and then the transformation
+                                // because that way, there is a floating point explosion
+                                // because when pushing the view, you must calculate
+                                // (zoom * xview) which can become too large.
     stackObj = (Pad_Object *)_objects.First();
     if ((stackObj && (stackObj->Type() != PAD_VIEW) && (stackObj->Type() != PAD_PORTAL)) ||
-	(_views.Is_empty())) {
-				// If there is a non-view object on the stack
-				// that means the view has already been incorporated
-				// and we shouldn't add it in here.
-	newXoffset = xoffset;
-	newYoffset = yoffset;
-	newScale = scale;
+        (_views.Is_empty())) {
+                                // If there is a non-view object on the stack
+                                // that means the view has already been incorporated
+                                // and we shouldn't add it in here.
+        newXoffset = xoffset;
+        newYoffset = yoffset;
+        newScale = scale;
     } else {
-	view = (Pad_View *)_views.First();
+        view = (Pad_View *)_views.First();
 
-	view->Get_bbox(bb);
-	newXoffset = view->zoom * (xoffset - view->xview) + bb.Xctr();
-	newYoffset = view->zoom * (yoffset - view->yview) + bb.Yctr();
-	newScale = view->zoom * scale;
+        view->Get_bbox(bb);
+        newXoffset = view->zoom * (xoffset - view->xview) + bb.Xctr();
+        newYoffset = view->zoom * (yoffset - view->yview) + bb.Yctr();
+        newScale = view->zoom * scale;
     }
 
-				// Combine computed transformation with transformation
-				// that is currently on the renderer stack.
+                                // Combine computed transformation with transformation
+                                // that is currently on the renderer stack.
     _viewAppliedToTransform = TRUE;
     _objects.Push(obj);
     Get_transform(transform);
@@ -899,9 +899,9 @@ Pad_XRenderer::Pop_object(void)
     _objects.Pop();
     obj = (Pad_Object *)_objects.First();
     if (obj && (obj->Type() != PAD_VIEW) && (obj->Type() != PAD_PORTAL)) {
-	_viewAppliedToTransform = TRUE;
+        _viewAppliedToTransform = TRUE;
     } else {
-	_viewAppliedToTransform = FALSE;
+        _viewAppliedToTransform = FALSE;
     }
     Pop_transform();
 }
@@ -945,7 +945,7 @@ Pad_XRenderer::_Reallocate_points(void)
     _ptNum *= 2;
     new_point = new XPoint[_ptNum];
     DOTIMES(i, _ptIndex) {
-	new_point[i] = _point[i];
+        new_point[i] = _point[i];
     }
     delete [] _point;
     _point = new_point;
@@ -1016,7 +1016,7 @@ Pad_XRenderer::V2f(const float x, const float y)
     Pad_Point point;
 
     if (_ptIndex >= _ptNum) {
-	_Reallocate_points();
+        _Reallocate_points();
     }
 
     point.Set(x, y);
@@ -1040,7 +1040,7 @@ Pad_XRenderer::V2f(const float x, const float y, float theta)
     Pad_Point point;
 
     if (_ptIndex >= _ptNum) {
-	_Reallocate_points();
+        _Reallocate_points();
     }
 
     Pad_Point tmppt;
@@ -1104,9 +1104,9 @@ Pad_XRenderer::B8f(Pad_Point &ip0, Pad_Point &ip1, Pad_Point &ip2, Pad_Point &ip
 
 void
 Pad_XRenderer::_Bezier(const float x0, const float y0,
-		       const float x1, const float y1,
-		       const float x2, const float y2,
-		       const float x3, const float y3)
+                       const float x1, const float y1,
+                       const float x2, const float y2,
+                       const float x3, const float y3)
 {
     float midx, midy, dx, dy;
     int tx0, ty0, tx1, ty1;
@@ -1117,33 +1117,33 @@ Pad_XRenderer::_Bezier(const float x0, const float y0,
     dy = midy - ((y0 + y3) / 2.0);
 
     if (((dx * dx) + (dy * dy)) < 1.0) {
-	if ((_ptIndex + 3) >= _ptNum) {
-	    _Reallocate_points();
-	}
+        if ((_ptIndex + 3) >= _ptNum) {
+            _Reallocate_points();
+        }
 
-	_ptIndex--;
-	tx0 = _point[_ptIndex].x;
-	ty0 = _point[_ptIndex].y;
-	_ptIndex++;
-	tx1 = Pad_F2rs(midx, _lineWidth);
-	ty1 = Pad_F2rs(_height - midy, _lineWidth);
-	if (tx0 != tx1 || ty0 != ty1) {
-	    _point[_ptIndex].x = tx0 = tx1;
-	    _point[_ptIndex].y = ty0 = ty1;
-	    _ptIndex++;
-	}
-	tx1 = Pad_F2rs(x3, _lineWidth);
-	ty1 = Pad_F2rs(_height - y3, _lineWidth);
-	if (tx0 != tx1 || ty0 != ty1) {
-	    _point[_ptIndex].x = tx1;
-	    _point[_ptIndex].y = ty1;
-	    _ptIndex++;
-	}
+        _ptIndex--;
+        tx0 = _point[_ptIndex].x;
+        ty0 = _point[_ptIndex].y;
+        _ptIndex++;
+        tx1 = Pad_F2rs(midx, _lineWidth);
+        ty1 = Pad_F2rs(_height - midy, _lineWidth);
+        if (tx0 != tx1 || ty0 != ty1) {
+            _point[_ptIndex].x = tx0 = tx1;
+            _point[_ptIndex].y = ty0 = ty1;
+            _ptIndex++;
+        }
+        tx1 = Pad_F2rs(x3, _lineWidth);
+        ty1 = Pad_F2rs(_height - y3, _lineWidth);
+        if (tx0 != tx1 || ty0 != ty1) {
+            _point[_ptIndex].x = tx1;
+            _point[_ptIndex].y = ty1;
+            _ptIndex++;
+        }
     } else {
-	_Bezier(x0, y0, (x0+x1)/2.0, (y0+y1)/2.0,
-		(x0+x1+x1+x2)/4.0, (y0+y1+y1+y2)/4.0, midx, midy);
-	_Bezier(midx, midy, (x1+x2+x2+x3)/4.0, (y1+y2+y2+y3)/4.0,
-		(x2+x3)/2.0, (y2+y3)/2.0, x3, y3);
+        _Bezier(x0, y0, (x0+x1)/2.0, (y0+y1)/2.0,
+                (x0+x1+x1+x2)/4.0, (y0+y1+y1+y2)/4.0, midx, midy);
+        _Bezier(midx, midy, (x1+x2+x2+x3)/4.0, (y1+y2+y2+y3)/4.0,
+                (x2+x3)/2.0, (y2+y3)/2.0, x3, y3);
     }
 }
 
@@ -1185,12 +1185,12 @@ void
 Pad_XRenderer::End_line(void)
 {
     if (_ptIndex > 0) {
-	if (_ptIndex == 1) {
-	    _point[1] = _point[0];
-	    _ptIndex++;
-	}
-	XDrawLines(_display, _drawable, _fgGC,
-		   _point, _ptIndex, CoordModeOrigin);
+        if (_ptIndex == 1) {
+            _point[1] = _point[0];
+            _ptIndex++;
+        }
+        XDrawLines(_display, _drawable, _fgGC,
+                   _point, _ptIndex, CoordModeOrigin);
     }
 }
 
@@ -1206,11 +1206,11 @@ Pad_XRenderer::End_rectangle(void)
     int x, y, width, height;
 
     if (_ptIndex >= 2) {
-	x = MIN(_point[0].x, _point[1].x);
-	y = MIN(_point[0].y, _point[1].y);
-	width = MAX(_point[0].x, _point[1].x) - x + 1;
-	height = MAX(_point[0].y, _point[1].y) - y + 1;
-	XFillRectangle(_display, _drawable, _fgGC, x, y, width, height);
+        x = MIN(_point[0].x, _point[1].x);
+        y = MIN(_point[0].y, _point[1].y);
+        width = MAX(_point[0].x, _point[1].x) - x + 1;
+        height = MAX(_point[0].y, _point[1].y) - y + 1;
+        XFillRectangle(_display, _drawable, _fgGC, x, y, width, height);
     }
 }
 
@@ -1226,15 +1226,15 @@ Pad_XRenderer::End_oval(Pad_Bool fill)
     int x, y, width, height;
 
     if (_ptIndex >= 2) {
-	x = MIN(_point[0].x, _point[1].x);
-	y = MIN(_point[0].y, _point[1].y);
-	width = MAX(_point[0].x, _point[1].x) - x + 1;
-	height = MAX(_point[0].y, _point[1].y) - y + 1;
-	if( fill) {
-	    XFillArc(_display, _drawable, _fgGC, x, y, width, height, 0, 360*64);
-	} else {
-	    XDrawArc(_display, _drawable, _fgGC, x, y, width, height, 0, 360*64);
-	}
+        x = MIN(_point[0].x, _point[1].x);
+        y = MIN(_point[0].y, _point[1].y);
+        width = MAX(_point[0].x, _point[1].x) - x + 1;
+        height = MAX(_point[0].y, _point[1].y) - y + 1;
+        if( fill) {
+            XFillArc(_display, _drawable, _fgGC, x, y, width, height, 0, 360*64);
+        } else {
+            XDrawArc(_display, _drawable, _fgGC, x, y, width, height, 0, 360*64);
+        }
     }
 }
 
@@ -1248,8 +1248,8 @@ void
 Pad_XRenderer::End_polygon(void)
 {
     if (_ptIndex > 0) {
-	XFillPolygon(_display, _drawable, _fgGC,
-		     _point, _ptIndex, _concave, CoordModeOrigin);
+        XFillPolygon(_display, _drawable, _fgGC,
+                     _point, _ptIndex, _concave, CoordModeOrigin);
     }
 }
 
@@ -1283,12 +1283,12 @@ void
 Pad_XRenderer::Set_font(Pad_Font *font)
 {
     if (font) {
-	_font = font;
-	_fontData = (Pad_FontData*)font->Find(_dpy);
-	_fontData->Load();
+        _font = font;
+        _fontData = (Pad_FontData*)font->Find(_dpy);
+        _fontData->Load();
     } else {
-	_font     = &Pad_Font::lineFont;
-	_fontData = &Pad_FontData::lineFontData;
+        _font     = &Pad_Font::lineFont;
+        _fontData = &Pad_FontData::lineFontData;
     }
     _fontHeightMult = font->Get_size() / _fontData->Char_height();
 }
@@ -1303,9 +1303,9 @@ void
 Pad_XRenderer::Get_font(Pad_String &name)
 {
     if (_font) {
-	_font->Get(name);
+        _font->Get(name);
     } else {
-	name = "Line";
+        name = "Line";
     }
 }
 
@@ -1327,14 +1327,14 @@ Pad_XRenderer::Draw_line(int npts, Pad_Point *pts, Pad_Bool closed)
     int i;
 
     if (npts > 0) {
-	Begin_line();
-	for (i=0; i<npts; i++) {
-	    V2f(pts[i]);
-	}
-	if (closed) {
-	    V2f(pts[0]);
-	}
-	End_line();
+        Begin_line();
+        for (i=0; i<npts; i++) {
+            V2f(pts[i]);
+        }
+        if (closed) {
+            V2f(pts[0]);
+        }
+        End_line();
     }
 }
 
@@ -1355,11 +1355,11 @@ Pad_XRenderer::Draw_polygon(int npts, Pad_Point *pts)
     int i;
 
     if (npts > 0) {
-	Begin_polygon();
-	for (i=0; i<npts; i++) {
-	    V2f(pts[i]);
-	}
-	End_polygon();
+        Begin_polygon();
+        for (i=0; i<npts; i++) {
+            V2f(pts[i]);
+        }
+        End_polygon();
     }
 }
 
@@ -1414,12 +1414,12 @@ Pad_XRenderer::Draw_filled_box(float xmin, float ymin, float xmax, float ymax)
 // Font Substitution Support
 //
 
-#define XF_MIN_SIZE 8		// cutoff size below which X fonts are not used
+#define XF_MIN_SIZE 8                // cutoff size below which X fonts are not used
 
 
-#define XF_WEIGHT 1.5		// the current zoom level is multiplied by this factor to
-				// get size of X font to use. Note that for other fonts
-				// than the ones listed below, this may need to be tuned.
+#define XF_WEIGHT 1.5                // the current zoom level is multiplied by this factor to
+                                // get size of X font to use. Note that for other fonts
+                                // than the ones listed below, this may need to be tuned.
 
 // -mode- used with Get_x_font:
 #define XF_IF_LOADED 0          // Get font if it is already loaded.
@@ -1445,18 +1445,18 @@ typedef struct {
 #define XF_NUM_FAMILIES 2
 static FontFamily families[] = {
     { "Times", {
-	// plain, bold, italic, bolditalic (in that order)
-	{ "-adobe-times-medium-r-normal--%d-*-*-*-p-*-iso8859-1", NULL } ,
+        // plain, bold, italic, bolditalic (in that order)
+        { "-adobe-times-medium-r-normal--%d-*-*-*-p-*-iso8859-1", NULL } ,
         { "-adobe-times-bold-r-normal--%d-*-*-*-p-*-iso8859-1", NULL },
-	{ "-adobe-times-medium-i-normal--%d-*-*-*-p-*-iso8859-1", NULL },
-	{ "-adobe-times-bold-i-normal--%d-*-*-*-p-*-iso8859-1", NULL }
+        { "-adobe-times-medium-i-normal--%d-*-*-*-p-*-iso8859-1", NULL },
+        { "-adobe-times-bold-i-normal--%d-*-*-*-p-*-iso8859-1", NULL }
     } },
     { "Helvetica", {
-	// plain, bold, italic, bolditalic (in that order)
-	{ "-adobe-helvetica-medium-r-normal--%d-*-*-*-p-*-iso8859-1", NULL },
-	{ "-adobe-helvetica-bold-r-normal--%d-*-*-*-p-*-iso8859-1", NULL },
-	{ "-adobe-helvetica-medium-o-normal--%d-*-*-*-p-*-iso8859-1", NULL },
-	{ "-adobe-helvetica-bold-o-normal--%d-*-*-*-p-*-iso8859-1", NULL }
+        // plain, bold, italic, bolditalic (in that order)
+        { "-adobe-helvetica-medium-r-normal--%d-*-*-*-p-*-iso8859-1", NULL },
+        { "-adobe-helvetica-bold-r-normal--%d-*-*-*-p-*-iso8859-1", NULL },
+        { "-adobe-helvetica-medium-o-normal--%d-*-*-*-p-*-iso8859-1", NULL },
+        { "-adobe-helvetica-bold-o-normal--%d-*-*-*-p-*-iso8859-1", NULL }
     } }
 };
 
@@ -1472,7 +1472,7 @@ static FontFamily families[] = {
 // the font is one that X recognizes.
 //
 static Font Get_x_font(Display *dpy, char *name, int style,
-		       float magnification, int mode)
+                       float magnification, int mode)
 {
     static char *lastFontName = NULL;
     static FontFamily *family = NULL;
@@ -1480,48 +1480,48 @@ static Font Get_x_font(Display *dpy, char *name, int style,
     int size = (int)(magnification * XF_WEIGHT);
     int index = size - XF_MIN_SIZE;
 
-	    // default font maxsize to 16
+            // default font maxsize to 16
     Pad_Bool initDefaultFonts = FALSE;
     if (num_fonts == 0) {
-	num_fonts = 16;
-	initDefaultFonts = TRUE;
+        num_fonts = 16;
+        initDefaultFonts = TRUE;
     }
 
     if (index < 0 || index >= num_fonts)
       return 0; // outside range of font sizes that use X fonts
 
     if (name != lastFontName) {
-				// changed font - look for the new font name
-				// in the list of families that have X fonts
-	int i;
-	static int inited = FALSE;
-	if (!inited) {
-	    for (i = 0; i < XF_NUM_FAMILIES; i++) {
-		families[i].name = (char*)Pad_GetUid(families[i].name);
-	    }
+                                // changed font - look for the new font name
+                                // in the list of families that have X fonts
+        int i;
+        static int inited = FALSE;
+        if (!inited) {
+            for (i = 0; i < XF_NUM_FAMILIES; i++) {
+                families[i].name = (char*)Pad_GetUid(families[i].name);
+            }
 
-				// Init default fonts
-	    if (initDefaultFonts) {
-		void Pad_set_x_font_maxsize(Display *dpy, int size);
-		Pad_set_x_font_maxsize(NULL, num_fonts);
-	    }
-	    inited = TRUE;
-	}
+                                // Init default fonts
+            if (initDefaultFonts) {
+                void Pad_set_x_font_maxsize(Display *dpy, int size);
+                Pad_set_x_font_maxsize(NULL, num_fonts);
+            }
+            inited = TRUE;
+        }
 
-	family = NULL;
+        family = NULL;
 
-	for (i = 0; i < XF_NUM_FAMILIES; i++) {
-	    if (name == families[i].name) {
-		// font the font
-		family = &families[i];
-		break;
-	    }
-	}
-	lastFontName = name;
+        for (i = 0; i < XF_NUM_FAMILIES; i++) {
+            if (name == families[i].name) {
+                // font the font
+                family = &families[i];
+                break;
+            }
+        }
+        lastFontName = name;
     }
 
     if (!family) {
-	return 0; 		// no X font replacement for this family
+        return 0;                 // no X font replacement for this family
     }
 
     FontStyle *fs = &family->styles[style];
@@ -1533,28 +1533,28 @@ static Font Get_x_font(Display *dpy, char *name, int style,
     // -index- is in the range 0 to (XF_NUM_FONTS - 1)
     // indicating where in the list of fids the font for the
     // given -size- is.
-				// now get the X Font
+                                // now get the X Font
     switch (mode) {
       case XF_EXISTS:
-	return (Font)1;   // yes - an X font exists for this font/size
+        return (Font)1;   // yes - an X font exists for this font/size
 
       case XF_LOAD_NOW:
-	if (fs->fids[index] == 0) {
-				// font not yet loaded. Use XLoadFont
-	    char fname[100];
-	    sprintf(fname, fs->xlfd, size);
-	    fs->fids[index] = XLoadFont(dpy, fname);
-	}
-	break;
+        if (fs->fids[index] == 0) {
+                                // font not yet loaded. Use XLoadFont
+            char fname[100];
+            sprintf(fname, fs->xlfd, size);
+            fs->fids[index] = XLoadFont(dpy, fname);
+        }
+        break;
 
       case XF_LOAD_ALL:
-	int i;
-	for (i = 0; i < num_fonts; i++) {
-	    char fname[100];
-	    sprintf(fname, fs->xlfd, i + XF_MIN_SIZE);
-	    fs->fids[i] = XLoadFont(dpy, fname);
-	}
-	break;
+        int i;
+        for (i = 0; i < num_fonts; i++) {
+            char fname[100];
+            sprintf(fname, fs->xlfd, i + XF_MIN_SIZE);
+            fs->fids[i] = XLoadFont(dpy, fname);
+        }
+        break;
     }
 
     return fs->fids[index];
@@ -1568,7 +1568,7 @@ static Font Get_x_font(Display *dpy, char *name, int style,
 void Pad_load_x_font_bitmaps(Display *dpy, Pad_Font *font)
 {
     Get_x_font(dpy, font->Name(), font->Get_style(), (XF_MIN_SIZE / XF_WEIGHT) + 1,
-	       XF_LOAD_ALL);
+               XF_LOAD_ALL);
 }
 
 //
@@ -1581,23 +1581,23 @@ void Pad_set_x_font_maxsize(Display *, int size)
     int i, j, k;
 
     for (i = 0; i < XF_NUM_FAMILIES; i++) {
-	for (j = 0; j < 4; j++) {
-	    FontStyle *fs = &families[i].styles[j];
+        for (j = 0; j < 4; j++) {
+            FontStyle *fs = &families[i].styles[j];
 
-	    Font *fids = new Font[size];
+            Font *fids = new Font[size];
 
-	    for (k = 0; k < size; k++) {
-		// try to use previous font if its already been loaded
-		fids[k] = (fs->fids && k < num_fonts) ? fs->fids[k] : 0;
-	    }
+            for (k = 0; k < size; k++) {
+                // try to use previous font if its already been loaded
+                fids[k] = (fs->fids && k < num_fonts) ? fs->fids[k] : 0;
+            }
 
-	    // now set fs->fids
-	    if (fs->fids) {
-		delete fs->fids;
-	    }
-	    fs->fids = fids;
+            // now set fs->fids
+            if (fs->fids) {
+                delete fs->fids;
+            }
+            fs->fids = fids;
 
-	}
+        }
     }
 
     num_fonts = size;
@@ -1635,7 +1635,7 @@ typedef void (*pfss)(short, short, float);
 
 Pad_Bool
 Pad_XRenderer::Draw_string(char *string, int level,
-			   float xoff, float yoff, float theta)
+                           float xoff, float yoff, float theta)
 {
     float magnification;
     int tabpos;
@@ -1659,7 +1659,7 @@ Pad_XRenderer::Draw_string(char *string, int level,
     pfss addVertex      = (rotated ? add_rotated_vertex : add_vertex);
 
     if (!string) {
-	return FALSE;
+        return FALSE;
     }
 
     Get_transform(transform);
@@ -1671,26 +1671,26 @@ Pad_XRenderer::Draw_string(char *string, int level,
 
     if (!_font || _fontData->useLineFont) {
 
-	// Draw line font
-	Set_line_style(0.13, CapButt, JoinMiter);
+        // Draw line font
+        Set_line_style(0.13, CapButt, JoinMiter);
 
-	if (level == 0) {
-	    Pad_LineFont::DrawString_0(string, 0.0, 0.0);
-	} else if (level == 1) {
-	    if (rotated) {
-		Pad_LineFont::DrawString_1(string, 0.0, 0.0, theta);
-	    } else {
-		Pad_LineFont::DrawString_1(string, 0.0, 0.0);
-	    }
-	} else {
-	    if (rotated) {
-		Pad_LineFont::DrawString_2(string, 0.0, 0.0, theta);
-	    } else {
-		Pad_LineFont::DrawString_2(string, 0.0, 0.0);
-	    }
-	}
-	canRefine = (level < 2);
-	goto done;
+        if (level == 0) {
+            Pad_LineFont::DrawString_0(string, 0.0, 0.0);
+        } else if (level == 1) {
+            if (rotated) {
+                Pad_LineFont::DrawString_1(string, 0.0, 0.0, theta);
+            } else {
+                Pad_LineFont::DrawString_1(string, 0.0, 0.0);
+            }
+        } else {
+            if (rotated) {
+                Pad_LineFont::DrawString_2(string, 0.0, 0.0, theta);
+            } else {
+                Pad_LineFont::DrawString_2(string, 0.0, 0.0);
+            }
+        }
+        canRefine = (level < 2);
+        goto done;
     }
 
     //
@@ -1720,227 +1720,227 @@ Pad_XRenderer::Draw_string(char *string, int level,
     if (Pad_FontData::xftenable == TRUE &&
         (_win->activeRestorer->mode == RESTORE_REFINE ||
          _win->activeRestorer->mode == RESTORE_REPAIR) &&
-	3 < magnification && magnification < 800) {
-	int screen_num = DefaultScreen(_display);
+        3 < magnification && magnification < 800) {
+        int screen_num = DefaultScreen(_display);
         XftColor color_fg;
-	XColor dummyc;
+        XColor dummyc;
     // [unused]: XColor fg;
     // [unused]: Status retval;
-	XftPattern *pat;
-	XGCValues xgcvalues;
-	char *newstring, *p, *q;
-	int i, len;
+        XftPattern *pat;
+        XGCValues xgcvalues;
+        char *newstring, *p, *q;
+        int i, len;
 
-	len = strlen(string) + 1;
-	for (p = string; *p; p++)
-	    if (*p == '\t') len += 7;
-	newstring = (char *)alloca(len);
-	memset(newstring, 0, len);
-	for (p = string, i = 0, q = newstring; *p; p++) {
-	    if (*p == '\t') {
-		*q = ' ';
-		i++;
-		for ( ; i%8 != 0; i++)
-		  *q++ = ' ';
-	        continue;
-	    }
-	    *q++ = *p;
-	    i++;
-	}
+        len = strlen(string) + 1;
+        for (p = string; *p; p++)
+            if (*p == '\t') len += 7;
+        newstring = (char *)alloca(len);
+        memset(newstring, 0, len);
+        for (p = string, i = 0, q = newstring; *p; p++) {
+            if (*p == '\t') {
+                *q = ' ';
+                i++;
+                for ( ; i%8 != 0; i++)
+                  *q++ = ' ';
+                continue;
+            }
+            *q++ = *p;
+            i++;
+        }
 
-	renderType = R_FREETYPE;
+        renderType = R_FREETYPE;
         if (!_xftdraw) {
             fprintf(stderr, "No _xftdraw!\n");
             return FALSE;
         }
 
-	XGetGCValues(_display, _fgGC, GCForeground, &xgcvalues);
-	dummyc.pixel = xgcvalues.foreground;
-	XQueryColor(_display, DefaultColormap(_display, screen_num), &dummyc);
+        XGetGCValues(_display, _fgGC, GCForeground, &xgcvalues);
+        dummyc.pixel = xgcvalues.foreground;
+        XQueryColor(_display, DefaultColormap(_display, screen_num), &dummyc);
         color_fg.color.red = dummyc.red;
         color_fg.color.green = dummyc.green;
         color_fg.color.blue = dummyc.blue;
         color_fg.color.alpha = 0xffff;
         color_fg.pixel = dummyc.pixel;
 
-	if (magnification != _fontData->previousmag ||
-	    _fontData->xftfactorchanged) {
-	    if (_fontData->xftfont ) XftFontClose(_display, _fontData->xftfont);
-	    pat = XftPatternBuild(
-	        0,
-	        XFT_FILE, XftTypeString, _fontData->filename.Get(),
-	        XFT_PIXEL_SIZE, XftTypeDouble,
-		    (double)1.4*magnification*_fontData->xftfactor,
-	        NULL);
+        if (magnification != _fontData->previousmag ||
+            _fontData->xftfactorchanged) {
+            if (_fontData->xftfont ) XftFontClose(_display, _fontData->xftfont);
+            pat = XftPatternBuild(
+                0,
+                XFT_FILE, XftTypeString, _fontData->filename.Get(),
+                XFT_PIXEL_SIZE, XftTypeDouble,
+                    (double)1.4*magnification*_fontData->xftfactor,
+                NULL);
             _fontData->xftfont = XftFontOpenPattern(_display, pat);
             if (!_fontData->xftfont) {
                 fprintf(stderr, "XftFontOpen failed\n");
-	        return FALSE;
-	    }
-	    //XftPatternDestroy(pat);
-	    _fontData->previousmag = magnification;
-	    _fontData->xftfactorchanged = FALSE;
-	}
-	if (strcmp(newstring, "")) {
-	    float xfactor;
+                return FALSE;
+            }
+            //XftPatternDestroy(pat);
+            _fontData->previousmag = magnification;
+            _fontData->xftfactorchanged = FALSE;
+        }
+        if (strcmp(newstring, "")) {
+            float xfactor;
         // [unused]: float yfactor;
-	    float padfwidth, padfheight;
-	    XGlyphInfo xglyphinfo;
-	    float fwidth, fheight;
-	    Pad_BBox bbox;
-	    _fontData->String_extents(newstring, padfwidth, padfheight);
-	    XftTextExtents8(_display, _fontData->xftfont,
-	      (unsigned char*)newstring, strlen(newstring), &xglyphinfo);
-	    transform.Invert(fwidth = (float)xglyphinfo.width);
-	    transform.Invert(fheight = (float)xglyphinfo.height);
-	    xfactor = fwidth/padfwidth;
-	    /*
-	    fprintf(stderr, "-%s- %f %f %f\n",
-	      newstring, xfactor, padfwidth, fwidth);
-	    */
-	    if (xfactor < 0.98 || 1.00 < xfactor) {
-	        _fontData->xftfactor += (0.99 - xfactor)*_fontData->xftfactor;
-	        _fontData->xftfactorchanged = TRUE;
-	    }
+            float padfwidth, padfheight;
+            XGlyphInfo xglyphinfo;
+            float fwidth, fheight;
+            Pad_BBox bbox;
+            _fontData->String_extents(newstring, padfwidth, padfheight);
+            XftTextExtents8(_display, _fontData->xftfont,
+              (unsigned char*)newstring, strlen(newstring), &xglyphinfo);
+            transform.Invert(fwidth = (float)xglyphinfo.width);
+            transform.Invert(fheight = (float)xglyphinfo.height);
+            xfactor = fwidth/padfwidth;
+            /*
+            fprintf(stderr, "-%s- %f %f %f\n",
+              newstring, xfactor, padfwidth, fwidth);
+            */
+            if (xfactor < 0.98 || 1.00 < xfactor) {
+                _fontData->xftfactor += (0.99 - xfactor)*_fontData->xftfactor;
+                _fontData->xftfactorchanged = TRUE;
+            }
     }
 
-	point.Set(xoffset, 0);
-	Pad_renderer->Local_to_screen(point);
+        point.Set(xoffset, 0);
+        Pad_renderer->Local_to_screen(point);
         XftDrawString8(_xftdraw, &color_fg, _fontData->xftfont,
-	    (int)point.x, (int)point.y,
-	    (unsigned char *) newstring, strlen(newstring));
+            (int)point.x, (int)point.y,
+            (unsigned char *) newstring, strlen(newstring));
         canRefine = FALSE;
-	goto done;
+        goto done;
     }
 
     if (level >= 2) {
-	/*
-	// Big enough or high enough render level to use high quality font.
-	// See if we can use the font cache or a bitmap font.
+        /*
+        // Big enough or high enough render level to use high quality font.
+        // See if we can use the font cache or a bitmap font.
 
-	if (!rotated) {    // only use cache or bitmap fonts if NOT rotated
-	    xfont = Get_x_font(_display, _fontData->name, _fontData->style,
-			       magnification,
-			       globalLevel  ? XF_LOAD_NOW
-			                    : XF_IF_LOADED);
-	    if (xfont) {
-		// got a bitmap font
-		renderType = R_XFONT;
-		XSetFont(_display, _fgGC, xfont);
-	    } else if (magnification > SMALL_FONT){
-		// try the font cache
-		cache = _dpy->Get_fontcache(_fontData->id, mag);
-		if (cache) {
-		    cache->Setup(this, _drawable, _fgGC, stipple);
-		    renderType = R_CACHE;
-		}
-	    }
-	}
+        if (!rotated) {    // only use cache or bitmap fonts if NOT rotated
+            xfont = Get_x_font(_display, _fontData->name, _fontData->style,
+                               magnification,
+                               globalLevel  ? XF_LOAD_NOW
+                                            : XF_IF_LOADED);
+            if (xfont) {
+                // got a bitmap font
+                renderType = R_XFONT;
+                XSetFont(_display, _fgGC, xfont);
+            } else if (magnification > SMALL_FONT){
+                // try the font cache
+                cache = _dpy->Get_fontcache(_fontData->id, mag);
+                if (cache) {
+                    cache->Setup(this, _drawable, _fgGC, stipple);
+                    renderType = R_CACHE;
+                }
+            }
+        }
 
-	Set_concave(TRUE);
-	*/
+        Set_concave(TRUE);
+        */
     } else {
-	// Small text and low render level - revert to line font
-	Set_abs_line_style(1, CapButt, JoinMiter);
-	scaleMult = Pad_LineFont::CharHeight() / highRes->char_height('A');
-	Pop_transform();
-	transform.Scale(1.0/scaleMult);
-	Push_transform(transform);
-	renderType = rotated ? R_ROTATED_HASH : R_HASH;
-	canRefine = TRUE;
+        // Small text and low render level - revert to line font
+        Set_abs_line_style(1, CapButt, JoinMiter);
+        scaleMult = Pad_LineFont::CharHeight() / highRes->char_height('A');
+        Pop_transform();
+        transform.Scale(1.0/scaleMult);
+        Push_transform(transform);
+        renderType = rotated ? R_ROTATED_HASH : R_HASH;
+        canRefine = TRUE;
     }
 
     // Now draw the characters
 
     for (c=*string; *string != 0; c=*++string) {
-	switch (c) {
-	  case '\t':
-	    xoffset += (8 - (tabpos % 8)) * highRes->char_width(' ') * scaleMult;
-	    tabpos = 0;
-	    break;
+        switch (c) {
+          case '\t':
+            xoffset += (8 - (tabpos % 8)) * highRes->char_width(' ') * scaleMult;
+            tabpos = 0;
+            break;
 
-	  case '\n':
-	    xoffset = 0;
-	    tabpos = 0;
-	    Pop_transform();
-	    transform.Translate(0.0, -1.4 * highRes->char_height('A'));
-	    Push_transform(transform);
-	    break;
+          case '\n':
+            xoffset = 0;
+            tabpos = 0;
+            Pop_transform();
+            transform.Translate(0.0, -1.4 * highRes->char_height('A'));
+            Push_transform(transform);
+            break;
 
-	  case ' ':
-	    tabpos++;
-	    cwidth = highRes->char_width(c);
-	    if ((renderType == R_HASH) || (renderType == R_ROTATED_HASH)) {
-		cwidth *= scaleMult;
-	    }
-	    xoffset += cwidth;
-	    break;
+          case ' ':
+            tabpos++;
+            cwidth = highRes->char_width(c);
+            if ((renderType == R_HASH) || (renderType == R_ROTATED_HASH)) {
+                cwidth *= scaleMult;
+            }
+            xoffset += cwidth;
+            break;
 
-	  default:
-	    tabpos++;
-	    cwidth = highRes->char_width(c);
+          default:
+            tabpos++;
+            cwidth = highRes->char_width(c);
 
-	    switch (renderType) {
-	      case R_XFONT:
-		// Use X Bitmap font
-		point.Set(xoffset, 0);
-		Pad_renderer->Local_to_screen(point);
-		XDrawString(_display, _drawable, _fgGC,
-			    (int)point.x, (int)point.y, (char*)&c, 1);
-		break;
+            switch (renderType) {
+              case R_XFONT:
+                // Use X Bitmap font
+                point.Set(xoffset, 0);
+                Pad_renderer->Local_to_screen(point);
+                XDrawString(_display, _drawable, _fgGC,
+                            (int)point.x, (int)point.y, (char*)&c, 1);
+                break;
 
-	      case R_CACHE:
-		// Draw using font cache
-		cache->Draw_char(highRes, c, xoffset, mag, stipple);
-		break;
+              case R_CACHE:
+                // Draw using font cache
+                cache->Draw_char(highRes, c, xoffset, mag, stipple);
+                break;
 
-	      case R_POLY:
-		// Draw using polygonal data
-		Begin_polygon();
-		poly->Run(c, addVertex, theta);
-		End_polygon();
-		break;
+              case R_POLY:
+                // Draw using polygonal data
+                Begin_polygon();
+                poly->Run(c, addVertex, theta);
+                End_polygon();
+                break;
 
-	      case R_POLYLINE:
-		// Draw using polygonal data, but draw with lines
-		Begin_line();
-		Set_line_style(0, CapButt, JoinBevel);
-		poly->Run(c, addVertex, theta);
-		End_line();
-		break;
+              case R_POLYLINE:
+                // Draw using polygonal data, but draw with lines
+                Begin_line();
+                Set_line_style(0, CapButt, JoinBevel);
+                poly->Run(c, addVertex, theta);
+                End_line();
+                break;
 
-	      case R_HASH:
-		// Draw using hash marks (no rotation)
-		Pad_LineFont::DrawChar_1(xoffset, 0.0);
-		cwidth *= scaleMult;
-		break;
+              case R_HASH:
+                // Draw using hash marks (no rotation)
+                Pad_LineFont::DrawChar_1(xoffset, 0.0);
+                cwidth *= scaleMult;
+                break;
 
-	      case R_ROTATED_HASH:
-		// Draw using hash marks with rotation
-		Pad_LineFont::DrawChar_1(xoffset, 0.0, theta);
-		cwidth *= scaleMult;
-		break;
-	    }
-	    xoffset += cwidth;
-	}
+              case R_ROTATED_HASH:
+                // Draw using hash marks with rotation
+                Pad_LineFont::DrawChar_1(xoffset, 0.0, theta);
+                cwidth *= scaleMult;
+                break;
+            }
+            xoffset += cwidth;
+        }
     }
     Set_concave(FALSE);
 
     // Now set canRefine
 
     switch (renderType) {
-      case R_XFONT:  	    // Already using an X font, so no refining,
+      case R_XFONT:              // Already using an X font, so no refining,
       case R_HASH:          // Line fonts don't get refined (unless tiny and substituting for another)
       case R_ROTATED_HASH:
         break;
 
       default:
-	if (!rotated && _win->activeRestorer->mode != RESTORE_REFINE) {
-	    canRefine = TRUE;
-	} else {
-	    // Are we at level 0?
-	    canRefine = (level < 2);
-	}
+        if (!rotated && _win->activeRestorer->mode != RESTORE_REFINE) {
+            canRefine = TRUE;
+        } else {
+            // Are we at level 0?
+            canRefine = (level < 2);
+        }
     }
 
   done:
@@ -2053,20 +2053,20 @@ Pad_XRenderer::Alloc_image(char *name, Pad_Bool *newflag)
     image = (Pad_ImageData *)Pad_imageNameTable.Get((void *) nameUid);
     if (image) {
         *newflag = FALSE;
-	image->count++;
+        image->count++;
     } else {
         *newflag = TRUE;
-	image = new Pad_ImageData(_dpy, nameUid);
-	if (!(image->rgbData && image->width && image->height)) {
+        image = new Pad_ImageData(_dpy, nameUid);
+        if (!(image->rgbData && image->width && image->height)) {
             *newflag = FALSE;
-	    delete image;
-	    image = NULL;
-	} else {
-	    if (!Pad_rgb) {
+            delete image;
+            image = NULL;
+        } else {
+            if (!Pad_rgb) {
                 *newflag = FALSE;
-		image->Free_rgb();
-	    }
-	}
+                image->Free_rgb();
+            }
+        }
     }
 
     return(image);
@@ -2075,57 +2075,57 @@ Pad_XRenderer::Alloc_image(char *name, Pad_Bool *newflag)
 // JM's experimental tiling facility
 void
 Pad_XRenderer::Set_tile(Pad_ImageData *image1, Pad_ImageData *image2,
-			long *tmp, float d, int tx, int ty)
+                        long *tmp, float d, int tx, int ty)
 {
     if (!image1) {
-	XSetFillStyle(_display, _fgGC, FillSolid);
-	XSetTSOrigin(_display, _fgGC, 0, 0);
+        XSetFillStyle(_display, _fgGC, FillSolid);
+        XSetTSOrigin(_display, _fgGC, 0, 0);
     } else {
 
-	if (image1->tile == None) {
-	    // Make the tile
+        if (image1->tile == None) {
+            // Make the tile
 
-	    image1->tile = XCreatePixmap(_display, _dpy->rootDrawable,
-					image1->width, image1->height,
-					_dpy->depth);
-	}
-	int x, y;
-	long src, dst, pix;
-	void *data;
-	static GC gc = None;
+            image1->tile = XCreatePixmap(_display, _dpy->rootDrawable,
+                                        image1->width, image1->height,
+                                        _dpy->depth);
+        }
+        int x, y;
+        long src, dst, pix;
+        void *data;
+        static GC gc = None;
 
-	if (d <= 0) {
-	    data = image1->rgbData;
-	} else if (d >= 1) {
-	    data = image2->rgbData;
-	} else {
-	    for (y = 0; y < image1->height; y++) {
-		int row = y * image1->width;
-		for (x = 0; x < image1->width; x++) {
-		    pix = x + row;
-		    src = image1->rgbData[pix];
-		    dst = image2->rgbData[pix];
-		    tmp[pix] =
-		      CC_RGBA(MAX(0, MIN(255, (int)LERP(d, CC_RED(src), CC_RED(dst)))),
-			      MAX(0, MIN(255, (int)LERP(d, CC_GREEN(src), CC_GREEN(dst)))),
-			      MAX(0, MIN(255, (int)LERP(d, CC_BLUE(src), CC_BLUE(dst)))),
-			      0);
+        if (d <= 0) {
+            data = image1->rgbData;
+        } else if (d >= 1) {
+            data = image2->rgbData;
+        } else {
+            for (y = 0; y < image1->height; y++) {
+                int row = y * image1->width;
+                for (x = 0; x < image1->width; x++) {
+                    pix = x + row;
+                    src = image1->rgbData[pix];
+                    dst = image2->rgbData[pix];
+                    tmp[pix] =
+                      CC_RGBA(MAX(0, MIN(255, (int)LERP(d, CC_RED(src), CC_RED(dst)))),
+                              MAX(0, MIN(255, (int)LERP(d, CC_GREEN(src), CC_GREEN(dst)))),
+                              MAX(0, MIN(255, (int)LERP(d, CC_BLUE(src), CC_BLUE(dst)))),
+                              0);
 
-		}
-	    }
-	    data = tmp;
-	}
+                }
+            }
+            data = tmp;
+        }
 
-	if (gc == None) gc = XCreateGC(_display, _dpy->rootDrawable, 0, NULL);
+        if (gc == None) gc = XCreateGC(_display, _dpy->rootDrawable, 0, NULL);
 
-	Pad_DrawImage(_display, Pad_prc->win, image1->tile,
-		      gc, data, NULL, image1->width, image1->height,
-		      0, 0, image1->width-1, image1->height-1,
-		      0,0, image1->width, image1->height,
-		      TRUE, 1.0);
-	XSetTile(_display, _fgGC, image1->tile);
-	XSetFillStyle(_display, _fgGC, FillTiled);
-	XSetTSOrigin(_display, _fgGC, tx, ty);
+        Pad_DrawImage(_display, Pad_prc->win, image1->tile,
+                      gc, data, NULL, image1->width, image1->height,
+                      0, 0, image1->width-1, image1->height-1,
+                      0,0, image1->width, image1->height,
+                      TRUE, 1.0);
+        XSetTile(_display, _fgGC, image1->tile);
+        XSetFillStyle(_display, _fgGC, FillTiled);
+        XSetTSOrigin(_display, _fgGC, tx, ty);
     }
 }
 
@@ -2145,12 +2145,12 @@ Pad_XRenderer::Alloc_image(unsigned char *data, int len)
     image = new Pad_ImageData(_dpy, data, len);
 
     if (!(image->rgbData && image->width && image->height)) {
-	delete image;
-	image = NULL;
+        delete image;
+        image = NULL;
     } else {
-	if (!Pad_rgb) {
-	    image->Free_rgb();
-	}
+        if (!Pad_rgb) {
+            image->Free_rgb();
+        }
     }
 
     return(image);
@@ -2184,11 +2184,11 @@ Pad_XRenderer::Free_image(char *token)
 
     imageData = (Pad_ImageData *)Pad_imageTokenTable.Get(Pad_GetUid(token));
     if (imageData) {
-	rc = Free_image(imageData);
+        rc = Free_image(imageData);
     } else {
-	Pad_errorString = "Image not previously allocated: ";
-	Pad_errorString += token;
-	rc = FALSE;
+        Pad_errorString = "Image not previously allocated: ";
+        Pad_errorString += token;
+        rc = FALSE;
     }
 
     return(rc);
@@ -2208,9 +2208,9 @@ Pad_XRenderer::Free_image(Pad_ImageData *image)
     assert(image->count >= 1);
 
     if (image->count == 1) {
-	delete image;
+        delete image;
     } else {
-	image->count--;
+        image->count--;
     }
 
     return(TRUE);
@@ -2242,21 +2242,21 @@ Pad_XRenderer::Get_image(char *token)
 //
 Pad_Bool
 Pad_XRenderer::Draw_image(Pad_ImageData *image,
-			  float dst_left, float dst_bot, float dst_right, float dst_top,
-			  Pad_Bool dither)
+                          float dst_left, float dst_bot, float dst_right, float dst_top,
+                          Pad_Bool dither)
 {
     int rc = 1;
     float clipped[4], unclipped[4];
     float clipped_width, clipped_height;
     float unclipped_width, unclipped_height;
     float dst_bbox[4];
-    XPoint img1, img2;		// Source image region
-    XPoint scr1, scr2;		// Destination image region
+    XPoint img1, img2;                // Source image region
+    XPoint scr1, scr2;                // Destination image region
     void *data;
 
     if (!Pad_prc) {
-	fprintf(stderr, "Draw_image called with NULL Pad_RenderContext\n");
-	return(FALSE);
+        fprintf(stderr, "Draw_image called with NULL Pad_RenderContext\n");
+        return(FALSE);
     }
 
     dst_bbox[XMIN] = dst_left;
@@ -2270,7 +2270,7 @@ Pad_XRenderer::Draw_image(Pad_ImageData *image,
     unclipped_height = unclipped[YMAX] - unclipped[YMIN];
 
     if ((unclipped_width == 0) || (unclipped_height == 0)) {
-	return(TRUE);
+        return(TRUE);
     }
 
     scr1.x = (int)clipped[XMIN];
@@ -2282,52 +2282,52 @@ Pad_XRenderer::Draw_image(Pad_ImageData *image,
     img1.y = (int)(((float)(clipped[YMIN] - unclipped[YMIN]) / unclipped_height) * image->height);
 
     img2.x = (int)(((float)(clipped[XMIN] + clipped_width - unclipped[XMIN]) / unclipped_width) *
-		   image->width);
+                   image->width);
     img2.y = (int)(((float)(clipped[YMIN] + clipped_height - unclipped[YMIN]) / unclipped_height) *
-		   image->height);
+                   image->height);
 
     if (img1.x >= image->width) {img1.x = image->width - 1;}
     if (img2.x >= image->width) {img2.x = image->width - 1;}
     if (img1.y >= image->height) {img1.y = image->height - 1;}
     if (img2.y >= image->height) {img2.y = image->height - 1;}
 
-				// Adjust for partial visibility of magnified pixels
+                                // Adjust for partial visibility of magnified pixels
     if (image->width < unclipped_width) {
-	if (clipped[XMIN] != unclipped[XMIN]) {
-	    scr1.x += (int)((unclipped[XMIN] - clipped[XMIN]) +
-			    (img1.x * (unclipped_width / image->width)));
-	}
-	if (clipped[XMAX] != unclipped[XMAX]) {
-	    scr2.x += (int)((unclipped[XMAX] - clipped[XMAX]) -
-			    ((image->width - img2.x - 1) * (unclipped_width / image->width)));
-	}
+        if (clipped[XMIN] != unclipped[XMIN]) {
+            scr1.x += (int)((unclipped[XMIN] - clipped[XMIN]) +
+                            (img1.x * (unclipped_width / image->width)));
+        }
+        if (clipped[XMAX] != unclipped[XMAX]) {
+            scr2.x += (int)((unclipped[XMAX] - clipped[XMAX]) -
+                            ((image->width - img2.x - 1) * (unclipped_width / image->width)));
+        }
     }
     if (image->height < unclipped_height) {
-	if (clipped[YMIN] != unclipped[YMIN]) {
-	    scr1.y += (int)((unclipped[YMIN] - clipped[YMIN]) +
-			    (img1.y * (unclipped_height / image->height)));
-	}
-	if (clipped[YMAX] != unclipped[YMAX]) {
-	    scr2.y += (int)((unclipped[YMAX] - clipped[YMAX]) -
-			    ((image->height - img2.y - 1) * (unclipped_height / image->height)));
-	}
+        if (clipped[YMIN] != unclipped[YMIN]) {
+            scr1.y += (int)((unclipped[YMIN] - clipped[YMIN]) +
+                            (img1.y * (unclipped_height / image->height)));
+        }
+        if (clipped[YMAX] != unclipped[YMAX]) {
+            scr2.y += (int)((unclipped[YMAX] - clipped[YMAX]) -
+                            ((image->height - img2.y - 1) * (unclipped_height / image->height)));
+        }
     }
 
     if (dither && image->rgb) {
-	data = image->rgbData;
+        data = image->rgbData;
     } else {
-	dither = FALSE;
-	if (Pad_prc->dpy->depth == 8) {
-	    data = image->xpixels8;
-	} else {
-	    data = image->xpixels;
-	}
+        dither = FALSE;
+        if (Pad_prc->dpy->depth == 8) {
+            data = image->xpixels8;
+        } else {
+            data = image->xpixels;
+        }
     }
     if (data) {
-	rc = Pad_DrawImage(_display, Pad_prc->win, _drawable,
-			   _fgGC, data, image->mask, image->width, image->height,
-			   img1.x, img1.y, img2.x, img2.y,
-			   scr1.x, scr1.y, scr2.x, scr2.y, dither, Get_transparency());
+        rc = Pad_DrawImage(_display, Pad_prc->win, _drawable,
+                           _fgGC, data, image->mask, image->width, image->height,
+                           img1.x, img1.y, img2.x, img2.y,
+                           scr1.x, scr1.y, scr2.x, scr2.y, dither, Get_transparency());
     }
 
     return(rc);
@@ -2347,18 +2347,18 @@ EventChecker(Display *, XEvent *event, char *)
 {
     switch (event->type)
       {
-	case ButtonPress:
-	case KeyPress:
-	case Expose:
-	    Pad_eventCheckerResult = TRUE;
-	  break;
-	case MotionNotify:
-	  if (((XMotionEvent *)event)->state & (Button1Mask | Button2Mask | Button3Mask)) {
-	      Pad_eventCheckerResult = TRUE;
-	  }
-	  break;
-	default:
-	  break;
+        case ButtonPress:
+        case KeyPress:
+        case Expose:
+            Pad_eventCheckerResult = TRUE;
+          break;
+        case MotionNotify:
+          if (((XMotionEvent *)event)->state & (Button1Mask | Button2Mask | Button3Mask)) {
+              Pad_eventCheckerResult = TRUE;
+          }
+          break;
+        default:
+          break;
       }
 
     return(0);
@@ -2375,11 +2375,11 @@ Pad_XRenderer::Is_interrupted(Pad_Win *win)
     XEvent event;
 
     if (win->interruptible) {
-	Pad_eventCheckerResult = FALSE;
-	XCheckIfEvent(_display, &event, EventChecker, 0);
-	rc = Pad_eventCheckerResult;
+        Pad_eventCheckerResult = FALSE;
+        XCheckIfEvent(_display, &event, EventChecker, 0);
+        rc = Pad_eventCheckerResult;
     } else {
-	rc = FALSE;
+        rc = FALSE;
     }
 
     return(rc);

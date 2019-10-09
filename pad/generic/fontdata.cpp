@@ -37,7 +37,7 @@ software in general.
 // Pad++ Font Data Manager
 //
 
-#define DEFAULT_FONT_PATH "/usr/lib/X11/fonts/Type1 /usr/X11R6/lib/X11/fonts/Type1"
+#define DEFAULT_FONT_PATH "/opt/X11/share/fonts/Type1 /usr/lib/X11/fonts/Type1 /usr/X11R6/lib/X11/fonts/Type1"
 
 #define PATH_SEP_CHAR ' '
 
