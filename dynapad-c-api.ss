@@ -337,17 +337,17 @@
       (filter (lambda (opt) opt)
               `(
                 (id ,(send this id)) ;generates id if not one already
-                ,(if (string=? (anchor) "center")     #f `(anchor ,(anchor)))
+                ,(if (string=? (anchor) "center")  #f `(anchor ,(anchor)))
                 (position ,@(position))
                 ,(if (equal? (minsize) '( 0.0 #f)) #f `(minsize ',(minsize)))
                 ,(if (equal? (maxsize) '(-1.0 #f)) #f `(maxsize ',(maxsize)))  ; maxsize isn't 10000
                 ,(if (and (> (faderange) 0.3) (< (faderange) 0.3001))
-                     #f `(faderange ,(faderange)))
-                ,(if (= (transparency) 1.0)           #f `(transparency ,(transparency)))
-                ,(if (not (sticky))                   #f `(sticky ,(sticky)))
+                                                   #f `(faderange ,(faderange)))
+                ,(if (= (transparency) 1.0)        #f `(transparency ,(transparency)))
+                ,(if (not (sticky))                #f `(sticky ,(sticky)))
                 ;(oldid ,(padid))
-                ,(if (null? (alist))                  #f `(loadalist ',(savealist)))
-                ,(if (null? (gettags))                #f `(settags ',(gettags)))
+                ,(if (null? (alist))               #f `(loadalist ',(savealist)))
+                ,(if (null? (gettags))             #f `(settags ',(gettags)))
                 ,(and (savelink))
                 )))
 
@@ -681,7 +681,7 @@
            ((list? initlink) `(savelink ',initlink))
            ((is-a? initlink dynaobject%) ;(send initlink padid))
             ;           `(refer-when-ready 'savelink ,(obj->id initlink)))
-            `(defer-send (savelink ,(export-objs initlink))))
+            `(defer-send (quote (savelink ,(export-objs initlink)))))
            (else
             (error "savelink expects dynaobject% or view, given " initlink))))
         ((newlink) (link newlink))))
@@ -1179,8 +1179,8 @@
 
     (define getvar
       (case-lambda
-        ((varname) (cond ((massq varname _varlist) => (λ (pair) (mcar (mcdr pair)))) (else #f)))
-        ((varname fail) (cond ((massq varname _varlist) => (λ (pair) (mcar (mcdr pair)))) (else fail)))))
+        ((varname) (cond ((massq varname _varlist) => (λ (mpair) (mcar (mcdr mpair)))) (else #f)))
+        ((varname fail) (cond ((massq varname _varlist) => (λ (mpair) (mcar (mcdr mpair)))) (else fail)))))
 
     (define (setvar varname val)
       (let ((elmt (massq varname _varlist)))
