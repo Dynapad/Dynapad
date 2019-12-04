@@ -31,7 +31,8 @@
 ;                     (cons expr oldmlst))))
 (define (deferred-exprs)
   ;alist by phase ((0 expr...) (1 expr....) (n expr....))
-  (list->mlist (load-context-deferred-exprs (mcar *load-context-stack*))))
+  (let ([exprs (load-context-deferred-exprs (mcar *load-context-stack*))])
+    (if (list? exprs) (list->mlist exprs) exprs)))
 (define (order-by-phase mlst)
   ;mlst is ((0 x1 x2...) (1 x3 x4...) ...)
   ; returns appended list of all 0's, then 1's, etc
