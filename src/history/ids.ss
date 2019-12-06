@@ -6,40 +6,42 @@
 (define-struct load-context
   (importing?    ; = 'import (default) or 'restore
    objs          ; set of all loaded objects
-   deferred-exprs)) ; set of exprs to eval after all objects loaded
+   deferred-exprs) ; set of exprs to eval after all objects loaded
+  #:mutable)
 
 (define *load-context-stack* null)  ;global stack: car is #t when importing file or clipboard
 (define (importing?)
   (or (null? *load-context-stack*)
       (eq? 'import
-           (load-context-importing? (car *load-context-stack*)))))
+           (load-context-importing? (mcar *load-context-stack*)))))
 (define (set-load-context imp?)
-  (push! (make-load-context imp? null null) *load-context-stack*))
+  (mpush! (make-load-context imp? null null) *load-context-stack*))
 (define (revert-load-context)
-  (pop! *load-context-stack*))
+  (mpop! *load-context-stack*))
 ;(define (push-loaded-obj obj)
-;  (let ((oldlst (load-context-objs (car *load-context-stack*))))
-;    (set-load-context-objs! (car *load-context-stack*)
-;                (cons obj oldlst))))
+;  (let ((oldmlst (load-context-objs (mcar *load-context-stack*))))
+;    (set-load-context-objs! (mcar *load-context-stack*)
+;                (cons obj oldmlst))))
 ;(define (loaded-objs)
-;  (load-context-objs (car *load-context-stack*)))
+;  (load-context-objs (mcar *load-context-stack*)))
 (define (push-deferred-expr phase expr)
-  (let ((oldlst (load-context-deferred-exprs (car *load-context-stack*))))
-    (pushq-onto-malist-val-always! phase expr oldlst)
-    (set-load-context-deferred-exprs! (car *load-context-stack*) oldlst)))
-;                     (cons expr oldlst))))
+  (let ((oldmlst (list->mlist (load-context-deferred-exprs (mcar *load-context-stack*)))))
+    (pushq-onto-malist-val-always! phase expr oldmlst)
+    (set-load-context-deferred-exprs! (mcar *load-context-stack*) oldmlst)))
+;                     (cons expr oldmlst))))
 (define (deferred-exprs)
   ;alist by phase ((0 expr...) (1 expr....) (n expr....))
-  (load-context-deferred-exprs (car *load-context-stack*)))
-(define (order-by-phase lst)
-  ;lst is ((0 x1 x2...) (1 x3 x4...) ...)
+  (let ([exprs (load-context-deferred-exprs (mcar *load-context-stack*))])
+    (if (list? exprs) (list->mlist exprs) exprs)))
+(define (order-by-phase mlst)
+  ;mlst is ((0 x1 x2...) (1 x3 x4...) ...)
   ; returns appended list of all 0's, then 1's, etc
-  (let ((phases (sort
-                 lst
+  ; requires a delicate dance between mlist and list
+  (let ([phases (sort
+                 (mlist->list mlst)
                  (lambda (phase-a phase-b)
-                   (< (car phase-a) (car phase-b))))))
-    (apply append (map cdr phases))
-    ))
+                   (< (mcar phase-a) (mcar phase-b))))])
+    (apply mappend (map mcdr phases))))
 
 ;---- IDs -----------
 ;modified to use hash-tbl instead of alist
@@ -352,14 +354,13 @@
       (obj->IDatom objs)))
 
 (define *debug-deferred-exprs* null) ;delete this later
-
 (define (do-deferred-evals idmap)
   (set! *debug-deferred-exprs* (deferred-exprs)) ;delete this later
-  (map
+  (mmap
    ;(lambda (e) (printf "~a~%" e) (eval e))
    eval
-   (map (lambda (expr) (import-expr-with-objs expr idmap))
-        (order-by-phase (deferred-exprs)))))
+   (mmap (lambda (expr) (import-expr-with-objs expr idmap))
+         (order-by-phase (deferred-exprs)))))
 
 #|
 ;Example:

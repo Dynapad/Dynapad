@@ -2,6 +2,19 @@
 ; "say" is defined here for use in debugging
 (define (say . args) (for-each (lambda (x) (printf "~a " x)) args)(printf "~%"))
 
+(define-syntax mpush!
+  (syntax-rules ()
+    ((_ val mlst)
+     (set! mlst (mcons val mlst)))))
+
+(define-syntax mpop!
+  (syntax-rules ()
+    ((_ mlst)
+     (and (not (null? mlst))
+          (let ((val (mcar mlst)))
+            (set! mlst (mcdr mlst))
+            val)))))
+
 (define-syntax push!
   (syntax-rules ()
     ((_ val lst)
