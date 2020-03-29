@@ -1,3 +1,9 @@
+#lang racket/base
+
+(require dynapad/misc/misc)
+
+(provide lerp
+         )
 ;--- lerp utilities ----------------------------------------------
 
 ;linear-interpolates between low and high by fraction t

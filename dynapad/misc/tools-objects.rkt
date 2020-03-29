@@ -1,4 +1,7 @@
-(require (lib "defmacro.ss"))
+#lang racket/base
+
+(require compatibility/defmacro
+         (for-syntax racket/base))
 
 ;remote-get, -set, -push
 ; are "remote" in that they can operate through an object interface

@@ -1,5 +1,13 @@
-(require (lib "defmacro.ss"))
-(require (lib "math.ss"))
+#lang racket/base
+
+(require racket/class
+         compatibility/defmacro
+         scheme/math  ; alternately mzlib/math
+         (for-syntax racket/base))
+
+(provide round-to-int
+         round-to-decimal
+         )
 
 ;---- STATS tools ----
 

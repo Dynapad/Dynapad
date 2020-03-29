@@ -1,15 +1,25 @@
+#lang racket/base
+
 ;======= Image Bindings and Utilities ============================
 
-(require (lib "thumbify.ss" "thumbify"))
+(require (only-in racket/class send)
+         dynapad/pad-state
+         dynapad/misc/misc
+         dynapad/history/undo ; show-possible-delay
+         collects/thumbify/thumbify)
+
+;(require (lib "thumbify.ss" "thumbify"))
+
 (define gifjpg_rexp (regexp "(.*[/\\]|)(.*)(\\.[^\\.]*)$"))
 (define thumb_rexp (regexp "(.*[/\\]|)(.+)(\\.|-)(125|150)(\\.([gG][iI][fF]|[jJ][pP][gG]|[pP][pP][mM]|[pP][nN][gG]|[tT][iI][fF]|[bB][mM][pP]))$"))
 
 (define (image-toggle-hires-thumb img)
-  (lambda (eventPAD e) (set! currentPAD eventPAD)
+  (lambda (eventPAD e) (set-currentPAD! eventPAD)
           (if (send img hires?)
               (send img thumb)
               (send img hires))))
 
+#; ; this is overwritten by a later definition
 ; This function is called when an image% object is created.
 ; Some applications may redefine this function to change
 ; the default binding of new images.

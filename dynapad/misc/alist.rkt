@@ -1,6 +1,20 @@
-(require (lib "defmacro.ss"))
-(require compatibility/mlist)
+#lang racket/base
 
+(require compatibility/mlist
+         compatibility/defmacro
+         racket/class
+         (for-syntax racket/base))
+
+(provide pushq-onto-malist-val-always!
+         push-onto-malist-val-always!
+         remote-get
+         remote-set!
+         remote-push!
+         get-else-push-onto-malist!
+         get-and-rem-from-malist!
+         remq-from-malist-val!
+         delete-from-malist-val!
+         )
 ;remote-get, -set, and -push work on either lvals (settable variables)
 ;  or object fields accessed via message:
 ; (send obj msg) for getting; (send obj msg val) for setting

@@ -1,3 +1,5 @@
+#lang racket/base
+
 ; LOG FILE NOTES
 ;
 ; While manipulating workspace(s), user creates "states" whose
@@ -96,12 +98,19 @@
 ;  By default, <treename> is the name under which the tree is first saved
 ;======================================================
 
+(require racket/string
+         mzlib/process
+         dynapad/misc/progress
+         ;dynapad/history/undo ; cycle
+         dynapad/history/logbranch
+         dynapad/history/showlogs
+         dynapad/history/logbead
+         ;dynapad/history/lognodes ; *current-log-tree* ???
+         collects/misc/pathhack
+         )
 
 (announce-module-loading "logging...")
 ;Utilities for reading/writing workspace logs
-(require (lib "string.ss"))
-(require (lib "process.ss"))
-(dynaload "undo.ss")
 
 ; the following hooks may be overridden in showlogs.ss, logbead.ss, etc:
 (define (set-current-state-id new)
@@ -115,14 +124,14 @@
   (set-current-state-id new))
 
 
-(dynaload "logbranch.ss")
+;(dynaload "logbranch.ss")
 (update-progress .6)
 
 ;OPTIONAL: comment out to exclude...
 ; visible logs:
-(dynaload "showlogs.ss")  ;requires logbranch.ss
+;(dynaload "showlogs.ss")  ;requires logbranch.ss
 ; state-marker
-(dynaload "logbead.ss")   ;requires showlogs.ss
+;(dynaload "logbead.ss")   ;requires showlogs.ss
 (update-progress .8)
 
 #|

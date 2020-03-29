@@ -1,3 +1,7 @@
+#lang racket/base
+
+; uh yeah, this approach just completely does not work with modules
+
 ;Contains dummy functions (needed in events.ss, etc)
 ;  which are be overridden by undo.ss if included
 

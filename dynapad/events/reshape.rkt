@@ -1,3 +1,13 @@
+#lang racket/base
+
+(require racket/class
+         dynapad/base
+         dynapad/pad-state
+         dynapad/misc/misc
+         )
+
+(provide general-handle%)
+
 ;=== Reshape and Resize ==========================================
 
 ; general handles provide a dragable object with configurable callback
@@ -36,7 +46,7 @@
 
     (send this bind "<Select-B1-Motion>"
           (list
-           (lambda (eventPAD e) (set! currentPAD eventPAD)
+           (lambda (eventPAD e) (set-currentPAD! eventPAD)
                    (let ((x (event-x e)) (y (event-y e)))
                      (send this xy x y)
                      (when _drag_callback (_drag_callback x y))

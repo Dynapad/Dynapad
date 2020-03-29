@@ -1,3 +1,9 @@
+#lang racket/base
+
+(require dynapad/misc/misc)
+(provide announce-module-loading
+         update-progress)
+
 (define *progress-bar-total-len* 35)
 (define *progress-bar-len* 0)
 (define *progress-bar-gap* 0)

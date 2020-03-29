@@ -1,3 +1,33 @@
+#lang racket/base
+(require (only-in racket/math
+                  sqr
+                  )
+         (only-in racket/class
+                  send)
+         dynapad/pad-state
+         dynapad/misc/misc
+         dynapad/misc/tools-misc
+         dynapad/utils/lerp
+         )
+
+(provide bbwidth
+         bbheight
+         b0
+         b1
+         b2
+         b3
+         bbenclosed
+         bbenclosedoron
+         bbcenter
+         bbwiden
+         bbstretch
+         bxc
+         byc
+         bb-crossing
+         bb-crossing-fract
+         bb-diag
+         )
+
 ; many of these functions should be pushed down into a C implementation
 
 ; coord splitting
@@ -58,6 +88,7 @@
 (define (bbs bbox)
   (list [* 0.5 (+ [list-ref bbox 0] [list-ref bbox 2])] [list-ref bbox 1]))
 
+; bbcenter: Returns the center (x y) of a bounding box
 (define (bbcenter bbox)
   (list [* 0.5 (+ [list-ref bbox 0] [list-ref bbox 2])]
         [* 0.5 (+ [list-ref bbox 1] [list-ref bbox 3])]))
@@ -93,12 +124,6 @@
 
 ; maxdim: Returns the maximum dimension of a bounding box
 (define (maxdim bbox) (max (bbwidth bbox) (bbheight bbox)))
-
-; bbcenter: Returns the center (x y) of a bounding box
-(define (bbcenter bbox)
-  (list
-   [* 0.5 (+ [list-ref bbox 0] [list-ref bbox 2])]
-   [* 0.5 (+ [list-ref bbox 1] [list-ref bbox 3])]))
 
 ;--- bbox predicates ---------------------------------------------
 
@@ -380,6 +405,8 @@
 ;  |   L_|   |   L_|   | ^ L_|
 ;  |  ^      |         | ^
 ;  L__^__    L_____    L_^__
+
+#; ; this doesn't seem to be used anywhere and obj->geometry-list is not defined anywhere
 (define bb-geometry
   (case-lambda
     (            (ref-bb tgt)  (obj->geometry-list 'up     1 ref-bb tgt))
@@ -429,3 +456,20 @@
 ;     (apply obj->geometry-list arg0 arg1 more)))))
 
 
+;; why the heck were these in edges !??!
+
+(define (bb-crossing-fract segment bbox)
+  (let* ((xfract (abs (/ (bbwidth bbox)
+                         (* 2 (bbwidth segment)))))
+         (yfract (abs (/ (bbheight bbox)
+                         (* 2 (bbheight segment))))))
+    (min xfract yfract)))
+
+(define (bb-crossing segment bbox)
+  ;segment is (ax ay bx by), where (bx by) is center of bbox
+  ;returns (x y) point where segment crosses edge of bbox
+  (let* ((fract (bb-crossing-fract segment bbox))
+         ;use car-cadddr instead of b0-b3 to override auto-correct
+         (tipx  (lerp fract (caddr segment) (car segment)))
+         (tipy  (lerp fract (cadddr segment) (cadr segment))))
+    (list tipx tipy)))

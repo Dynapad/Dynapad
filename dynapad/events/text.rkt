@@ -1,4 +1,113 @@
+#lang racket/base
+
+(require racket/class
+         dynapad/base
+         dynapad/misc/misc
+         dynapad/layout/bbox
+         dynapad/history/undo
+         (only-in dynapad/libdynapad
+                  sch_gettext
+                  sch_settext
+                  sch_inserttext
+                  sch_deletetext
+                  sch_maketext
+                  sch_marktext
+                  sch_pen
+                  sch_font
+                  )
+         )
+
+(define basetext%
+  (class dynaobject%
+    (init _dynapad (inittext #f) (initposition #f) (initfont #f) (initanchor #f))
+    (inherit anchor delete position dynaclass)
+    (inherit-field cptr selected)
+    (override writeoptions)
+    (public text insert forward backward next previous
+            setpoint delete-backward delete-forward font pen)
+
+    (define text
+      (case-lambda
+        (() (sch_gettext cptr))
+        ((newtext) (sch_settext cptr newtext))))
+
+    (define (export-stub dir class) (error 'not-implemented))
+
+    (define/override (export dir)
+      (export-stub dir (text)))
+
+    (define (writeoptions)
+      `(,@(super writeoptions)
+        (text ,(text))
+        (font ,(font))
+        (pen ,(pen))))
+
+    (define insert
+      (case-lambda
+        ((str)
+         (sch_inserttext cptr "point" str)
+         (send this update-any-hilights))
+        ((index str)
+         (sch_inserttext cptr index str)
+         (send this update-any-hilights))))
+
+    (define (setpoint pt)
+      (when (number? pt) (set! pt (number->string pt)))
+      (sch_marktext cptr "set" "point" pt)
+      (send this update-any-hilights))
+
+    (define (point-end)
+      (sch_marktext cptr "set" "point" "end")
+      (send this update-any-hilights))
+
+    (define (forward)
+      (sch_marktext cptr "set" "point" "point + 1 char")
+      (send this update-any-hilights))
+
+    (define (backward)
+      (sch_marktext cptr "set" "point" "point - 1 char")
+      (send this update-any-hilights))
+
+    (define (next)
+      (sch_marktext cptr "set" "point" "point + 1 line")
+      (send this update-any-hilights))
+
+    (define (previous)
+      (sch_marktext cptr "set" "point" "point - 1 line")
+      (send this update-any-hilights))
+
+    (define (delete-backward)
+      (sch_deletetext cptr "point - 1 char")
+      (send this update-any-hilights))
+
+    (define (delete-forward)
+      (sch_deletetext cptr "point")
+      (send this update-any-hilights))
+
+    (define font
+      (case-lambda
+        (() (sch_font cptr))
+        ((newfont)
+         (sch_font cptr newfont)
+         (send this update-any-hilights))))
+
+    (define pen
+      (case-lambda
+        (() (sch_pen cptr))
+        ((color) (sch_pen cptr color))))
+
+    (super-instantiate (_dynapad (sch_maketext (send _dynapad get-cptr) this)))
+    (when (send _dynapad defaultfont) (font (send _dynapad defaultfont)))
+    (when (send _dynapad defaultpen) (pen (send _dynapad defaultpen)))
+    (dynaclass 'basetext%)
+    (anchor "nw")
+    (when initposition (position initposition))
+    (when initfont (font initfont))
+    (when initanchor (anchor initanchor))
+    (when inittext (text inittext))))
+
 ;======= Text ========
+
 (define text%
   (class basetext%
     (init argPAD (inittext #f) (initposition #f) (initfont #f) (initanchor #f))

@@ -1,4 +1,18 @@
-(require (lib "process.ss"))
+#lang racket/base
+
+(require mzlib/process
+         collects/misc/pathhack
+         dynapad/misc/misc
+         (only-in racket/path file-name-from-path)
+         (only-in dynapad/libdynapad
+                  sch_imagep
+                  )
+         )
+
+(provide export-container-generic-name
+         export-link
+         )
+
 (define break-on-last-dot-regexp (regexp "(.*)([.][a-zA-Z]+)"))
 ; parses xxxxx.yyy into xxxxx and .yyy (where xxxxx may contain .)
 

@@ -1,3 +1,9 @@
+#lang racket/base
+
+(require racket/class
+         dynapad/history/undo
+         )
+
 (define (dt-event? e) #f)  ;may be overridden by DiamondTouch table package
 
 (define ask-user-for-bbox--event-binder%

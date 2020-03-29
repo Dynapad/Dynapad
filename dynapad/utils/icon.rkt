@@ -1,4 +1,13 @@
-(require (lib "file.ss"))  ; needed for "file-name-from-path"
+#lang racket/base
+(require (only-in racket/class
+                  class
+                  init
+                  inherit
+                  super-instantiate
+                  )
+         (only-in racket/path file-name-from-path)
+         dynapad/utils/formation
+         )
 
 (define icon-container-form%
   (class container-form%

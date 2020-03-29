@@ -1,3 +1,9 @@
+#lang racket/base
+
+(require racket/class
+         dynapad/history/undo
+         )
+
 ;These are similar to get-user-bbox.ss
 
 (define ask-user-for-lasso--event-binder%

@@ -1,6 +1,10 @@
-(require lang/plt-pretty-big)
-(require scheme/gui)
+#lang racket/base
+
+;(require lang/plt-pretty-big)
+(require racket/gui/base)
 (require compatibility/mlist)
+(require dynapad/dynapad-c-api)
+
 
 (current-eventspace (make-eventspace))
 
@@ -8,8 +12,6 @@
 (define (update-progress pct) #f)
 ; anytime after here, once progress.ss is included, loading modules (if so coded)
 ; will announce themselves and generate "..." progress bar to stdout
-
-(load-relative "dynapad-c-api.ss")
 
 (define *home-directory* #f)
 (define *dynapad-directory* (current-load-relative-directory))

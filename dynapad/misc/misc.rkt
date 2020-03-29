@@ -1,3 +1,14 @@
+#lang racket/base
+
+(require compatibility/mlist
+         (only-in racket/class
+                  send
+                  send*
+                  method-in-interface?
+                  object-interface)
+         dynapad/pad-state)
+
+(provide (all-defined-out))
 
 ; "say" is defined here for use in debugging
 (define (say . args) (for-each (lambda (x) (printf "~a " x)) args)(printf "~%"))

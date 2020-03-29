@@ -1,5 +1,13 @@
-(dynaload "utils/lerp.ss")
-(dynaload "tools-misc.ss") ;need: round-to-int
+#lang racket/base
+
+(require racket/class
+         (only-in racket/draw
+                  color%)
+         (only-in dynapad/utils/lerp
+                  lerp)
+         (only-in dynapad/misc/tools-misc
+                  round-to-int
+                  round-to-decimal))
 
 (define (tcl-color-from-mred-color mred-color)
   (cond ((eq? mred-color #f) #f)

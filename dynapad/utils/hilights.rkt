@@ -1,3 +1,26 @@
+#lang racket/base
+(require racket/class
+         dynapad/bind
+         dynapad/misc/misc
+         dynapad/misc/alist
+         dynapad/layout/bbox
+         (only-in dynapad/libdynapad
+                  sch_delete
+                  sch_coords
+                  sch_makerect
+                  sch_sticky
+                  sch_findable
+                  sch_events
+                  sch_penwidth
+                  sch_layer
+                  sch_makeoval
+                  sch_renderscript 
+                  sch_renderitem 
+                  )
+         )
+
+(provide select%)
+
 ; This module handles all forms of highlights
 ;  (C-level objects which are not dynaobject%s)
 ; including select% borders

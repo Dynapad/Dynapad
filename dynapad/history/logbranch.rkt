@@ -1,7 +1,15 @@
-(dynaload "actor.ss")
-(dynaload "tools-lists.ss") ; need (first-valid...)
-(require (lib "list.ss"))
-(require (lib "etc.ss")) ;need (second/third/fourth/etc ...)
+#lang racket/base
+
+(require racket/list
+         dynapad/misc/tools-lists
+         dynapad/utils/actor
+         collects/misc/pathhack
+         )
+
+;(dynaload "actor.ss")
+;(dynaload "tools-lists.ss") ; need (first-valid...)
+;(require (lib "list.ss"))
+;(require (lib "etc.ss")) ;need (second/third/fourth/etc ...)
 
 ; ============= Name-part generation, conversion  =============
 ; Nomenclature:

@@ -1,5 +1,12 @@
-(require (lib "defmacro.ss"))
-(load-relative "tools-objects.ss")
+#lang racket/base
+
+(require compatibility/defmacro
+         (for-syntax racket/base)
+         dynapad/misc/misc
+         dynapad/misc/tools-objects
+         )
+;(require (lib "defmacro.ss"))
+;(load-relative "tools-objects.ss")
 
 (define (multiple? lst)
   (and (list? lst)

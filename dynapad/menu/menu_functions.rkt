@@ -1,4 +1,23 @@
-(dynaload "utils/colors.ss")
+#lang racket/base
+
+(require (only-in racket/class
+                  send)
+         (only-in racket/gui/base
+                  get-file)
+         dynapad/pad-state
+         dynapad/copy
+         dynapad/misc/misc
+         dynapad/misc/progress
+         dynapad/utils/colors
+         (only-in collects/misc/pathhack
+                  split-path->string)
+         (only-in dynapad/history/undo
+                  undoify-fresh-obj
+                  delete-all
+                  undoable-delete-all
+                  Paste-From-Copy-Buffer
+                  Copy-Paste-ReSelect))
+
 (announce-module-loading "Menu functions...")
 
 ;======= Menu Functions =================
@@ -164,88 +183,6 @@
 (define (UnGroup-Selected)
   (unmakegroup currentPAD (send currentPAD selected)))
 
-;-----
-
-(define (write-set objs)
-  (if (null? objs)
-      null
-      (append
-       (let ((obj (car objs)))
-         (and obj
-              (send obj write-all)))
-       (write-set (cdr objs)))))
-
-(define *copy_buffer* '())
-(define (Copy-Selected)
-  (set! *copy_buffer* (write-set (send currentPAD selected)))
-  )
-
-;  _______.  Nudges object along NE vector by <offset> fraction of its bbox
-;      _. |  (Neg. offset moves toward SW)
-;   __./| |
-;     |   |
-(define Offset-Object
-  (case-lambda
-    ((obj) (Offset-Object obj .1))
-    ((obj offset)
-     (let* ((mybb  (send obj bbox))
-            (newbb (bbstretch mybb offset))
-            (dxy   (map - (cddr newbb) (cddr mybb))))
-       (send/apply obj slide dxy)))))
-
-
-(define (Copy-Buffer-empty?) (null?  *copy_buffer*))
-
-(define (Paste-From-Copy-Buffer)
-  (let* ((newobjects (eval `(import-set ,@*copy_buffer*)))
-         (topobjects (filter (lambda (o) (not (send o getgroup))) newobjects)))
-    (for-each Offset-Object topobjects)
-    ;  (Unselect-Selected--undoable)
-    ;  (map (lambda (o)(send o unselect)) (send currentPAD selected))
-    ;  (for-each (lambda (o) (send o select)) topobjects)
-    (Set-Select--undoable currentPAD topobjects)
-    (Copy-Selected) ;recopy new objects to propagate offset
-    (undoify-fresh-objs newobjects)
-    ))
-
-(define (Copy-Paste-ReSelect)
-  ; when triggered (e.g. by Ctrl-Click to select),
-  ;  copies selected obj, and makes that the new selection for dragging, etc.
-  (Copy-Selected)
-  (Paste-From-Copy-Buffer))
-
-(define (clone-object obj)
-  (and obj
-       (let ((build-exprs (send obj write-all)))
-         (car (eval `(import-set ,@build-exprs))))))
-
-(define (clone-objects set)
-  (let ((build-exprs (write-set set)))
-    (eval `(import-set ,@build-exprs))))
-
-
-(define (using-another-pad--Paste-From-Copy-Buffer argPAD)
-  (let ((tmp currentPAD)
-        (newobjects '()))
-    (set! currentPAD argPAD)
-    (set! newobjects (Paste-From-Copy-Buffer))
-    ;UNDO HERE?
-    (foreach newobjects (lambda (o) (send o unselect)))
-    (changemode argPAD "Run")
-    (set! currentPAD tmp)
-    )
-  )
-
-(define (using-another-pad--Copy-Selected argPAD)
-  (let ((tmp currentPAD))
-    (set! currentPAD argPAD)
-    (Copy-Selected)
-    ;UNDO HERE?
-    (set! currentPAD tmp)
-    )
-  )
-;-----
-
 (define (makealist objs)
   (let ((alist (map (lambda (o) (list (send o oldid) o)) objs)))
     alist))
@@ -323,19 +260,6 @@
            (fprintf port "~s~%" write-str))))
      (send currentPAD objects))))
 
-; New:
-(define *abstract-objects-callbacks* null)
-(define abstract-objects-callbacks (callback-accessor-functions *abstract-objects-callbacks*))
-
-
-(define saveable-objects
-  (case-lambda
-    ((argPAD)
-     (apply append (send argPAD objects)
-            (map (lambda (cb) ((car cb)))
-                 *abstract-objects-callbacks*)))
-    (() (saveable-objects currentPAD))))
-
 ;(define (Write-All-Objects-To-Port port)
 ;  (let ((allwrites (write-set (send currentPAD objects))))
 ;    (foreach allwrites (lambda (w) (fprintf port "~s~%" w)))))
@@ -349,6 +273,7 @@
     allwrites))
 
 ; Old Save Format:
+#; ; overwritten below so commenting out until it can be removed
 (define (Save-All-To-Port port)
   (fprintf port "(let* ((objs (list~%")
   (Write-All-Objects-To-Port port)
@@ -436,56 +361,6 @@
     (if path
         (restore-path path)
         (Select-and-Restore-File))))
-
-; === Deleting ===
-
-(define (Delete-Selected)
-  (let ((l (filter (lambda (x) (send x deletable?)) (send currentPAD selected))))
-    (undoable-delete-objs l)))
-
-(define (Deep-Delete-Selected)
-  (let ((l (filter (lambda (x) (send x deletable?)) (send currentPAD selected))))
-    (undoable-delete-objs l #t)))
-
-(define (Clear-Workspace . stuff)  ;may be overridden in logs.ss
-  (apply undoable-delete-all currentPAD stuff))
-
-(define (Confirm-and-Delete-All)
-  (let
-      ((l (filter (lambda (x) (send x deletable?))
-                  (saveable-objects currentPAD)))) ;include abstract objs
-    ;(send currentPAD objects))))
-    (cond
-      ((null? l)
-       (message-box "Delete All" "Nothing to delete" *menubar* '(ok)))
-      (else
-       (when (eq? 'ok (message-box "Delete" "Delete Everything?" *menubar* '(ok-cancel)))
-         ;(undoable-delete-objs l)
-         ;(destroy-and-keep-destroying-until-everything-is-gone currentPAD)
-         (Clear-Workspace l)
-         )))))
-
-(define delete-all
-  (case-lambda
-    ((argPAD) (delete-all argPAD (saveable-objects argPAD)))
-    ((argPAD objs) (foreach objs (lambda (o) (send o delete-all))))))
-
-(define undoable-delete-all
-  (case-lambda
-    ((argPAD) (undoable-delete-all argPAD (saveable-objects argPAD)))
-    ((argPAD objs)
-     (undoable-delete-objs objs #t))))
-;    (foreach objs (lambda (o) (send o delete-all))))))
-
-;OBSOLETE?
-; A quick fix for a policy problem.
-; Regions partially ignore the standard delete command,
-; so keep sending delete messages until everything is gone.
-;(define (destroy-and-keep-destroying-until-everything-is-gone argPAD)
-;  (def bound 20)
-;  (while (and (> bound 0) (pair? (send argPAD objects)))
-;    (for-each (lambda (x) (send x delete)) (send argPAD objects))
-;      (-= bound 1)))
 
 (define (Fillcolor-Dialog)
   (let* ((tclcolor (fillgetcolor)))

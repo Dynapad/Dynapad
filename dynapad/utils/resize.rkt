@@ -1,4 +1,18 @@
+#lang racket/base
 
+(require racket/class
+         dynapad/base
+         dynapad/pad-state
+         dynapad/undo-state
+         dynapad/misc/misc
+         dynapad/events/reshape
+         dynapad/events/mode
+         dynapad/layout/bbox
+         )
+
+(provide make-selected-bigger
+         make-selected-smaller
+         )
 
 (define (make-selected-bigger)
   (let* ((selected (send dynapad selected))

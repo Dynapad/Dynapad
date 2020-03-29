@@ -1,3 +1,14 @@
+#lang racket/base
+
+(require racket/class
+         dynapad/misc/progress
+         dynapad/misc/misc ; ic item config
+         dynapad/layout/bbox
+         ; cycle inducing
+         ; dynapad/dynapad-c-api
+         ; oval%
+         )
+
 (announce-module-loading "graph tools...")
 ; Originally adapted from
 ; /home/Share/high/dyna/toys/dyna_constraints/dyna_constraints.ss
@@ -115,22 +126,6 @@
   )
 
 ;================
-(define (bb-crossing-fract segment bbox)
-  (let* ((xfract (abs (/ (bbwidth bbox)
-                         (* 2 (bbwidth segment)))))
-         (yfract (abs (/ (bbheight bbox)
-                         (* 2 (bbheight segment))))))
-    (min xfract yfract)))
-
-(define (bb-crossing segment bbox)
-  ;segment is (ax ay bx by), where (bx by) is center of bbox
-  ;returns (x y) point where segment crosses edge of bbox
-  (let* ((fract (bb-crossing-fract segment bbox))
-         ;use car-cadddr instead of b0-b3 to override auto-correct
-         (tipx  (lerp fract (caddr segment) (car segment)))
-         (tipy  (lerp fract (cadddr segment) (cadr segment))))
-    (list tipx tipy)))
-
 (define graph-edge%
   (class line%
     (init _dynapad)

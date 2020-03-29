@@ -1,5 +1,12 @@
-(require (lib "class.ss"))
-(dynaload "alist.ss")
+#lang racket/base
+
+(require racket/class
+         compatibility/mlist
+         dynapad/ffs
+         dynapad/misc/misc
+         dynapad/misc/alist
+         )
+
 ; Consider using surrogate.ss to replace actor construction
 
 ;--- actor baseclass ---------------------------------------------

@@ -1,5 +1,34 @@
-(dynaload "alist.ss")
-(dynaload "filenames.ss")
+#lang racket/base
+
+(require (only-in racket/class
+                  send
+                  class
+                  init
+                  inherit
+                  super-instantiate
+                  define/public
+                  this
+                  define/override
+                  ; if these are missing you will get weird errors
+                  override
+                  field
+                  inherit-field
+                  super
+                  )
+         compatibility/defmacro
+         dynapad/dynapad-c-api
+         dynapad/misc/misc
+         dynapad/misc/alist
+         dynapad/misc/filenames
+         dynapad/layout/bbox
+         (for-syntax racket/base)
+         (only-in dynapad/libdynapad
+                  sch_removemember
+                  sch_addmember
+                  sch_divisible 
+                  sch_members
+                  )
+ )
 
 (define-macro (name-part field-name method-name)
   `(begin
@@ -59,7 +88,7 @@
       (case-lambda
         (()
          ;delete callbacks may remove members before they're deleted,
-         ; so need to apply callbacks (normally triggered in (super-delete))
+         ; so need to apply callbacks (normally triggered in (super delete))
          ; BEFORE deleting members:
          (for-each (lambda (cb-fn-pair) ((car cb-fn-pair) this))
                    (send this delete-callbacks))
@@ -75,7 +104,7 @@
 
     (define/public (disband)
       (sch_members cptr null)
-      (super-delete)
+      (delete)  ; FIXME this might be (super delete) someone missed super-delete -> delete during the v299 diff
       #t)
 
     (define (writeoptions)

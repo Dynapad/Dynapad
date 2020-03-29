@@ -1,12 +1,21 @@
+#lang racket/base
+
+(require (only-in racket/class send)
+         dynapad/pad-state
+         dynapad/misc/misc ; sendf
+         )
+
+(provide bindArrows)
+
 (define Start-Pan-Event
   (lambda (eventPAD e)
-    (set! currentPAD eventPAD)
+    (set-currentPAD! eventPAD)
     (sendf eventPAD evs set-last-xy (event-x e) (event-y e))
     ))
 
 (define Do-Pan-Event
   (lambda (eventPAD e)
-    (set! currentPAD eventPAD)
+    (set-currentPAD! eventPAD)
     (let*
         ((l (send eventPAD view))
          (view_x (car l))
@@ -23,7 +32,7 @@
                                     zoom)) ))))
 
 (define (pan-view-or-slide-selected dx dy)
-  (lambda (eventPAD e) (set! currentPAD eventPAD)
+  (lambda (eventPAD e) (set-currentPAD! eventPAD)
           (let* ((vu (send eventPAD view))
                  (view_x (car vu))
                  (view_y (cadr vu))

@@ -1,58 +1,94 @@
-(require compatibility/mlist)
+#lang racket/base
 
-(require (lib "class.ss"))
-(require (lib "list.ss")) ; because mred doesn't load it by default
-(require (lib "defmacro.ss"))
-(require (lib "file.ss"))
+(require racket/class
+         racket/gui/base
+         compatibility/mlist
+         (only-in mzlib/list quicksort)
+         dynapad/libdynapad
+         dynapad/bind
+         dynapad/ffs ; export-objs
+         dynapad/pad-state ; write-set
+         dynapad/misc/misc
+         dynapad/layout/bbox
+         dynapad/utils/hilights
+         dynapad/misc/filenames
+         )
 
-; macros and utilities for code development
-(load-relative "src/misc/misc.ss")
-(load-relative "src/misc/alist.ss")
-(load-relative "src/history/ids.ss") ;move this elsewhere?
-(load-relative "src/utils/hilights.ss")
+(provide dynaobject%
+         dynapad%
+         layer%
+         base-group%
+         group%
+         line%
+         freehand%
+         polyline%
+         rect%
+         oval%
+         polygon%
+         )
 
-;;; (load-relative-extension (path-replace-suffix "build/libdynapad" (system-type 'so-suffix)))
+(define (link-hook o) #t)
 
-(let
-    ([libdynapad-path (getenv "LIBDYNAPAD_PATH")])
-  (if libdynapad-path
-      (load-relative-extension libdynapad-path)
-      (load-relative-extension "build/libdynapad.so")))
+(define (center-hook o) #t)
 
-(define padthread
-  (let
-      ((new-es (make-eventspace)))
+;----- some help for writing the alist option -----
 
-    (parameterize
-        ((current-eventspace new-es))
-      (thread
-       (lambda ()
-         (wish)
-         (display "bye"))))))
+(define (dynapad-printable? x)
+  (or (symbol? x)
+      (string? x)
+      (boolean? x)
+      (char? x)
+      (null? x)
+      (number? x)
+      (and (pair? x)
+           (dynapad-printable? (car x))
+           (dynapad-printable? (cdr x))) ))
 
-(define-struct event (x y type key obj sx sy))
-(define-struct (tablet-event event) (xid p tiltx tilty state button))
+; global list for functions that want to filter alists before saving.
+; applications can push filters onto the list using:
+;   (alist-filters 'add func)
+; where func is (lambda (object alist-element) body)
+;               which returns the element, or a modified version,
+;                             or () in order prevent writing.
 
-(define (describe-all-callbacks obj)
-  (map (lambda (name mth) (say name (eval `(send ,obj ,mth))))
-       (list "delete" "afterdelete"
-             "slide" "afterslide"
-             "position" "afterposition"
-             "scale" "afterscale"
-             "width" "afterwidth"
-             "height" "afterheight"
-             "select"
-             "reposition" "resize"
-             )
-       (list 'delete-callbacks 'afterdelete-callbacks
-             'slide-callbacks 'afterslide-callbacks
-             'position-callbacks 'afterposition-callbacks
-             'scale-callbacks 'afterscale-callbacks
-             'width-callbacks 'afterwidth-callbacks
-             'height-callbacks 'afterheight-callbacks
-             'select-callbacks
-             'reposition-callbacks 'resize-callbacks
-             )))
+(define *filter-alist-functions* '())
+(define alist-filters (callback-accessor-functions *filter-alist-functions*))
+
+(define (filter-alist object alist)
+  (if (null? *filter-alist-functions*)
+      alist
+      ;else
+      (begin
+        (foreach *filter-alist-functions* (lambda (fncpair)
+                                            (set! alist
+                                                  (apply append (map (lambda (elt) ((car fncpair) object elt)) alist)))
+                                            ))
+        alist
+        )
+      )
+  )
+
+; a little utility for simple alist modifers
+; usage:  (alist-filters 'add (make-alist-modifier-function 'keyname foo))
+;         where foo is (lambda (val) body) --> newval
+(define (make-alist-modifier-function key value-modifier-func)
+  (lambda (object elt)
+    (if (eq? (car elt) key)
+        (list (cons (car elt) (value-modifier-func (cdr elt))))
+        (list elt))))
+
+;Another version which takes not a single key but a lambda on key-vals tuple:
+(define (make-alist-modifier-function-general match-fn value-modifier-func)
+  (lambda (object elt)
+    (if (match-fn elt)
+        (list (cons (car elt) (value-modifier-func (cdr elt))))
+        (list elt))))
+;EX:
+;Replace any alist-val which is an object with its ID:
+;(make-alist-modifier-function-general
+;  (lambda (tuple) (any-vals-are-objects? (cdr tuple)))
+;  (lambda (tuple) (replace-objects-w-IDs (cdr tuple))))
+;-----
 
 (define dynaobject%
   (class linkable-obj%
@@ -797,6 +833,8 @@
          ; should update select box here
          )))
 
+    (define (export-stub dir class) (error 'not-implemented))
+
     (define (export dir) (export-stub dir (dynaclass)))
     ; In general: creates a file-system analog of the object
     ;  to be overridden by some subclasses (eg. group%, base-image%...)
@@ -829,310 +867,9 @@
     (when initposition (position initposition))
     (when initanchor (anchor initanchor))
 
-    )) ;end dynaobject%
-
-(define slowgrow
-  (case-lambda
-    ((obj slowness)
-     ;slowness 0--> sticky z (constant size)
-     ;slowness 1--> normal zooming
-     ;        >1--> faster than view
-     (slowgrow obj slowness
-               (or (not slowness)
-                   (let ((padz (send (send obj dynapad) getzoom)))
-                     (* (send obj z)
-                        (expt padz slowness))))))
-    ((obj slowness home-sz)
-     (slowgrow obj slowness home-sz 0))
-    ;      (Obj-z = relative size; Apparent size = obj-z * pad-z)
-    ; Need 3 params to describe a line plus threshold.
-    ;
-    ;
-    ; obj-z   `
-    ;          `
-    ;           `       /
-    ;            `     / - - slowness (slope)
-    ;             `.  /
-    ;               `/  <- - home-sz (y-intercept):
-    ;  obj          /:`.      = rel. sz = apparent sz at zoom=1
-    ;apparent      / :  ` .
-    ;  size  _____/  :  <- -`-.- - - min-sz
-    ;                :          `  .
-    ;   0            1                 `  -   _
-    ;      out  <--zoom-->  in                    "    -    .
-    ;
-    ((obj slowness home-sz min-sz)
-     ;home-sz is obj's z when dynapad zoom=1
-     ; min-sz sets minimum size (fraction of home-sz)
-     (if (not slowness)
-         (send obj renderscript #f) ;normal zooming
-         ;else slowed zooming:
-         (let* ((mypad (send obj dynapad))
-                (set-z-script
-                 (lambda (o)
-                   (let* ((padz (send mypad getzoom))
-                          (newz (* home-sz (expt padz (- slowness 1))))
-                          (minz (/ min-sz padz)))
-                     (send o z (max minz newz))))))
-           ;(send obj z (/ home-sz (send mypad getzoom)))
-           (send obj renderscript
-                 (lambda (o)
-                   (set-z-script o)
-                   (send o renderitem)))
-           ;run set-z-script now, to set the correct intial z
-           (set-z-script obj)
-           )))))
-
-
-; for text labels, try (slowgrow label .3 2 .5)
-
-
-;----- some help for writing the alist option -----
-
-(define (dynapad-printable? x)
-  (or (symbol? x)
-      (string? x)
-      (boolean? x)
-      (char? x)
-      (null? x)
-      (number? x)
-      (and (pair? x)
-           (dynapad-printable? (car x))
-           (dynapad-printable? (cdr x))) ))
-
-; global list for functions that want to filter alists before saving.
-; applications can push filters onto the list using:
-;   (alist-filters 'add func)
-; where func is (lambda (object alist-element) body)
-;               which returns the element, or a modified version,
-;                             or () in order prevent writing.
-
-(define *filter-alist-functions* '())
-(define alist-filters (callback-accessor-functions *filter-alist-functions*))
-
-(define (filter-alist object alist)
-  (if (null? *filter-alist-functions*)
-      alist
-      ;else
-      (begin
-        (foreach *filter-alist-functions* (lambda (fncpair)
-                                            (set! alist
-                                                  (apply append (map (lambda (elt) ((car fncpair) object elt)) alist)))
-                                            ))
-        alist
-        )
-      )
-  )
-
-; a little utility for simple alist modifers
-; usage:  (alist-filters 'add (make-alist-modifier-function 'keyname foo))
-;         where foo is (lambda (val) body) --> newval
-(define (make-alist-modifier-function key value-modifier-func)
-  (lambda (object elt)
-    (if (eq? (car elt) key)
-        (list (cons (car elt) (value-modifier-func (cdr elt))))
-        (list elt))))
-
-;Another version which takes not a single key but a lambda on key-vals tuple:
-(define (make-alist-modifier-function-general match-fn value-modifier-func)
-  (lambda (object elt)
-    (if (match-fn elt)
-        (list (cons (car elt) (value-modifier-func (cdr elt))))
-        (list elt))))
-;EX:
-;Replace any alist-val which is an object with its ID:
-;(make-alist-modifier-function-general
-;  (lambda (tuple) (any-vals-are-objects? (cdr tuple)))
-;  (lambda (tuple) (replace-objects-w-IDs (cdr tuple))))
-;-----
-
-(define base-group%
-  ;this level relays reposition/resize callbacks to group members
-  (class dynaobject%
-    (inherit-field _dynapad cptr)
-    (init dynaptr)
-    (super-instantiate (dynaptr (sch_makegroup (send dynaptr get-cptr) this)))
-
-    (define/override (update-position dx dy)
-      (super update-position dx dy)
-      (foreach (sch_members cptr)
-               (lambda (m) (send m update-position dx dy))))
-
-    (define/public case-super-update-size
-      (case-lambda
-        ;       ((arg) (super update-size arg))
-        ;       ((arg1 arg2) (super update-size arg1 arg2))
-        ((arg1 arg2 arg3) (super update-size arg1 arg2 arg3))
-        ((arg1 arg2 arg3 arg4) (super update-size arg1 arg2 arg3))
-        ))
-
-    (define/override (update-size . args)
-      (send/apply this case-super-update-size args)
-      (foreach (sch_members cptr)
-               (lambda (m) (send/apply m update-size args))))
     ))
 
-(define group%
-  (class base-group%
-    (inherit-field _dynapad cptr selected)
-    (init dynaptr (initmembers #f))
-    (inherit dynaclass)
-    (override writeoptions fix delete)
-    (public members member? add remove save divisible ungroup)
-    (field (savemembers null))
-
-    (define members
-      (case-lambda
-        (() (sch_members cptr))
-        ((some . more)
-         (let ((newmembers (if (list? some)
-                               (append some more)
-                               (cons some more))))
-           (sch_members cptr (map (lambda (o) (send o get-cptr)) newmembers))
-           (send this update-any-hilights)))))
-
-    (define (member? o)
-      (eq? this (send o getgroup)))
-
-    (define save
-      (case-lambda
-        (() `(quote ,(map (lambda (o) (send o padid)) (members))))
-        ((newmembers) (set! savemembers newmembers))))
-
-    (define/override (export dir)
-      (let ((subdir (export-container-generic-name dir "group")))
-        (foreach (send this members) (lambda (o) (send o export subdir)))))
-
-    (define (fix alist)
-      (for-each (lambda (o) (add (cadr (assq o alist)))) savemembers)
-      (super fix alist))
-
-    (define (add l)
-      (let ((l (if (list? l) l (list l))))
-        (for-each (lambda (o) (sch_addmember cptr (send o get-cptr))) l))
-      (send this update-any-hilights))
-
-    (define (remove l)
-      (let ((l (if (list? l) l (list l))))
-        (for-each (lambda (o) (sch_removemember cptr (send o get-cptr))) l))
-      (send this update-any-hilights))
-
-    (define (writeoptions)
-      `(,@(super writeoptions)
-        (defer-send (members ,(export-objs (members))))
-        ;(refer-when-ready 'members ,@(map obj->id (members)))
-        ;(members (list ,@(map (lambda (o) (send o write)) (reverse (members)))))
-        (divisible ,(divisible))))
-
-    (define (delete)
-      ;delete callbacks may remove members before they're deleted,
-      ; so need to apply callbacks (normally triggered in (super-delete))
-      ; BEFORE deleting members:
-      (for-each (lambda (cb-fn-pair) ((car cb-fn-pair) this))
-                (send this delete-callbacks))
-      ;already done, so clear them
-      (send this delete-callbacks null)
-      ;finally, delete remaining members + this
-      (for-each (lambda (o) (remove o) (send o delete)) (members))
-      (super delete))
-
-    (define (ungroup)
-      (send this members '())
-      (delete)
-      #t)
-
-    (define divisible
-      (case-lambda
-        (() (sch_divisible cptr))
-        ((bool) (sch_divisible cptr bool))))
-
-    (define/override (select . args)
-      (if (null? args) (super select)
-          (when (not selected)
-            (set! selected (make-object select% _dynapad this (car args))))
-          ))
-
-    (super-instantiate (dynaptr)); (sch_makegroup (send _dynapad get-cptr) this)))
-    (dynaclass 'group%)
-    (send this dependents-fn (lambda (me) (send me members)))
-    (when initmembers (members initmembers))))
-
-(define panel%
-  (class dynaobject%
-    (inherit-field _dynapad)
-    (init dynaptr (initcoords '(0 0 100 100)) (initmembers #f))
-    (set! _dynapad dynaptr)
-    (inherit-field cptr selected)
-    (inherit dynaclass)
-    (override writeoptions fix delete anchor re-anchor)
-    (public members add remove save divisible coords fill)
-    (field (savemembers null))
-
-    (define anchor (case-lambda
-                     (() (super anchor))
-                     ((newanchor) (super anchor "sw")) ))
-
-    (define (re-anchor newanchor) (super re-anchor "sw"))
-
-    (define (fill color) (sch_panelsetfill (send this get-cptr) color))
-
-    (define coords (case-lambda
-                     (() (send this bbox))
-                     ((crds)
-                      (send this width (bbwidth crds))
-                      (send this height (bbheight crds))
-                      (send this xy (car crds) (cadr crds)) )))
-
-    (define members
-      (case-lambda
-        (() (sch_members cptr))
-        ((newmembers)
-         (sch_members cptr (map (lambda (o) (send o get-cptr)) newmembers))
-         (send this update-any-hilights))))
-
-    (define save
-      (case-lambda
-        (() (map (lambda (o) (send o padid)) (members)))
-        ((newmembers) (set! savemembers newmembers))))
-
-    (define (fix alist)
-      (for-each (lambda (o) (add (cadr (assq o alist)))) savemembers)
-      (super fix alist))
-
-    (define (add l)
-      (let ((l (if (list? l) l (list l))))
-        (for-each (lambda (o) (sch_addmember cptr (send o get-cptr))) l))
-      (send this update-any-hilights))
-
-    (define (remove l)
-      (let ((l (if (list? l) l (list l))))
-        (for-each (lambda (o) (sch_removemember cptr (send o get-cptr))) l))
-      (send this update-any-hilights))
-
-    (define (writeoptions)
-      `(,@(super writeoptions)
-        (save ',(save)) ;;; Should be same as group%
-        (coords ',(coords))
-        (divisible ,(divisible))))
-
-    (define (delete)
-      (for-each (lambda (o) (remove o) (send o delete)) (members))
-      (super delete))
-
-    (define divisible
-      (case-lambda
-        (() (sch_divisible cptr))
-        ((bool) (sch_divisible cptr bool))))
-
-    (define/override (select . args)
-      (if (null? args) (super select)
-          (when (not selected)
-            (set! selected (make-object select% _dynapad this (car args))))))
-
-    (super-instantiate (_dynapad (sch_makepanel (send _dynapad get-cptr) this)))
-    (dynaclass 'panel%)
-    (coords initcoords)
-    (when initmembers (members initmembers))))
+ ;end dynaobject%
 
 (define dynapad%
   (class frame% ;object%
@@ -1545,6 +1282,200 @@
     (set! _selectlist '())
     ))
 
+(define layer%
+  (class object%
+    (init _dynapad initname)
+    (field (cptr #f) (_dynaclass #f) (savemembers null) (_writable #t))
+    (public get-cptr delete name members dynaclass
+            lower raise save write writeoptions visible writable?)
+
+    (define (get-cptr)
+      cptr)
+
+    (define (delete)
+      (for-each (lambda (o)(send o delete)) (members))
+      (sch_deletelayer cptr))
+
+    (define (name)
+      (sch_layername cptr))
+
+    (define (members)
+      (sch_layermembers cptr))
+
+    (define visible
+      (case-lambda
+        (() (sch_visiblelayer cptr))
+        ((bool) (sch_visiblelayer cptr bool))))
+
+    (define dynaclass
+      (case-lambda
+        (() _dynaclass)
+        ((newclass) (set! _dynaclass newclass))))
+
+    (define (fix alist)
+      (for-each
+       (lambda (oldid)
+         (let ((o (assq oldid alist)))
+           (send o layer this)))
+       savemembers))
+
+    (define save
+      (case-lambda
+        (() (map (lambda (o) (send o padid)) (members)))
+        ((newmembers) (set! savemembers newmembers))))
+
+    (define (writeoptions)
+      `((save ',(save))))
+
+    (define (write)
+      `(let ((obj (make-object ,(dynaclass) dynapad ,(name))))
+         (send* obj
+           ,@(writeoptions))
+         obj))
+
+    (define writable?
+      (case-lambda
+        (() _writable)
+        ((bool) (set! _writable bool))))
+
+    (define raise
+      (case-lambda
+        (() (sch_raiselayer cptr))
+        ((abovethis)
+         (if (or (equal? abovethis "one") (equal? abovethis 'one))
+             (sch_raiselayer cptr 1)
+             (sch_raiselayer cptr (send abovethis get-cptr))))))
+
+    (define lower
+      (case-lambda
+        (() (sch_lowerlayer cptr))
+        ((belowthis)
+         (if (or (equal? belowthis "one") (equal? belowthis 'one))
+             (sch_lowerlayer cptr 1)
+             (sch_lowerlayer cptr (send belowthis get-cptr))))))
+
+    (super-instantiate ())
+    (dynaclass 'layer%)
+    (set! cptr (sch_makelayer (send _dynapad get-cptr) this initname))
+    ; This is hideous: because of a long-time bug (empty layers drift upward)
+    ;  use a permanent, hidden object as a "paperweight" on each layer
+    ; to ensure that it is never empty.
+    (field (_ballast (ic (make-object group% _dynapad)
+                         (findable #f)
+                         (layer this))))
+    ))
+
+(define base-group%
+  ;this level relays reposition/resize callbacks to group members
+  (class dynaobject%
+    (inherit-field _dynapad cptr)
+    (init dynaptr)
+    (super-instantiate (dynaptr (sch_makegroup (send dynaptr get-cptr) this)))
+
+    (define/override (update-position dx dy)
+      (super update-position dx dy)
+      (foreach (sch_members cptr)
+               (lambda (m) (send m update-position dx dy))))
+
+    (define/public case-super-update-size
+      (case-lambda
+        ;       ((arg) (super update-size arg))
+        ;       ((arg1 arg2) (super update-size arg1 arg2))
+        ((arg1 arg2 arg3) (super update-size arg1 arg2 arg3))
+        ((arg1 arg2 arg3 arg4) (super update-size arg1 arg2 arg3))
+        ))
+
+    (define/override (update-size . args)
+      (send/apply this case-super-update-size args)
+      (foreach (sch_members cptr)
+               (lambda (m) (send/apply m update-size args))))
+    ))
+
+(define group%
+  (class base-group%
+    (inherit-field _dynapad cptr selected)
+    (init dynaptr (initmembers #f))
+    (inherit dynaclass)
+    (override writeoptions fix delete)
+    (public members member? add remove save divisible ungroup)
+    (field (savemembers null))
+
+    (define members
+      (case-lambda
+        (() (sch_members cptr))
+        ((some . more)
+         (let ((newmembers (if (list? some)
+                               (append some more)
+                               (cons some more))))
+           (sch_members cptr (map (lambda (o) (send o get-cptr)) newmembers))
+           (send this update-any-hilights)))))
+
+    (define (member? o)
+      (eq? this (send o getgroup)))
+
+    (define save
+      (case-lambda
+        (() `(quote ,(map (lambda (o) (send o padid)) (members))))
+        ((newmembers) (set! savemembers newmembers))))
+
+    (define/override (export dir)
+      (let ((subdir (export-container-generic-name dir "group")))
+        (foreach (send this members) (lambda (o) (send o export subdir)))))
+
+    (define (fix alist)
+      (for-each (lambda (o) (add (cadr (assq o alist)))) savemembers)
+      (super fix alist))
+
+    (define (add l)
+      (let ((l (if (list? l) l (list l))))
+        (for-each (lambda (o) (sch_addmember cptr (send o get-cptr))) l))
+      (send this update-any-hilights))
+
+    (define (remove l)
+      (let ((l (if (list? l) l (list l))))
+        (for-each (lambda (o) (sch_removemember cptr (send o get-cptr))) l))
+      (send this update-any-hilights))
+
+    (define (writeoptions)
+      `(,@(super writeoptions)
+        (defer-send (members ,(export-objs (members))))
+        ;(refer-when-ready 'members ,@(map obj->id (members)))
+        ;(members (list ,@(map (lambda (o) (send o write)) (reverse (members)))))
+        (divisible ,(divisible))))
+
+    (define (delete)
+      ;delete callbacks may remove members before they're deleted,
+      ; so need to apply callbacks (normally triggered in (super delete))
+      ; BEFORE deleting members:
+      (for-each (lambda (cb-fn-pair) ((car cb-fn-pair) this))
+                (send this delete-callbacks))
+      ;already done, so clear them
+      (send this delete-callbacks null)
+      ;finally, delete remaining members + this
+      (for-each (lambda (o) (remove o) (send o delete)) (members))
+      (super delete))
+
+    (define (ungroup)
+      (send this members '())
+      (delete)
+      #t)
+
+    (define divisible
+      (case-lambda
+        (() (sch_divisible cptr))
+        ((bool) (sch_divisible cptr bool))))
+
+    (define/override (select . args)
+      (if (null? args) (super select)
+          (when (not selected)
+            (set! selected (make-object select% _dynapad this (car args))))
+          ))
+
+    (super-instantiate (dynaptr)); (sch_makegroup (send _dynapad get-cptr) this)))
+    (dynaclass 'group%)
+    (send this dependents-fn (lambda (me) (send me members)))
+    (when initmembers (members initmembers))))
+
 (define baseline%
   (class dynaobject%
     (init _dynapad makeproc)
@@ -1666,468 +1597,3 @@
     (super-instantiate (_dynapad sch_makepolygon))
     (dynaclass 'polygon%)
     (when initcoords (coords initcoords))))
-
-(define imagedata%
-  (class object%
-    (init-field _dynapad (initimagepath #f))
-    (field (cptr #f) (_dynaclass #f))
-    (public imagepath free get-cptr dimensions dynaclass)
-
-    (define (get-cptr)
-      cptr)
-
-    (define (imagepath)
-      (sch_imagepath cptr))
-
-    (define (free)
-      (sch_freeimagedata (send _dynapad get-cptr) cptr))
-
-    (define (dimensions)
-      (sch_imagedim cptr))
-
-    (define dynaclass
-      (case-lambda
-        (() _dynaclass)
-        ((newclass) (set! _dynaclass newclass))))
-
-    (super-instantiate ())
-    (dynaclass 'imagedata%)
-    (when initimagepath
-      (set! cptr (sch_makeimagedata (send _dynapad get-cptr) this initimagepath)))))
-
-(define grabdata%
-  (class imagedata%
-    (init _dynapad (winid #f) (xywh #f))
-    (inherit-field cptr)
-    (inherit dynaclass)
-    (super-instantiate (_dynapad))
-    (set! cptr (sch_grab (send _dynapad get-cptr) this winid xywh))
-    (dynaclass 'grabdata%)))
-
-(define baseimage%
-  (class dynaobject%
-    (init-field (initdynapad #f))
-    (init (initimagedata #f) (initposition #f))
-    (inherit position unselect dynaclass)
-    (inherit-field cptr selected)
-    (field (idata #f))
-    (public imagedata saveimagepath)
-    (override writeoptions)
-
-    (define saveimagepath
-      (case-lambda
-        (() (if idata (send idata imagepath) #f))
-        ((newimagepath)
-         (when newimagepath
-           (imagedata (make-object imagedata% initdynapad newimagepath))))))
-
-    (define/override (export dir)
-      (let ((myname (file-name-from-path (saveimagepath))))
-        (export-link (saveimagepath) (build-path->string dir myname))))
-
-    (define (writeoptions)
-      `(,@(super writeoptions)))
-
-    #|
-    (define/override (write)
-    `(let ((obj (make-object ,(dynaclass) dynapad)))
-    (send* obj
-    ,@(writeoptions)
-    (saveimagepath ,(saveimagepath)))
-    obj))
-    |#
-    ;    (define/override (write)
-    ;      `(ic (make-object ,(dynaclass) dynapad)
-    ;       ,@(writeoptions)
-    ;       (saveimagepath)))
-
-    (define imagedata
-      (case-lambda
-        (() idata)
-        ((data)
-         (cond
-           ((is-a? data imagedata%)
-            (sch_imagedata cptr (send data get-cptr))
-            (send this update-any-hilights))
-           ((eq? data #f)
-            (unselect)
-            (sch_imagedata cptr #f))
-           (else
-            (error "image% imagedata expects imagedata, given " data)))
-         (set! idata data))))
-
-    (when (not (is-a? initdynapad dynapad%))
-      (error "instantiate: image% expects type dynapad% as 1st argument, given " initdynapad))
-
-    (super-instantiate (initdynapad (sch_makeimage (send initdynapad get-cptr) this)))
-    (dynaclass 'baseimage%)
-
-    (when initposition (send this position initposition))
-    (when initimagedata (imagedata initimagedata))))
-
-(define *image-aftermake-callbacks* null) ;list of (lambda (img)...)
-(define image-aftermake-callbacks (callback-accessor-functions *image-aftermake-callbacks*))
-(define image%
-  (class baseimage%
-    (init initpad)
-    (init-field (_hirespath #f))
-    (init (initposition #f))
-    (field (_hiresdata #f) (_thumbdata #f))
-    (field (_use_bbox #f))
-    (inherit-field _dynapad)
-    (inherit imagedata bind anchor scale dynaclass bbox)
-    (override delete)
-    (override writeoptions center)
-    (public hires thumb hires? hirespath free free-hiresdata)
-
-    (define (hires)
-      (when (not _hiresdata)
-        (set! _hiresdata (make-object imagedata% _dynapad _hirespath))
-        (if _thumbdata
-            ; has thumb; restore curr size after loading hiresdata
-            (let ((w (send this width))
-                  (h (send this height)))
-              (imagedata _hiresdata)
-              (send this widthheight w h))
-            ;else no thumb; don't worry about size
-            (imagedata _hiresdata)) )
-      _hiresdata)
-
-    (define (free-hiresdata)
-      ; works only when thumb already in view; call (thumb) first
-      (when (and _thumbdata (eq? _thumbdata (imagedata)))
-        (when _hiresdata
-          (send _hiresdata free))
-        (set! _hiresdata #f)))
-
-    (define (thumb)
-      (when (and _thumbdata (eq? (imagedata) _hiresdata))
-        (let ((w (send this width))
-              (h (send this height)))
-          (imagedata _thumbdata)
-          (send this widthheight w h)
-          (unless (send _dynapad getvar 'cache-image-hiresdata)
-            (free-hiresdata))))
-      _thumbdata)
-
-    (define/override width (case-lambda
-                             (() (super width))
-                             ((new) (set! _use_bbox #t) (super width new))
-                             ))
-
-    (define/override height (case-lambda
-                              (() (super height))
-                              ((new) (set! _use_bbox #t) (super height new))
-                              ))
-
-    (define/override (export dir)
-      (let ((myname (file-name-from-path (hirespath))))
-        (export-link (hirespath) (build-path->string dir myname))))
-
-    ; write hirespath, but thumb position
-    ; so super-writeoptions must be last
-    (define (writeoptions)
-      (filter (lambda (opt) opt)
-              `(,@(super writeoptions)
-                (hirespath (string->path ,(path->string (hirespath))))
-                ,(if (not _use_bbox) #f `(bbox ',(bbox)))
-                )))
-    (define/override (writeinits)
-      (list `(string->path ,(path->string (hirespath)))))
-
-    #|
-    (define/override (write)
-    `(let ((obj (make-object ,(dynaclass) dynapad)))
-    (send* obj
-    ,@(writeoptions))
-    obj))
-    |#
-    ;    (define/override (write)
-    ;      `(ic (make-object ,(dynaclass) dynapad ,(hirespath))
-    ;       ,@(writeoptions)))
-    ;      (let* ((suffixes (map (lambda (fn) ((car fn) this)) _post-build-ops))
-    ;         (alter-bld (and _alternate-build-fn (_alternate-build-fn this)))
-    ;         (build-expr (or alter-bld
-    ;                 `(ic (make-object ,(dynaclass) dynapad)
-    ;                  ,@(writeoptions)))))
-    ;    (if (null? suffixes)
-    ;        build-expr
-    ;        `(with obj ,build-expr ,@suffixes))))
-
-    (define hirespath
-      (case-lambda
-        (() _hirespath)
-        ((newhirespath)
-         (set! _hirespath newhirespath)
-         (let ((thumbpath (findthumb _hirespath)))
-           (when thumbpath
-             (set! _thumbdata (make-object imagedata% _dynapad thumbpath))))
-         (if _thumbdata
-             (imagedata _thumbdata)
-             (hires)))))
-
-    (define (delete)
-      (imagedata #f)
-      (when _hiresdata (send _hiresdata free))
-      (when _thumbdata (send _thumbdata free))
-      (bind "<Run-Shift-ButtonPress-1>" '())  ; #f causes fatal error on delete-key
-      (super delete))
-
-    (define (free)
-      (imagedata #f)
-      (when _hiresdata (send _hiresdata free))
-      (when _thumbdata (send _thumbdata free)))
-
-    (define (hires?)
-      _hiresdata)
-
-    (define (center . args)
-      (let ((lc (send _dynapad lastcentered)))
-        (when (and lc (is-a? lc image%)) (send lc thumb)))
-      (super center . args)
-      (hires))
-
-    (super-instantiate (initpad))
-    (dynaclass 'image%)
-    (when initposition (send this position initposition))
-    (when _hirespath (hirespath _hirespath))
-
-    ;(init-image-bindings this)  ; see events.ss
-    (when *image-aftermake-callbacks*
-      (exec-any-callbacks *image-aftermake-callbacks* this))
-    ))
-
-(define basetext%
-  (class dynaobject%
-    (init _dynapad (inittext #f) (initposition #f) (initfont #f) (initanchor #f))
-    (inherit anchor delete position dynaclass)
-    (inherit-field cptr selected)
-    (override writeoptions)
-    (public text insert forward backward next previous
-            setpoint delete-backward delete-forward font pen)
-
-    (define text
-      (case-lambda
-        (() (sch_gettext cptr))
-        ((newtext) (sch_settext cptr newtext))))
-
-    (define/override (export dir)
-      (export-stub dir (text)))
-
-    (define (writeoptions)
-      `(,@(super writeoptions)
-        (text ,(text))
-        (font ,(font))
-        (pen ,(pen))))
-
-    (define insert
-      (case-lambda
-        ((str)
-         (sch_inserttext cptr "point" str)
-         (send this update-any-hilights))
-        ((index str)
-         (sch_inserttext cptr index str)
-         (send this update-any-hilights))))
-
-    (define (setpoint pt)
-      (when (number? pt) (set! pt (number->string pt)))
-      (sch_marktext cptr "set" "point" pt)
-      (send this update-any-hilights))
-
-    (define (point-end)
-      (sch_marktext cptr "set" "point" "end")
-      (send this update-any-hilights))
-
-    (define (forward)
-      (sch_marktext cptr "set" "point" "point + 1 char")
-      (send this update-any-hilights))
-
-    (define (backward)
-      (sch_marktext cptr "set" "point" "point - 1 char")
-      (send this update-any-hilights))
-
-    (define (next)
-      (sch_marktext cptr "set" "point" "point + 1 line")
-      (send this update-any-hilights))
-
-    (define (previous)
-      (sch_marktext cptr "set" "point" "point - 1 line")
-      (send this update-any-hilights))
-
-    (define (delete-backward)
-      (sch_deletetext cptr "point - 1 char")
-      (send this update-any-hilights))
-
-    (define (delete-forward)
-      (sch_deletetext cptr "point")
-      (send this update-any-hilights))
-
-    (define font
-      (case-lambda
-        (() (sch_font cptr))
-        ((newfont)
-         (sch_font cptr newfont)
-         (send this update-any-hilights))))
-
-    (define pen
-      (case-lambda
-        (() (sch_pen cptr))
-        ((color) (sch_pen cptr color))))
-
-    (super-instantiate (_dynapad (sch_maketext (send _dynapad get-cptr) this)))
-    (when (send _dynapad defaultfont) (font (send _dynapad defaultfont)))
-    (when (send _dynapad defaultpen) (pen (send _dynapad defaultpen)))
-    (dynaclass 'basetext%)
-    (anchor "nw")
-    (when initposition (position initposition))
-    (when initfont (font initfont))
-    (when initanchor (anchor initanchor))
-    (when inittext (text inittext))))
-
-(define layer%
-  (class object%
-    (init _dynapad initname)
-    (field (cptr #f) (_dynaclass #f) (savemembers null) (_writable #t))
-    (public get-cptr delete name members dynaclass
-            lower raise save write writeoptions visible writable?)
-
-    (define (get-cptr)
-      cptr)
-
-    (define (delete)
-      (for-each (lambda (o)(send o delete)) (members))
-      (sch_deletelayer cptr))
-
-    (define (name)
-      (sch_layername cptr))
-
-    (define (members)
-      (sch_layermembers cptr))
-
-    (define visible
-      (case-lambda
-        (() (sch_visiblelayer cptr))
-        ((bool) (sch_visiblelayer cptr bool))))
-
-    (define dynaclass
-      (case-lambda
-        (() _dynaclass)
-        ((newclass) (set! _dynaclass newclass))))
-
-    (define (fix alist)
-      (for-each
-       (lambda (oldid)
-         (let ((o (assq oldid alist)))
-           (send o layer this)))
-       savemembers))
-
-    (define save
-      (case-lambda
-        (() (map (lambda (o) (send o padid)) (members)))
-        ((newmembers) (set! savemembers newmembers))))
-
-    (define (writeoptions)
-      `((save ',(save))))
-
-    (define (write)
-      `(let ((obj (make-object ,(dynaclass) dynapad ,(name))))
-         (send* obj
-           ,@(writeoptions))
-         obj))
-
-    (define writable?
-      (case-lambda
-        (() _writable)
-        ((bool) (set! _writable bool))))
-
-    (define raise
-      (case-lambda
-        (() (sch_raiselayer cptr))
-        ((abovethis)
-         (if (or (equal? abovethis "one") (equal? abovethis 'one))
-             (sch_raiselayer cptr 1)
-             (sch_raiselayer cptr (send abovethis get-cptr))))))
-
-    (define lower
-      (case-lambda
-        (() (sch_lowerlayer cptr))
-        ((belowthis)
-         (if (or (equal? belowthis "one") (equal? belowthis 'one))
-             (sch_lowerlayer cptr 1)
-             (sch_lowerlayer cptr (send belowthis get-cptr))))))
-
-    (super-instantiate ())
-    (dynaclass 'layer%)
-    (set! cptr (sch_makelayer (send _dynapad get-cptr) this initname))
-    ; This is hideous: because of a long-time bug (empty layers drift upward)
-    ;  use a permanent, hidden object as a "paperweight" on each layer
-    ; to ensure that it is never empty.
-    (field (_ballast (ic (make-object group% _dynapad)
-                         (findable #f)
-                         (layer this))))
-    ))
-
-(define bind
-  (case-lambda
-    ((obj) (sch_bind (send obj get-cptr)))
-    ((obj event) (sch_bind (send obj get-cptr) event))
-    ((obj event callback) (bind obj event callback #f))
-    ((obj event callback save?)
-     (let ((bindings (bind obj event)))
-       (cond
-         ; don't forget to update *writelist* when removing bindings
-         ((not callback) (set! bindings null)) ; grandfather #f to mean null
-         ((list? callback) (set! bindings callback))
-         (else
-          (set! bindings (list callback))
-          (when save? (make-object bind/write% obj event callback))))
-       (sch_bind (send obj get-cptr) event bindings)))))
-
-(define (addbinding PAD evnt fnc)
-  (send PAD bind evnt (cons fnc (send PAD bind evnt))))
-
-(define bind_to_tag
-  (case-lambda
-    ((pad tag) (sch_bind_to_tag (send pad get-cptr) tag))
-    ((pad tag event) (sch_bind_to_tag (send pad get-cptr) tag event))
-    ((pad tag event callback)
-     (let ((bindings (bind_to_tag pad tag event)))
-       (cond
-         ((not callback) (set! bindings null)) ; grandfather #f to mean null
-         ((list? callback) (set! bindings callback))
-         (else (set! bindings (list callback))))
-       (sch_bind_to_tag
-        (send pad get-cptr)
-        tag
-        event
-        bindings)))))
-
-(define *writelist* null)
-
-(define bind/write%
-  (class object%
-    (init-field obj event callback)
-
-    (define/public (write)
-      (cond
-        ((annotated-proc? callback)
-         (list 'make-object 'bind/write% (send obj padid) event
-               (apply list 'lambda (procedure-args callback)
-                      (procedure-body callback))))
-        (else
-         (list 'make-object 'bind/write% (send obj padid) event
-               (object-name callback)))))
-
-    (define/public (fix alist)
-      (set! obj (cadr (assq obj alist)))
-      (bind obj event callback))
-
-    (define/public (delete)
-      (set! *writelist* (remq *writelist* this)))
-
-    (super-instantiate ())
-    (set! *writelist* (cons this *writelist*))))
-
-(define (link-hook o) #t)
-
-(define (center-hook o) #t)
