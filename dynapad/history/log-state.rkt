@@ -1,12 +1,47 @@
 #lang racket/base
 
-(require (only-in racket/date date->string)
+(require (only-in racket/class send make-object)
+         (only-in racket/date date->string)
+         dynapad/base
          dynapad/import
+         dynapad/pad-state
          dynapad/misc/misc
+         dynapad/misc/user-preferences
+
+         #;
+         (
+         racket/class
+         dynapad/base
+         dynapad/pad-state
+         collects/misc/pathhack
+         dynapad/misc/tools-lists
+         (only-in racket/function identity)
+         dynapad/ffs  ; *id-counter*
+         dynapad/history/ids
+         )
          )
 (provide reset-stacks
          make-timestamp-ID
+         *current-state-id*
+         set-current-state-id
+         pixels->space
+         *logtree-layer*
+         *future-log-path*
+         set-*future-log-path*!
+         *heed-start-state?*
+         set-*heed-start-state?*!
+         enter-firststate
+         enter-midstate
+         enter-laststate
+         make-undo/redo-frame
+         *log-continues?*
          )
+
+(define *logtree-layer* (make-object layer% dynapad "logtree"))
+
+(define (pixels->space px)
+  (let ((scale (caddr (send dynapad view))))
+    (/ px scale)))
 
 ;---------- Main Load/Save, State-Stack ---
 
@@ -27,11 +62,28 @@
 ;which specify path to future "target" state
 (define *log-continues?* #f)
 
+(define (set-*heed-start-state?*! bool)
+  (set! *heed-start-state?* bool))
+
+(define (set-*future-log-path*! path)
+  (set! *future-log-path* path))
+
 ;these do nothing when log is loaded:
 (define (created-by state-id winid username hostname) #t)
 (define (visit-state when state-id) #t)
 (define (visit-start when state-id winid username hostname) #t)
 (define (change-view when state-id . args) #t)
+
+; the following hooks may be overridden in showlogs.ss, logbead.ss, etc:
+(define (set-current-state-id new)
+  (set! *current-state-id* new))
+
+(define (enter-midstate new)
+  (set-current-state-id new))
+(define (enter-firststate new)
+  (set-current-state-id new))
+(define (enter-laststate new)
+  (set-current-state-id new))
 
 (define (make-undo/redo-frame state-id do-msg undo-msg) ;may be overridden
   (list state-id do-msg undo-msg))
@@ -85,4 +137,3 @@
 (define (timestamp->datestring id)
   (date->string (timestamp->date id) #t))
 ;-------------------------------------------
-

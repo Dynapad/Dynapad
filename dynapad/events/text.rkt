@@ -4,7 +4,8 @@
          dynapad/base
          dynapad/misc/misc
          dynapad/layout/bbox
-         dynapad/history/undo
+         dynapad/events/mode
+         dynapad/events/draw
          (only-in dynapad/libdynapad
                   sch_gettext
                   sch_settext
@@ -156,7 +157,7 @@
 (define (edit-text-at-xy argPAD obj x y)
   ; assumes obj is text%
   (changemode argPAD "EditText")
-  (set! Draw-object obj)
+  (set-Draw-object! obj)
   (send obj focus)
   (text-move-point-to-xy obj x y))
 
@@ -172,7 +173,7 @@
                  (is-a? target text%))
       ; make new text:
       (set! target (make-object text% eventPAD "" pos)))
-    ;   (set! Draw-object target))
+    ;   (set-Draw-object! target))
     (edit-text-at-xy eventPAD target x y)))
 
 (define (bindTextMode argPAD)

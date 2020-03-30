@@ -13,6 +13,7 @@
          export-container-generic-name
          export-container-custom-name
          construct-unique-filename-seed
+         insert-filenamebase-suffix
          )
 
 (define break-on-last-dot-regexp (regexp "(.*)([.][a-zA-Z]+)"))

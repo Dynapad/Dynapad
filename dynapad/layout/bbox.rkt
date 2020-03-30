@@ -10,26 +10,7 @@
          dynapad/utils/lerp
          )
 
-(provide bbwidth
-         bbheight
-         b0
-         b1
-         b2
-         b3
-         bbenclosed
-         bbenclosedoron
-         bbcenter
-         bbwiden
-         bbstretch
-         bxc
-         byc
-         bb-crossing
-         bb-crossing-fract
-         bb-diag
-         bbs
-         format-geometry-str
-         bbintersection
-         )
+(provide (all-defined-out))
 
 ; many of these functions should be pushed down into a C implementation
 
@@ -409,11 +390,14 @@
 ;  |  ^      |         | ^
 ;  L__^__    L_____    L_^__
 
-#; ; this doesn't seem to be used anywhere and obj->geometry-list is not defined anywhere
+; used in image-composite.rkt
+; I think obj->geometry-list was repaced by bb-geometry
+; and the bits here didn't get replaced
+; the advantage of the racket module system are pretty clear here
 (define bb-geometry
   (case-lambda
-    (            (ref-bb tgt)  (obj->geometry-list 'up     1 ref-bb tgt))
-    (      (scale ref-bb tgt)  (obj->geometry-list 'up scale ref-bb tgt))
+    (            (ref-bb tgt)  (bb-geometry 'up     1 ref-bb tgt))
+    (      (scale ref-bb tgt)  (bb-geometry 'up scale ref-bb tgt))
     ((y-dir scale ref-bb tgt)
      (let* ((tgt-bb (if (list? tgt)
                         tgt
@@ -455,8 +439,8 @@
     ((geom sffx)
      (format "~a~a" (apply format-geometry-str geom) sffx))))
 ;   ((arg0 arg1 . more)
-;    (obj->geometry-string
-;     (apply obj->geometry-list arg0 arg1 more)))))
+;    (bb-geometry->string
+;     (apply bb-geometry arg0 arg1 more)))))
 
 
 ;; why the heck were these in edges !??!

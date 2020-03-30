@@ -7,6 +7,8 @@
          dynapad/utils/actor
          )
 
+(provide spatial-treenode%)
+
 ; tree layout algorithm stolen from:
 ; http://archive.ncsa.uiuc.edu/SDG/IT94/Proceedings/Searching/doemel/subsection3_2_3.html
 

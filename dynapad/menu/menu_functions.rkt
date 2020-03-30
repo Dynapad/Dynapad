@@ -476,3 +476,57 @@
           (send currentPAD defaultpen result)
           result)
         (send currentPAD defaultpen))))
+
+;; pdf menu functions from composite
+
+(define make-metadata-menu-for-pdf
+  (case-lambda
+    ((obj) (make-metadata-menu-for-pdf (new-popup "Document Details")))
+    ((obj menu)
+     (date-display-format (pad-date-format))
+     (make-submenu-DateFormat menu obj)
+     (add-menu-item menu (format "File: ~a" (send obj url)) void #f)
+     (add-menu-item menu (format "Created: ~a"
+                                 (let* ((pair (get-pdf-date obj))
+                                        (date (pair->date pair)))
+                                   (if date
+                                       (date->string date (show-metadata-time?))
+                                       "(unknown)"))) void #f)
+     (add-menu-item menu (format "Acquired: ~a"
+                                 (let* ((pair (get-pdf-filedate obj))
+                                        (date (pair->date pair)))
+                                   (if date
+                                       (date->string date (show-metadata-time?))
+                                       "(unknown)"))) void #f)
+     (add-menu-item menu "Author" void #f)
+     (add-menu-item menu "Title" void #f)
+     menu)))
+
+(define (make-menu-for-pdf obj)
+  (let ((menu (new-popup "Document Details"))
+        (pdf  (ensure-pdf obj))) ;obj itself or pdf containing it
+    ;    (when (send obj findable)
+    (send pdf select)
+    (make-submenu-Edit menu pdf)
+    ;(make-submenu-Arrange menu obj) ;dubious...
+    (unless (eq? obj pdf)
+      (add-menu-item menu "Raise" (lambda () (send obj raise)))
+      (add-menu-item menu "Lower" (lambda () (send obj lower))))
+    (add-checkable-menu-item menu "Lock Arrangement"
+                             (lambda (i) (if (send pdf expanded?)
+                                             (send pdf condense)
+                                             (send pdf expand)))
+                             (not (send pdf expanded?)))
+    ;      (add-menu-item menu "Rearrange..."
+    ;             (lambda () (send obj expand))
+    ;             (not (send obj expanded?)))
+    ;      (add-menu-item menu "Flatten..."
+    ;             (lambda () (send obj condense))
+    ;             (send obj expanded?)))
+    ;)
+    (add-menu-item menu "View Document..." (lambda () (send pdf view-document)))
+    (make-submenu-Select-Highlighted menu pdf)
+    (add-menu-separator menu) ;------------------------------
+    (make-metadata-menu-for-pdf pdf menu)
+    menu))
+

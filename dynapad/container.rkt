@@ -1,9 +1,12 @@
 #lang racket/base
 
 (require racket/class
+         dynapad/base
          dynapad/misc/misc
+         dynapad/misc/filenames
          dynapad/utils/formation
-         dynapad/events/text
+         dynapad/layout/bbox
+         ;dynapad/events/text
          )
 
 (define container-form%

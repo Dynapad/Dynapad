@@ -19,7 +19,17 @@
                   sch_truncatefile)
          )
 
-(provide current-logtree)
+(provide current-logtree
+         current-logbranch
+         *current-logtree*
+         set-*current-logtree*!
+         logtree%
+         logbranch%
+         ensure-current-logtree
+         logpath->logdir+logfile
+         logfile->treename
+         logfile->logid
+         )
 
 ;(dynaload "actor.ss")
 ;(dynaload "tools-lists.ss") ; need (first-valid...)
@@ -308,7 +318,12 @@
   (make-object logtree% dynapad logbranch% dir name))
 
 (define *current-logtree* #f)
+
 (define (current-logtree) *current-logtree*)
+
+(define (set-*current-logtree*! lt)
+  (set! *current-logtree* lt))
+
 (define ensure-current-logtree
   (case-lambda
     ((dir name)

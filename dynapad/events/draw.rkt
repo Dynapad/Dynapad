@@ -1,4 +1,12 @@
-(dynaload "menu-draw.ss")
+#lang racket/base
+
+(require (only-in racket/class send)
+         dynapad/undo-state
+         dynapad/events/mode
+         )
+
+(provide set-Draw-object!)
+;(dynaload "menu-draw.ss")
 ;======= Draw Rect, Oval, Line, and Polygon from Menubar ========
 
 (define Draw-mode #f)
@@ -6,6 +14,9 @@
 (define Draw-object #f)
 (define Draw-preview #f)
 (define Draw-multiple #f)
+
+(define (set-Draw-object! obj)
+  (set! Draw-object obj))
 
 (define (resetDrawPreview)
   (when Draw-preview

@@ -12,12 +12,69 @@
 
 (provide pdf-portrait%)
 
+
+(define *max-pdf-images* 8)
+(define *max-pdf-images-shown* 1)
+
 (define *pdf-aftermake-callbacks* null) ;list of (lambda (img)...)
 (define pdf-aftermake-callbacks
   (callback-accessor-functions *pdf-aftermake-callbacks*))
 
+(define *pdf-subimage-base* "image")
+(define *pdf-subimage-rexp* (regexp (format "^(~a.*)" *pdf-subimage-base*)))
+
 (define (blank-baseimage-file)
   (build-path->string *dynapad-directory* "pad/bitmaps/blank.jpg"))
+
+(define (end-of-path path)
+  (let-values (((path end result) (split-path->string path)))
+    end))
+
+(define (imagefile-aspect-ratio file)
+  (let* ((w+h (im/identify file))
+         (w (car w+h))
+         (h (cadr w+h))
+         (aspect (if (zero? h)
+                     0
+                     (/ w h))))
+    aspect))
+
+(define (reasonable-aspect? file)
+  (let ((aspect (imagefile-aspect-ratio file)))
+    (and (< aspect 5)
+         (> aspect .2))))
+
+(define (gather-pdf-subimages dir)
+  (and (directory-exists? dir)
+       (filter (lambda (filename) (regexp-match *pdf-subimage-rexp* filename))
+               (map
+                path->string
+                (filter-and-sort-directory dir file-size >
+                                           sch_imagep
+                                           (lambda (f) (>= (file-size f) 5000)) ;file must be >5k
+                                           reasonable-aspect?
+                                           )))
+       ;(sort-image-files-by-descending-size dir)))
+       ))
+
+(define (ensure-pdf obj)
+  (cond ((is-a? obj pdf-portrait%) obj)
+        ((is-a? obj resizable-image%) (send (get-container obj) getgroup))
+        (else #f)))
+
+
+(define (save-pdf-config pdf) ;pdf is a pdf-portrait
+  (let ((dir (send pdf dir)))
+    (and (directory-exists? dir)
+         (let* ((path (build-path->string dir "config.ss"))
+                (file (open-output-file path #:mode 'text #:exists 'truncate))
+                (cmd `(ic (make-object pdf-portrait% dynapad
+                                       (relpath ,(build-path->string "../"
+                                                                     (file-name-from-path (send pdf url)))))
+                          (subimages (list ,@(map (lambda (lst) (cons 'list lst))
+                                                  (send pdf subimages)))))))
+           (write cmd file)
+           (close-output-port file)))))
 
 (define pdf-portrait%
   (class base-formation%

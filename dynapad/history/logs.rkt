@@ -98,31 +98,29 @@
 ;  By default, <treename> is the name under which the tree is first saved
 ;======================================================
 
-(require racket/string
+(require (only-in racket/class send)
+         racket/string
+         compatibility/defmacro
          mzlib/process
+         dynapad/import
+         dynapad/misc/misc
          dynapad/misc/progress
          ;dynapad/history/undo ; cycle
+         dynapad/undo-state
          dynapad/history/logbranch
-         dynapad/history/showlogs
+         ;dynapad/history/showlogs
          dynapad/history/logbead
          dynapad/history/log-state
          collects/misc/pathhack
+         (for-syntax racket/base)
+         )
+
+(provide #; ;didn't work :/
+         (all-from-out undo-state)
          )
 
 (announce-module-loading "logging...")
 ;Utilities for reading/writing workspace logs
-
-; the following hooks may be overridden in showlogs.ss, logbead.ss, etc:
-(define (set-current-state-id new)
-  (set! *current-state-id* new))
-
-(define (enter-midstate new)
-  (set-current-state-id new))
-(define (enter-firststate new)
-  (set-current-state-id new))
-(define (enter-laststate new)
-  (set-current-state-id new))
-
 
 ;(dynaload "logbranch.ss")
 (update-progress .6)
@@ -173,12 +171,12 @@
               ensure-current-branch logid) ; redundant arg: state-id)
         (send (current-logtree) reset-maxid)
         (when *heed-start-state?* ;may be already in (or beyond) state, no need to build
-          (set! *future-log-path* null)
+          (set-*future-log-path*! null)
           (enter-firststate state-id)
           (send (current-logbranch)
                 log-visitstart-entry (make-timestamp-ID) state-id)
           (eval build-expr))   ;build starting state
-        (set! *heed-start-state?* #t))) ;activate in future
+        (set-*heed-start-state?*! #t))) ;activate in future
   )
 
 ;(define (restore-log-branch . args)
@@ -239,7 +237,7 @@
     ;replace all object references with '(objid <id>)
     (set! do-expr (export-expr do-expr))
     (set! undo-expr (export-expr undo-expr))
-    (push! (make-undo/redo-frame state-id do-expr undo-expr) *undo-stack*)
+    (push-*undo-stack*! (make-undo/redo-frame state-id do-expr undo-expr))
     (send (current-logbranch)
           log-changestate-entry state-id do-expr undo-expr);write to log
     (enter-laststate state-id)
@@ -275,17 +273,17 @@
              ; ...so fork new branch
              (let ((newbranch
                     (send (current-logtree) new-branch *current-state-id* build-expr)))
-               (set! *future-log-path* null)
+               (set-*future-log-path*! null)
                (send (current-logtree) activate-branch newbranch))))
          ;either way, add new frame
          (create-frame do-expr undo-expr)
-         (set! *undo-ops* null)
-         (set! *redo-ops* null)
+         (set-*undo-ops*! null)
+         (set-*redo-ops*! null)
          )
        ))
     ((do-expr undo-expr)
-     (push! do-expr *redo-ops*)
-     (push! undo-expr *undo-ops*)
+     (push-*redo-ops*! do-expr)
+     (push-*undo-ops*! undo-expr)
      (push-ops-no-exec))
     ))
 
@@ -311,7 +309,7 @@
     (send (current-logtree) activate-branch nextbranch)
     ;    (switch-logs (current-logbranch) nextbranch)
     ;    (send *current-logbranch* close); just to be safe
-    (set! *heed-start-state?* #f) ;skips start-state entry when loading
+    (set-*heed-start-state?*! #f) ;skips start-state entry when loading
     (restore-path-no-delete nextpath)    ; load/exec the log; changes *undo-stack*
     (forward-frame))) ;exec first redo
 
@@ -339,7 +337,7 @@
           ;      (switch-logs (current-logbranch) prevbranch)
           ;(display (format "loading prev log ~a...~%" prevpath))
           (send (current-logtree) activate-branch prevbranch)
-          (set! *heed-start-state?* #f)
+          (set-*heed-start-state?*! #f)
           (restore-path-no-delete prevpath)    ; load/exec the log; changes *undo-stack*
           ;     (display (format "past-stack= ~a~%" *undo-stack*))
           (backward-frame)) ;invoke new last frame of new *undo-stack*

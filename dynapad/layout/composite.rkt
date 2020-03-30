@@ -3,24 +3,21 @@
 ;(require (lib "process.ss")) ; this was mzlib/process, maybe racket/system has what we need?
 (require racket/class
          racket/system
-         dynapad/pdf
+         ;dynapad/pdf
          dynapad/image
          dynapad/misc/progress
          dynapad/utils/handle
          dynapad/image-utils/metadata
          collects/misc/pathhack
-         collects/imagemagick/imagemagick
+         ;collects/imagemagick/imagemagick
          collects/pdfrip/pdfrip
-         collects/pdfrip/misc
-         collects/thumbify/thumbify
+         ;collects/pdfrip/misc
+         ;collects/thumbify/thumbify
          )
 
-(provide image-composite%)
+(provide build-composite-cmd)
 
 (announce-module-loading "PDF features...")
-
-(define *max-pdf-images* 8)
-(define *max-pdf-images-shown* 1)
 
 
 
@@ -34,19 +31,6 @@
                      (string->number (caddr match))))))
 |#
 
-
-(define (build-composite-cmd bbox scale img old-file new-file)
-  ; constructs system command to composite two images together:
-  ;  superimposes img atop old-file, assuming old-file fills bbox
-  ;  saves merged image as new-file
-  ; (list "-geometry" "<NXN>" "<filename>" ...)
-  (list "-geometry"
-        (bb-geometry->string
-         (bb-geometry 'down scale bbox img) "!")
-        ;potentially insert borders/etc here
-        (send img hirespath)
-        old-file
-        new-file))
 
 (define (limit-drag-to-bbox obj bbox-fn union?)
   ;prevents obj from being dragged outside of bbox
@@ -163,39 +147,6 @@
 
 ; no need for above; use build-in split path
 ; (or: replace with (file-name-from-path...)?)
-(define (end-of-path path)
-  (let-values (((path end result) (split-path->string path)))
-    end))
-
-(define *pdf-subimage-base* "image")
-(define *pdf-subimage-rexp* (regexp (format "^(~a.*)" *pdf-subimage-base*)))
-
-(define (imagefile-aspect-ratio file)
-  (let* ((w+h (im/identify file))
-         (w (car w+h))
-         (h (cadr w+h))
-         (aspect (if (zero? h)
-                     0
-                     (/ w h))))
-    aspect))
-
-(define (reasonable-aspect? file)
-  (let ((aspect (imagefile-aspect-ratio file)))
-    (and (< aspect 5)
-         (> aspect .2))))
-
-(define (gather-pdf-subimages dir)
-  (and (directory-exists? dir)
-       (filter (lambda (filename) (regexp-match *pdf-subimage-rexp* filename))
-               (map
-                path->string
-                (filter-and-sort-directory dir file-size >
-                                           sch_imagep
-                                           (lambda (f) (>= (file-size f) 5000)) ;file must be >5k
-                                           reasonable-aspect?
-                                           )))
-       ;(sort-image-files-by-descending-size dir)))
-       ))
 
 (define 1cell-layout (list '(0.2 #f 0.8 0.75))) ;centered below 3/4 hline
 (define 2cell-layout (list '(0.3 0.5 0.7 #f) '(0.3 #f 0.7 0.45))) ;N,S
@@ -210,77 +161,5 @@
 ;(define 3cell-surplus (cons '(-0.5 1 #f 0) 2cell-surplus))
 (define 3cell-surplus (cons '(1 -0.5 #f 0) 2cell-surplus))
 (define 4cell-surplus (cons '(#f -0.5 0 0) 3cell-surplus))
-
-(define *subimg-grab* #f)
-
-(define (ensure-pdf obj)
-  (cond ((is-a? obj pdf-portrait%) obj)
-        ((is-a? obj resizable-image%) (send (get-container obj) getgroup))
-        (else #f)))
-
-
-(define (save-pdf-config pdf) ;pdf is a pdf-portrait
-  (let ((dir (send pdf dir)))
-    (and (directory-exists? dir)
-         (let* ((path (build-path->string dir "config.ss"))
-                (file (open-output-file path #:mode 'text #:exists 'truncate))
-                (cmd `(ic (make-object pdf-portrait% dynapad
-                                       (relpath ,(build-path->string "../"
-                                                                     (file-name-from-path (send pdf url)))))
-                          (subimages (list ,@(map (lambda (lst) (cons 'list lst))
-                                                  (send pdf subimages)))))))
-           (write cmd file)
-           (close-output-port file)))))
-
-(define make-metadata-menu-for-pdf
-  (case-lambda
-    ((obj) (make-metadata-menu-for-pdf (new-popup "Document Details")))
-    ((obj menu)
-     (date-display-format (pad-date-format))
-     (make-submenu-DateFormat menu obj)
-     (add-menu-item menu (format "File: ~a" (send obj url)) void #f)
-     (add-menu-item menu (format "Created: ~a"
-                                 (let* ((pair (get-pdf-date obj))
-                                        (date (pair->date pair)))
-                                   (if date
-                                       (date->string date (show-metadata-time?))
-                                       "(unknown)"))) void #f)
-     (add-menu-item menu (format "Acquired: ~a"
-                                 (let* ((pair (get-pdf-filedate obj))
-                                        (date (pair->date pair)))
-                                   (if date
-                                       (date->string date (show-metadata-time?))
-                                       "(unknown)"))) void #f)
-     (add-menu-item menu "Author" void #f)
-     (add-menu-item menu "Title" void #f)
-     menu)))
-
-(define (make-menu-for-pdf obj)
-  (let ((menu (new-popup "Document Details"))
-        (pdf  (ensure-pdf obj))) ;obj itself or pdf containing it
-    ;    (when (send obj findable)
-    (send pdf select)
-    (make-submenu-Edit menu pdf)
-    ;(make-submenu-Arrange menu obj) ;dubious...
-    (unless (eq? obj pdf)
-      (add-menu-item menu "Raise" (lambda () (send obj raise)))
-      (add-menu-item menu "Lower" (lambda () (send obj lower))))
-    (add-checkable-menu-item menu "Lock Arrangement"
-                             (lambda (i) (if (send pdf expanded?)
-                                             (send pdf condense)
-                                             (send pdf expand)))
-                             (not (send pdf expanded?)))
-    ;      (add-menu-item menu "Rearrange..."
-    ;             (lambda () (send obj expand))
-    ;             (not (send obj expanded?)))
-    ;      (add-menu-item menu "Flatten..."
-    ;             (lambda () (send obj condense))
-    ;             (send obj expanded?)))
-    ;)
-    (add-menu-item menu "View Document..." (lambda () (send pdf view-document)))
-    (make-submenu-Select-Highlighted menu pdf)
-    (add-menu-separator menu) ;------------------------------
-    (make-metadata-menu-for-pdf pdf menu)
-    menu))
 
 (update-progress 1)

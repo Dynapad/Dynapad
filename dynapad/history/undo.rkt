@@ -13,6 +13,7 @@
          dynapad/events/mode ; now stripped down
 
          dynapad/events/pan
+         dynapad/events/draw
          ;dynapad/events/drag ; had to move it all here
          ;dynapad/events/image-events ; woo cycles!
          dynapad/events/reshape
@@ -25,9 +26,9 @@
          dynapad/history/logs
          )
 
-(provide saveable-objects
-         delete-all
-         undoable-delete-all
+(provide undoable-delete-all
+         restore-set-core
+         restore-set
          )
 
 ;; cyclical dependencies with mode, select, and event-shared ffs
@@ -307,27 +308,6 @@
         (new (send argPAD selected)))
     (not (equal? old new))))
 
-; For one-step selection changes:
-(define (Set-Select--undoable argPAD set)
-  (when (not (list? set)) (set! set (list set)))
-  (Start-Changing-Select--undoable argPAD)
-  (send argPAD selected set)
-  (Done-Changing-Select--undoable argPAD set))
-
-; For two-step (i.e. button down-->up) changes:
-(define (Start-Changing-Select--undoable argPAD . oldset)
-  (let ((old (if (null? oldset)
-                 (send argPAD selected)
-                 (car oldset))))
-    (send argPAD setvar 'old-selection old)
-    (store-selection-for-undo old)))
-
-(define (Done-Changing-Select--undoable argPAD . newset)
-  (let ((new (if (null? newset)
-                 (send argPAD selected)
-                 (car newset))))
-    (store-selection-for-redo new)))
-
 (define Update-Select-Marquee-With-Motion
   (lambda (eventPAD e)
     (set-currentPAD! eventPAD)
@@ -358,118 +338,11 @@
 ;; end select.rkt
 ;; mode.rkt
 ;======= Change Modifier ========
-(define _gui-mode-cursor '())
-
-(define gui-mode-cursor
-  (case-lambda
-    ((mode)
-     (let ((cursor (massoc mode _gui-mode-cursor)))
-       (if cursor (cadr cursor) #f)))
-    ((mode cursor)
-     (set! _gui-mode-cursor
-           (append _gui-mode-cursor (list (list mode cursor)))))))
-
-(define (gui-add-mode-cursor mode cursor)
-  (set! gui-mode-cursor (append gui-mode-cursor (list (list mode cursor)))))
-
-; Cursors:
-; 0,13 = arrow
-;    1 = crosshair
-;    2 = text I-bar
-;    3 = hourglass
-;  4,7 = NE/SW dual arrow
-;  5,6 = NW/SE dual arrow
-;  8,9 = N/S dual arrow
-;10,11 = E/W dual arrow
-;   12 = hand
-;  14+ = mystery spiral
-
-(define (createModes arg_PAD)
-  (mfor-each (lambda (mode) (send arg_PAD modifier 'create mode))
-             (mmap mcar gui-mode-malist))
-  )
-
-(define changemode
-  (case-lambda
-    ((argPAD mode) (changemode argPAD mode #f))
-    ((argPAD mode cursor)
-     (changemode--no-gui argPAD mode)
-     (gui-update-mode argPAD cursor))))
-
-(define (changemode--no-gui argPAD mode)
-  (let ((curmode (send argPAD modifier 'get)))
-    (send argPAD focus)
-
-    ;    (cond
-    ;      ((equal? curmode "DrawText")
-    ;;          (equal? curmode "EditText")
-    ;        (let ((obj (send argPAD getfocus)))
-    ;          (if obj (send obj unfocus)))))
-
-    (when (and (string=? curmode "Select")
-               (or (string=? mode "Run")
-                   (string=? mode "Pan")
-                   (string=? mode "Zoom")
-                   (string=? mode "BBox")
-                   (string=? mode "Draw")
-                   (string=? mode "DrawAdd")
-                   (string=? mode "DrawText")
-                   (string=? mode "EditText")
-                   (string=? mode "")))
-      (Set-Select--undoable argPAD null))
-
-    ;    (if (and (string=? mode "Draw") (pair? (send argPAD selected)))
-    ;        (Set-Select--undoable argPAD null))
-
-    (send argPAD modifier 'set mode))
-  )
-
-(define (default-mode argPAD)
-  (send argPAD getvar 'default-mode))
-
-(define (push-event-mode argPAD mode)
-  (unless (member mode (send argPAD eventModeStack)) ;dont push same mode twice
-    (remote-push! mode argPAD eventModeStack))
-  (changemode argPAD mode))
-
-(define (pop-event-mode argPAD . mode)
-  ;if mode included, will remove mode even if not on top
-  (let* ((oldstack (send argPAD eventModeStack))
-         (newstack (if (null? mode)
-                       (cdr oldstack)
-                       (remove (car mode) oldstack)))
-         (newmode (if (null? newstack)
-                      (default-mode argPAD)
-                      (car newstack))))
-    (send argPAD eventModeStack newstack)
-    (changemode argPAD newmode)))
-
-(define (clear-delay-cursor argPAD)
-  (send argPAD setvar 'delay-cursor? #f)
-  (gui-update-mode argPAD))
 ;; end mode.rkt
 
 ;; save and delete
 
 ; New:
-(define *abstract-objects-callbacks* null)
-(define abstract-objects-callbacks (callback-accessor-functions *abstract-objects-callbacks*))
-
-
-(define saveable-objects
-  (case-lambda
-    ((argPAD)
-     (apply append (send argPAD objects)
-            (map (lambda (cb) ((car cb)))
-                 *abstract-objects-callbacks*)))
-    (() (saveable-objects currentPAD))))
-
-
-(define delete-all
-  (case-lambda
-    ((argPAD) (delete-all argPAD (saveable-objects argPAD)))
-    ((argPAD objs) (foreach objs (lambda (o) (send o delete-all))))))
-
 (define undoable-delete-all
   (case-lambda
     ((argPAD) (undoable-delete-all argPAD (saveable-objects argPAD)))
@@ -492,25 +365,6 @@
                              (fprintf port  "Error (~a) in ~a~%" (exn-message exn) expr)))
                   #f)])
     (eval expr)))
-
-(define-syntax use-load-context
-  (syntax-rules ()
-    ((_ type do-sth ...)
-     (begin
-       (set-load-context type)
-       (let ((result (begin do-sth ...)))
-         (revert-load-context)
-         result)))))
-
-(define (restore-path path)
-  (use-load-context 'restore ;needed here to set (importing?) context for load-set
-                    ; also nested in restore-set
-                    ;    (show-possible-delay currentPAD
-                    (delete-all currentPAD) ;DO NOT move these inside restore-set-core
-                    (clear-undo/redo)
-                    ;       )
-                    (load path)) ; file should call load-set --> restore-set
-  path)
 
 (define-syntax restore-set-core
   (syntax-rules ()
@@ -646,51 +500,6 @@
 |#
 ;=============
 
-(define (delete-expr-for-obj obj . deep?)
-  (if (null? deep?)
-      `(send ,(obj->IDexpr obj) delete)
-      `(send ,(obj->IDexpr obj) delete-all)))
-
-(define (redo-undo-pair-for-obj obj . deep?)
-  (if (null? deep?)
-      (list (send obj write) (delete-expr-for-obj obj))
-      (list (cons 'begin (send obj write-all))
-            (delete-expr-for-obj obj #t))))
-
-(define (undoify-fresh-obj obj)
-  ; Expects newly-created obj;
-  ; registers it and pushes rebuild/delete script onto redo/undo stack
-  (apply push-ops-no-exec (redo-undo-pair-for-obj obj))
-  obj)
-
-(define (undoify-fresh-objs objs)
-  ;Expects a list of newly-created objs;
-  ; registers them and pushes rebuild/delete scripts onto the redo/undo stack
-  ; Returns original object list
-  (let* ((do-undo-pairs
-          (map redo-undo-pair-for-obj objs))
-         (redos (cons 'begin (map car do-undo-pairs)))
-         (undos (cons 'begin (map cadr do-undo-pairs))))
-    (push-ops-no-exec redos undos)
-    objs))
-
-(define (undoable-delete-obj obj . deep?)
-  (apply push-ops-and-exec (reverse (apply redo-undo-pair-for-obj obj deep?))))
-
-(define (undoable-delete-objs objs . deep?)
-  (let* ((do-undo-pairs
-          (map (lambda (o) (apply redo-undo-pair-for-obj o deep?)) objs))
-         (redos (cons 'begin (map cadr do-undo-pairs)))
-         (undos (cons 'begin
-                      (append
-                       (map car do-undo-pairs)
-                       (list `(send dynapad selected
-                                    ,(cons 'list (map obj->IDexpr objs))))))))
-    ;    (set! redos (append redos (list
-    ;                   `(send dynapad selected
-    ;                      ,(cons 'list (map obj->IDexpr objs))))))
-    (push-ops-and-exec redos undos)))
-
 ;-----------------------------------------------------------------
 ; Example 1 - slide command
 ;
@@ -796,92 +605,6 @@
 ; The above functions are incorporated into the binding definitions for
 ; "<Select-ButtonPress-1>" and "<Drag-ButtonRelease-1>"
 ; (see events.ss and event-binders.ss)
-
-;======= Dan's new generalized versions:
-; Accumulate many incremental changes in same undo/redo-op
-;  by calling multiple (store-attr...)
-;  and finishing with a (push-ops-no-exec)
-
-(define (store-attribute-of-specified-object-for-undo argPAD attr obj)
-  (let ((expr (expr-to-set-obj-attr obj attr)))
-    (push! expr *undo-ops*)))
-
-(define (store-attribute-of-specified-object-for-redo argPAD attr obj)
-  (let ((expr (expr-to-set-obj-attr obj attr)))
-    (push! expr *redo-ops*)))
-
-(define (store-attribute-of-selected-objects-for-undo argPAD attr)
-  (let ((newops (map (lambda (o) (expr-to-set-obj-attr o attr))
-                     (send argPAD selected))))
-    (set! *undo-ops* (append newops *undo-ops*))))
-
-(define (store-attribute-of-selected-objects-for-redo argPAD attr)
-  (let ((newops (map (lambda (o) (expr-to-set-obj-attr o attr))
-                     (send argPAD selected))))
-    (set! *redo-ops* (append newops *redo-ops*))))
-
-(define (store-selection-for-undo objs)
-  (push! `(send dynapad selected
-                ,(cons 'list (map obj->IDexpr objs)))
-         *undo-ops*)
-  ;(say "undo-ops:" *undo-ops*)
-  )
-(define (store-selection-for-redo objs)
-  (push! `(send dynapad selected
-                ,(cons 'list (map obj->IDexpr objs)))
-         *redo-ops*)
-  ;(say "redo-ops:" *redo-ops*)
-  )
-
-(define (fake-event x y)
-  (make-event x y #f #f #f #f #f))
-
-(define (loggable? obj)
-  #t) ;for now, log all objects
-;  (send obj loggable?))
-
-(define (undrag-batch-expr eventPAD evnt objs)
-  ; alternative for undoing moves
-  (set! objs (filter loggable? objs))
-  (if (null? objs)
-      #f
-      `(begin ,@(map (lambda (obj)
-                       `(send ,(obj->IDexpr obj) position
-                              ,(cons 'list (send obj position)))) objs))))
-
-(define (drag-batch-expr eventPAD evnt objs)
-  ;LATER: figure out how to externalize eventPAD instead of 'dynapad
-  (set! objs (filter loggable? objs))
-  (if (null? objs)
-      #f
-      `(drag-batch dynapad
-                   (fake-event ,(event-x evnt) ,(event-y evnt))
-                   ,(cons 'list (map obj->IDexpr objs))
-                   ,(cons 'list (map (lambda (o) (cons 'list (send o position)))
-                                     objs)))))
-
-(define (store-drag-batch-for-undo eventPAD evnt objs)
-  (let ((expr  (undrag-batch-expr eventPAD evnt objs)))
-    (when expr (push! expr *undo-ops*))))
-(define (store-drag-batch-for-redo eventPAD evnt objs)
-  (let ((expr  (drag-batch-expr eventPAD evnt objs)))
-    (when expr (push! expr *redo-ops*))))
-
-(define (ensure-region-claims-expr reg objs)
-  `(ic (get-rgn ,(obj->IDexpr (send reg object)))
-       (receive (list ,@(map obj->IDexpr objs)))
-       (finish)))
-
-(define (ensure-region-claims-after-undo reg . objs)
-  (push! (ensure-region-claims-expr reg objs) *undo-ops*))
-
-(define (ensure-region-unclaims-expr reg objs)
-  `(ic (get-rgn ,(obj->IDexpr (send reg object)))
-       (remove (list ,@(map obj->IDexpr objs)))
-       (finish)))
-
-(define (ensure-region-unclaims-after-undo reg . objs)
-  (push! (ensure-region-unclaims-expr reg objs) *undo-ops*))
 
 ;====== Traps for non-logging =======
 (define (load-log . args)

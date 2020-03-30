@@ -1,52 +1,27 @@
 #lang racket/base
 
 (require racket/class
-         (only-in racket/gui/base
-                  horizontal-pane%
-                  check-box%)
          dynapad/base
+         dynapad/spd
          dynapad/pad-state
+         dynapad/undo-state
+         dynapad/misc/misc
+         dynapad/layout/bbox
          dynapad/layout/trees
+         dynapad/history/log-state
          dynapad/history/logbranch
          dynapad/misc/user-preferences
-         dynapad/menu/menu_popup
+         dynapad/utils/colors
+         dynapad/utils/lerp
+         )
+
+(provide logbranch-line%
+         visible-logtree%
          )
 
 (define (make-logtree dir name) ;override defn in logbranch.ss
   (make-object visible-logtree% dynapad logbranch-line% dir name))
 
-(define (pixels->space px)
-  (let ((scale (caddr (send dynapad view))))
-    (/ px scale)))
-
-; ---------GUI controls------------
-(define *logtree-layer* (make-object layer% dynapad "logtree"))
-(define (show-history-tree arg)
-  (when arg
-    (send (current-logtree) refresh-layout))
-  (send *logtree-layer* visible arg)
-  (and showhistorybox (send showhistorybox set-value arg)))
-(define (toggle-history-tree)
-  (let ((shown? (send *logtree-layer* visible)))
-    (show-history-tree (not shown?))))
-(define showhistorypane (and *use-menubar*
-                             (make-object horizontal-pane% *menubar*))) ;may be used by showlogs.ss
-
-(define showhistorybox
-  (and showhistorypane
-       (make-object check-box% "Show history tree" showhistorypane
-                    (lambda (button evnt) (toggle-history-tree)))))
-(show-history-tree #f)
-
-;add to popup menu
-(append-mainmenu-constructor
- (lambda (menu obj)
-   (add-menu-separator menu)
-   (add-checkable-menu-item menu "Show history tree"
-                            (lambda (i) (toggle-history-tree))
-                            (send *logtree-layer* visible))))
-
-;=================================================================
 (define log-treenode%
   (class spatial-treenode%
     (init-field _tree)
@@ -108,7 +83,7 @@
 
     (define/override (delete)
       (when (eq? *current-logtree* this)
-        (set! *current-logtree* #f))
+        (set-*current-logtree*! #f))
       (super delete))
 
     (define/public (refresh-color-scheme)
@@ -287,7 +262,7 @@
              (curr-branch (send _tree current-branch))
              (found (memq curr-branch branch-path)))
         (when found
-          (set! *future-log-path* (cdr found))
+          (set-*future-log-path*! (cdr found))
           (send _tree refresh-active-path)
           (send curr-branch hilight))))
 

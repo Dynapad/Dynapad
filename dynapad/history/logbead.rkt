@@ -1,3 +1,16 @@
+#lang racket/base
+
+(require racket/class
+         dynapad/base
+         dynapad/undo-state
+         dynapad/pad-state
+         dynapad/misc/misc
+         dynapad/utils/lerp
+         dynapad/history/logbranch
+         dynapad/history/log-state
+         dynapad/history/showlogs
+         )
+
 (define *current-state-marker* #f)
 ;red dot showing current state on log tree
 
