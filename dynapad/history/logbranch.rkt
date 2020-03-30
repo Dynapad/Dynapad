@@ -1,10 +1,25 @@
 #lang racket/base
 
-(require racket/list
+(require racket/class
+         racket/list
+         (only-in racket/function identity)
+         dynapad/base
+         dynapad/ffs
+         dynapad/pad-state
+         dynapad/misc/misc
+         dynapad/misc/filenames
+         dynapad/misc/user-preferences
          dynapad/misc/tools-lists
+         dynapad/misc/command-shortcuts
          dynapad/utils/actor
+         dynapad/history/ids
+         dynapad/history/log-state
          collects/misc/pathhack
+         (only-in dynapad/libdynapad
+                  sch_truncatefile)
          )
+
+(provide current-logtree)
 
 ;(dynaload "actor.ss")
 ;(dynaload "tools-lists.ss") ; need (first-valid...)
@@ -36,6 +51,8 @@
   (let-values (((dir file dir?) (split-path->string logpath)))
     (when dir? (error "Logpath" logpath "is a directory"))
     (list dir file)))
+
+(define *current-log-treename* "is-this-thing-ever-actually-used")
 
 (define logrange->logfile
   (case-lambda
@@ -389,7 +406,7 @@
                                     (logrange->logfile
                                      treename
                                      (lograngeparts->logrange lognum (car sfx-lst) "")))))
-             (exists-fn (lambda (name) (not (null? (ls-dir dir name)))))
+             (exists-fn (lambda (name) (not (null? (ls-dir dir name)))))  ; FIXME ls-dir not supposed to be used in here ...
              (seed (construct-unique-filename-seed construct-fn exists-fn cdr
                                                    *suffix-alphabet*)))
         (and seed (car seed))))

@@ -1,4 +1,19 @@
-(require (lib "date.ss"))
+#lang racket/base
+
+(require racket/date
+         dynapad/pad-state
+         dynapad/misc/misc
+         dynapad/misc/tools-lists
+         )
+
+(provide date->list
+         list->date
+         string->date
+         prune-date-string
+         *iso-date-format-rexp*
+         infer-complete-date
+         )
+
 ; offers:
 ; (date->string <date>)
 ; (date-display-format 'american | 'chinese | 'iso-8601 | 'rfc2822 | ...)
@@ -35,7 +50,6 @@
 (define *year-rexp* (regexp *year-pattern*))
 
 
-(dynaload "tools-lists.ss") ;need list-position-general
 (define string->month #f)
 (let ((months-rexp (regexp "(Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec)")))
   (set! string->month

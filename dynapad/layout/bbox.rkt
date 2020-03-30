@@ -26,6 +26,9 @@
          bb-crossing
          bb-crossing-fract
          bb-diag
+         bbs
+         format-geometry-str
+         bbintersection
          )
 
 ; many of these functions should be pushed down into a C implementation

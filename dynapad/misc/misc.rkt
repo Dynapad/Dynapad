@@ -392,4 +392,6 @@
 ;         (targets (filter (lambda (o) (memq o objs)) local-objs)))
 ;    targets))
 
-
+;; moved in from undo.rkt
+(define (current-error-ports) ;may be overridden to cc errors elsewhere
+  (list (current-error-port)))

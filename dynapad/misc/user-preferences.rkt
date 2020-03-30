@@ -1,4 +1,15 @@
-(require (lib "file.ss")) ;needed for make-directory*
+#lang racket/base
+
+(require (only-in racket/class send)
+         (only-in racket/file make-directory*)
+         (only-in racket/gui/base message-box)
+         collects/misc/pathhack
+         )
+
+(provide setup-dynapad-subdirectory
+         *use-menubar*
+         *home-directory*
+         )
 
 ; default user preferences
 (define *window-geometry* #f)
@@ -11,6 +22,8 @@
 (define *pad-selection-mode* 'show)
 (define *cowboy-zoom-on-objects* #t)
 (define *use-menubar* #t)
+
+(define *home-directory* null)
 
 ; load .padsetup.ss to get user preferences
 (define (load-user-preferences)

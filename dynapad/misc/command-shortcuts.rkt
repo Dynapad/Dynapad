@@ -1,4 +1,25 @@
+#lang racket/base
 
+(require (only-in racket/class
+                  send
+                  interface->method-names
+                  object-interface
+                  )
+         (only-in racket/path path-only file-name-from-path)
+         (only-in racket/system process*)
+         racket/list
+         compatibility/defmacro
+         (only-in mzlib/file build-absolute-path)
+         dynapad/pad-state
+         dynapad/misc/misc
+         collects/misc/pathhack
+         (for-syntax racket/base setup/dirs)
+         )
+
+(provide ls-dir
+         get-username
+         get-hostname
+         )  ; really (all-defined-out)
 
 ;-----------------------------------------------------------------
 ; shortcuts for command line interface
@@ -37,6 +58,7 @@
           (m2 (undot-rel-path (updir base-path) (cadr m2)))
           (else (path->complete-path rel-path base-path)))))
 ; use macro so that (this-expr...source-dir) is eval'd in local context
+#; ; this was shadowed by the definition below
 (define-macro (relpath path)
   `(undot-rel-path (this-expression-source-directory) ,path))
 ; perhaps re-implement using (simplify-path ...)?
@@ -151,7 +173,7 @@
 ;))
 
 ; TODO: this was "plthome.ss", is this a safe choice of replacement..?
-(require-for-syntax (lib "dirs.ss" "setup"))
+#; ; overwritten by the version below
 (define-syntax (this-expression-source-path stx)
   (syntax-case stx ()
     [(_)
@@ -180,6 +202,6 @@
 
 ;terser version:
 (define-syntax (this-expression-source-path stx)
-  (datum->syntax-object stx (syntax-source stx)))
+  (datum->syntax stx (syntax-source stx)))
 
 

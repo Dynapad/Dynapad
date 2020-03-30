@@ -1,6 +1,13 @@
-(dynaload "wxmenu.ss")
-(dynaload "menu_shared.ss")
-(dynaload "actor.ss")
+#lang racket/base
+
+(require racket/class
+         dynapad/utils/actor
+         dynapad/menu/menu_shared
+         dynapad/menu/wxmenu
+         )
+
+(provide append-mainmenu-constructor)
+
 
 (define (handle-popup-event e)
   (define pmenu #f)

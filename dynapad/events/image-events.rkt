@@ -6,63 +6,7 @@
          dynapad/pad-state
          dynapad/misc/misc
          dynapad/history/undo ; show-possible-delay
-         collects/thumbify/thumbify)
-
-;(require (lib "thumbify.ss" "thumbify"))
-
-(define gifjpg_rexp (regexp "(.*[/\\]|)(.*)(\\.[^\\.]*)$"))
-(define thumb_rexp (regexp "(.*[/\\]|)(.+)(\\.|-)(125|150)(\\.([gG][iI][fF]|[jJ][pP][gG]|[pP][pP][mM]|[pP][nN][gG]|[tT][iI][fF]|[bB][mM][pP]))$"))
-
-(define (image-toggle-hires-thumb img)
-  (lambda (eventPAD e) (set-currentPAD! eventPAD)
-          (if (send img hires?)
-              (send img thumb)
-              (send img hires))))
-
-#; ; this is overwritten by a later definition
-; This function is called when an image% object is created.
-; Some applications may redefine this function to change
-; the default binding of new images.
-(define (init-image-bindings img)
-  (send img bind "<Run-Shift-ButtonPress-1>"
-        (image-toggle-hires-thumb img) ))
-
-
-; List of places to look for corresponding thumbnail.
-; (findthumb) no longer supports thumbnails in same directory
-; with images.  This can be adjusted by changing the following
-; list to include ("" "-125"), for example.
-(define *thumbnail-variants*
-  '( ("thumbs/125/" "-125") ; <-- try default first
-     ("thumbs/"     "-125")
-     ("thumbs/"     "-150")
-     ("thumbs/150/" "-150")
-     ("thumbs/"     ".125")
-     ("thumbs/"     ".150")
-     ("thumbs/125/" ".125")
-     ("thumbs/150/" ".150")))
-
-(define (findthumb hires)
-  (call/cc (lambda (return)
-             (let* ((s (if (path? hires) (path->string hires) hires))
-                    (l (regexp-match gifjpg_rexp s))
-                    (path   (list-ref l 1))
-                    (base   (list-ref l 2))
-                    (suffix (list-ref l 3)))
-               (foreach *thumbnail-variants* (lambda (dir_sz)
-                                               ; try thumbnail with same suffix as hires image
-                                               (let ((thumbfile (string-append path (car dir_sz) base (cadr dir_sz) suffix)))
-                                                 (when (file-exists? thumbfile) (return thumbfile)))
-                                               ; try thumbnail with .jpg suffix
-                                               (let ((thumbfile (string-append path (car dir_sz) base (cadr dir_sz) ".jpg")))
-                                                 (when (file-exists? thumbfile) (return thumbfile))) ))
-               (return #f)))))
-
-(define (ensure-thumb hirespath)
-  (let ((thumbpath (findthumb hirespath)))
-    (unless (and thumbpath (file-exists? thumbpath))
-      (thumbify hirespath))
-    thumbpath))
+         )
 
 ;------ New Auto-hires....
 ; Need to rewrite these to accomodate compound images
@@ -71,7 +15,6 @@
   (send img bind "<Double-ButtonPress-1>" image-hires-and-center)
   (send img bind "<Shift-Double-ButtonPress-1>" image-also-hires-and-center)
   )
-
 
 (define *list_of_hirez_images* '())
 ;(define *last_view_before_image_centering* '(0 0 1))

@@ -1,10 +1,10 @@
 #lang racket/base
 
-;(require lang/plt-pretty-big)
-(require racket/gui/base)
-(require compatibility/mlist)
-(require dynapad/dynapad-c-api)
-
+(require racket/gui/base
+         compatibility/mlist
+         dynapad/base
+         dynapad/pad-state
+         dynapad/dynapad-c-api)
 
 (current-eventspace (make-eventspace))
 
@@ -14,7 +14,6 @@
 ; will announce themselves and generate "..." progress bar to stdout
 
 (define *home-directory* #f)
-(define *dynapad-directory* (current-load-relative-directory))
 
 (current-library-collection-paths
  (cons

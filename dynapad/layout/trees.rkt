@@ -1,7 +1,14 @@
+#lang racket/base
+
+(require racket/class
+         compatibility/mlist
+         dynapad/misc/misc
+         ;dynapad/misc/alist
+         dynapad/utils/actor
+         )
+
 ; tree layout algorithm stolen from:
 ; http://archive.ncsa.uiuc.edu/SDG/IT94/Proceedings/Searching/doemel/subsection3_2_3.html
-
-(dynaload "actor.ss")
 
 ; A set of treenode% actors manage the 2D layout of a tree.
 ; Each node actor may be attached to an actual dynaobject node or not,
@@ -50,7 +57,7 @@
     (define/public (insert-parent new)
       (when _parent
         (let ((my-cell-at-parent (memq this (send _parent children))))
-          (set-car! my-cell-at-parent new)))
+          (set-mcar! my-cell-at-parent new)))
       (send new depth _depth)
       (send new column _column)
       (send new parent _parent)

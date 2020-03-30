@@ -1,3 +1,16 @@
+#lang racket/base
+
+(require racket/class
+         (only-in racket/system process*)
+         compatibility/mlist
+         dynapad/base
+         dynapad/misc/misc
+         dynapad/misc/alist
+         dynapad/misc/tools-lists
+         dynapad/utils/alias
+         collects/misc/pathhack
+         )
+
 ; A handle% associates multiple dynaobjects (renderings)
 ;  with a common abstract object such that they all share
 ;  a level of metadata.

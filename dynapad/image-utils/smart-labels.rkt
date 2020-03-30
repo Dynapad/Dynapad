@@ -1,3 +1,11 @@
+#lang racket/base
+
+(require racket/date
+         dynapad/misc/misc
+         dynapad/utils/parsedate
+         dynapad/misc/tools-lists
+         )
+
 (define (list-offset lst fn)
   (cond ((null? lst) #f)
         ((fn (car lst)) 0)
@@ -41,6 +49,7 @@
 (define (diverse? changelst)
   (> (diversity changelst) 1))
 
+#; ; broken missing some-changes, also not used
 (define (sublist-slice-until-changes sublists eq-fn)
   (sublist-slice-until-fn sublists some-changes eq-fn))
 
@@ -110,6 +119,10 @@
                                                   (or-mask time-vals mymask)))
                        (cross-slice change-slices))))
             (cons shared-mask private-masks)))))
+
+;  Date labels
+
+(define (subdivide-date date) (reverse (date->list date)))
 
 (define (dates->labels datelist)
   (date-display-format 'iso-8601)

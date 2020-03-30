@@ -1,5 +1,6 @@
-;(dynaload "menu_functions.ss")
-(dynaload "import-dirs.ss")
+#lang racket/base
+
+(require dynapad/utils/import-dirs)
 
 (define (nyi msg) (lambda () (printf "~a: not yet implemented~%" msg)))
 

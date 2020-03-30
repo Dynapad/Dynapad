@@ -9,9 +9,9 @@
          dynapad/ffs ; export-objs
          dynapad/pad-state ; write-set
          dynapad/misc/misc
+         dynapad/misc/filenames
          dynapad/layout/bbox
          dynapad/utils/hilights
-         dynapad/misc/filenames
          )
 
 (provide dynaobject%

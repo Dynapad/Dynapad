@@ -8,7 +8,9 @@
          *menubar*
          (struct-out event)
          (struct-out tablet-event)
-         write-set)
+         write-set
+         *dynapad-directory*
+         )
 
 ;; needed by misc
 
@@ -38,3 +40,7 @@
          (and obj
               (send obj write-all)))
        (write-set (cdr objs)))))
+
+;; default-directory or something like that
+; FIXME this is a hack that is not remotely robust
+(define *dynapad-directory* (build-path (current-load-relative-directory) 'up))

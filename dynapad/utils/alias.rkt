@@ -1,3 +1,13 @@
+#lang racket/base
+
+(require dynapad/misc/misc)
+
+(provide *pdf-viewer-app*
+         *url-alias-alist*
+         alias-url
+         )
+
+; TODO provide a way to set this ...
 (define *pdf-viewer-app* "xpdf") ;set your own in .padsetup
 
 (define *url-alias-alist* null)

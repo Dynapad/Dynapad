@@ -267,3 +267,104 @@
 
   )
 
+;; what were you doing in formation.rkt silly?
+
+(define textblock%
+  (class base-formation%
+    (init dynaptr)
+    (init (txt-arg ""))
+    (init (xy-arg (list-head (send dynaptr view) 2)))
+    (inherit dynaclass)
+    (super-instantiate (dynaptr))
+    (dynaclass 'textblock%)
+
+    (name-part _block block)
+    (block (make-object rect% dynaptr))
+    (name-part _textpart textpart)
+    (textpart (make-object text% dynaptr))
+    (send (textpart) xy xy-arg)
+
+    (define/public text
+      (case-lambda
+        (() (send _textpart text))
+        ((newtext)
+         (send _textpart text newtext)
+         (send _block re-anchor (send _textpart anchor))
+         (send _block coords (send _textpart bbox)))))
+
+    (send this text txt-arg)
+    ))
+
+(define titled-frame-container%
+  (class frame-container%
+    (init dynaptr)
+    (inherit dynaclass)
+    (init (frame-arg #f))
+    (super-instantiate (dynaptr frame-arg))
+    (dynaclass 'titled-frame-container%)
+
+    (name-part _titlebox titlebox)
+
+    (define/public (refresh-titlebox)
+      (when _titlebox
+        (send _titlebox xy (bbs (send (send this frame) bbox)))))
+
+    (define (make-titlebox)
+      (let* ((frm (send this frame))
+             (tb (ic (make-object text% (send frm dynapad))
+                     (anchor "n"))))
+        (send tb delete-callbacks 'add (lambda (tb) (say "clearing title")
+                                               (send this titlebox #f)))
+        (titlebox tb)
+        (send this rigid tb #t)
+        (slowgrow tb .3 2 .5)
+        (refresh-titlebox)
+        (send frm aftercoords-callbacks 'add
+              (lambda (obj crds) (send this refresh-titlebox)))
+        (send frm afterwidth-callbacks 'add
+              (lambda (obj w) (send this refresh-titlebox)))
+        (send frm afterheight-callbacks 'add
+              (lambda (obj h) (send this refresh-titlebox)))
+        ))
+
+
+    (define/public title
+      (case-lambda
+        (() (and (titlebox) (send (titlebox) text)))
+        ((txt)
+         (unless (send this frame)
+           (error "Needs frame before title"))
+         (if txt
+             (begin
+               (when (not (titlebox)) (make-titlebox))
+               (send (titlebox) text txt))
+             (when (titlebox)
+               (send (titlebox) delete)
+               (titlebox #f)))
+         (send this update-any-hilights)
+         )))
+
+    (define/override (export dir)
+      (let* ((name (send this title))
+             (subdir
+              (if name
+                  (export-container-custom-name dir name)
+                  (export-container-generic-name dir "clump"))))
+        (foreach (send this contents) (lambda (o) (send o export subdir)))))
+
+    ;add menu item for title
+    (add-custom-popup-items
+     (lambda (me menu)
+       (unless (send me titlebox)
+         (add-menu-item menu "Add title..."
+                        (lambda ()
+                          (send me title "")
+                          (let* ((my-tb (send me titlebox))
+                                 (xy (bbcenter (send my-tb bbox))))
+                            (apply edit-text-at-xy (send me dynapad)
+                                   my-tb
+                                   xy)))
+                        #t)))
+     this)
+
+    ))

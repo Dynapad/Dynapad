@@ -9,7 +9,9 @@
          ;dynapad/menu/menu_functions
          )
 
-(provide obj->IDexpr)
+(provide obj->IDexpr
+         set-max-padid
+         )
 
 ;---- IDs -----------
 (define (set-max-padid new) ;use carefully...

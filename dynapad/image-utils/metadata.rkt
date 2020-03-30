@@ -1,3 +1,4 @@
+#lang racket/base
 ; images dumped from digital cameras sometime contain
 ; information in the file header.  The time/dates info
 ; can be extracted using the shellscript "exif_dates"
@@ -19,11 +20,20 @@
 ;  minutes
 ;  seconds
 
-(require (lib "date.ss"))
-(require (lib "etc.ss"))
-(dynaload "parsedate.ss")
-(dynaload "smart-labels.ss")
-
+(require racket/class
+         racket/date
+         racket/list
+         (only-in racket/system process)
+         mzlib/etc
+         dynapad/base
+         dynapad/image
+         dynapad/pdf
+         dynapad/misc/misc
+         dynapad/misc/alist
+         dynapad/misc/tools-cmp
+         dynapad/utils/parsedate
+         dynapad/image-utils/smart-labels
+         )
 
 ;==================== Parameters =============
 ;(define (*metadata-parameter-alist* null))
@@ -353,83 +363,3 @@
                (lambda (nums) (list (map (lambda (num) (format "f/~a" num)) nums)))
                safe-cmp-nums
                ensure-number))
-
-;  Date labels
-
-(define (subdivide-date date) (reverse (date->list date)))
-
-
-#| DEAD CODE:
-(define (expand-levels-of-description subdivide-val-fn val-list)
-  (map (lambda (val) (subdivide-val-fn val)) val-list))
-
-(define (count-adjacent-inequalities lst eq-fn . last-val-arg)
-  ; count # of times adjacent values in a list are unequal (via eq-fn)
-  (cond ((null? lst) 0)
-        ((null? last-val-arg) (count-adjacent-inequalities (cdr lst) eq-fn (car lst)))
-        (else (let* ((last-val (car last-val-arg))
-                     (this-val (car lst))
-                     (diff (if (eq-fn last-val this-val) 0 1)))
-                (+ diff (count-adjacent-inequalities (cdr lst) eq-fn this-val))))))
-
-(define (count-adjacent-inequalities-of-sublists-at-level sublists lvl eq-fn)
-  ; EX: sublists [(1 2 3 4 5)
-  ;               (3 3 3 3 3)
-  ;               (3 4 3 4 3)]
-  ; result:   (lvl 0 ----> 4)
-  ;       -------->1 2 0 2 1
-  (let ((vals-at-lvl (map (lambda (sublist) (list-ref sublist lvl)) sublists)))
-    (count-adjacent-inequalities vals-at-lvl eq-fn)))
-
-
-(define (inequality-vector-of-sublists-at-level sublists lvl eq-fn)
-  ;returns list of: 0 if (car sublist) is eq-fn last item, 1 otherwise
-
-
-  ; (subdivide-val-fn val) -> list of subvalues hi->lo
-  ; e.g. (subdivide-date date)-> (year month day hour min sec)
-
-  (define (choose-level-of-description sublists eq-fn ineq-ratio-fn)
-    (let* ((len (length sublists))
-           ;     (num-ineqs (map (lambda (lvl)
-           ;               (count-adjacent-inequalities-of-sublists-at-level
-           ;                expanded-vals-list lvl eq-fn))
-           ;             (counting-list len)))
-           (found (first-valid (counting-list len)
-                               (lambda (lvl)
-                                 (let* ((ineqs (count-adjacent-inequalities-of-sublists-at-level
-                                                sublists lvl eq-fn))
-                                        (ineq-ratio (/ ineqs len)))
-                                   (ineq-ratio-fn ineq-ratio))))))
-      (and found (caar found))))
-
-  (define (choose-desc-lvl-range-for-dates datelist)
-    (let* ((sublists (map subdivide-date datelist))
-           (top-lvl-fn (lambda (ratio) (> ratio 0)))
-           ;     (btm-lvl-fn (lambda (ratio) (> ratio .5)))
-           (top-lvl (choose-level-of-description sublists eq? top-lvl-fn))
-           (btm-lvl (min (+ top-lvl 1) 5)))
-      ;     (btm-lvl (choose-level-of-description sublists eq? btm-lvl-fn)))
-      (list (or top-lvl 5) (or btm-lvl 5))))
-
-  (define (convert-dates-to-labels datelist)
-    (date-display-format 'iso-8601)
-    (let* ((range (choose-desc-lvl-range-for-dates datelist))
-           (from (car range))
-           (to (max (cadr range) from))
-           (template (map (lambda (n) (and (>= n from) (<= n to)))
-                          (counting-list 6))) ;--> e.g. (#f #f #t #t #f #f) for range (2 3)
-           (shared-template
-            (map (lambda (n) (< n from)) (counting-list 6)))
-           (raw-strs (map (lambda (d) (date->string d #t)) datelist))
-           (trim-strs (map (lambda (str)
-                             (prune-date-string template
-                                                *iso-date-format-rexp*
-                                                str)) raw-strs)))
-      (list
-       trim-strs
-       (if (null? raw-strs)
-           ""
-           (prune-date-string shared-template *iso-date-format-rexp* (car raw-strs)))
-       )))
-  |#

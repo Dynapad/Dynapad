@@ -1,4 +1,16 @@
-(dynaload "trees.ss")
+#lang racket/base
+
+(require racket/class
+         (only-in racket/gui/base
+                  horizontal-pane%
+                  check-box%)
+         dynapad/base
+         dynapad/pad-state
+         dynapad/layout/trees
+         dynapad/history/logbranch
+         dynapad/misc/user-preferences
+         dynapad/menu/menu_popup
+         )
 
 (define (make-logtree dir name) ;override defn in logbranch.ss
   (make-object visible-logtree% dynapad logbranch-line% dir name))

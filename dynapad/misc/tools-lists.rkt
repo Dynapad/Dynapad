@@ -5,8 +5,11 @@
          dynapad/misc/misc
          dynapad/misc/tools-objects
          )
-;(require (lib "defmacro.ss"))
-;(load-relative "tools-objects.ss")
+
+(provide first-valid
+         list-position-general
+         counting-list
+         )
 
 (define (multiple? lst)
   (and (list? lst)

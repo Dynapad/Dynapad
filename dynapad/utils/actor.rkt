@@ -7,6 +7,8 @@
          dynapad/misc/alist
          )
 
+(provide named-actor%)
+
 ; Consider using surrogate.ss to replace actor construction
 
 ;--- actor baseclass ---------------------------------------------
