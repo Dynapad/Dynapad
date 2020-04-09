@@ -2,7 +2,9 @@
 
 (require racket/class
          (only-in racket/system process*)
-         compatibility/mlist
+         (except-in compatibility/mlist
+                    ; mutable-map vs multi-map from tools-lists
+                    mmap) 
          dynapad/base
          dynapad/misc/misc
          dynapad/misc/alist

@@ -10,6 +10,8 @@
 (provide gui-mode-malist
          gui-update-mode
          changemode
+         changemode--no-gui
+         default-mode
          )
 
 (define _gui-mode-cursor '())

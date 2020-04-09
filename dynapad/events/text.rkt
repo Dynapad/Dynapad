@@ -2,10 +2,28 @@
 
 (require racket/class
          dynapad/base
+         (only-in dynapad/dynapad-c-api
+                  slowgrow
+                  )
+         dynapad/pad-state
          dynapad/misc/misc
+         (only-in dynapad/misc/tools-lists
+                  list-head  ; note list-head? comes from misc/misc
+                  )
+         (only-in dynapad/misc/filenames
+                  export-container-custom-name
+                  export-container-generic-name
+                  )
+         (only-in dynapad/utils/formation
+                  base-formation%
+                  name-part ; FIXME this is one of the cryptic error creators
+                  )
          dynapad/layout/bbox
          dynapad/events/mode
-         dynapad/events/draw
+         dynapad/events/draw ; cycle
+         (only-in dynapad/menu/menu_popup ; cycle
+                  add-custom-popup-items
+                  )
          (only-in dynapad/libdynapad
                   sch_gettext
                   sch_settext
@@ -16,6 +34,9 @@
                   sch_pen
                   sch_font
                   )
+         )
+
+(provide text%
          )
 
 (define basetext%
@@ -163,7 +184,7 @@
 
 ; This mimics start-shape-event in draw.ss:
 (define (start-text-event eventPAD e)
-  (set! currentPAD eventPAD)
+  (set-currentPAD! eventPAD)
   (let* ((x (event-x e))
          (y (event-y e))
          (pos (list x y (/ 1.0 (send eventPAD getzoom))))
@@ -369,3 +390,98 @@
      this)
 
     ))
+
+;; from draw.rkt
+(define (degenerate-object? obj)
+  (or (not obj)
+      (if (is-a? obj text%)
+          (equal? "" (send obj text))
+          (let ((c (send obj coords)))
+            (cond ((is-a? obj polyline%) (< (length c) 4))
+                  ((is-a? obj polygon%)  (< (length c) 6))
+                  (else (null? c)))))))
+
+(define (start-shape-event eventPAD e) ;start new shape (rect%, poly%, text%, etc)
+  (set! currentPAD eventPAD)
+  (let* ((x (event-x e))
+         (y (event-y e))
+         (objs-here (reverse (send eventPAD find 'overlapping (list x y x y)))))
+    (set! Draw-object (if (null? objs-here) #f (car objs-here)))
+    (cond
+      ; maybe edit existing obj (e.g. text%)
+      ((and Draw-object
+            (is-a? Draw-object Draw-class)
+            (eq? Draw-class text%))
+       (edit-text-at-xy Draw-object x y))
+
+      (else ; make new obj
+       (set! Draw-object (make-object Draw-class eventPAD))
+
+       (when (has-method? Draw-object 'fill)
+         (send Draw-object fill
+               (if (send eventPAD fill?) (send eventPAD defaultfill) "none")))
+
+       (when (has-method? Draw-object 'pen)
+         (send Draw-object pen (send eventPAD defaultpen)))
+
+       (cond
+         ;edit new text
+         ((subclass? Draw-class text%)
+          (edit-text-at-xy Draw-object x y))
+         ;new polygon/polyline
+         ((or (subclass? Draw-class polygon%)
+              (subclass? Draw-class polyline%))
+          (send Draw-object coords (list x y))
+          (send Draw-object save-coords (list x y))
+          (initDrawPreview eventPAD)
+          (changemode eventPAD "DrawAdd")
+          )
+         ;new rect/oval/line/etc
+         (else
+          (send Draw-object save-coords (list x y)))
+         )))
+    ))
+
+(define (esc-shape-event eventPAD e) ; exit object or mode
+  (set-currentPAD! eventPAD)
+  (cond
+    ((not Draw-object)
+     (finishDraw eventPAD))
+    ((degenerate-object? Draw-object)
+     (cancelDrawObject eventPAD)
+     (changemode eventPAD Draw-mode))
+    (Draw-multiple
+     (resetDrawObject eventPAD)
+     (changemode eventPAD Draw-mode))
+    (else
+     (finishDraw eventPAD))))
+
+;; these binds must be defined here, or could be moved to another file
+;; because they need forms from both text and draw that would induce a cycle
+(define (bindDrawMode argPAD)
+
+  (send argPAD bind "<Draw-ButtonPress-1>" start-shape-event)
+
+  (send argPAD bind "<DrawAdd-B1-Motion>" drag-shape-vertex-event)
+  (send argPAD bind "<Draw-B1-Motion>" drag-shape-vertex-event)
+
+  (send argPAD bind "<DrawAdd-Motion>" update-shape-preview-event)
+
+  (send argPAD bind "<DrawAdd-ButtonRelease-1>" fix-shape-vertex-event)
+
+  (send argPAD bind "<DrawAdd-ButtonPress-1>" add-shape-vertex-event)
+
+  (send argPAD bind "<Draw-ButtonRelease-1>" esc-shape-event)
+
+  (send argPAD bind "<DrawAdd-Double-ButtonPress-1>" esc-shape-event)
+
+  (send argPAD bind "<Draw-KeyPress-Escape>"    esc-shape-event)
+  (send argPAD bind "<DrawAdd-KeyPress-Escape>" esc-shape-event)
+
+  ; allow zooming (oldschool) while drawing
+  ;(send argPAD bind "<Draw-ButtonPress-2>"   Zoom-In-lambda)
+  ;(send argPAD bind "<Draw-ButtonRelease-2>" Zoom-In-Stop-lambda)
+  ;(send argPAD bind "<Draw-ButtonPress-3>"   Zoom-Out-lambda)
+  ;(send argPAD bind "<Draw-ButtonRelease-3>" Zoom-Out-Stop-lambda)
+
+  )

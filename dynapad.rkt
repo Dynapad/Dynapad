@@ -21,20 +21,28 @@
   (current-library-collection-paths)))
 
 ;-----------------------------------------------------------------
-(require (lib "pathhack.ss" "misc"))
-(load-relative "src/misc/dynaload.ss")
+(require dynapad/utils/alias
+         dynapad/utils/formation
+         dynapad/utils/lambdas
+         ;dynapad/events/events
+         dynapad/history/undo  ; events bits were moved to undo for now
+         dynapad/layout/bbox
+         dynapad/layout/arrange
+         dynapad/misc/command-shortcuts
+         dynapad/misc/user-preferences
+         collects/misc/pathhack)
 
-(dynaload "alias.ss")               ; allows aliasing of pathnames
-(dynaload "events.ss")              ; basic events plus draw-application events)
-(dynaload "bbox.ss")                ; bounding box utilities
-(dynaload "arrange.ss")             ; utilities for layout and arrangement of objects
+;(dynaload "alias.ss")               ; allows aliasing of pathnames
+;(dynaload "events.ss")              ; basic events plus draw-application events)
+;(dynaload "bbox.ss")                ; bounding box utilities
+;(dynaload "arrange.ss")             ; utilities for layout and arrangement of objects
 ;arrangeimages is now obsolete, replaced by import-dirs.ss
 ;(dynaload "arrangeimages.ss")       ; module for load all images from a directory
-(dynaload "formation.ss")           ; base mechanism for defining "rich objects"
-(dynaload "lambdas.ss")
+;(dynaload "formation.ss")           ; base mechanism for defining "rich objects"
+;(dynaload "lambdas.ss")
 ;(require new-lambda)
-(dynaload "command-shortcuts.ss")   ; shortcut functions (mostly for programmers)
-(dynaload "user-preferences.ss")    ; a mechanism for saving characteristics of the dynapad environment.
+;(dynaload "command-shortcuts.ss")   ; shortcut functions (mostly for programmers)
+;(dynaload "user-preferences.ss")    ; a mechanism for saving characteristics of the dynapad environment.
 
 (define *list-of-all-dynapads* '())
 

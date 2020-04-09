@@ -5,7 +5,9 @@
          dynapad/layout/bbox
          )
 
-(provide Copy-Selected)
+(provide Copy-Selected
+         clone-object
+         )
 ;-----
 
 (define *copy_buffer* '())

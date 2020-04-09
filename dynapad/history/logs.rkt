@@ -98,25 +98,44 @@
 ;  By default, <treename> is the name under which the tree is first saved
 ;======================================================
 
-(require (only-in racket/class send)
+(require (only-in racket/class send is-a? object%)
          racket/string
          compatibility/defmacro
-         mzlib/process
-         dynapad/import
+         ;mzlib/process
+         dynapad/ffs
+         (only-in dynapad/import
+                  importing?
+                  deferred-exprs
+                  order-by-phase)
+         dynapad/pad-state
+         dynapad/save
+         (only-in dynapad/spd
+                  show-possible-delay)
          dynapad/misc/misc
          dynapad/misc/progress
+         (only-in dynapad/misc/tools-lists
+                  mmap)
          ;dynapad/history/undo ; cycle
          dynapad/undo-state
+         (only-in dynapad/history/ids import-expr-with-objs)
          dynapad/history/logbranch
          ;dynapad/history/showlogs
          dynapad/history/logbead
          dynapad/history/log-state
+         (only-in dynapad/misc/command-shortcuts
+                  ; FIXME this is not supposed to to being used in the core impl here
+                  get-hostname)
+         (only-in dynapad/menu/menu_popup append-mainmenu-constructor)
          collects/misc/pathhack
          (for-syntax racket/base)
          )
 
 (provide #; ;didn't work :/
          (all-from-out undo-state)
+         do-deferred-evals
+         safe-eval
+         restore-set-core
+         restore-set
          )
 
 (announce-module-loading "logging...")
@@ -291,6 +310,47 @@
   (eval do-expr)
   (push-ops-no-exec do-expr undo-expr))
 
+
+;;; from undo
+;; from ids
+
+(define *debug-deferred-exprs* null) ;delete this later
+(define (do-deferred-evals idmap)
+  (set! *debug-deferred-exprs* (deferred-exprs)) ;delete this later
+  (mmap
+   ;(lambda (e) (printf "~a~%" e) (eval e))
+   eval
+   (mmap (lambda (expr) (import-expr-with-objs expr idmap))
+         (order-by-phase (deferred-exprs)))))
+
+(define (safe-eval expr)
+  ;serves as a reentry point in case of errors during eval
+  (with-handlers
+    ;   ([exn:user? (lambda (exn)
+    ([exn:fail? (lambda (exn)
+                  (foreach (current-error-ports)
+                           (lambda (port)
+                             (fprintf port  "Error (~a) in ~a~%" (exn-message exn) expr)))
+                  #f)])
+    (eval expr)))
+
+(define-syntax restore-set-core
+  (syntax-rules ()
+    ((_ expr ...)
+     (show-possible-delay currentPAD
+                          (let* ((objs (filter (lambda (o) (is-a? o object%))
+                                               (map safe-eval (list expr ...)))))
+                            (do-deferred-evals *id->obj-index*)
+                            objs)))))
+
+(define-syntax restore-set
+  (syntax-rules ()
+    ((_ expr ...)
+     (use-load-context 'restore
+                       (restore-set-core expr ...)))))
+
+;;; end from undo
+
 (define (restore-undo-frame frame) ;may be overridden
   (restore-set (caddr frame)))
 (define (restore-redo-frame frame)
@@ -303,7 +363,7 @@
   ) ;MAYBE WRONG-- when did this go awry?
 
 (define (load-next-log)
-  (let* ((nextbranch (pop! *future-log-path*))
+  (let* ((nextbranch (pop-*future-log-path*!))
          (nextpath (send nextbranch path)))
     ;(display (format "loading next log ~a...~%" nextpath))
     (send (current-logtree) activate-branch nextbranch)
@@ -319,8 +379,8 @@
           #f  ;FUTURE: if *log-continues?*, may also proceed by searching for next log
           (load-next-log))
       ;else: F or PF (some future frames)...
-      (let ((frame (pop! *redo-stack*)))
-        (push! frame *undo-stack*)  ;--> PF
+      (let ((frame (pop-*redo-stack*!)))
+        (push-*undo-stack*! frame)  ;--> PF
         (enter-midstate (car frame))
         (send (current-logbranch)
               log-visitstate-entry (make-timestamp-ID) *current-state-id*)
@@ -333,7 +393,7 @@
   (let ((prevbranch (send (current-logbranch) get-parent)))
     (if prevbranch
         (let ((prevpath (send prevbranch path)))
-          (push! (current-logbranch) *future-log-path*)
+          (push-*future-log-path*! (current-logbranch))
           ;      (switch-logs (current-logbranch) prevbranch)
           ;(display (format "loading prev log ~a...~%" prevpath))
           (send (current-logtree) activate-branch prevbranch)
@@ -349,8 +409,8 @@
     ; (undo-expr (caddr frame)))
     (when (not (null? (cdr *undo-stack*)))  ;never pop last frame
       ; last frame calls load-prev-log
-      (pop! *undo-stack*) ;pop this frame
-      (push! frame *redo-stack*)
+      (pop-*undo-stack*!) ;pop this frame
+      (push-*redo-stack*! frame)
       (enter-midstate (caar *undo-stack*))
       (send (current-logbranch)
             log-visitstate-entry (make-timestamp-ID) *current-state-id*))

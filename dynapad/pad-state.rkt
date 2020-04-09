@@ -1,6 +1,8 @@
 #lang racket/base
 
-(require (only-in racket/class send))
+(require (only-in racket/class send)
+         syntax/location
+         )
 
 (provide currentPAD set-currentPAD!
          dynapad set-dynapad!
@@ -43,4 +45,12 @@
 
 ;; default-directory or something like that
 ; FIXME this is a hack that is not remotely robust
-(define *dynapad-directory* (build-path (current-load-relative-directory) 'up))
+(define *dynapad-directory*
+  ; clrd -> #f since we no longer use load ...
+  (build-path (let ([clrd (current-load-relative-directory)])
+                (if clrd clrd
+                    ;(quote-source-file) ; doesn't do what we want ...
+                    "~/git/dynapad/dynapad" ; FIXME :/
+                    )
+                ) 'up))
+(println *dynapad-directory*)

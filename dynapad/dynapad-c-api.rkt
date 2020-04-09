@@ -24,6 +24,8 @@
          collects/misc/pathhack  ; build-path->string
          )
 
+(provide slowgrow)
+
 ;;; (load-relative-extension (path-replace-suffix "build/libdynapad" (system-type 'so-suffix)))
 
 (define padthread

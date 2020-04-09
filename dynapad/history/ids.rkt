@@ -11,6 +11,7 @@
 
 (provide obj->IDexpr
          set-max-padid
+         import-expr-with-objs
          )
 
 ;---- IDs -----------

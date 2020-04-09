@@ -28,6 +28,8 @@
          *logtree-layer*
          *future-log-path*
          set-*future-log-path*!
+         pop-*future-log-path*!
+         push-*future-log-path*!
          *heed-start-state?*
          set-*heed-start-state?*!
          enter-firststate
@@ -67,6 +69,12 @@
 
 (define (set-*future-log-path*! path)
   (set! *future-log-path* path))
+
+(define (pop-*future-log-path*!)
+  (pop! *future-log-path*))
+
+(define (push-*future-log-path*! path)
+  (push! path *future-log-path*))
 
 ;these do nothing when log is loaded:
 (define (created-by state-id winid username hostname) #t)

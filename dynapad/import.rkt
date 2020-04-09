@@ -8,6 +8,8 @@
          push-deferred-expr
          set-load-context
          revert-load-context
+         deferred-exprs
+         order-by-phase
          (struct-out load-context))
 
 ;---- load-context stack

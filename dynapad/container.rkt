@@ -6,7 +6,7 @@
          dynapad/misc/filenames
          dynapad/utils/formation
          dynapad/layout/bbox
-         ;dynapad/events/text
+         dynapad/events/text ; how this is not creating a cycle is a mystery
          )
 
 (define container-form%

@@ -36,6 +36,9 @@
          *undo-ops*
          set-*undo-ops*!
          push-*undo-ops*!
+         undoify-fresh-obj
+         push-ops-no-exec
+         use-load-context
          )
 
 ;--- basic do/undo mechanism -------------------------------------
@@ -237,6 +240,7 @@
 (define (undoify-fresh-obj obj)
   ; Expects newly-created obj;
   ; registers it and pushes rebuild/delete script onto redo/undo stack
+  ; also appearing in undo-hooks.rkt
   (apply push-ops-no-exec (redo-undo-pair-for-obj obj))
   obj)
 

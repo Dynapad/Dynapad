@@ -9,6 +9,8 @@
 (provide first-valid
          list-position-general
          counting-list
+         mmap
+         list-head
          )
 
 (define (multiple? lst)

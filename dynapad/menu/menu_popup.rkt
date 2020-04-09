@@ -6,7 +6,9 @@
          dynapad/menu/wxmenu
          )
 
-(provide append-mainmenu-constructor)
+(provide append-mainmenu-constructor
+         add-custom-popup-items
+         )
 
 
 (define (handle-popup-event e)

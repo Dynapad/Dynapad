@@ -5,9 +5,9 @@
          dynapad/copy
          dynapad/ffs
          dynapad/pad-state
-         dynapad/import
+         ;dynapad/import
          dynapad/undo-state
-         dynapad/misc/misc ; do-deferred-evals
+         ;dynapad/misc/misc ; do-deferred-evals
          dynapad/misc/alist
 
          dynapad/events/mode ; now stripped down
@@ -22,7 +22,7 @@
          ;dynapad/utils/get-user-bbox
          ;dynapad/utils/lasso
 
-         dynapad/history/ids ; this actually works now ?!
+         ;dynapad/history/ids ; this actually works now ?!
          dynapad/history/logs
          )
 
@@ -355,26 +355,6 @@
 ; Importing: remap all ids, keep padid counter
 ; Restoring: advance padid counter>max, keep all ids
 
-(define (safe-eval expr)
-  ;serves as a reentry point in case of errors during eval
-  (with-handlers
-    ;   ([exn:user? (lambda (exn)
-    ([exn:fail? (lambda (exn)
-                  (foreach (current-error-ports)
-                           (lambda (port)
-                             (fprintf port  "Error (~a) in ~a~%" (exn-message exn) expr)))
-                  #f)])
-    (eval expr)))
-
-(define-syntax restore-set-core
-  (syntax-rules ()
-    ((_ expr ...)
-     (show-possible-delay currentPAD
-                          (let* ((objs (filter (lambda (o) (is-a? o object%))
-                                               (map safe-eval (list expr ...)))))
-                            (do-deferred-evals *id->obj-index*)
-                            objs)))))
-
 (define-syntax import-set-core
   (syntax-rules ()
     ((_ expr ...)
@@ -409,12 +389,6 @@
     ((_ expr ...)
      (use-load-context 'import
                        (import-set-core expr ...)))))
-
-(define-syntax restore-set
-  (syntax-rules ()
-    ((_ expr ...)
-     (use-load-context 'restore
-                       (restore-set-core expr ...)))))
 
 (define (undo) ;overridden in logs.ss
   (when (not (null? *undo-stack*))
@@ -795,15 +769,3 @@
             ;else
             (printf "not a complete move.~%"))))
 |#
-
-;; from ids
-
-(define *debug-deferred-exprs* null) ;delete this later
-(define (do-deferred-evals idmap)
-  (set! *debug-deferred-exprs* (deferred-exprs)) ;delete this later
-  (mmap
-   ;(lambda (e) (printf "~a~%" e) (eval e))
-   eval
-   (mmap (lambda (expr) (import-expr-with-objs expr idmap))
-         (order-by-phase (deferred-exprs)))))
-
