@@ -1,6 +1,8 @@
 #lang racket/base
 
-(require (only-in racket/class send)
+(require (only-in racket/class
+                  send
+                  send/apply)
          dynapad/pad-state
          (only-in dynapad/undo-state
                   import-set)
