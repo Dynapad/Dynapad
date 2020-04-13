@@ -6,7 +6,8 @@
          dynapad/misc/misc
          )
 
-(provide general-handle%)
+(provide general-handle%
+         reshape-polygon)
 
 ;=== Reshape and Resize ==========================================
 

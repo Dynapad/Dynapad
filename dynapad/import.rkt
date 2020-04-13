@@ -2,7 +2,8 @@
 
 (require compatibility/mlist
          dynapad/misc/misc
-         dynapad/misc/alist)
+         dynapad/misc/alist
+         )
 
 (provide importing?
          push-deferred-expr

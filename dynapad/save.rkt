@@ -1,13 +1,27 @@
 #lang racket/base
 
-(require (only-in dynapad/pad-state write-set)
+(require (only-in racket/class send)
+         (only-in racket/gui/base
+                  message-box
+                  put-file
+                  get-file
+                  )
+         (only-in dynapad/pad-state
+                  *menubar*
+                  currentPAD)
+         (only-in dynapad/menu/menu-state
+                  append-mainmenu-constructor)
          (only-in dynapad/undo-state saveable-objects)
          (only-in dynapad/ffs *id-counter*)
+         (only-in dynapad/misc/misc
+                  write-set)
+         collects/misc/pathhack
          )
 
 (provide Save-All-To-Expr
          Save-All-To-String
          Format-SaveAll-Expr-Into-String
+         Select-File-Dialog
          )
 ;;; from menu_functions
 
@@ -47,6 +61,7 @@
 ;  (fprintf port ")~%")
 ;)
 
+#; ; apparently overwritten by the bit below from logs
 (define (Save-All-To-Port port)
   (fprintf port (Format-SaveAll-Expr-Into-String (Save-All-To-Expr))))
 
@@ -57,4 +72,24 @@
 ;   (Write-All-Objects-To-String)
 ;   ")\n"))
 
-
+;; from menu_functions :/
+(define *current_directory* (current-directory))
+(define Select-File-Dialog
+  (case-lambda
+    ;mode is 'load or 'save
+    ((mode) (Select-File-Dialog mode (send currentPAD get-path)))
+    ((mode path)
+     (let ((dir *current_directory*)
+           (filename #f)
+           (dir? #f))
+       (when path
+         (set!-values (dir filename dir?) (split-path->string path)))
+       (when dir?
+         (set! dir (build-path dir filename))
+         (set! filename #f))
+       (set! path
+             (cond ((eq? mode 'save)
+                    (put-file "Save" *menubar* dir filename #f null))
+                   (else
+                    (get-file "Load" *menubar* dir #f #f null))))
+       path))))

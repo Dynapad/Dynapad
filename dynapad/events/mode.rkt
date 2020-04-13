@@ -12,6 +12,9 @@
          changemode
          changemode--no-gui
          default-mode
+         push-event-mode
+         pop-event-mode
+         createModes
          )
 
 (define _gui-mode-cursor '())

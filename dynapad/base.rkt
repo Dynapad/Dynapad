@@ -7,11 +7,15 @@
          dynapad/libdynapad
          dynapad/bind
          dynapad/ffs ; export-objs
-         dynapad/pad-state ; write-set
+         (only-in dynapad/pad-state
+                  *list-of-all-dynapads*
+                  set-*list-of-all-dynapads*!)
          dynapad/misc/misc
          dynapad/misc/filenames
          dynapad/layout/bbox
          dynapad/utils/hilights
+         (only-in dynapad/events/mode
+                  createModes)
          )
 
 (provide dynaobject%
@@ -25,11 +29,26 @@
          rect%
          oval%
          polygon%
+         make-new-dynapad
          )
 
 (define (link-hook o) #t)
 
 (define (center-hook o) #t)
+
+;;; new dynapad constructor
+(define (make-new-dynapad stringname)
+  (let ((newPAD (make-object dynapad% stringname)))
+    (createModes newPAD)
+    (send newPAD bindtags "specific")
+    (send newPAD focus)
+
+    (set-*list-of-all-dynapads*!
+          (append *list-of-all-dynapads* (list newPAD)))
+
+    newPAD
+    )
+  )
 
 ;----- some help for writing the alist option -----
 
@@ -1286,8 +1305,18 @@
   (class object%
     (init _dynapad initname)
     (field (cptr #f) (_dynaclass #f) (savemembers null) (_writable #t))
-    (public get-cptr delete name members dynaclass
-            lower raise save write writeoptions visible writable?)
+    (public get-cptr
+            delete
+            name
+            members
+            dynaclass
+            lower
+            raise
+            save
+            write
+            writeoptions
+            visible
+            writable?)
 
     (define (get-cptr)
       cptr)

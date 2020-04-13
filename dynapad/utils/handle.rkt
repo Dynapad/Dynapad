@@ -13,6 +13,11 @@
          collects/misc/pathhack
          )
 
+(provide assign-handle
+         pdf-handle%
+         get-pdf-metadata-dir
+         )
+
 ; A handle% associates multiple dynaobjects (renderings)
 ;  with a common abstract object such that they all share
 ;  a level of metadata.

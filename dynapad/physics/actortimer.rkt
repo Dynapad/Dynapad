@@ -1,4 +1,13 @@
-(require (lib "class.ss"))
+#lang racket/base
+
+(require racket/class
+         (only-in racket/gui/base timer%)
+         (only-in dynapad/base dynaobject%)
+         dynapad/misc/misc
+         dynapad/utils/actor
+         )
+
+(provide (all-defined-out))
 
 (define broadcast-timer%
   (class timer%

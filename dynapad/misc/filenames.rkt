@@ -14,6 +14,7 @@
          export-container-custom-name
          construct-unique-filename-seed
          insert-filenamebase-suffix
+         filter-and-sort-directory
          )
 
 (define break-on-last-dot-regexp (regexp "(.*)([.][a-zA-Z]+)"))
@@ -112,56 +113,56 @@
            ))
      (export-container obj dir usename)))
   ((obj dir filename)
-   |#
+|#
 
-   (define (export-container-generic-name dir namebase)
-     (let ((path (construct-unique-filename-append-number (build-path->string dir namebase))))
-       (make-directory path)
-       path))
+(define (export-container-generic-name dir namebase)
+  (let ((path (construct-unique-filename-append-number (build-path->string dir namebase))))
+    (make-directory path)
+    path))
 
-   (define (export-container-custom-name dir filename)
-     (let ((path (build-path->string dir filename)))
-       (if (file-or-dir-exists? path)
-           (begin (error "File exists:" path) #f)
-           (begin (make-directory path) path))))
+(define (export-container-custom-name dir filename)
+  (let ((path (build-path->string dir filename)))
+    (if (file-or-dir-exists? path)
+        (begin (error "File exists:" path) #f)
+        (begin (make-directory path) path))))
 
-   ;creates an empty file in dir uniquely named "namebaseN" (usually "dynaclass%N")
-   (define (export-stub dir namebase)
-     (let ((filename (construct-unique-filename-insert-number>1
-                      (build-path->string dir (format "~a" namebase)))))
-       (if (file-exists? filename)
-           (begin (error "File exists:" filename) #f)
-           (begin (system (format "touch ~a" filename)) #t))))
+;creates an empty file in dir uniquely named "namebaseN" (usually "dynaclass%N")
+(define (export-stub dir namebase)
+  (let ((filename (construct-unique-filename-insert-number>1
+                   (build-path->string dir (format "~a" namebase)))))
+    (if (file-exists? filename)
+        (begin (error "File exists:" filename) #f)
+        (begin (system (format "touch ~a" filename)) #t))))
 
-   ;creates a symbolic link to target named filename
-   (define (export-link target filename)
-     (set! filename (construct-unique-filename-insert-number>1 filename))
-     (if (file-exists? filename)
-         (begin (error "File exists:" filename) #f)
-         (begin (system* (find-executable-path "ln" #f) "-s" target filename)
-                #t)))
-   ;      (begin (system (format "ln -s ~a ~a" target filename)) #t)))
+;creates a symbolic link to target named filename
+(define (export-link target filename)
+  (set! filename (construct-unique-filename-insert-number>1 filename))
+  (if (file-exists? filename)
+      (begin (error "File exists:" filename) #f)
+      (begin (system* (find-executable-path "ln" #f) "-s" target filename)
+             #t)))
+;      (begin (system (format "ln -s ~a ~a" target filename)) #t)))
 
 
-   (define (filter-and-sort-directory dir extract-fn lessthan-fn . filter-fns)
-     (say "filtering...")
-     (let* ((names (directory-list->string dir))
-            (fullnames (map (lambda (f) (build-path->string dir f)) names))
-            (vals null)
-            (tuples null))
-       (foreach (cons file-exists?  filter-fns)
-                (lambda (fn)
-                  (set! fullnames
-                        (filter fn fullnames))))
-       (set! names (map file-name-from-path fullnames))
-       (set! vals (map extract-fn fullnames))
-       (set! tuples (map list names vals))
-       (set! tuples (sort tuples (lambda (a b) (lessthan-fn (cadr a) (cadr b)))))
-       (say "end filtering...")
-       (map car tuples)
-       ))
+(define (filter-and-sort-directory dir extract-fn lessthan-fn . filter-fns)
+  (say "filtering...")
+  (let* ((names (directory-list->string dir))
+         (fullnames (map (lambda (f) (build-path->string dir f)) names))
+         (vals null)
+         (tuples null))
+    (foreach (cons file-exists?  filter-fns)
+             (lambda (fn)
+               (set! fullnames
+                     (filter fn fullnames))))
+    (set! names (map file-name-from-path fullnames))
+    (set! vals (map extract-fn fullnames))
+    (set! tuples (map list names vals))
+    (set! tuples (sort tuples (lambda (a b) (lessthan-fn (cadr a) (cadr b)))))
+    (say "end filtering...")
+    (map car tuples)
+    ))
 
-   ; Example of usage:
-   (define (sort-image-files-by-descending-size dir)
-     (filter-and-sort-directory dir file-size >
-                                sch_imagep))
+; Example of usage:
+(define (sort-image-files-by-descending-size dir)
+  (filter-and-sort-directory dir file-size >
+                             sch_imagep))

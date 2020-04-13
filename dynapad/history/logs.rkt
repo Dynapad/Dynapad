@@ -125,7 +125,10 @@
          (only-in dynapad/misc/command-shortcuts
                   ; FIXME this is not supposed to to being used in the core impl here
                   get-hostname)
-         (only-in dynapad/menu/menu_popup append-mainmenu-constructor)
+         
+         (only-in dynapad/menu/wxmenu
+                  add-menu-item
+                  add-menu-separator)
          collects/misc/pathhack
          (for-syntax racket/base)
          )
@@ -136,6 +139,8 @@
          safe-eval
          restore-set-core
          restore-set
+         ensure-keyframe
+         start-new-history
          )
 
 (announce-module-loading "logging...")
@@ -175,6 +180,7 @@
      (let-values (((dir file dir?) (split-path->string fullpath)))
        (and (not dir?)
             (logfile->treename file)))))
+
 (define-macro (my-logtreedir)
   `(this-expression-source-directory))
 
@@ -236,7 +242,7 @@
   (syntax-case stx ()
     [(_ whatever ...) ;don't parse args here, just get syntax context (mypath)
      ; and pass along to restore-log-branch-convert-args
-     (with-syntax ((mypath (datum->syntax-object stx (syntax-source stx))))
+     (with-syntax ((mypath (datum->syntax stx (syntax-source stx))))
        (syntax (restore-log-branch-convert-args
                 (and (not (equal? "STDIN" mypath)) mypath) ;"STDIN"-->#f
                 whatever ...)))]
@@ -496,29 +502,7 @@
     )
   )
 
-(define Save-Snapshot-To-Port Save-All-To-Port) ;capture existing
-(define (Save-All-To-Port port) ;overrides Save-All-To-Port in menu_functions.ss
-  ; save port is merely a wrapper file
-  ; which redirects to the current log branch
-  (ensure-keyframe)
-  (fprintf port "(load-log ~s ~s ~s)~%"
-           (get-hostname)
-           (send (current-logtree) treename)
-           (send (current-logbranch) logid))
-  (send (current-logtree) cache-maxid) ;this could happen more frequently also
-  )
-
-(start-new-history)
-
 (update-progress 1)
-; ================= HACK! THHPTH! ==========
-;add to popup menu
-(append-mainmenu-constructor
- (lambda (menu obj)
-   (add-menu-separator menu)
-   (add-menu-item menu "Save state..."
-                  (lambda () (Save-All-As (Select-File-Dialog 'save) Save-Snapshot-To-Port))
-                  )))
 
 ; === NOTES ===
 ; The system can be characterized as a State-Machine:

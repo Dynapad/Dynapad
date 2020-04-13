@@ -26,6 +26,7 @@
          saveable-objects
          delete-all
          restore-path
+         import-path
 
          maybe-wrap
 
@@ -37,8 +38,16 @@
          set-*undo-ops*!
          push-*undo-ops*!
          undoify-fresh-obj
+         undoify-fresh-objs
          push-ops-no-exec
          use-load-context
+         Start-Changing-Select--undoable
+         Done-Changing-Select--undoable
+         store-drag-batch-for-undo
+         store-drag-batch-for-redo
+         undoable-delete-objs
+
+         get-top-group
          )
 
 ;--- basic do/undo mechanism -------------------------------------
@@ -308,3 +317,30 @@
        (let ((result (begin do-sth ...)))
          (revert-load-context)
          result)))))
+
+(define (false-event-lambda o e) #f)
+
+; gets topmost group which takes events
+(define (get-top-group obj)
+  (if (and (not (send obj takegroupevents))
+           (send obj getgroup))
+      (get-top-group (send obj getgroup))
+      obj))
+
+; gets topmost group regardless of event handling
+(define (get-topmost-group obj)
+  (if (send obj getgroup)
+      (get-topmost-group (send obj getgroup))
+      obj))
+
+;these set load-context if restore/import-path are bypassed
+(define-syntax import-set
+  (syntax-rules ()
+    ((_ expr ...)
+     (use-load-context 'import
+                       (import-set-core expr ...)))))
+
+(define (import-path path)  ; FIXME seems like this should be defined elsewhere?
+  (use-load-context 'import
+                    (load path))  ; file at path should call (load-set ...)
+  path)

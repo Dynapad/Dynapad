@@ -9,6 +9,11 @@
 (provide setup-dynapad-subdirectory
          *use-menubar*
          *home-directory*
+         load-and-apply-user-preferences
+         *draw-menu-x*
+         *draw-menu-y*
+         *cowboy-zoom-on-objects*
+         *window-geometry*
          )
 
 ; default user preferences
@@ -23,7 +28,7 @@
 (define *cowboy-zoom-on-objects* #t)
 (define *use-menubar* #t)
 
-(define *home-directory* null)
+(define *home-directory* #f)
 
 ; load .padsetup.ss to get user preferences
 (define (load-user-preferences)

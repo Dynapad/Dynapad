@@ -1,3 +1,25 @@
+#lang racket/base
+
+(require racket/class
+         (only-in racket/gui/base timer%)
+         (only-in dynapad/pad-state
+                  set-currentPAD!)
+         (only-in dynapad/misc/misc
+                  sendf)
+
+         (only-in dynapad/pad-state
+                  event-x
+                  event-y
+                  )
+         )
+
+(provide zoomtimer%
+         Zoom-In-lambda
+         Zoom-In-Stop-lambda
+         Zoom-Out-lambda
+         Zoom-Out-Stop-lambda
+         )
+
 ;======= Zoom Multiplier ========
 
 (define zoomtimer%
@@ -40,21 +62,21 @@
 ;======= Zoom, Pan, and Follow Hyperlink ========
 
 (define Zoom-In-lambda
-  (lambda (eventPAD e) (set! currentPAD eventPAD)
+  (lambda (eventPAD e) (set-currentPAD! eventPAD)
           (sendf eventPAD evs set-last-xy (event-x e) (event-y e))
           (send (send eventPAD ztimer) start 1 (send eventPAD zinterval))))
 
 (define Zoom-In-Stop-lambda
-  (lambda (eventPAD e) (set! currentPAD eventPAD)
+  (lambda (eventPAD e) (set-currentPAD! eventPAD)
           (send (send eventPAD ztimer) stop)))
 
 (define Zoom-Out-lambda
-  (lambda (eventPAD e) (set! currentPAD eventPAD)
+  (lambda (eventPAD e) (set-currentPAD! eventPAD)
           (sendf eventPAD evs set-last-xy (event-x e) (event-y e))
           (send (send eventPAD ztimer) start -1 (send eventPAD zinterval))))
 
 (define Zoom-Out-Stop-lambda
-  (lambda (eventPAD e) (set! currentPAD eventPAD)
+  (lambda (eventPAD e) (set-currentPAD! eventPAD)
           (send (send eventPAD ztimer) stop)))
 
 (define (bindClassicZoom argPAD)

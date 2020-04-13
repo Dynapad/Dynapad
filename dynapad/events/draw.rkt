@@ -13,6 +13,17 @@
          drag-shape-vertex-event
          update-shape-preview-event
          fix-shape-vertex-event
+         set-Draw-multiple!
+         Draw-mode
+         Draw-class
+         Draw-object
+         Draw-multiple
+         initDraw
+         initDrawPreview
+         finishDraw
+         cancelDrawObject 
+         resetDrawObject 
+         add-shape-vertex-event
          )
 ;(dynaload "menu-draw.ss")
 ;======= Draw Rect, Oval, Line, and Polygon from Menubar ========
@@ -25,6 +36,9 @@
 
 (define (set-Draw-object! obj)
   (set! Draw-object obj))
+
+(define (set-Draw-multiple! obj)
+  (set! Draw-multiple obj))
 
 (define (resetDrawPreview)
   (when Draw-preview

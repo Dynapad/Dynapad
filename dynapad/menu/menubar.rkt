@@ -1,10 +1,53 @@
+#lang racket/base
+
 ;======= Simple Menubar ========
 
-(require compatibility/mlist)
+(require (only-in racket/class send make-object)
+         (only-in racket/gui/base
+                  button%
+                  horizontal-pane%
+                  vertical-pane%
+                  canvas%
+                  dialog%
+                  message%
+                  check-box%
+                  )
+         (only-in racket/draw
+                  bitmap%
+                  color%)
+         compatibility/mlist
+         (only-in dynapad/copy
+                  Copy-Selected)
+         dynapad/pad-state
+         dynapad/misc/misc
+         dynapad/misc/alist
+         (only-in dynapad/events/draw
+                  set-Draw-multiple!
+                  )
+         (only-in dynapad/utils/colors
+                  mred-color-from-tcl-color
+                  )
+         (only-in dynapad/history/undo
+                  Paste-From-Copy-Buffer
+                  )
+         dynapad/events/mode
+         dynapad/events/hyperlink
+         (only-in dynapad/menu/menu_shared
+                  Restore-Current
+                  Select-and-Restore-File
+                  Export-To-Directories
+                  )
+         collects/misc/pathhack
+         (only-in dynapad/history/undo
+                  Delete-Selected
+                  Deep-Delete-Selected
+                  Confirm-and-Delete-All
+                  )
+         )
 
 (define (for-all-pads body) (for-each body *list-of-all-dynapads*))
 
-(dynaload "mode.ss")
+;(dynaload "mode.ss")
 (push-onto-malist-val! massoc "Run"
                        (lambda (argPAD)
                          (clear-all-menu-buttons)
@@ -74,8 +117,6 @@
           (make-object bitmap% filename filetype)
           )
         string)))
-
-(define *menubar* (make-object frame% "Draw Tools" #f #f #f *draw-menu-x* *draw-menu-y*))
 
 (define *menubar_offlist* '())
 
@@ -149,7 +190,7 @@
                                  (send argPAD fill? #f)))
                  (clear-all-menu-buttons)
                  (send button set-label on_portal)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (printf "portals not migrated yet~%")
                  ))
   )
@@ -163,7 +204,7 @@
                                  (send argPAD fill? #f)))
                  (clear-all-menu-buttons)
                  (send button set-label on_hyperlink)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (for-all-pads (lambda (argPAD)
                                  (initCreateLink argPAD)))
                  ))
@@ -200,6 +241,20 @@
 
 
 (define imagefontpane (make-object horizontal-pane% *menubar*))
+
+;; from menu_functions
+(define (Load-Image) #f)
+(define (Get-Font-Name-For-Selected apply-callback cancel-callback) #f)
+(define (fillgetcolor) #f)
+(define (pengetcolor) #f)
+(define (Resize-Selected pad) #f)
+(define (Reshape-Selected pad) #f)
+(define (Raise-Selected pad) #f)
+(define (Lower-Selected pad) #f)
+(define (Group-Selected) #f)
+(define (UnGroup-Selected) #f)
+(define (Save-Current) #f)
+(define (Select-and-Save-All) #f)
 
 (make-object button% "Image" imagefontpane
              (lambda (button event) (Load-Image)))

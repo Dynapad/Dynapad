@@ -2,17 +2,21 @@
 
 (require (only-in racket/class send)
          dynapad/pad-state
+         dynapad/misc/misc
          dynapad/layout/bbox
          )
 
 (provide Copy-Selected
          clone-object
+         *copy-buffer*
+         Offset-Object
+         Copy-Buffer-empty?
          )
 ;-----
 
-(define *copy_buffer* '())
+(define *copy-buffer* '())
 (define (Copy-Selected)
-  (set! *copy_buffer* (write-set (send currentPAD selected)))
+  (set! *copy-buffer* (write-set (send currentPAD selected)))
   )
 
 ;  _______.  Nudges object along NE vector by <offset> fraction of its bbox
@@ -29,7 +33,7 @@
        (send/apply obj slide dxy)))))
 
 
-(define (Copy-Buffer-empty?) (null?  *copy_buffer*))
+(define (Copy-Buffer-empty?) (null?  *copy-buffer*))
 
 (define (clone-object obj)
   (and obj

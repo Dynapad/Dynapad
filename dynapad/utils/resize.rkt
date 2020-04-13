@@ -12,6 +12,9 @@
 
 (provide make-selected-bigger
          make-selected-smaller
+         resize-object
+         resizer-bindings
+         undoable-resizer-bindings
          )
 
 (define (make-selected-bigger)

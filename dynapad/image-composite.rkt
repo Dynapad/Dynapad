@@ -10,6 +10,9 @@
          dynapad/misc/filenames
          dynapad/misc/user-preferences ; *home-directory*
          dynapad/layout/bbox
+         (only-in dynapad/layout/composite
+                  limit-drag-to-bbox
+                  )
          dynapad/utils/formation
          collects/misc/pathhack
          collects/pdfrip/misc

@@ -1,22 +1,99 @@
 #lang racket/base
 
 (require (only-in racket/class
-                  send)
+                  send
+                  make-object
+                  is-a?
+                  )
          (only-in racket/gui/base
-                  get-file)
+                  get-file
+                  dialog%
+                  list-box%
+                  horizontal-pane%
+                  button%
+                  get-color-from-user
+                  message-box
+                  )
          dynapad/pad-state
+         dynapad/base
          dynapad/copy
+         dynapad/save  ; Select-File-Dialog
          dynapad/misc/misc
          dynapad/misc/progress
-         dynapad/utils/colors
+         (only-in dynapad/utils/colors
+                  mred-color-from-tcl-color
+                  tcl-color-from-mred-color
+                  )
          (only-in collects/misc/pathhack
                   split-path->string)
-         (only-in dynapad/history/undo
+         (only-in dynapad/history/logs
+                  ensure-keyframe
+                  )
+         (only-in dynapad/history/logbranch
+                  current-logtree
+                  current-logbranch
+                  )
+         (only-in dynapad/undo-state
                   undoify-fresh-obj
                   delete-all
+                  Set-Select--undoable
+                  Start-Changing-Select--undoable
+                  Done-Changing-Select--undoable
+                  restore-path
+                  import-path
+                  )
+         (only-in dynapad/history/undo
+                  undo
                   undoable-delete-all
                   Paste-From-Copy-Buffer
-                  Copy-Paste-ReSelect))
+                  Copy-Paste-ReSelect
+                  Delete-Selected
+                  Deep-Delete-Selected
+                  Confirm-and-Delete-All
+                  )
+         (only-in dynapad/menu/menu_shared
+                  Select-and-Load-File
+                  nyi
+                  )
+         (only-in dynapad/image
+                  image%
+                  pdf%
+                  )
+         (only-in dynapad/events/reshape
+                  reshape-polygon)
+         (only-in dynapad/utils/resize
+                  resize-object)
+         (only-in dynapad/events/draw
+                  initDraw
+                  )
+         (only-in dynapad/utils/resize
+                  make-selected-bigger
+                  make-selected-smaller)
+         (only-in dynapad/events/text
+                  text%
+                  )
+         (only-in dynapad/events/hyperlink
+                  initCreateLink)
+         (only-in dynapad/layout/arrange
+                  arrange-in-spiral-in-current-view
+                  arrange-in-grid-in-current-view
+                  )
+         (only-in dynapad/misc/command-shortcuts
+                  get-hostname  ; FIXME cmd shorts should not be used in core here
+                  )
+         (only-in dynapad/menu/menu-state
+                  append-mainmenu-constructor)
+
+         (only-in dynapad/menu/wxmenu
+                  add-menu-separator
+                  add-menu-item
+                  add-submenu
+                  )
+         )
+
+(provide make-submenu-Edit
+         make-submenu-Select-Highlighted
+         )
 
 (announce-module-loading "Menu functions...")
 
@@ -36,18 +113,6 @@
 (define modebutton #f)  ; placeholder variable
 
 (define *default_directory* #f)
-
-(define Export-To-Directories
-  (case-lambda
-    (() (Export-To-Directories (send dynapad objects)))
-    ((objs)
-     (let ((newdir (Select-File-Dialog 'save)))
-       (if (file-exists? newdir)
-           (error "File or directory already exists:" newdir)
-           (begin
-             (make-directory newdir)
-             (foreach objs (lambda (o) (send o export newdir)))
-             newdir))))))
 
 (define (Load-Image)
   (let* ((path (send currentPAD get-path))
@@ -124,19 +189,6 @@
 ;            (send argPAD selected)))))
 
 
-(define (Raise-Selected argPAD)
-  (foreach (send argPAD selected)
-           (lambda (obj)
-             (send obj raise))))
-
-(define (Lower-Selected argPAD)
-  (foreach (send argPAD selected)
-           (lambda (obj)
-             (send obj lower))))
-
-(define (RaiseByOne-Selected) (send-selected raise 'one))
-(define (LowerByOne-Selected) (send-selected lower 'one))
-
 (define (Reshape-Selected argPAD)
   (foreach (send argPAD selected)
            (lambda (obj)
@@ -163,7 +215,7 @@
 ;    (send g select)))
 
 (define (unmakegroup argPAD item-list)
-  (Start-Changing-Select argPAD)
+  (Start-Changing-Select--undoable argPAD)
   (foreach item-list
            (lambda (g)
              (when (is-a? g group%)
@@ -172,7 +224,7 @@
                    (foreach mems (lambda (m) (send m select))))
                  ))))
   ;;UNDO HERE
-  (Done-Changing-Select argPAD)
+  (Done-Changing-Select--undoable argPAD)
   )
 
 (define (Group-Selected)
@@ -196,27 +248,6 @@
 (define fix fix-object-ids) ;for backward compatibility
 
 ; === Saving and Loading ===
-(define *current_directory* (current-directory))
-(define Select-File-Dialog
-  (case-lambda
-    ;mode is 'load or 'save
-    ((mode) (Select-File-Dialog mode (send currentPAD get-path)))
-    ((mode path)
-     (let ((dir *current_directory*)
-           (filename #f)
-           (dir? #f))
-       (when path
-         (set!-values (dir filename dir?) (split-path->string path)))
-       (when dir?
-         (set! dir (build-path dir filename))
-         (set! filename #f))
-       (set! path
-             (cond ((eq? mode 'save)
-                    (put-file "Save" *menubar* dir filename #f null))
-                   (else
-                    (get-file "Load" *menubar* dir #f #f null))))
-       path))))
-
 
 ;(define (Select-File-Dialog mode) ;mode is 'load or 'save
 ;  (let ((path (send currentPAD get-path))
@@ -262,45 +293,8 @@
 
 ; Old Save Format:
 
-; Used to re-save current pad.  (Does no error checking)
-(define Save-All-As
-  (case-lambda
-    ((fullfilename) (Save-All-As fullfilename Save-All-To-Port))
-    ((fullfilename save-fn)
-     (with-handlers
-       ((exn?
-         (lambda (exn)
-           (message-box  "Save" (exn-message exn) *menubar* '(ok)))))
-       (let ((port #f))
-         (unless fullfilename
-           (error "no filename specified"))
-         (send currentPAD set!-path fullfilename)
-         (set! port (open-output-file fullfilename #:exists 'truncate))
-         (save-fn port)
-         (close-output-port port))))))
-
-(define Select-and-Load-File
-  (case-lambda
-    (() (Select-and-Load-File import-path)) ;import by default
-    ((load-context-fn)
-     (let ((path (Select-File-Dialog 'load)))
-       (when path
-         (load-context-fn path))
-       path))))
-
 (define (Select-and-Import-File)
   (Select-and-Load-File import-path))
-
-(define (Select-and-Restore-File)
-  (let ((path (Select-and-Load-File restore-path)))
-    (when path
-      (send currentPAD set!-path path))))
-
-(define (Restore-Current)
-  (let ((path (send currentPAD get-path)))
-    (if path
-        (restore-path path)
-        (Select-and-Restore-File))))
 
 (define (Fillcolor-Dialog)
   (let* ((tclcolor (fillgetcolor)))
@@ -417,56 +411,207 @@
           result)
         (send currentPAD defaultpen))))
 
-;; pdf menu functions from composite
+;; from logs.rkt
 
-(define make-metadata-menu-for-pdf
+(define (Save-All-To-Port port) ;overrides Save-All-To-Port in menu_functions.ss
+  ; save port is merely a wrapper file
+  ; which redirects to the current log branch
+  (ensure-keyframe)
+  (fprintf port "(load-log ~s ~s ~s)~%"
+           (get-hostname)
+           (send (current-logtree) treename)
+           (send (current-logbranch) logid))
+  (send (current-logtree) cache-maxid) ;this could happen more frequently also
+  )
+
+; ================= HACK! THHPTH! ==========
+;add to popup menu
+(append-mainmenu-constructor
+ (lambda (menu obj)
+   (add-menu-separator menu)
+   (add-menu-item menu "Save state..."
+                  (lambda () (Save-All-As (Select-File-Dialog 'save) Save-All-To-Port))
+                  )))
+
+;; from menu_functions Old Save Format:
+; Used to re-save current pad.  (Does no error checking)
+(define Save-All-As
   (case-lambda
-    ((obj) (make-metadata-menu-for-pdf (new-popup "Document Details")))
-    ((obj menu)
-     (date-display-format (pad-date-format))
-     (make-submenu-DateFormat menu obj)
-     (add-menu-item menu (format "File: ~a" (send obj url)) void #f)
-     (add-menu-item menu (format "Created: ~a"
-                                 (let* ((pair (get-pdf-date obj))
-                                        (date (pair->date pair)))
-                                   (if date
-                                       (date->string date (show-metadata-time?))
-                                       "(unknown)"))) void #f)
-     (add-menu-item menu (format "Acquired: ~a"
-                                 (let* ((pair (get-pdf-filedate obj))
-                                        (date (pair->date pair)))
-                                   (if date
-                                       (date->string date (show-metadata-time?))
-                                       "(unknown)"))) void #f)
-     (add-menu-item menu "Author" void #f)
-     (add-menu-item menu "Title" void #f)
-     menu)))
+    ((fullfilename) (Save-All-As fullfilename Save-All-To-Port))
+    ((fullfilename save-fn)
+     (with-handlers
+       ((exn?
+         (lambda (exn)
+           (message-box  "Save" (exn-message exn) *menubar* '(ok)))))
+       (let ((port #f))
+         (unless fullfilename
+           (error "no filename specified"))
+         (send currentPAD set!-path fullfilename)
+         (set! port (open-output-file fullfilename #:exists 'truncate))
+         (save-fn port)
+         (close-output-port port))))))
 
-(define (make-menu-for-pdf obj)
-  (let ((menu (new-popup "Document Details"))
-        (pdf  (ensure-pdf obj))) ;obj itself or pdf containing it
-    ;    (when (send obj findable)
-    (send pdf select)
-    (make-submenu-Edit menu pdf)
-    ;(make-submenu-Arrange menu obj) ;dubious...
-    (unless (eq? obj pdf)
-      (add-menu-item menu "Raise" (lambda () (send obj raise)))
-      (add-menu-item menu "Lower" (lambda () (send obj lower))))
-    (add-checkable-menu-item menu "Lock Arrangement"
-                             (lambda (i) (if (send pdf expanded?)
-                                             (send pdf condense)
-                                             (send pdf expand)))
-                             (not (send pdf expanded?)))
-    ;      (add-menu-item menu "Rearrange..."
-    ;             (lambda () (send obj expand))
-    ;             (not (send obj expanded?)))
-    ;      (add-menu-item menu "Flatten..."
-    ;             (lambda () (send obj condense))
-    ;             (send obj expanded?)))
-    ;)
-    (add-menu-item menu "View Document..." (lambda () (send pdf view-document)))
-    (make-submenu-Select-Highlighted menu pdf)
-    (add-menu-separator menu) ;------------------------------
-    (make-metadata-menu-for-pdf pdf menu)
-    menu))
+;
+; Edit submenu
+;
+(define (make-submenu-Edit mb object)
+  (define sb (add-submenu mb "Edit"))
 
+  (add-menu-item sb "Undo" undo)
+
+  (add-menu-separator sb) ;------------------------------
+
+  (add-menu-item sb "Cut" Cut-Selected       (or (eq? object #t) (any-selected?)))
+  (add-menu-item sb "Copy" Copy-Selected     (or (eq? object #t) (any-selected?)))
+  (add-menu-item sb "Paste" Do-Paste         (or (eq? object #t) (not (Copy-Buffer-empty?))))
+  (add-menu-item sb (if (many-selected?) "Delete Selected" "Delete")
+                 Delete-Selected (or (eq? object #t) (any-selected?)))
+  (add-menu-item sb (if (many-selected?) "Delete Selected Groups" "Delete Group")
+                 Deep-Delete-Selected (or (eq? object #t) (any-selected?)))
+
+  (add-menu-separator sb) ;------------------------------
+
+  (add-menu-item sb "Select All" Select-All
+                 (or (eq? object #t) (any-objects?)))
+  (add-menu-item sb "Delete All" Confirm-and-Delete-All
+                 (or (eq? object #t) (any-objects?)))
+  )
+
+;
+; Arrange submenu
+;
+
+(define (Raise-Selected argPAD)
+  (foreach (send argPAD selected)
+           (lambda (obj)
+             (send obj raise))))
+
+(define (Lower-Selected argPAD)
+  (foreach (send argPAD selected)
+           (lambda (obj)
+             (send obj lower))))
+
+(define (RaiseByOne-Selected) (send-selected raise 'one))
+(define (LowerByOne-Selected) (send-selected lower 'one))
+
+(define (make-submenu-Arrange mb object)
+  (define sb (add-submenu mb "Arrange"))
+
+  (add-menu-item sb "Bring to Front" (lambda () (Raise-Selected dynapad)))
+  (add-menu-item sb "Send to Back" (lambda () (Lower-Selected dynapad)))
+  (add-menu-item sb "Bring Closer" (lambda () (RaiseByOne-Selected dynapad)))
+  (add-menu-item sb "Send Further" (lambda () (LowerByOne-Selected dynapad)))
+
+  (add-menu-separator sb) ;------------------------------
+
+  (add-menu-item sb "Group" Group-Selected
+                 (or (eq? object #t) (more-than-one-selected?)))
+  (add-menu-item sb "Ungroup" UnGroup-Selected
+                 (or (eq? object #t) (any-accept-method? 'ungroup)))
+
+  (add-menu-separator sb) ;------------------------------
+
+  (add-menu-item sb "Lock" (nyi "Lock-Selected") #f)
+  (add-menu-item sb "UnLock" (nyi "UnLock-Selected") #f)
+  (add-menu-item sb "Hide" (nyi "Hide-Selected") #f)
+  (add-menu-item sb "Show All" (nyi "ShowAll") #f)
+  )
+
+;
+; Object submenu
+;
+(define *wintop_obj_fill_mi* #f)
+(define *wintop_obj_pen_mi* #f)
+(define (make-submenu-Object mb object)
+  (define sb (add-submenu mb "Object"))
+
+  (add-menu-item sb "Make Bigger" make-selected-bigger (any-selected?))
+  (add-menu-item sb "Make Smaller" make-selected-smaller (any-selected?))
+  (add-menu-separator sb)
+  (add-menu-item sb "Resize" Resize-Selected (any-selected?))
+  (add-menu-item sb "Reshape" Reshape-Selected (any-selected?))
+  (add-menu-item sb "Rotate" (nyi "Rotate") #f)
+  (add-menu-item sb "Flip Vertical" (nyi "Flip Vertical") #f)
+  (add-menu-item sb "Flip Horizontal" (nyi "Flip Horizontal") #f)
+  ;   (add-menu-item sb "Smooth" (nyi "Smooth") #f)
+  ;   (add-menu-item sb "Unsmooth" (nyi "Unsmooth") #f)
+
+  (when (or (eq? object #t) (any-accept-method? 'fill))
+    (let ((mi (add-menu-item sb "Fill Color..." Fillcolor-Dialog)))
+      (when (eq? object #t) (set! *wintop_obj_fill_mi* mi))))
+
+  (when (or (eq? object #t) (any-accept-method? 'pen))
+    (let ((mi (add-menu-item sb "Pen Color..." Pencolor-Dialog)))
+      (when (eq? object #t) (set! *wintop_obj_pen_mi* mi))))
+
+  ;
+  ; Fade submenu
+  ;
+  (let* ((sb_up sb)
+         (sb (add-submenu sb_up "Fade")))
+    (add-menu-item sb "None" (nyi "None") #f)
+    (add-menu-item sb "Default" (nyi "Default") #f)
+    (add-menu-item sb "When smaller" (nyi "When smaller") #f)
+    (add-menu-item sb "When larger" (nyi "When larger") #f)
+    (add-menu-item sb "Cross" (nyi "Cross") #f)
+    )
+
+  (add-menu-separator sb) ;------------------------------
+
+  ;
+  ; Sticky submenu
+  ;
+  (let* ((sb_up sb)
+         (sb (add-submenu sb_up "Sticky")))
+    (add-menu-item sb "UnSticky" (nyi "UnSticky") #f)
+    (add-menu-item sb "Sticky" (nyi "Sticky") #f)
+    (add-menu-item sb "Sticky X" (nyi "Sticky X") #f)
+    (add-menu-item sb "Sticky Y" (nyi "Sticky Y") #f)
+    (add-menu-item sb "Sticky Z" (nyi "Sticky Z") #f)
+    (add-menu-item sb "Sticky View" (nyi "Sticky View") #f)
+    )
+
+  (add-menu-item sb "Center" (nyi "Center") #f)
+  (add-menu-item sb "Make same size" (nyi "Make same size") #f)
+
+  (add-menu-separator sb) ;------------------------------
+
+  (add-menu-item sb "Properties..." (nyi "Properties") #f)
+  (add-menu-item sb "Line Props..." (nyi "Line Props") #f)
+  )
+
+;
+; Font submenu
+;
+(define (make-submenu-Font mb object)
+  (define sb (add-submenu mb "Font"))
+  (add-menu-item sb "Size" (nyi "Size") #f)
+  (add-menu-item sb "Name" Get-Font-Name-For-Selected)
+  (add-menu-item sb "Style" (nyi "Style") #f)
+  )
+
+(define (make-submenu-Tools mb object)
+  (define sb (add-submenu mb "Tools"))
+  ;
+  ; Create Object submenu
+  ;
+  (add-menu-item sb "Drawing Tool..." (nyi "Drawing Tool") #f)
+  (add-menu-item sb "Colors Tool..." (nyi "Colors Tool") #f)
+
+  (add-menu-item sb "Fill Color..." Fillcolor-Dialog)
+  (add-menu-item sb "Pen Color..." Pencolor-Dialog)
+
+  (add-menu-item sb "Layers..." (nyi "Layers Tool") #f)
+  (add-menu-item sb "Selection..." (nyi "Selection Tool") #f)
+
+  ;
+  ; Layout submenu
+  ;
+  (let* ((sb_up sb)
+         (sb (add-submenu sb_up "Layout...")))
+    (add-menu-item sb "Align..." (nyi "Align Dialog") #f)
+    (add-menu-item sb "Distribute..." (nyi "Distribute Dialog") #f)
+    )
+  )
+
+(define (make-submenu-Select-Highlighted mb obj) #f) ;hook to be overridden

@@ -1,4 +1,29 @@
+#lang racket/base
 
+(require (only-in racket/class send)
+         (only-in dynapad/pad-state
+                  dynapad)
+         dynapad/misc/misc
+         (only-in dynapad/misc/tools-lists
+                  counting-list)
+         (only-in dynapad/layout/bbox
+                  bbcenter
+                  bbheight
+                  bbunion
+                  bbwidth
+                  bbunion-objects
+                  b0
+                  b1
+                  b2
+                  b3
+                  bxc
+                  byc
+                  )
+         )
+
+(provide arrange-in-spiral-in-current-view
+         arrange-in-grid-in-current-view
+         )
 ;;Basic routines
 
 (define (anchor-quadrant anc)
@@ -409,6 +434,7 @@
    lst)
   (send obj maxsize (list 0.95 #t)))
 
+#; ; overwritten
 (define (arrange-in-grid-onto-object lst obj)
   (arrange-objs-in-grid lst (send obj bbox) '() "nw")
   (arrange-objs-in-bbox  lst (send obj bbox) 0.8)

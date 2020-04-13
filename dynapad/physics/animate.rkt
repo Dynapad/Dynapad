@@ -1,6 +1,16 @@
-(dynaload "actor.ss")
-(dynaload "actortimer.ss")
+#lang racket/base
 
+(require racket/class
+         (only-in dynapad/pad-state
+                  dynapad)
+         dynapad/misc/misc
+         (only-in dynapad/misc/tools-lists
+                  first-valid)
+         dynapad/utils/actor
+         dynapad/physics/actortimer
+         )
+
+(provide animate-batch-then-do)
 
 ; there are several motion timers with diff. freqs;
 ;  subscribe motion-actors to appropriate freq timer

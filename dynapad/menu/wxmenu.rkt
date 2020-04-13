@@ -1,8 +1,33 @@
-(require (prefix-in wx: (only-in mred/private/kernel
+#lang racket/base
+
+(require racket/class
+         (only-in racket/gui/base
+                  popup-menu%
+                  menu%
+                  control-event%
+                  menu-item%
+                  checkable-menu-item%
+                  separator-menu-item%
+                  frame%
+                  menu-bar%
+                  )
+         (prefix-in wx: (only-in mred/private/kernel
                                  fill-private-color
                                  get-panel-background
                                  the-pen-list))
-         racket/class)
+         dynapad/pad-state
+         dynapad/misc/misc
+         )
+
+(provide add-submenu
+         add-menu-item
+         add-menu-separator
+         show-popup-lambda
+         make-popup-server
+         new-popup
+         add-checkable-menu-item
+         )
+
 #;
 (require (lib "class100.ss"))
 
@@ -15,9 +40,10 @@
 
 ; see method: /home/hci/plt-200/collects/mred/mred.ss line 3554
 
+#; ; appears to be unused and has a bunch of issues
 (define popup-server%
-  (class canvas%  (parent)
-
+  (class canvas%
+    (parent)
     (inherit popup-menu)
     (define/override
       (on-focus on?) (say on?))

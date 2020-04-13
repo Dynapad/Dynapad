@@ -395,3 +395,13 @@
 ;; moved in from undo.rkt
 (define (current-error-ports) ;may be overridden to cc errors elsewhere
   (list (current-error-port)))
+
+;; dynapad-c-api and menu_functions candidate to move to `dynapad/misc/misc'
+(define (write-set objs)
+  (if (null? objs)
+      null
+      (append
+       (let ((obj (car objs)))
+         (and obj
+              (send obj write-all)))
+       (write-set (cdr objs)))))

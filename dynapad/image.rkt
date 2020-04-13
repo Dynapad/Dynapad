@@ -22,6 +22,8 @@
 
 (provide image%
          findthumb
+         pdf%
+         ensure-thumb
          )
 
 ;; thumbs
@@ -303,3 +305,81 @@
     (when *image-aftermake-callbacks*
       (exec-any-callbacks *image-aftermake-callbacks* this))
     ))
+
+;; from dynapad/image-utils/arrangeimages
+(define pdf%
+  (class image%
+    (init initpad initpath (initposition #f))
+    (inherit hirespath dynaclass position writeoptions)
+    (field (_path #f) (_name #f) (_dotdir #f) (_author #f) (_title #f)
+           (_firstpage #f) (_images '()) (_largest #f)
+           (_composite #f) (_composites '()) (_text #f))
+
+    (override write)
+
+    (define/public (path)
+      _path)
+    (define/public (name)
+      _name)
+    (define/public (dotdir)
+      _dotdir)
+    (define/public (author)
+      _author)
+    (define/public (title)
+      _title)
+    (define/public (firstpage)
+      _firstpage)
+    (define/public (images)
+      _images)
+    (define/public (largest)
+      _largest)
+    (define/public (composite)
+      _composite)
+    (define/public (composites)
+      _composites)
+    (define/public (text)
+      _text)
+
+    (define (write)
+      `(let ((obj (make-object ,(dynaclass) dynapad ,(path))))
+         (send* obj
+           ,@(writeoptions))
+         obj))
+
+    (set! _path (path->complete-path initpath))
+    (let-values (((base name dir?) (split-path->string _path)))
+      (set! _name name)
+      (set! _dotdir (build-path->string base (string-append "." name))))
+
+    (define (dotpath name)
+      (let ((x (build-path->string _dotdir name)))
+        (if (file-exists? x) x #f)))
+
+    (set! _firstpage (dotpath "firstpage.jpg"))
+    (set! _largest (dotpath "largest.jpg"))
+    (set! _composite (dotpath "composite.jpg"))
+    (set! _text (dotpath "text.jpg"))
+
+    (define image_regexp (regexp "image-[0-9][0-9][0-9].[jJ][pP][gG]"))
+
+    (when (directory-exists? _dotdir)
+      (set! _images
+            (map (lambda(x) (dotpath x))
+                 (filter (lambda(file) (regexp-match image_regexp file))
+                         (sort (directory-list->string _dotdir) string<?))))
+      )
+
+    (define composite_regexp (regexp "composite-[0-9][0-9][0-9].[jJ][pP][gG]"))
+
+    (when (directory-exists? _dotdir)
+      (set! _composites
+            (map (lambda(x) (dotpath x))
+                 (filter (lambda(file) (regexp-match composite_regexp file))
+                         (sort (directory-list->string _dotdir) string<?))))
+      )
+
+    (super-instantiate(initpad))
+    (when initposition
+      (position initposition))
+    (when _composite (hirespath _composite))
+    (dynaclass 'pdf%)))

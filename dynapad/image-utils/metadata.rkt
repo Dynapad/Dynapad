@@ -23,16 +23,19 @@
 (require racket/class
          racket/date
          racket/list
-         (only-in racket/system process)
          mzlib/etc
          dynapad/base
          dynapad/image
-         dynapad/pdf
-         dynapad/misc/misc
-         dynapad/misc/alist
+         (only-in dynapad/pdf
+                  pdf-portrait%
+                  )
+         (only-in dynapad/misc/misc
+                  ensure-number)
+         ;dynapad/misc/misc
+         ;dynapad/misc/alist
          dynapad/misc/tools-cmp
-         dynapad/utils/parsedate
          dynapad/image-utils/smart-labels
+         dynapad/image-utils/metadata-base
          )
 
 ;==================== Parameters =============
@@ -84,92 +87,6 @@
                (lambda (a b) cmp-nums)
                (lambda (val) 0)))
 
-
-;generalize generate-and-cache process:
-(define (get-obj-metadata obj tag generate-fn)
-  (let* ((keyval (assq tag (send obj alist)))
-         (val (if keyval
-                  (cadr keyval) ;reuse cached val
-                  (generate-fn obj)))) ;unknown, generate anew
-    (when (not keyval) ;cache for next time
-      (remote-push! (list tag val) obj alist))
-    val))
-
-
-; this define...let...set! construction lets regexps be pre-compiled but scoped locally:
-(define (match-metadata-line-for-tag line tag) #f)
-; given a tag and line of output from a metadata-generating process
-; (e.g. jhead, pdfinfo),
-; parses line appropriately to tag and returns non-#f if match, #f otherwise
-(let (; jhead entries:
-      (photo-datetime-rexp (regexp "^Date/Time[ \t]*: +(....):(..):(..) +(..):(..):(..)$"))
-      (focus-dist-rexp     (regexp "^Focus Dist.[ \t]+: +([0-9.]+)([a-z]+)$"))
-      (file-datetime-rexp  (regexp "^File date[ \t]*: +(....):(..):(..) +(..):(..):(..)$"))
-      (aperture-rexp       (regexp "^Aperture[ \t]+: +f/(.*)$"))
-      ; pdfinfo entries:
-      (publish-date-rexp   (regexp "^CreationDate:[ \t]*(.+)$"))
-      ; other services/entries may be added here...
-      )
-  (set! match-metadata-line-for-tag
-        (lambda (line tag)
-          (case tag
-            ((photo-datetime)
-             (let ((match (regexp-match photo-datetime-rexp line)))
-               (and match
-                    (infer-complete-date
-                     (apply list->date
-                            (map ensure-number (reverse (cdr match))))))))
-
-            ((file-datetime)
-             (let ((match (regexp-match file-datetime-rexp line)))
-               (and match
-                    (infer-complete-date
-                     (apply list->date
-                            (map ensure-number (reverse (cdr match))))))))
-
-            ((fstop)
-             (let ((match (regexp-match aperture-rexp line)))
-               (and match (ensure-number (cadr match)))))
-
-            ((focus-dist)
-             (let ((match (regexp-match focus-dist-rexp line)))
-               (and match (ensure-number (cadr match)))))
-
-            ((publish-date)
-             (let ((match (regexp-match publish-date-rexp line)))
-               (and match
-                    (infer-complete-date
-                     (string->date (cadr match))))))
-
-            (else #f)))))
-
-(define (extract-metadata-with-cmd tag path cmd)
-  ; jhead is a system app which extracts exif data from .jpgs;
-  ;   pdfinfo extracts info from .pdfs
-  ; This fn starts a metadata-extraction process (e.g. jhead, pdfinfo)
-  ;  and reads its results on input-port;
-  ;  if any line matches regexp (above) for tag, returns parsed value, else #f
-  (let* ((ports (and path (file-exists? path)
-                     (process (format "~a ~s" cmd path))))
-         (input-port (and ports (car ports))))
-    (and input-port
-         (let ((line #f)
-               (found #f))
-           (while (and (not found)
-                       (not (eq? eof (cset! line (read-line input-port)))))
-             (set! found
-                   (match-metadata-line-for-tag line tag)))
-           (close-input-port input-port)
-           (close-output-port (second ports))
-           (close-input-port (fourth ports))
-           found))))
-
-(define (get-filedate path)
-  (and (file-exists? path)
-       (let* ((secs (file-or-directory-modify-seconds path))
-              (date (seconds->date secs)))
-         (list secs date))))
-
 (define (get-image-date obj)
   (let ((pair
          (get-obj-metadata
@@ -187,30 +104,6 @@
           img 'filedate
           (lambda (img) (get-filedate (send img hirespath))))))
     pair))
-
-(define (get-pdf-date obj)
-  (let ((pair
-         (get-obj-metadata
-          obj 'publish-date
-          (lambda (pdf) (let ((date
-                               (extract-metadata-with-cmd
-                                'publish-date (send pdf url) "pdfinfo ")))
-                          (and date
-                               (list (date->seconds date) date)))))))
-    pair))
-
-(define (get-pdf-filedate pdf)
-  (let ((pair
-         (get-obj-metadata
-          pdf 'filedate
-          (lambda (pdf) (get-filedate (send pdf url))))))
-    pair))
-
-(define (pair->date pair)
-  (and pair
-       (or (cadr pair)
-           (and (car pair)
-                (seconds->date (car pair))))))
 
 (define (get-image-fstop obj)
   (get-obj-metadata obj 'fstop
@@ -249,44 +142,6 @@
                      (lambda (vals) (let* ((pair (car vals)) ;assumes only one val
                                            (sec (car pair)))
                                       (list (list sec #f))))))
-
-; ====== Metadata menu =========
-(define *show-metadata-time?* #t)
-(define (show-metadata-time?) *show-metadata-time?*)
-(define *pad-date-format* 'american)
-(define pad-date-format
-  ;(date-display-format ...) needs this wrapper for some reason
-  ;  or menu doesnt refresh
-  (case-lambda
-    (() *pad-date-format*)
-    ((frmt) (set! *pad-date-format* frmt)
-            (date-display-format frmt))))
-
-
-(define-macro (time-format-item format)
-  `(add-checkable-menu-item sb ,(symbol->string format)
-                            (lambda (i)
-                              (pad-date-format ',format))
-                            (eq? ',format (pad-date-format))))
-
-(define (make-submenu-DateFormat mb obj)
-  (let* ((sb (add-submenu mb "Date Format...")))
-    (add-checkable-menu-item sb "Show time"
-                             (lambda (i) (set! *show-metadata-time?*
-                                               (not (show-metadata-time?))))
-                             (show-metadata-time?))
-    (add-menu-separator sb) ;------------------------------
-    (time-format-item american)
-    (time-format-item chinese)
-    (time-format-item german)
-    (time-format-item indian)
-    (time-format-item irish)
-    (time-format-item julian)
-    (time-format-item iso-8601)
-    (time-format-item rfc2822)
-    ))
-
-
 
 ;====== Parameters =======
 ; template:

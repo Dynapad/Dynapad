@@ -1,12 +1,19 @@
 #lang racket/base
 
-;======= Image Bindings and Utilities ============================
-
 (require (only-in racket/class send)
          dynapad/pad-state
+         (only-in dynapad/spd
+                  show-possible-delay)
          dynapad/misc/misc
-         dynapad/history/undo ; show-possible-delay
+         ;dynapad/history/undo ; show-possible-delay
          )
+
+(provide add-images-to-hires-list
+         image-hires-and-center
+         init-image-bindings
+         )
+
+;======= Image Bindings and Utilities ============================
 
 ;------ New Auto-hires....
 ; Need to rewrite these to accomodate compound images

@@ -9,7 +9,10 @@
                   round-to-int
                   round-to-decimal))
 
-(provide dynacolor%)
+(provide dynacolor%
+         mred-color-from-tcl-color
+         tcl-color-from-mred-color
+         )
 
 (define (tcl-color-from-mred-color mred-color)
   (cond ((eq? mred-color #f) #f)

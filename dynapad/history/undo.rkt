@@ -1,5 +1,7 @@
 #lang racket/base
 (require racket/class
+         (only-in racket/gui/base
+                  message-box)
          compatibility/mlist
          dynapad/base
          dynapad/copy
@@ -7,7 +9,7 @@
          dynapad/pad-state
          ;dynapad/import
          dynapad/undo-state
-         ;dynapad/misc/misc ; do-deferred-evals
+         dynapad/misc/misc
          dynapad/misc/alist
 
          dynapad/events/mode ; now stripped down
@@ -24,11 +26,20 @@
 
          ;dynapad/history/ids ; this actually works now ?!
          dynapad/history/logs
+         (only-in dynapad/layout/bbox
+                  bbunion-objects
+                  )
+         dynapad/physics/animate
          )
 
-(provide undoable-delete-all
-         restore-set-core
-         restore-set
+(provide Paste-From-Copy-Buffer
+         Copy-Paste-ReSelect
+         undoable-delete-all
+         import-path
+         undo
+         Delete-Selected
+         Deep-Delete-Selected
+         Confirm-and-Delete-All
          )
 
 ;; cyclical dependencies with mode, select, and event-shared ffs
@@ -59,21 +70,6 @@
 ;(bindControlKeys arg_PAD)
 ;(bindDrag arg_PAD)
 
-
-(define (false-event-lambda o e) #f)
-
-; gets topmost group which takes events
-(define (get-top-group obj)
-  (if (and (not (send obj takegroupevents))
-           (send obj getgroup))
-      (get-top-group (send obj getgroup))
-      obj))
-
-; gets topmost group regardless of event handling
-(define (get-topmost-group obj)
-  (if (send obj getgroup)
-      (get-topmost-group (send obj getgroup))
-      obj))
 
 ;--------------------
 ; A drag select action may need to "find" different objects in different
@@ -371,10 +367,7 @@
                             (do-deferred-evals (make-immutable-hash-table idmap))
                             objs)))))
 
-(define (import-path path)
-  (use-load-context 'import
-                    (load path))  ; file at path should call (load-set ...)
-  path)
+
 
 (define-syntax load-set
   (syntax-rules ()
@@ -382,13 +375,6 @@
      (if (importing?)
          (import-set-core obj ...)
          (restore-set-core obj ...)))))
-
-;these set load-context if restore/import-path are bypassed
-(define-syntax import-set
-  (syntax-rules ()
-    ((_ expr ...)
-     (use-load-context 'import
-                       (import-set-core expr ...)))))
 
 (define (undo) ;overridden in logs.ss
   (when (not (null? *undo-stack*))
@@ -587,7 +573,7 @@
 ; some copy stuff tainted by Set-Select--undoable
 
 (define (Paste-From-Copy-Buffer)
-  (let* ((newobjects (eval `(import-set ,@*copy_buffer*)))
+  (let* ((newobjects (eval `(import-set ,@*copy-buffer*)))
          (topobjects (filter (lambda (o) (not (send o getgroup))) newobjects)))
     (for-each Offset-Object topobjects)
     ;  (Unselect-Selected--undoable)
@@ -606,21 +592,21 @@
 (define (using-another-pad--Paste-From-Copy-Buffer argPAD)
   (let ((tmp currentPAD)
         (newobjects '()))
-    (set! currentPAD argPAD)
+    (set-currentPAD! argPAD)
     (set! newobjects (Paste-From-Copy-Buffer))
     ;UNDO HERE?
     (foreach newobjects (lambda (o) (send o unselect)))
     (changemode argPAD "Run")
-    (set! currentPAD tmp)
+    (set-currentPAD! tmp)
     )
   )
 
 (define (using-another-pad--Copy-Selected argPAD)
   (let ((tmp currentPAD))
-    (set! currentPAD argPAD)
+    (set-currentPAD! argPAD)
     (Copy-Selected)
     ;UNDO HERE?
-    (set! currentPAD tmp)
+    (set-currentPAD! tmp)
     )
   )
 ;-----

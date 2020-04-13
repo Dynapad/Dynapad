@@ -5,9 +5,20 @@
          racket/system
          ;dynapad/pdf
          dynapad/image
+         (only-in dynapad/pad-state
+                  event-x
+                  event-y)
+         (only-in dynapad/misc/misc
+                  sendf)
          dynapad/misc/progress
          dynapad/utils/handle
-         dynapad/image-utils/metadata
+         (only-in dynapad/layout/bbox
+                  b0
+                  b1
+                  b2
+                  b3
+                  )
+         ;dynapad/image-utils/metadata
          collects/misc/pathhack
          ;collects/imagemagick/imagemagick
          collects/pdfrip/pdfrip
@@ -15,7 +26,8 @@
          ;collects/thumbify/thumbify
          )
 
-(provide build-composite-cmd)
+(provide limit-drag-to-bbox
+         )
 
 (announce-module-loading "PDF features...")
 
@@ -144,22 +156,4 @@
          (system mogrify-cmd))))))
 
 |#
-
-; no need for above; use build-in split path
-; (or: replace with (file-name-from-path...)?)
-
-(define 1cell-layout (list '(0.2 #f 0.8 0.75))) ;centered below 3/4 hline
-(define 2cell-layout (list '(0.3 0.5 0.7 #f) '(0.3 #f 0.7 0.45))) ;N,S
-(define 3cell-layout (list '(0 0.4 #f 0.75) '(#f 0.2 1 0.6) '(0 0 #f 0.4))) ;NW,E,SW
-(define 4cell-layout (list '(0 0.4 #f 0.75) '(#f 0.4 1 0.75) ;NW,NE,
-                           '(0 0 #f 0.4)   '(#f 0 1 0.4)))   ;SW,SE
-(define 5cell-layout (cons '(0.3 #f 0.7 0.7) 4cell-layout))
-;(define 6cell-layout (list-append (list '() '())
-;                  4cell-layout))
-(define 1cell-surplus (list '(#f 1 0 1.5)))
-(define 2cell-surplus (cons '(1 1 #f 1.5) 1cell-surplus))
-;(define 3cell-surplus (cons '(-0.5 1 #f 0) 2cell-surplus))
-(define 3cell-surplus (cons '(1 -0.5 #f 0) 2cell-surplus))
-(define 4cell-surplus (cons '(#f -0.5 0 0) 3cell-surplus))
-
 (update-progress 1)

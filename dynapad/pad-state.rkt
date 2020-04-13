@@ -1,7 +1,13 @@
 #lang racket/base
 
-(require (only-in racket/class send)
+(require (only-in racket/class send make-object)
+         (only-in racket/gui/base
+                  frame%)
          syntax/location
+         (only-in dynapad/misc/user-preferences
+                  *draw-menu-x*
+                  *draw-menu-y*
+                  )
          )
 
 (provide currentPAD set-currentPAD!
@@ -10,11 +16,20 @@
          *menubar*
          (struct-out event)
          (struct-out tablet-event)
-         write-set
          *dynapad-directory*
+         *list-of-all-dynapads* 
+         set-*list-of-all-dynapads*!
+         set-initial-pad-state!
          )
 
-;; needed by misc
+(define *list-of-all-dynapads* '())
+(define (set-*list-of-all-dynapads*! value)
+   (set! *list-of-all-dynapads* value))
+
+(define (set-initial-pad-state! pad)
+  (set-dp1! pad)
+  (set-dynapad! pad)
+  (set-currentPAD! pad))
 
 ; should only be set once at the begining in dynapad.rkt
 (define dp1 null)
@@ -28,20 +43,11 @@
 (define (set-currentPAD! pad) (set! currentPAD pad))
 
 ;; not needed by misc
-(define *menubar* #f)
+(define *menubar* (make-object frame% "Draw Tools" #f #f #f *draw-menu-x* *draw-menu-y*))
+
 
 (define-struct event (x y type key obj sx sy))
 (define-struct (tablet-event event) (xid p tiltx tilty state button))
-
-;; dynapad-c-api and menu_functions candidate to move to `dynapad/misc/misc'
-(define (write-set objs)
-  (if (null? objs)
-      null
-      (append
-       (let ((obj (car objs)))
-         (and obj
-              (send obj write-all)))
-       (write-set (cdr objs)))))
 
 ;; default-directory or something like that
 ; FIXME this is a hack that is not remotely robust
@@ -53,4 +59,3 @@
                     "~/git/dynapad/dynapad" ; FIXME :/
                     )
                 ) 'up))
-(println *dynapad-directory*)

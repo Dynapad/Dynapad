@@ -26,6 +26,8 @@
          set-current-state-id
          pixels->space
          *logtree-layer*
+         set-*logtree-layer*!
+         init-logtree-layer
          *future-log-path*
          set-*future-log-path*!
          pop-*future-log-path*!
@@ -39,7 +41,11 @@
          *log-continues?*
          )
 
-(define *logtree-layer* (make-object layer% dynapad "logtree"))
+(define *logtree-layer* null)
+(define (set-*logtree-layer*! value)
+  (set! *logtree-layer* value))
+(define (init-logtree-layer)
+  (set! *logtree-layer* (make-object layer% dynapad "logtree")))
 
 (define (pixels->space px)
   (let ((scale (caddr (send dynapad view))))

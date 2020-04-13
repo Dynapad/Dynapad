@@ -7,11 +7,13 @@
          )
 
 (provide date->list
+         pair->date
          list->date
          string->date
          prune-date-string
          *iso-date-format-rexp*
          infer-complete-date
+         date->seconds
          )
 
 ; offers:
@@ -134,6 +136,12 @@
 
 (define (current-year)
   (date-year (seconds->date (current-seconds))))
+
+(define (pair->date pair)
+  (and pair
+       (or (cadr pair)
+           (and (car pair)
+                (seconds->date (car pair))))))
 
 (define (list->date sec min hr day mon yr)
   (make-date sec min hr day mon yr #f #f #f #f))

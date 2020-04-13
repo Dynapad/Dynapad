@@ -1,17 +1,83 @@
 #lang racket/base
 
 (require racket/class
+         (only-in racket/date
+                  date->string
+                  date-display-format)
+         (only-in racket/path
+                  file-name-from-path)
+         compatibility/defmacro
+         (for-syntax racket/base)
          dynapad/pad-state
-         dynapad/image
+         (only-in dynapad/image
+                  image%
+                  ensure-thumb
+                  )
+         (only-in dynapad/container
+                  get-container
+                  resizable-image%
+                  )
          dynapad/misc/misc
-         dynapad/image-composite
+         (only-in dynapad/misc/tools-lists
+                  list-head
+                  )
+         (only-in dynapad/misc/filenames
+                  export-link
+                  filter-and-sort-directory)
+         (only-in dynapad/image-composite
+                  image-composite%
+                  )
          ;dynapad/layout/composite
          dynapad/utils/formation ; for name-part otherwise a cryptic error occurs
          collects/misc/pathhack
+         (only-in collects/imagemagick/imagemagick
+                  im/identify
+                  )
+         (only-in dynapad/libdynapad
+                  sch_imagep)
+         (only-in dynapad/layout/bbox
+                  apply-bb-transform
+                  make-bb-transform
+                  )
+         (only-in dynapad/menu/popup-provider
+                  add-object-menu
+                  )
+         (only-in dynapad/menu/menu_functions
+                  make-submenu-Select-Highlighted
+                  make-submenu-Edit
+                  )
+         (only-in dynapad/menu/wxmenu
+                  add-menu-item
+                  new-popup
+                  add-submenu
+                  add-checkable-menu-item
+                  add-menu-separator
+                  )
+         #;
+         (only-in dynapad/menu/menu_functions
+                  make-menu-for-pdf
+                  )
+         (only-in dynapad/events/image-events
+                  add-images-to-hires-list
+                  image-hires-and-center
+                  init-image-bindings
+                  )
+         (only-in dynapad/utils/handle
+                  assign-handle
+                  pdf-handle%
+                  get-pdf-metadata-dir
+                  )
+         (only-in dynapad/image-utils/metadata-base
+                  get-pdf-date
+                  get-pdf-filedate
+                  )
+         (only-in dynapad/utils/parsedate
+                  pair->date
+                  )
          )
 
-(provide pdf-portrait%)
-
+(provide pdf-portrait%
+         pad-date-format)
 
 (define *max-pdf-images* 8)
 (define *max-pdf-images-shown* 1)
@@ -23,6 +89,61 @@
 (define *pdf-subimage-base* "image")
 (define *pdf-subimage-rexp* (regexp (format "^(~a.*)" *pdf-subimage-base*)))
 
+; no need for above; use build-in split path
+; (or: replace with (file-name-from-path...)?)
+
+(define 1cell-layout (list '(0.2 #f 0.8 0.75))) ;centered below 3/4 hline
+(define 2cell-layout (list '(0.3 0.5 0.7 #f) '(0.3 #f 0.7 0.45))) ;N,S
+(define 3cell-layout (list '(0 0.4 #f 0.75) '(#f 0.2 1 0.6) '(0 0 #f 0.4))) ;NW,E,SW
+(define 4cell-layout (list '(0 0.4 #f 0.75) '(#f 0.4 1 0.75) ;NW,NE,
+                           '(0 0 #f 0.4)   '(#f 0 1 0.4)))   ;SW,SE
+(define 5cell-layout (cons '(0.3 #f 0.7 0.7) 4cell-layout))
+;(define 6cell-layout (list-append (list '() '())
+;                  4cell-layout))
+(define 1cell-surplus (list '(#f 1 0 1.5)))
+(define 2cell-surplus (cons '(1 1 #f 1.5) 1cell-surplus))
+;(define 3cell-surplus (cons '(-0.5 1 #f 0) 2cell-surplus))
+(define 3cell-surplus (cons '(1 -0.5 #f 0) 2cell-surplus))
+(define 4cell-surplus (cons '(#f -0.5 0 0) 3cell-surplus))
+
+;;; from dynapad/image-utils/metadata
+; ====== Metadata menu =========
+(define *show-metadata-time?* #t)
+(define (show-metadata-time?) *show-metadata-time?*)
+
+(define *pad-date-format* 'american)
+(define pad-date-format
+  ;(date-display-format ...) needs this wrapper for some reason
+  ;  or menu doesnt refresh
+  (case-lambda
+    (() *pad-date-format*)
+    ((frmt) (set! *pad-date-format* frmt)
+            (date-display-format frmt))))
+
+(define-macro (time-format-item format)
+  `(add-checkable-menu-item sb ,(symbol->string format)
+                            (lambda (i)
+                              (pad-date-format ',format))
+                            (eq? ',format (pad-date-format))))
+
+(define (make-submenu-DateFormat mb obj)
+  (let* ((sb (add-submenu mb "Date Format...")))
+    (add-checkable-menu-item sb "Show time"
+                             (lambda (i) (set! *show-metadata-time?*
+                                               (not (show-metadata-time?))))
+                             (show-metadata-time?))
+    (add-menu-separator sb) ;------------------------------
+    (time-format-item american)
+    (time-format-item chinese)
+    (time-format-item german)
+    (time-format-item indian)
+    (time-format-item irish)
+    (time-format-item julian)
+    (time-format-item iso-8601)
+    (time-format-item rfc2822)
+    ))
+
+;;;
 (define (blank-baseimage-file)
   (build-path->string *dynapad-directory* "pad/bitmaps/blank.jpg"))
 
@@ -360,4 +481,56 @@
 
 ;(send test gather-all)
 
+;; pdf menu functions from composite
+
+(define make-metadata-menu-for-pdf
+  (case-lambda
+    ((obj) (make-metadata-menu-for-pdf (new-popup "Document Details")))
+    ((obj menu)
+     (date-display-format (pad-date-format))
+     (make-submenu-DateFormat menu obj)
+     (add-menu-item menu (format "File: ~a" (send obj url)) void #f)
+     (add-menu-item menu (format "Created: ~a"
+                                 (let* ((pair (get-pdf-date obj))
+                                        (date (pair->date pair)))
+                                   (if date
+                                       (date->string date (show-metadata-time?))
+                                       "(unknown)"))) void #f)
+     (add-menu-item menu (format "Acquired: ~a"
+                                 (let* ((pair (get-pdf-filedate obj))
+                                        (date (pair->date pair)))
+                                   (if date
+                                       (date->string date (show-metadata-time?))
+                                       "(unknown)"))) void #f)
+     (add-menu-item menu "Author" void #f)
+     (add-menu-item menu "Title" void #f)
+     menu)))
+
+(define (make-menu-for-pdf obj)
+  (let ((menu (new-popup "Document Details"))
+        (pdf  (ensure-pdf obj))) ;obj itself or pdf containing it
+    ;    (when (send obj findable)
+    (send pdf select)
+    (make-submenu-Edit menu pdf)
+    ;(make-submenu-Arrange menu obj) ;dubious...
+    (unless (eq? obj pdf)
+      (add-menu-item menu "Raise" (lambda () (send obj raise)))
+      (add-menu-item menu "Lower" (lambda () (send obj lower))))
+    (add-checkable-menu-item menu "Lock Arrangement"
+                             (lambda (i) (if (send pdf expanded?)
+                                             (send pdf condense)
+                                             (send pdf expand)))
+                             (not (send pdf expanded?)))
+    ;      (add-menu-item menu "Rearrange..."
+    ;             (lambda () (send obj expand))
+    ;             (not (send obj expanded?)))
+    ;      (add-menu-item menu "Flatten..."
+    ;             (lambda () (send obj condense))
+    ;             (send obj expanded?)))
+    ;)
+    (add-menu-item menu "View Document..." (lambda () (send pdf view-document)))
+    (make-submenu-Select-Highlighted menu pdf)
+    (add-menu-separator menu) ;------------------------------
+    (make-metadata-menu-for-pdf pdf menu)
+    menu))
 

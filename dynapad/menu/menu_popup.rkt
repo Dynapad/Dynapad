@@ -1,15 +1,51 @@
 #lang racket/base
 
 (require racket/class
-         dynapad/utils/actor
-         dynapad/menu/menu_shared
+         (only-in dynapad/pad-state
+                  dynapad
+                  ; accessors from struct
+                  event-obj
+                  event-sx
+                  event-sy
+                  )
+         (only-in dynapad/base
+                  dynapad%)
+         (only-in dynapad/undo-state
+                  get-top-group
+                  )
+         dynapad/misc/misc
+         (only-in dynapad/utils/actor
+                  actors%)
+         dynapad/menu/menu-state
+         (only-in dynapad/utils/import-dirs
+                  make-submenu-Import
+                  )
          dynapad/menu/wxmenu
+         (only-in dynapad/menu/menu_functions
+                  make-submenu-Edit
+                  )
+         (only-in dynapad/events/zoom-classic
+                  Zoom-In-lambda
+                  Zoom-In-Stop-lambda
+                  Zoom-Out-lambda
+                  Zoom-Out-Stop-lambda
+                  )
+         (only-in dynapad/events/zoom-obj
+                  Select-Zoom-In-lambda
+                  Select-Zoom-In-Stop-lambda
+                  Select-Zoom-Out-lambda
+                  Select-Zoom-Out-Stop-lambda
+                  )
          )
 
-(provide append-mainmenu-constructor
-         add-custom-popup-items
+(provide add-custom-popup-items
+         *popup-menus-enabled?*
          )
 
+(define *popup-menus-enabled?* #f)
+
+(define (main-menu-title obj) ;probably overridden by application module
+  (if obj "Object Menu" "Dynapad Menu"))
 
 (define (handle-popup-event e)
   (define pmenu #f)
@@ -64,16 +100,6 @@
 ; Applications should call (append-mainmenu .... (lambda (menu obj) ... ))
 ;  where (lambda...) builds app-specific menus using (add-menu-item...) etc.
 
-(define *application-mainmenu-constructors* null)
-;list of fns to generate app-specific submenus
-
-(define (append-mainmenu-constructor fn)
-  (set! *application-mainmenu-constructors*
-        (append *application-mainmenu-constructors* (list fn))))
-
-(define (include-application-mainmenu-constructors popmenu object)
-  (for-each (lambda (fn) (fn popmenu object)) *application-mainmenu-constructors*))
-
 ; object is dynaobject% or #f (for dynapad%)
 (define (make-popup-menu object)
   (if (and object (send-actor object 'provides-popup?))
@@ -105,85 +131,64 @@
       )
   )
 
-
-;--- an example of object specific menus -------------------------
-;
-; The make-popup-menu function (above) tests whether an object
-; wants to provide it's own popup menu, before displaying the
-; default object menu.  The test is made by sending an actor-message
-; called "provides-popup?".  If the object has an attached actor
-; which responds to this query, then a second actor-message
-; "make-popup-menu" is used to generate the menu.
-;
-; In the following example code we see a generic actor that handles
-; these messages, as well as a utility for adding the actor and
-; a small example popup-menu.
-;
-(define popup-provider%
-  (class actor%
-    (field (_make-popup-menu #f))
-    (inherit-field _object)
-
-    (define/public (provides-popup?) _make-popup-menu)
-    (define/public (make-popup-menu) (_make-popup-menu _object))
-    (define/public (use-this-popup-fnc newfnc) (set! _make-popup-menu newfnc))
-
-    (super-instantiate ())))
-
-(define (add-object-menu menu-maker dynaobject)
-  (define ppr (make-object popup-provider%))
-  (send ppr use-this-popup-fnc menu-maker)
-  (send ppr attach-to dynaobject))
-
-; Addendum:
-; In addition to entire menus, objects can include individual menu
-; items as follows: any menu-maker can call
-; (include-popup-items obj)
-(define popup-item-provider%
-  (class actor%
-    (field (_make-popup-menu-item #f))
-    (inherit-field _object)
-
-    (define/public (provides-popup-item?) _make-popup-menu-item)
-    (define/public (make-popup-items menu) (_make-popup-menu-item _object menu))
-    (define/public (use-this-popup-fnc newfnc) (set! _make-popup-menu-item newfnc))
-    (super-instantiate ())))
-
 (define (include-custom-popup-items menu obj)
   (when (and obj (send-actor obj 'provides-popup-item?))
     (send-actor obj 'make-popup-items menu)))
 
-(define (add-custom-popup-items item-maker obj)
-  (define ppir (make-object popup-item-provider%))
-  (send ppir use-this-popup-fnc item-maker)
-  (send ppir attach-to obj))
-
-
-; (define (add-object-menu object)
-;   (define ppr (make-object popup-provider%))
-;   (when ppr
-;     (send ppr use-this-popup-fnc  make-popup-menu-for-region)
-;     (send ppr attach-to object)))
-;
-; (define (make-popup-menu-for-region regn)
-;   (let ((popmenu (new-popup "Region Menu")))
-;
-;     (make-submenu-File    popmenu regn)
-;     (make-submenu-Edit    popmenu regn)
-;
-;     (add-menu-item popmenu
-;        "Arrange in Grid"  (lambda () (Arrange-in-Grid regn)))
-;
-;     (add-menu-item popmenu
-;        "Arrange in Spiral"  (lambda () (Arrange-in-Spiral regn)))
-;
-;     popmenu
-;   )
-; )
-;
 
 (define (special-menu-item-maker obj menu)
   (add-menu-item menu "I'm special!" void #f)
+  )
+
+;
+; File submenu
+;
+(define (make-submenu-File mb object)
+  (define sb (add-submenu mb "File"))
+
+  (add-menu-item sb "New Pad" (nyi "New-Pad") #f)
+
+  ;Loading/Importing:
+  (add-menu-item sb "Revert Workspace"         Restore-Current)
+  (add-menu-item sb "Restore Workspace..." Select-and-Restore-File)
+  ;(lambda () (LoadPad-Dialog #t)))
+
+  ;  (add-menu-item sb "Import Pad File..."  Select-and-Import-File)
+  (make-submenu-Import sb object)
+
+  (add-menu-separator sb) ;------------------------------
+  ;Saving/Exporting:
+  (add-menu-item sb "Save" Save-Current)
+  (add-menu-item sb "Save As..." Select-and-Save-All)
+  (make-submenu-Export sb object)
+
+  ;  (add-menu-item sb "Import Image..." Load-Image)
+  ;  (add-menu-item sb "Import Image Dir..." (lambda () (Arrange-Images)))
+  ;  ;(add-menu-item sb "Import..." (nyi "Import") #f)
+
+  ;  (add-menu-separator sb) ;------------------------------
+
+  ;  (add-menu-item sb "Import PDF..." (nyi "Import PDF")  #f)
+  ;  (add-menu-item sb "Import PDF Dir..." (lambda () (Arrange-Pdfs)))
+
+  (add-menu-separator sb) ;------------------------------
+  ;
+  ; Start submenu
+  ;
+  (let* ((sb_up sb)
+         (sb (add-submenu sb_up "Starting view")))
+    (add-menu-item sb "Set Start View"   (nyi "pad_set_start_view") #f)
+    (add-menu-item sb "Goto Start View"  (nyi "pad_goto_start_view") #f)
+    (add-menu-item sb "Clear Start View" (nyi "pad_clear_start_view") #f)
+    )
+
+  (add-menu-separator sb) ;------------------------------
+
+  (add-menu-item sb "Close" (nyi "padClose") #f)
+
+  (add-menu-separator sb) ;------------------------------
+
+  (add-menu-item sb "Exit" exit)
   )
 
 ; Make it so:

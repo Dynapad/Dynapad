@@ -7,7 +7,11 @@
          dynapad/misc/alist
          )
 
-(provide named-actor%)
+(provide actor%
+         named-actor%
+         send-actor
+         get-actor-named
+         )
 
 ; Consider using surrogate.ss to replace actor construction
 

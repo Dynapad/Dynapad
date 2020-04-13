@@ -2,11 +2,16 @@
 
 (require (only-in racket/class make-object)
          mzlib/etc
-         ;dynapad/image
+         (only-in dynapad/image
+                  image%)
+         (only-in dynapad/pdf
+                  make-pdf-at-position)
          dynapad/pad-state
-         dynapad/layout/composite  ; alte might be dynapad/image-utils/arrangeimages.rkt depending on load order
+         ;dynapad/layout/composite  ; alte might be dynapad/image-utils/arrangeimages.rkt depending on load order
          collects/misc/pathhack
          )
+
+(provide make-submenu-Import)
 
 ;============= file/subdir filters ======
 ;these 3 taken from arrangeimages.ss:

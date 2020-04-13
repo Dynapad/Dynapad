@@ -1,3 +1,31 @@
+#lang racket/base
+
+(require (only-in racket/class send is-a? make-object)
+         dynapad/base
+         (only-in dynapad/pad-state
+                  currentPAD
+                  set-currentPAD!
+                  ; accessors from event struct
+                  event-obj
+                  event-x
+                  event-y
+                  )
+         (only-in dynapad/events/mode
+                  default-mode
+                  changemode
+                  changemode--no-gui
+                  gui-update-mode
+                  )
+         (only-in dynapad/misc/misc
+                  sendf
+                  ic
+                  )
+         (only-in dynapad/events/draw
+                  Draw-multiple)
+         )
+
+(provide initCreateLink)
+
 ; If destination is list of numbers (position on pad surface, rather than object),
 ; then third number is x dimension of pad at time link was created.
 ; Zoom so that view fills pad the way it did when link was created; that is
@@ -6,7 +34,7 @@
 (define (link-hook o)
   (if (send o link)
       (send o bind "<Run-Double-ButtonPress-1>"
-            (lambda (eventPAD e) (set! currentPAD eventPAD)
+            (lambda (eventPAD e) (set-currentPAD! eventPAD)
                     (let
                         ((link (send (event-obj e) link)))
                       (cond
@@ -52,26 +80,26 @@
 
     ;;; enable zooming during hyperlink mode
     (send argPAD bind "<CreateLink-ButtonPress-2>"
-          (lambda (eventPAD e) (set! currentPAD eventPAD)
+          (lambda (eventPAD e) (set-currentPAD! eventPAD)
                   (sendf eventPAD evs set-last-xy (event-x e) (event-y e))
                   (send (send eventPAD ztimer) start 1 (send eventPAD zinterval))))
 
     (send argPAD bind "<CreateLink-ButtonRelease-2>"
-          (lambda (eventPAD e) (set! currentPAD eventPAD)
+          (lambda (eventPAD e) (set-currentPAD! eventPAD)
                   (send (send eventPAD ztimer) stop)))
 
     (send argPAD bind "<CreateLink-ButtonPress-3>"
-          (lambda (eventPAD e) (set! currentPAD eventPAD)
+          (lambda (eventPAD e) (set-currentPAD! eventPAD)
                   (sendf eventPAD evs set-last-xy (event-x e) (event-y e))
                   (send (send eventPAD ztimer) start -1 (send eventPAD zinterval))))
 
     (send argPAD bind "<CreateLink-ButtonRelease-3>"
-          (lambda (eventPAD e) (set! currentPAD eventPAD)
+          (lambda (eventPAD e) (set-currentPAD! eventPAD)
                   (send (send eventPAD ztimer) stop)))
 
     ;;; start the link
     (send argPAD bind "<CreateLink-ButtonRelease-1>"
-          (lambda (eventPAD e) (set! currentPAD eventPAD)
+          (lambda (eventPAD e) (set-currentPAD! eventPAD)
                   (when (not CreateLink)
                     (let*
                         ((x (event-x e))
@@ -90,7 +118,7 @@
     ;;; make the link
     ; see link-hook for explanation of use of xdim
     (send argPAD bind "<CreateLink-KeyPress-space>"
-          (lambda (eventPAD e) (set! currentPAD eventPAD)
+          (lambda (eventPAD e) (set-currentPAD! eventPAD)
                   (let*
                       ((x (event-x e))
                        (y (event-y e))
@@ -114,7 +142,7 @@
 
     ;;; abort making the link
     (send argPAD bind "<CreateLink-KeyPress-Escape>"
-          (lambda (eventPAD e) (set! currentPAD eventPAD)
+          (lambda (eventPAD e) (set-currentPAD! eventPAD)
                   (when LinkArrow
                     (send LinkArrow delete)
                     (set! LinkArrow #f))
@@ -124,11 +152,11 @@
 
     ;;; enable pan during hyperlink mode
     (send argPAD bind "<CreateLink-ButtonPress-1>"
-          (lambda (eventPAD e) (set! currentPAD eventPAD)
+          (lambda (eventPAD e) (set-currentPAD! eventPAD)
                   (sendf eventPAD evs set-last-xy (event-x e) (event-y e)) ))
 
     (send argPAD bind "<CreateLink-B1-Motion>"
-          (lambda (eventPAD e) (set! currentPAD eventPAD)
+          (lambda (eventPAD e) (set-currentPAD! eventPAD)
                   (let* ((l (send eventPAD view))
                          (view_x (car l))
                          (view_y (cadr l))
@@ -143,7 +171,7 @@
                     (send eventPAD moveto (list newx newy zoom)) )))
 
     (send argPAD bind "<CreateLink-Motion>"
-          (lambda (eventPAD e) (set! currentPAD eventPAD)
+          (lambda (eventPAD e) (set-currentPAD! eventPAD)
                   (let* ((last_x (sendf eventPAD evs lastx))
                          (last_y (sendf eventPAD evs lasty)))
                     (when LinkArrow

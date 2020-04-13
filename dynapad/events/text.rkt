@@ -21,8 +21,14 @@
          dynapad/layout/bbox
          dynapad/events/mode
          dynapad/events/draw ; cycle
-         (only-in dynapad/menu/menu_popup ; cycle
+         (only-in dynapad/menu/popup-provider
                   add-custom-popup-items
+                  )
+         (only-in dynapad/menu/wxmenu
+                  add-menu-item
+                  )
+         (only-in dynapad/container
+                  frame-container%
                   )
          (only-in dynapad/libdynapad
                   sch_gettext
@@ -146,7 +152,7 @@
 #|
 (define (bindText argPAD)
   (let ((enter-text-fn
-         (lambda (eventPAD e) (set! currentPAD eventPAD)
+         (lambda (eventPAD e) (set-currentPAD! eventPAD)
                  (let*
                      ((x (event-x e))
                       (y (event-y e))
@@ -402,11 +408,11 @@
                   (else (null? c)))))))
 
 (define (start-shape-event eventPAD e) ;start new shape (rect%, poly%, text%, etc)
-  (set! currentPAD eventPAD)
+  (set-currentPAD! eventPAD)
   (let* ((x (event-x e))
          (y (event-y e))
          (objs-here (reverse (send eventPAD find 'overlapping (list x y x y)))))
-    (set! Draw-object (if (null? objs-here) #f (car objs-here)))
+    (set-Draw-object! (if (null? objs-here) #f (car objs-here)))
     (cond
       ; maybe edit existing obj (e.g. text%)
       ((and Draw-object
@@ -415,7 +421,7 @@
        (edit-text-at-xy Draw-object x y))
 
       (else ; make new obj
-       (set! Draw-object (make-object Draw-class eventPAD))
+       (set-Draw-object! (make-object Draw-class eventPAD))
 
        (when (has-method? Draw-object 'fill)
          (send Draw-object fill
