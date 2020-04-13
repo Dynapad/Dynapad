@@ -2,10 +2,15 @@
 
 (require compatibility/mlist
          (only-in racket/class
+                  ; SO many cryptic and silent errors during
+                  ; macro expansion if certain names are missing WOW
                   send
                   send*
                   method-in-interface?
-                  object-interface)
+                  object-interface
+                  field
+                  define/public
+                  )
          dynapad/pad-state)
 
 (provide (all-defined-out))
@@ -143,19 +148,25 @@
      (send (send obj friend) msg args ...))))
 ;see also senda (for actors) in actor.ss
 
-(define-syntax friend (syntax-rules ()
-                        ((_ method-name field-name) (friend method-name field-name #f))
-                        ((_ method-name field-name init)
-                         (begin
-                           (field (field-name init))
-                           (define/public method-name (get/set field-name))))))
+(define-syntax friend
+  (syntax-rules ()
+    ((_ method-name field-name) (friend method-name field-name #f))
+    ((_ method-name field-name init)
+     (begin
+       (field (field-name init))
+       (define/public method-name (get/set field-name))))))
 
-(define-syntax public-field (syntax-rules ()
-                              ((_ method-name field-name) (public-field method-name field-name #f))
-                              ((_ method-name field-name init)
-                               (begin
-                                 (field (field-name init))
-                                 (define/public method-name (get/set field-name))))))
+
+(define-syntax public-field
+  ; WARNING if field or define/public are not defined
+  ; this macro will produce extremely cryptic errors
+  ; and say things like method-name not defined
+  (syntax-rules ()
+    ((_ method-name field-name) (public-field method-name field-name #f))
+    ((_ method-name field-name init)
+     (begin
+       (field (field-name init))
+       (define/public method-name (get/set field-name))))))
 
 (define (has-method? obj m)
   (cond ((method-in-interface? m (object-interface obj)) obj) (else #f)))

@@ -5,7 +5,9 @@
          dynapad/misc/misc ; sendf
          )
 
-(provide bindArrows)
+(provide bindArrows
+         bindClassicPan
+         )
 
 (define Start-Pan-Event
   (lambda (eventPAD e)

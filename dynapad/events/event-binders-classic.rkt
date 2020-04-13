@@ -1,9 +1,23 @@
+#lang racket/base
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(dynaload "zoom-classic.ss")
-(dynaload "zoom-obj.ss")
-(dynaload "draw.ss")
-(dynaload "hyperlink.ss")
+(require racket/class
+         dynapad/events/zoom-classic
+         dynapad/events/zoom-obj
+         (only-in dynapad/events/text
+                  bindDrawMode
+                  bindTextMode
+                  )
+         dynapad/events/hyperlink
+         dynapad/events/pan
+         (only-in dynapad/events/mode
+                  changemode)
+         (only-in dynapad/history/undo
+                  bindSelect
+                  basepad-event-binder%
+                  )
+         )
+
+(provide (all-defined-out))
 
 (define classicpad-event-binder%
   (class basepad-event-binder%

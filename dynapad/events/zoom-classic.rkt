@@ -18,6 +18,7 @@
          Zoom-In-Stop-lambda
          Zoom-Out-lambda
          Zoom-Out-Stop-lambda
+         bindClassicZoom
          )
 
 ;======= Zoom Multiplier ========

@@ -12,6 +12,8 @@
          dynapad/dynapad-c-api
          )
 
+(provide dynapad)
+
 (current-eventspace (make-eventspace))
 
 (define (announce-module-loading name) #f)
@@ -60,9 +62,9 @@
 ;; at compile time, this is probably a design flaw
 (set-initial-pad-state! (make-new-dynapad ".dynapad"))
 (load-and-apply-user-preferences dynapad)
+(init-menubar)  ; menubar setup
 (init-logtree-layer)
 (start-new-history)  ; set up logging for undo
-(init-menubar)  ; menubar setup
 
 
 ;(define *popup-menus-enabled?* #f)  ; -> menu_popup

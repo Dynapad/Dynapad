@@ -40,6 +40,8 @@
          Delete-Selected
          Deep-Delete-Selected
          Confirm-and-Delete-All
+         bindSelect
+         basepad-event-binder%
          )
 
 ;; cyclical dependencies with mode, select, and event-shared ffs

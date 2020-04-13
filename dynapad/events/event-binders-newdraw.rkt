@@ -1,7 +1,13 @@
-(dynaload "event-binders-new.ss")
+#lang racket/base
 
-(dynaload "draw.ss")
-(dynaload "hyperlink.ss")
+(require racket/class
+         dynapad/events/draw
+         dynapad/events/hyperlink
+         dynapad/events/event-binders-new)
+
+(provide (all-defined-out))
+
+; TODO (provide (all-from-out ...))
 
 (define newpaddraw-event-binder%
   (class newpad-event-binder%

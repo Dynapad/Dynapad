@@ -1,3 +1,42 @@
+#lang racket/base
+
+(require racket/class
+         (only-in dynapad/base
+                  dynapad%
+                  line%
+                  polygon%
+                  rect%)
+         (only-in dynapad/pad-state
+                  dynapad
+                  event-sx
+                  event-sy
+                  event-x
+                  event-y
+                  )
+         (only-in dynapad/container
+                  get-container
+                  )
+         (only-in dynapad/misc/misc
+                  public-field
+                  get/set
+                  sendf
+                  list-intersect
+                  def
+                  ic
+                  )
+         (only-in dynapad/layout/bbox
+                  bbcenter
+                  )
+         (only-in dynapad/menu/wxmenu
+                  add-submenu
+                  add-checkable-menu-item
+                  )
+         (only-in dynapad/libdynapad
+                  sch_xy_in_poly)
+         )
+
+(provide event-state%)
+
 (define *default-use-lasso?* #t)
 
 (define event-state%

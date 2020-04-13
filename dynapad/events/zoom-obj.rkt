@@ -18,6 +18,7 @@
          Select-Zoom-In-Stop-lambda
          Select-Zoom-Out-lambda
          Select-Zoom-Out-Stop-lambda
+         bindZoomSelection
          )
 
 (define Select-Zoom-In-lambda

@@ -1,4 +1,4 @@
-
+#lang racket/base
 
 ; Redefine the default binding for image% hires<-->thumb swap
 ; note: this must be loaded before any images are constructed.

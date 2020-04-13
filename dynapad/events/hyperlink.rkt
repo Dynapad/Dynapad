@@ -24,7 +24,9 @@
                   Draw-multiple)
          )
 
-(provide initCreateLink)
+(provide initCreateLink
+         bindHyperlink
+         )
 
 ; If destination is list of numbers (position on pad surface, rather than object),
 ; then third number is x dimension of pad at time link was created.

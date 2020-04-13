@@ -43,6 +43,8 @@
          )
 
 (provide text%
+         bindDrawMode
+         bindTextMode
          )
 
 (define basetext%
