@@ -1,4 +1,9 @@
-(dynaload "menubar.ss")
+#lang racket/base
+
+(require (only-in racket/class
+                  make-object
+                  send)
+         dynapad/menu/menubar)
 
 (define rectpane     (make-object horizontal-pane% drawpane))
 (define ovalpane     (make-object horizontal-pane% drawpane))
