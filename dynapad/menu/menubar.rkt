@@ -45,6 +45,14 @@
                   )
          )
 
+(provide init-menubar)
+
+(define (init-menubar)
+  (init-pen)
+  (for-all-pads (lambda (argPAD) (changemode argPAD "Run")))
+  (send *menubar* show #t)
+  (update-panel-colors))
+
 (define (for-all-pads body) (for-each body *list-of-all-dynapads*))
 
 ;(dynaload "mode.ss")
@@ -340,18 +348,19 @@
 (define menu-fill-pen 0)
 (define menu-pen-pen 0)
 
-(let ((penclr (if (equal? (send dynapad defaultpen) "none")
-                  no-color
-                  (mred-color-from-tcl-color (send dynapad defaultpen))))
-      (fillclr (if (equal? (send dynapad defaultfill) "none")
-                   no-color
-                   (mred-color-from-tcl-color (send dynapad defaultfill))))
-      )
-  (set! menu-fill-pen
-        (send wx:the-pen-list find-or-create-pen fillclr 15 'solid))
-  (set! menu-pen-pen
-        (send wx:the-pen-list find-or-create-pen penclr 8 'solid))
-  )
+(define (init-pen)
+  (let ((penclr (if (equal? (send dynapad defaultpen) "none")
+                    no-color
+                    (mred-color-from-tcl-color (send dynapad defaultpen))))
+        (fillclr (if (equal? (send dynapad defaultfill) "none")
+                     no-color
+                     (mred-color-from-tcl-color (send dynapad defaultfill))))
+        )
+    (set! menu-fill-pen
+          (send wx:the-pen-list find-or-create-pen fillclr 15 'solid))
+    (set! menu-pen-pen
+          (send wx:the-pen-list find-or-create-pen penclr 8 'solid))
+    ))
 
 (define (update-panel-colors)
   (let ((penclr (if (equal? (send dynapad defaultpen) "none")
@@ -503,10 +512,3 @@
 
 ; reserve a pane for new buttons
 (define app_pane (make-object horizontal-pane% *menubar*))
-
-
-(for-all-pads (lambda (argPAD)
-                (changemode argPAD "Run")))
-(send *menubar* show #t)
-(update-panel-colors)
-

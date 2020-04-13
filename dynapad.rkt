@@ -55,14 +55,14 @@
 
 ;-----------------------------------------------------------------
 
-(load-and-apply-user-preferences dynapad)
-
 ;; this has to be done here because other stages of init
 ;; e.g. log-state.rkt expects the pads to already exist
 ;; at compile time, this is probably a design flaw
 (set-initial-pad-state! (make-new-dynapad ".dynapad"))
+(load-and-apply-user-preferences dynapad)
 (init-logtree-layer)
 (start-new-history)  ; set up logging for undo
+(init-menubar)  ; menubar setup
 
 
 ;(define *popup-menus-enabled?* #f)  ; -> menu_popup
