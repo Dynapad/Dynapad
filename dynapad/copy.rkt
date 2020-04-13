@@ -1,7 +1,9 @@
-#lang racket
+#lang racket/base
 
 (require (only-in racket/class send)
          dynapad/pad-state
+         (only-in dynapad/undo-state
+                  import-set)
          dynapad/misc/misc
          dynapad/layout/bbox
          )
@@ -38,8 +40,10 @@
 (define (clone-object obj)
   (and obj
        (let ((build-exprs (send obj write-all)))
+         ; FIXME eval is not going to work the way it used to
          (car (eval `(import-set ,@build-exprs))))))
 
 (define (clone-objects set)
   (let ((build-exprs (write-set set)))
+    ; FIXME eval is not going to work the way it used to
     (eval `(import-set ,@build-exprs))))

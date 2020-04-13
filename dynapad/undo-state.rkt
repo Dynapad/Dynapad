@@ -50,6 +50,8 @@
          get-top-group
          )
 
+(provide import-set)
+
 ;--- basic do/undo mechanism -------------------------------------
 ;  many of these funcs are overridden in logs.ss
 

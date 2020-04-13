@@ -3,7 +3,27 @@
 (require (only-in racket/class
                   make-object
                   send)
-         dynapad/menu/menubar)
+         (only-in racket/gui/base
+                  button%
+                  horizontal-pane%
+                  )
+         dynapad/base
+         (only-in dynapad/events/draw
+                  set-Draw-multiple!
+                  initDraw
+                  )
+         (only-in dynapad/events/text
+                  text%)
+         (only-in dynapad/menu/menubar
+                  drawpane
+                  use-bitmap-or-string
+                  for-all-pads
+                  clear-all-menu-buttons
+                  button-double-clicked?
+                  update-panel-colors
+                  set-*draw-button-off-labels*!
+                  )
+         )
 
 (define rectpane     (make-object horizontal-pane% drawpane))
 (define ovalpane     (make-object horizontal-pane% drawpane))
@@ -45,7 +65,7 @@
                                  (send argPAD fill? #f)))
                  (clear-all-menu-buttons)
                  (send button set-label on_rect)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD rect% "Draw")))))
   )
@@ -59,7 +79,7 @@
                                  (send argPAD fill? #t)))
                  (clear-all-menu-buttons)
                  (send button set-label on_filledRect)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (update-panel-colors)
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD rect% "Draw")))))
@@ -74,7 +94,7 @@
                                  (send argPAD fill? #f)))
                  (clear-all-menu-buttons)
                  (send button set-label on_oval)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD oval% "Draw")))))
   )
@@ -87,7 +107,7 @@
                                  (send argPAD fill? #t)))
                  (clear-all-menu-buttons)
                  (send button set-label on_filledOval)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (update-panel-colors)
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD oval% "Draw")))))
@@ -101,7 +121,7 @@
                (lambda (button event)
                  (clear-all-menu-buttons)
                  (send button set-label on_line)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD line% "Draw")))))
   )
@@ -113,7 +133,7 @@
                (lambda (button event)
                  (clear-all-menu-buttons)
                  (send button set-label on_polyline)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD polyline% "Draw")))))
   )
@@ -139,7 +159,7 @@
                                  (send argPAD fill? #t)))
                  (clear-all-menu-buttons)
                  (send button set-label on_filledPoly)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (update-panel-colors)
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD polygon% "Draw")))))
@@ -152,7 +172,7 @@
                (lambda (button event)
                  (clear-all-menu-buttons)
                  (send button set-label on_text)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD text% "DrawText")))))
   )
@@ -164,12 +184,12 @@
                (lambda (button event)
                  (clear-all-menu-buttons)
                  (send button set-label on_freehand)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD freehand% "Draw")))))
   )
 
-(set! *draw-button-off-labels*
+(set-*draw-button-off-labels*!
       (list
        (list btn_rect        off_rect)
        (list btn_filledRect  off_filledRect )

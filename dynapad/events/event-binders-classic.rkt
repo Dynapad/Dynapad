@@ -7,8 +7,8 @@
                   bindDrawMode
                   bindTextMode
                   )
-         dynapad/events/hyperlink
          dynapad/events/pan
+         dynapad/events/hyperlink
          (only-in dynapad/events/mode
                   changemode)
          (only-in dynapad/history/undo

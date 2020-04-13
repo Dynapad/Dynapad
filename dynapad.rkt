@@ -1,5 +1,8 @@
 #lang racket/base
 
+; things that need to be at the top level for reasons I don't entirely understand
+; (require dynapad/pad-state) for the event struct for oval
+
 (require (only-in racket/class send make-object)
          (only-in racket/gui/base
                   make-eventspace

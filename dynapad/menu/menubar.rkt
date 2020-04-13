@@ -45,7 +45,15 @@
                   )
          )
 
-(provide init-menubar)
+(provide init-menubar
+         drawpane
+         use-bitmap-or-string
+         for-all-pads
+         clear-all-menu-buttons
+         button-double-clicked?
+         update-panel-colors
+         set-*draw-button-off-labels*!
+         )
 
 (define (init-menubar)
   (init-pen)
@@ -152,6 +160,8 @@
 
 (define *guest-button-off-labels* null)
 (define *draw-button-off-labels* null)
+(define (set-*draw-button-off-labels*! value)
+  (set! *draw-button-off-labels* value))
 
 (define (clear-all-menu-buttons)
   (send btn_run         set-label off_run        )
