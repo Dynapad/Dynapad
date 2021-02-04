@@ -5,16 +5,16 @@ I keep all my repos in =~/git/= so adjust paths accordingly if you clone elsewhe
 Run the following as root.
 From https://apt.kitware.com/. Needed for a recent version of =cmake=.
 WARNING this adds a new ppa.
-#+BEGIN_SRC bash
+#+begin_src bash
 apt update
 apt install apt-transport-https ca-certificates gnupg software-properties-common wget
 wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | apt-key add -  # EVIL
 apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main'
 apt update
-#+END_SRC
+#+end_src
 
 Run the following as root.
-#+BEGIN_SRC bash
+#+begin_src bash
 apt install \
 build-essential \
 lib64readline-dev \
@@ -29,34 +29,60 @@ libconfig-dev \
 libfontconfig1-dev \
 cmake \ 
 ninja-build
-#+END_SRC
+#+end_src
 
 This works on 19.04, but for reasons beyond my understanding fails to find tk.h on 18.10.
 
-#+BEGIN_SRC bash
+#+begin_src bash
 pushd ~/git
 git clone https://github.com/racket/racket.git
 pushd racket/racket/src
-./configure
+./configure --enable-cs --enable-bc
 make cgc
 make install-cgc
 popd
 
-~/git/racket/racket/bin/racocgc pkg install compatibility-lib htdp-lib xrepl
+#~/git/racket/racket/bin/racocgc pkg install compatibility-lib htdp-lib xrepl # no longer needed
 
-git clone git@github.com:DylanLukes/Dynapad.git dynapad
+git clone git@github.com:tgbugs/dynapad.git dynapad
 
-pushd Dynapad
-git checkout cmake  # temporary until changes are merged
+pushd dynapad
+git checkout modularize  # temporary until changes are merged
 pushd build
 cmake .. -G Ninja -DRACKET_DIR=${HOME}/git/racket/racket
 ninja
 popd
 
-~/git/racket/racket/bin/racketcgc
-#+END_SRC
+# cgc build
+~/git/racket/racket/bin/racocgc \
+ctool --cgc --ld dynapad/compiled/bc/native/x86_64-linux/libdynapad_rkt.so build/libdynapad.so
+~/git/racket/racket/bin/racocgc pkg install dynapad/
+~/git/racket/racket/bin/racocgc pkg install collects/
+~/git/racket/racket/bin/racocgc make dynapad.rkt
 
-#+BEGIN_SRC racket
-(load "dynapad.ss")  ; this will error at the moment
-(dynaload "apps/paddraw/paddraw.ss")
-#+END_SRC
+# 3m build
+raco ctool --ld dynapad/compiled/bc/native/x86_64-linux/3m/libdynapad_rkt.so build/libdynapad.so
+raco pkg install dynapad/
+raco pkg install collects/
+raco make dynapad.rkt
+
+~/git/racket/racket/bin/racketcgc
+#+end_src
+
+#+begin_src racket
+(require "dynapad.rkt")
+(require dynapad/pad-state)
+(require "apps/paddraw/paddraw.rkt")
+#+end_src
+
+If you run these under 3m (i.e. by launching =racket= or =racketbc=
+instead of =racketcgc=) you will encounter a segfault, possibly due to
+incorrect linking against 3m vs cgc, or maybe for some other reason,
+for example that the precise (non-conservative) GC in 3m will collect
+pointers that are referenced only from the C++ code, so we may need to
+get a list of those and keep a list of them on the racket side to
+prevent collection.
+
+Note that the 3m build may not work without modification to
+[[file:configure.ac]] and [[file:cmake/Modules/FindRacketCGC.cmake]]
+to include =mzdyn3m.o=.
