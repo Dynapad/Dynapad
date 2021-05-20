@@ -25,7 +25,10 @@
          ;dynapad/utils/lasso
 
          ;dynapad/history/ids ; this actually works now ?!
-         dynapad/history/logs
+         (only-in dynapad/history/logs
+                  restore-set)
+         (only-in dynapad/history/deferred-evals
+                  do-deferred-evals)
          (only-in dynapad/layout/bbox
                   bbunion-objects
                   )
@@ -42,6 +45,8 @@
          Confirm-and-Delete-All
          bindSelect
          basepad-event-binder%
+         ; needed for top level evals
+         load-set
          )
 
 ;; cyclical dependencies with mode, select, and event-shared ffs
@@ -551,6 +556,7 @@
 ; (see events.ss and event-binders.ss)
 
 ;====== Traps for non-logging =======
+#; ; have to require
 (define (load-log . args)
   (error "Must include logs.ss to read log files"))
 
@@ -560,11 +566,7 @@
 (define namespace-undo (namespace-anchor->namespace anchor-undo))
 
 (define (Paste-From-Copy-Buffer)
-  (let* ((newobjects
-          (parameterize ([current-namespace namespace-undo])
-            ; if this is not done then we encounter a bug when hitting the paste button
-            (eval `(import-set ,@*copy-buffer*))))
-         (__ (displayln (format "aaaaaaaaaaaaaaa: ~a" newobjects)))
+  (let* ((newobjects (eval `(import-set ,@*copy-buffer*)))
          (topobjects (filter (lambda (o) (not (send o getgroup))) newobjects)))
     (for-each Offset-Object topobjects)
     ;  (Unselect-Selected--undoable)

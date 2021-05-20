@@ -4,7 +4,7 @@
          dynapad/misc/misc
          dynapad/misc/alist
          dynapad/layout/bbox
-         (only-in dynapad/libdynapad
+         (only-in dynapad/libdynapad-wrapper
                   sch_delete
                   sch_coords
                   sch_makerect

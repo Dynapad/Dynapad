@@ -1,7 +1,7 @@
 #lang racket/base
 
 (require racket/class
-         (only-in dynapad/libdynapad sch_bind)
+         (only-in dynapad/libdynapad-wrapper sch_bind)
          dynapad/utils/lambdas)
 
 (provide bind)

@@ -30,7 +30,7 @@
          (only-in dynapad/container
                   frame-container%
                   )
-         (only-in dynapad/libdynapad
+         (only-in dynapad/libdynapad-wrapper
                   sch_gettext
                   sch_settext
                   sch_inserttext

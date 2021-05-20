@@ -33,7 +33,7 @@
          (only-in collects/imagemagick/imagemagick
                   im/identify
                   )
-         (only-in dynapad/libdynapad
+         (only-in dynapad/libdynapad-wrapper
                   sch_imagep)
          (only-in dynapad/layout/bbox
                   apply-bb-transform

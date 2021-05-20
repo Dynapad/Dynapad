@@ -4,7 +4,7 @@
          collects/misc/pathhack
          dynapad/misc/misc
          (only-in racket/path file-name-from-path)
-         (only-in dynapad/libdynapad
+         (only-in dynapad/libdynapad-wrapper
                   sch_imagep
                   )
          )

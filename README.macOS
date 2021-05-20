@@ -6,6 +6,8 @@ These instructions are for macOS.
 >   minimal-racket \
 >   imagemagick    \
 >   poppler        \
+>   cmake          \
+>   ninja          \
 
 # AutoTools
 

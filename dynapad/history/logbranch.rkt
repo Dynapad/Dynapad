@@ -15,7 +15,7 @@
          dynapad/history/ids
          dynapad/history/log-state
          collects/misc/pathhack
-         (only-in dynapad/libdynapad
+         (only-in dynapad/libdynapad-wrapper
                   sch_truncatefile)
          )
 
@@ -229,7 +229,7 @@
       (when (relative-path? logfilename)
         (set! logfilename (build-path->string (send this directory) logfilename)))
       (and (file-exists? logfilename)
-           (let* ((port (open-input-file logfilename 'text))
+           (let* ((port (open-input-file logfilename #:mode 'text))
                   (line #f)
                   (hits null)
                   (ids null))
@@ -488,7 +488,7 @@
     (define/public (prepare-for-read)
       (when _write-port (close));(error "Log already open for writing:" (path))) ;for debug
       (unless _read-port
-        (set! _read-port (open-input-file (path) 'text))))
+        (set! _read-port (open-input-file (path) #:mode 'text))))
 
     (define/public (close)
       (when _write-port (begin

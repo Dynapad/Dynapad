@@ -24,7 +24,7 @@
          dynapad/misc/filenames
          dynapad/layout/bbox
          (for-syntax racket/base)
-         (only-in dynapad/libdynapad
+         (only-in dynapad/libdynapad-wrapper
                   sch_removemember
                   sch_addmember
                   sch_divisible 

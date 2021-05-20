@@ -9,10 +9,11 @@ find_path(RacketCGC_INCLUDE_DIR_escheme
 
 list(APPEND CMAKE_FIND_LIBRARY_SUFFIXES ".o")
 find_library(RacketCGC_LIBRARY_mzdyn
-    NAMES mzdyn.o
+    NAMES mzdyn3m.o mzdyn.o
     PATHS "${RACKET_DIR}/lib"
           "/usr/local/opt/racket/lib"
           "/usr/local/lib"
+          "/usr/lib64/racket"
     PATH_SUFFIXES racket)
 
 # set(RacketCGC_VERSION ...)

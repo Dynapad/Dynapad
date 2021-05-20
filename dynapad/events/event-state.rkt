@@ -31,7 +31,7 @@
                   add-submenu
                   add-checkable-menu-item
                   )
-         (only-in dynapad/libdynapad
+         (only-in dynapad/libdynapad-wrapper
                   sch_xy_in_poly)
          )
 

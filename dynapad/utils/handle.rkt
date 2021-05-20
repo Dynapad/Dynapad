@@ -158,7 +158,7 @@
         ;look up in title-file and cache
         (let* ((filename (build-path->string _dir _title-file))
                (readport (and (file-exists? filename)
-                              (open-input-file filename 'text)))
+                              (open-input-file filename #:mode 'text)))
                (line (and readport (read-line readport))))
           (when readport (close-input-port readport))
           (set! _title (or line ""))))

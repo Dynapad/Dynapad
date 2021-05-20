@@ -12,6 +12,9 @@
 (provide obj->IDexpr
          set-max-padid
          import-expr-with-objs
+         ; called by eval at some point
+         ObjID
+         max-padid
          )
 
 ;---- IDs -----------

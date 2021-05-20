@@ -7,7 +7,7 @@
          dynapad/misc/misc
          dynapad/misc/filenames
          ;dynapad/events/image-events ; induces a cycle
-         (only-in dynapad/libdynapad
+         (only-in dynapad/libdynapad-wrapper
                   sch_imagepath
                   sch_imagedim
                   sch_makeimage

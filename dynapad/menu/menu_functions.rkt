@@ -93,6 +93,19 @@
 
 (provide make-submenu-Edit
          make-submenu-Select-Highlighted
+         ; needed by menubar
+         Load-Image
+         Get-Font-Name-For-Selected
+         fillgetcolor
+         pengetcolor
+         Resize-Selected
+         Reshape-Selected
+         Raise-Selected
+         Lower-Selected
+         Group-Selected
+         UnGroup-Selected
+         Save-Current
+         Select-and-Save-All
          )
 
 (announce-module-loading "Menu functions...")

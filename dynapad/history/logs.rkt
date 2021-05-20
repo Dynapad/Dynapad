@@ -106,7 +106,9 @@
          dynapad/ffs
          (only-in dynapad/import
                   importing?
+                  #;
                   deferred-exprs
+                  #;
                   order-by-phase)
          dynapad/pad-state
          dynapad/save
@@ -114,15 +116,19 @@
                   show-possible-delay)
          dynapad/misc/misc
          dynapad/misc/progress
+         #;
          (only-in dynapad/misc/tools-lists
                   mmap)
          ;dynapad/history/undo ; cycle
          dynapad/undo-state
+         #;
          (only-in dynapad/history/ids import-expr-with-objs)
          dynapad/history/logbranch
          ;dynapad/history/showlogs
          dynapad/history/logbead
          dynapad/history/log-state
+         (only-in dynapad/history/deferred-evals
+                  do-deferred-evals)
          (only-in dynapad/misc/command-shortcuts
                   ; FIXME this is not supposed to to being used in the core impl here
                   get-hostname)
@@ -141,6 +147,10 @@
          restore-set
          ensure-keyframe
          start-new-history
+
+         ; needed for save and restore
+         load-log
+         start-state
          )
 
 #; ; not relevant in the compiled module context
@@ -321,15 +331,6 @@
 
 ;;; from undo
 ;; from ids
-
-(define *debug-deferred-exprs* null) ;delete this later
-(define (do-deferred-evals idmap)
-  (set! *debug-deferred-exprs* (deferred-exprs)) ;delete this later
-  (mmap
-   ;(lambda (e) (printf "~a~%" e) (eval e))
-   eval
-   (mmap (lambda (expr) (import-expr-with-objs expr idmap))
-         (order-by-phase (deferred-exprs)))))
 
 (define-syntax restore-set-core
   (syntax-rules ()

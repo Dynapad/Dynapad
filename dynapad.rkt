@@ -1,21 +1,61 @@
 #lang racket/base
 
+; FIXME tab completion while running this causes everything to freeze
+
 ; things that need to be at the top level for reasons I don't entirely understand
 ; (require dynapad/pad-state) for the event struct for oval
 
-(require (only-in racket/class send make-object)
-         (only-in racket/gui/base
-                  make-eventspace
-                  current-eventspace
-                  )
-         ;compatibility/mlist
-         (only-in dynapad/base
-                  make-new-dynapad)
-         dynapad/pad-state
-         dynapad/dynapad-c-api
+(require
+ (only-in racket/class send make-object)
+ (only-in racket/gui/base
+          make-eventspace
+          current-eventspace
+          )
+ ;compatibility/mlist
+ #;
+ (only-in dynapad/base
+          make-new-dynapad)
+ dynapad/base ; all provided forms need to be available here
+ ; otherwise various calls to eval will fail with
+ ; undefined errors
+ dynapad/pad-state
+ dynapad/dynapad-c-api
+
+ ; used in top level evals
+ (only-in dynapad/copy import-set)
+ (only-in dynapad/history/undo load-set)
+ (only-in dynapad/history/ids
+          ObjID
+          max-padid
+          set-max-padid
+          )
+ (only-in dynapad/history/logs
+          load-log
+          start-state)
+
+ #; ; not the issue here it seems
+ (only-in dynapad/import
+          importing?)
+ #;
+ (only-in dynapad/history/deferred-evals do-deferred-evals)
          )
 
-(provide dynapad)
+(provide dynapad
+         ; things needed for calls to eval
+         import-set
+         ObjID
+
+         load-log
+         start-state
+         max-padid
+         set-max-padid
+         load-set
+         #;
+         importing?
+         #;
+         do-deferred-evals
+         (all-from-out dynapad/pad-state)
+         (all-from-out dynapad/base))
 
 (current-eventspace (make-eventspace))
 

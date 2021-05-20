@@ -10,7 +10,7 @@
          (only-in racket/path file-name-from-path)
          compatibility/mlist
          compatibility/defmacro
-         dynapad/libdynapad
+         dynapad/libdynapad-wrapper
          dynapad/ffs
          dynapad/base ; dynapad%
          dynapad/bind

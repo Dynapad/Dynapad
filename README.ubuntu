@@ -48,31 +48,37 @@ git clone git@github.com:tgbugs/dynapad.git dynapad
 
 pushd dynapad
 git checkout modularize  # temporary until changes are merged
+mkdir build
 pushd build
-cmake .. -G Ninja -DRACKET_DIR=${HOME}/git/racket/racket
+cmake .. -G Ninja -DRACKET_DIR=${HOME}/git/racket/racket # can leave out -DRACKET_DIR on gentoo
 ninja
 popd
 
 # cgc build
-~/git/racket/racket/bin/racocgc \
-ctool --cgc --ld dynapad/compiled/bc/native/x86_64-linux/libdynapad_rkt.so build/libdynapad.so
-~/git/racket/racket/bin/racocgc pkg install dynapad/
-~/git/racket/racket/bin/racocgc pkg install collects/
-~/git/racket/racket/bin/racocgc make dynapad.rkt
+mkdir -p dynapad/compiled/bc/native/x86_64-linux
+# on a real build libdynapad.so needs to be put at an absolute known path
+# can't link against relative paths
+racocgc ctool --cgc --ld dynapad/compiled/bc/native/x86_64-linux/libdynapad_rkt.so "${PWD}/build/libdynapad.so"
+racocgc pkg install dynapad/
+racocgc pkg install collects/
+racocgc make dynapad.rkt
 
-# 3m build
-raco ctool --ld dynapad/compiled/bc/native/x86_64-linux/3m/libdynapad_rkt.so build/libdynapad.so
+racketcgc --repl --require "apps/paddraw/paddraw.rkt"
+
+# bc build
+racobc ctool --ld dynapad/compiled/bc/native/x86_64-linux/3m/libdynapad_rkt.so build/libdynapad.so
+racobc pkg install dynapad/
+racobc pkg install collects/
+racobc make dynapad.rkt
+
+racketbc --repl --require "apps/paddraw/paddraw.rkt"
+
+# cs build
 raco pkg install dynapad/
 raco pkg install collects/
 raco make dynapad.rkt
 
-~/git/racket/racket/bin/racketcgc
-#+end_src
-
-#+begin_src racket
-(require "dynapad.rkt")
-(require dynapad/pad-state)
-(require "apps/paddraw/paddraw.rkt")
+racket -it "apps/paddraw/paddraw.rkt"
 #+end_src
 
 If you run these under 3m (i.e. by launching =racket= or =racketbc=

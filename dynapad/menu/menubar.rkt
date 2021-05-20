@@ -43,6 +43,7 @@
                   Deep-Delete-Selected
                   Confirm-and-Delete-All
                   )
+         dynapad/menu/menu_functions
          )
 
 (provide init-menubar
@@ -261,18 +262,6 @@
 (define imagefontpane (make-object horizontal-pane% *menubar*))
 
 ;; from menu_functions
-(define (Load-Image) #f)
-(define (Get-Font-Name-For-Selected apply-callback cancel-callback) #f)
-(define (fillgetcolor) #f)
-(define (pengetcolor) #f)
-(define (Resize-Selected pad) #f)
-(define (Reshape-Selected pad) #f)
-(define (Raise-Selected pad) #f)
-(define (Lower-Selected pad) #f)
-(define (Group-Selected) #f)
-(define (UnGroup-Selected) #f)
-(define (Save-Current) #f)
-(define (Select-and-Save-All) #f)
 
 (make-object button% "Image" imagefontpane
              (lambda (button event) (Load-Image)))

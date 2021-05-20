@@ -4,7 +4,7 @@
          racket/gui/base
          compatibility/mlist
          (only-in mzlib/list quicksort)
-         dynapad/libdynapad
+         dynapad/libdynapad-wrapper
          dynapad/bind
          dynapad/ffs ; export-objs
          (only-in dynapad/pad-state

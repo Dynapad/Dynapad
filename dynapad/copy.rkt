@@ -1,17 +1,18 @@
 #lang racket/base
 
-(require (only-in racket/class
-                  send
-                  send/apply)
-         dynapad/pad-state
-         dynapad/misc/misc
-         dynapad/layout/bbox
-         (only-in dynapad/undo-state use-load-context)
-         (only-in dynapad/spd show-possible-delay)
-         dynapad/seval
-         #; ; FIXME induces a cycle
-         (for-syntax (only-in dynapad/history/logs do-deferred-evals))
-         )
+(require
+ (only-in racket/class
+          send
+          send/apply
+          is-a?
+          object%)
+ dynapad/pad-state
+ dynapad/misc/misc
+ dynapad/layout/bbox
+ (only-in dynapad/undo-state use-load-context)
+ (only-in dynapad/spd show-possible-delay)
+ dynapad/seval
+ (only-in dynapad/history/deferred-evals do-deferred-evals))
 
 (provide Copy-Selected
          clone-object
@@ -44,24 +45,18 @@
 
 (define (Copy-Buffer-empty?) (null?  *copy-buffer*))
 
-(define-namespace-anchor anchor-copy)
-(define namespace-copy (namespace-anchor->namespace anchor-copy))
-
 (define (clone-object obj)
   (and obj
        (let* ((build-exprs (send obj write-all))
-              (res (parameterize ([current-namespace anchor-copy])
-                     (eval #`(import-set #,@build-exprs)))))
-         ; FIXME eval is not going to work the way it used to
-         (println build-exprs)
+              (res (eval #`(import-set #,@build-exprs))))
+         #;
+         (println (cons 'clone-object| |build-exprs: build-exprs))
          (unless (void? res)
            (car res)))))
 
 (define (clone-objects set)
   (let ((build-exprs (write-set set)))
-    ; FIXME eval is not going to work the way it used to
-    (parameterize ([current-namespace anchor-copy])
-      (eval #`(import-set #,@build-exprs)))))
+    (eval #`(import-set #,@build-exprs))))
 
 ;these set load-context if restore/import-path are bypassed
 (define-syntax import-set
@@ -84,11 +79,5 @@
                        (lambda (o) (let ((i (send o wasid)))
                                      (and i (cons i o))));(list i o))))
                        objs))))
-        ; FIXME do-deferred-evals is defined in dynapad/history/logs but we
-        ; don't require it here due to circularity I think?
-        ; similar issue with make-immutable-hash-table? no, miht is just an old name for make-immutable-hash
-        (displayln "ERROR HAPPENS AFTER THIS LINE")
-        (do-deferred-evals (make-immutable-hash idmap)) ; XXXXXXXXXXXXX
-        (displayln "ERROR HAPPENS BEFORE THIS LINE")
+        (do-deferred-evals (make-immutable-hash idmap))
         objs)))))
-
