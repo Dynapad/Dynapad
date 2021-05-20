@@ -69,6 +69,7 @@
 (define (initDrawPreview argPAD)
   (when (not Draw-preview)
     (set! Draw-preview (clone-object Draw-object))
+    ; FIXME TODO Draw-preview void due to changes in import-set eval
     (send Draw-preview transparency .3))
   (let ((c (send Draw-object coords)))
     (send Draw-preview coords c)

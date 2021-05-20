@@ -404,6 +404,8 @@
 ;    targets))
 
 ;; moved in from undo.rkt
+#; ; now unused, if you need to cc errors, you should probably use a custom
+; port and parameterize it as the current error port
 (define (current-error-ports) ;may be overridden to cc errors elsewhere
   (list (current-error-port)))
 

@@ -15,7 +15,7 @@
      (with-handlers
        ([exn:fail?
          (lambda (exn)
-           (foreach (current-error-ports)
+           (foreach (list (current-error-port))
                     (lambda (port)
                       (fprintf port "~a~%" (exn-message exn))))
            (pop-delay-cursor the-delayed-pad))])

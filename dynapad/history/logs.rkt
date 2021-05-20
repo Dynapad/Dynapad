@@ -99,6 +99,7 @@
 ;======================================================
 
 (require (only-in racket/class send is-a? object%)
+         dynapad/seval
          racket/string
          compatibility/defmacro
          ;mzlib/process
@@ -136,14 +137,15 @@
 (provide #; ;didn't work :/
          (all-from-out undo-state)
          do-deferred-evals
-         safe-eval
          restore-set-core
          restore-set
          ensure-keyframe
          start-new-history
          )
 
+#; ; not relevant in the compiled module context
 (announce-module-loading "logging...")
+
 ;Utilities for reading/writing workspace logs
 
 ;(dynaload "logbranch.ss")
@@ -328,17 +330,6 @@
    eval
    (mmap (lambda (expr) (import-expr-with-objs expr idmap))
          (order-by-phase (deferred-exprs)))))
-
-(define (safe-eval expr)
-  ;serves as a reentry point in case of errors during eval
-  (with-handlers
-    ;   ([exn:user? (lambda (exn)
-    ([exn:fail? (lambda (exn)
-                  (foreach (current-error-ports)
-                           (lambda (port)
-                             (fprintf port  "Error (~a) in ~a~%" (exn-message exn) expr)))
-                  #f)])
-    (eval expr)))
 
 (define-syntax restore-set-core
   (syntax-rules ()

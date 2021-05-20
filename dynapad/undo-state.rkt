@@ -50,8 +50,6 @@
          get-top-group
          )
 
-(provide import-set)
-
 ;--- basic do/undo mechanism -------------------------------------
 ;  many of these funcs are overridden in logs.ss
 
@@ -334,13 +332,6 @@
   (if (send obj getgroup)
       (get-topmost-group (send obj getgroup))
       obj))
-
-;these set load-context if restore/import-path are bypassed
-(define-syntax import-set
-  (syntax-rules ()
-    ((_ expr ...)
-     (use-load-context 'import
-                       (import-set-core expr ...)))))
 
 (define (import-path path)  ; FIXME seems like this should be defined elsewhere?
   (use-load-context 'import

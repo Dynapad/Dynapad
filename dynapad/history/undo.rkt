@@ -4,7 +4,7 @@
                   message-box)
          compatibility/mlist
          dynapad/base
-         dynapad/copy
+         dynapad/copy ; provides import-set
          dynapad/ffs
          dynapad/pad-state
          ;dynapad/import
@@ -353,24 +353,6 @@
 ; Importing: remap all ids, keep padid counter
 ; Restoring: advance padid counter>max, keep all ids
 
-(define-syntax import-set-core
-  (syntax-rules ()
-    ((_ expr ...)
-     (show-possible-delay currentPAD
-                          (let* ((objs (filter (lambda (o) (is-a? o object%))
-                                               (map safe-eval (list expr ...))))
-                                 ;build temp id->obj map:
-                                 (idmap  (filter ;omit objs with no id
-                                          (lambda (pair) pair)
-                                          (map
-                                           (lambda (o) (let ((i (send o wasid)))
-                                                         (and i (cons i o))));(list i o))))
-                                           objs))))
-                            (do-deferred-evals (make-immutable-hash-table idmap))
-                            objs)))))
-
-
-
 (define-syntax load-set
   (syntax-rules ()
     ((_ obj ...)
@@ -574,8 +556,15 @@
 
 ; some copy stuff tainted by Set-Select--undoable
 
+(define-namespace-anchor anchor-undo)
+(define namespace-undo (namespace-anchor->namespace anchor-undo))
+
 (define (Paste-From-Copy-Buffer)
-  (let* ((newobjects (eval `(import-set ,@*copy-buffer*)))
+  (let* ((newobjects
+          (parameterize ([current-namespace namespace-undo])
+            ; if this is not done then we encounter a bug when hitting the paste button
+            (eval `(import-set ,@*copy-buffer*))))
+         (__ (displayln (format "aaaaaaaaaaaaaaa: ~a" newobjects)))
          (topobjects (filter (lambda (o) (not (send o getgroup))) newobjects)))
     (for-each Offset-Object topobjects)
     ;  (Unselect-Selected--undoable)

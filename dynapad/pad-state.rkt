@@ -22,7 +22,7 @@
          set-initial-pad-state!
          )
 
-(define *list-of-all-dynapads* '())
+(define *list-of-all-dynapads* '()) ; TODO parameter
 (define (set-*list-of-all-dynapads*! value)
    (set! *list-of-all-dynapads* value))
 

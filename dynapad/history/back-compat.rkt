@@ -1,4 +1,5 @@
 ; This whole file is ugly hacky code just to support Dan's thesis log files.
+#lang racket/base
 
 
 (define titled-resizable-frame-container% resizable-dissolving-fusing-frame-container%)

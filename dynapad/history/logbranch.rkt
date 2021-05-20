@@ -319,7 +319,7 @@
 
 (define *current-logtree* #f)
 
-(define (current-logtree) *current-logtree*)
+(define (current-logtree) *current-logtree*) ; TODO parameter
 
 (define (set-*current-logtree*! lt)
   (set! *current-logtree* lt))

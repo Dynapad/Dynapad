@@ -1,4 +1,5 @@
 ; this assumes both event-binders-new.ss and logs.ss are already loaded
+#lang racket/base
 
 (access-hit-near-zoomlimit-callbacks
  'add

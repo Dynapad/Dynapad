@@ -73,12 +73,13 @@
     (() (Export-To-Directories (send dynapad objects)))
     ((objs)
      (let ((newdir (Select-File-Dialog 'save)))
-       (if (file-exists? newdir)
-           (error "File or directory already exists:" newdir)
-           (begin
-             (make-directory newdir)
-             (foreach objs (lambda (o) (send o export newdir)))
-             newdir))))))
+       (when newdir
+         (if (file-exists? newdir)
+             (error "File or directory already exists:" newdir)
+             (begin
+               (make-directory newdir)
+               (foreach objs (lambda (o) (send o export newdir)))
+               newdir)))))))
 
 (define (make-submenu-Export mb object)
   (define sb (add-submenu mb "Export"))

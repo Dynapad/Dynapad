@@ -7,6 +7,7 @@
          ; cycle inducing
          ; dynapad/dynapad-c-api
          ; oval%
+         ;(only-in dynapad/base oval%)
          )
 
 (announce-module-loading "graph tools...")
