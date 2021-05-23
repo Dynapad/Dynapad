@@ -7,7 +7,7 @@
 ; but I like the name thumbify for both the base module and the command
 
 (module thumbifyone mzscheme
-  (require "thumbify.ss")
+  (require "thumbify.rkt")
 
   (let*
       ((l (vector->list (current-command-line-arguments)))

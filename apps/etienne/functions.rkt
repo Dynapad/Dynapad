@@ -1,4 +1,4 @@
-(require (lib "process.ss"))
+(require (lib "process.rkt"))
 
 (define (diff l1 l2)
   (cond ((null? l1) '())

@@ -1,4 +1,4 @@
-(require "mysql.ss")
+(require "mysql.rkt")
 
 (define workspace%
   (class mysql%

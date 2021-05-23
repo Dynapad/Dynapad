@@ -1,5 +1,5 @@
-(dynaload "layout.ss")
-(dynaload "spirals.ss")
+(dynaload "layout.rkt")
+(dynaload "spirals.rkt")
 
 (define web-pile%
   (class event-pile%

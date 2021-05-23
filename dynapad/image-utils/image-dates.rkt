@@ -19,8 +19,8 @@
 ;  minutes
 ;  seconds
 
-(require (lib "date.ss"))
-(dynaload "parsedate.ss")
+(require (lib "date.rkt"))
+(dynaload "parsedate.rkt")
 
 (define (dir->date-alist dir)
   (define datefile (build-path->string dir "thumbs" "dates.txt"))

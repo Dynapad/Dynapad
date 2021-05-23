@@ -852,7 +852,7 @@
 
 ;--- menu and object menu buttons --------------------------------
 
-(dynaload "menu_popup.ss")
+(dynaload "menu_popup.rkt")
 (def show-popup-function (show-popup-lambda dynapad (make-popup-server)))
 
 (send menu_btn bind "<Select-ButtonRelease-1>" (lambda (w e)

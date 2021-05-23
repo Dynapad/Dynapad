@@ -31,10 +31,10 @@
          logfile->logid
          )
 
-;(dynaload "actor.ss")
-;(dynaload "tools-lists.ss") ; need (first-valid...)
-;(require (lib "list.ss"))
-;(require (lib "etc.ss")) ;need (second/third/fourth/etc ...)
+;(dynaload "actor.rkt")
+;(dynaload "tools-lists.rkt") ; need (first-valid...)
+;(require (lib "list.rkt"))
+;(require (lib "etc.rkt")) ;need (second/third/fourth/etc ...)
 
 ; ============= Name-part generation, conversion  =============
 ; Nomenclature:

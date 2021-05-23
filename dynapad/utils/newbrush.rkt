@@ -1,5 +1,5 @@
-(dynaload "newrelation.ss")
-(dynaload "hilights.ss") ;probably redundant
+(dynaload "newrelation.rkt")
+(dynaload "hilights.rkt") ;probably redundant
 
 (define relation-brush%
   ; Works with a relation to brush targets when source is "touched".

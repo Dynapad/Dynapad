@@ -1,5 +1,5 @@
-(load "dt.ss")
-(load "dt-events.ss")
+(load "dt.rkt")
+(load "dt-events.rkt")
 
 (define dt-user-ovals
   (let ((oval-list-v #4(())))

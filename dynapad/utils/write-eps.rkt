@@ -1,4 +1,4 @@
-(require (lib "port.ss"))
+(require (lib "port.rkt"))
 
 (define (rel-x x xy0 z)
   (* z (- x (car xy0))))

@@ -1,10 +1,10 @@
-(load "/home/hci/dynapad/workspace.ss")
-(load "/home/hci/dynapad/arrange.ss")
-(load "/home/hci/dynapad/bbox.ss")
-(require (lib "process.ss"))
-(require (lib "file.ss"))
-(require (lib "trace.ss"))
-(require (lib "date.ss"))
+(load "/home/hci/dynapad/workspace.rkt")
+(load "/home/hci/dynapad/arrange.rkt")
+(load "/home/hci/dynapad/bbox.rkt")
+(require (lib "process.rkt"))
+(require (lib "file.rkt"))
+(require (lib "trace.rkt"))
+(require (lib "date.rkt"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The icon class groups together an icon and its associated text objects ;;
@@ -241,7 +241,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;Arguments: lst: a list of objects to arrange, obj: the object to arrange onto,       ;;
 ;;           spread: a measure of the spacing between the objects                      ;;
-;;Note:      This function is identical to arrange-in-grid-onto-object in "arrange.ss" ;;
+;;Note:      This function is identical to arrange-in-grid-onto-object in "arrange.rkt" ;;
 ;;           except it includes a spread argument                                      ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define (arrange-in-grid-onto-object-with-spread lst obj spread)

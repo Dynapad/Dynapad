@@ -1,12 +1,12 @@
 (announce-module-loading "pile features...")
-(dynaload "hulls.ss")
+(dynaload "hulls.rkt")
 (update-progress .5)
 
-(dynaload "regions.ss")
+(dynaload "regions.rkt")
 (update-progress .75)
 
-(dynaload "colors.ss")
-(dynaload "get-user-bbox.ss")
+(dynaload "colors.rkt")
+(dynaload "get-user-bbox.rkt")
 
 (define obj-point%
   (class geo-point%

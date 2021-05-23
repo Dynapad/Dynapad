@@ -1,6 +1,6 @@
-(load-relative "C:/cygwin/home/hollan/dynapad/dynapad.ss")
+(load-relative "C:/cygwin/home/hollan/dynapad/dynapad.rkt")
 
-(require (lib "mysterx.ss" "mysterx"))
+(require (lib "mysterx.rkt" "mysterx"))
 
 (define ie (cci/progid "InternetExplorer.Application"))
 (com-set-property! ie "Visible" #t)

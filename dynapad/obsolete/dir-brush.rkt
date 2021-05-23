@@ -1,6 +1,6 @@
-(dynaload "import-dirs.ss")
-(dynaload "brush.ss")
-(dynaload "relation.ss")
+(dynaload "import-dirs.rkt")
+(dynaload "brush.rkt")
+(dynaload "relation.rkt")
 
 ;(alist-filters 'add
 ;   (make-alist-modifier-function 'brush-set

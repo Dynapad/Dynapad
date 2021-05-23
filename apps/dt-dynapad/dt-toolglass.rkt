@@ -1,8 +1,8 @@
-(load "dt.ss")
-(load "dt-actor.ss")
-(load "dt-events.ss")
-(load "dt-drag.ss")
-(load "dt-drag-bg.ss")
+(load "dt.rkt")
+(load "dt-actor.rkt")
+(load "dt-events.rkt")
+(load "dt-drag.rkt")
+(load "dt-drag-bg.rkt")
 
 ; a layer for tools to live on above the drawing surface
 (define *dt-tool-layer* (make-object layer% dynapad "dt-tool"))

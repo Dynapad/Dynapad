@@ -3,11 +3,11 @@
 (display "Including annotation features...")(newline)
 
 ;(define rootdir (getenv "DYNAPADHOME"))
-;(load (string-append rootdir "/dynapad.ss"))
-;(load (string-append rootdir "/actor.ss"))
-;(load (string-append rootdir "/menu_popup.ss"))
-(dynaload "actor.ss")
-(dynaload "menu_popup.ss")
+;(load (string-append rootdir "/dynapad.rkt"))
+;(load (string-append rootdir "/actor.rkt"))
+;(load (string-append rootdir "/menu_popup.rkt"))
+(dynaload "actor.rkt")
+(dynaload "menu_popup.rkt")
 ;(define iconpath (string-append rootdir "/apps/anno/icons/"))
 (define iconpath (string-append *dynapad-directory* "/apps/anno/icons/"))
 

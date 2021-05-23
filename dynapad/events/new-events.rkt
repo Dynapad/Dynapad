@@ -1,4 +1,4 @@
-(dynaload "event-binders.ss")
+(dynaload "event-binders.rkt")
 (apply-newpad-bindings dynapad)
 
 ;(if *menubar* (send *menubar* show #f))

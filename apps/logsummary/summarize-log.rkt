@@ -1,5 +1,5 @@
-(load-relative "logmunge.ss")
-(require (lib "string.ss"))
+(load-relative "logmunge.rkt")
+(require (lib "string.rkt"))
 
 (define *summary-port* #f)
 (define (summarize-log logpath)

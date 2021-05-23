@@ -159,7 +159,7 @@
     ))
 
 #|
-(dynaload "edges.ss")
+(dynaload "edges.rkt")
 
 (define (make-treenode)
   (let* ((obj (make-object oval% dynapad (list -5 -5 5 5)))

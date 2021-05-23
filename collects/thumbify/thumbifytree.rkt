@@ -4,7 +4,7 @@
 ; requires thumbify.ss
 
 (module thumbifytree mzscheme
-  (require "thumbify.ss")
+  (require "thumbify.rkt")
 
   (thumbify/verbose #t)
 

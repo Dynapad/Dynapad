@@ -1,6 +1,6 @@
 (module thumbify mzscheme
 
-  ; (require (file "thumbify.ss"))
+  ; (require (file "thumbify.rkt"))
   ; (thumbify "a/b/c.jpg") or (thumbify "a/b/c.jpg" 150)
   ; (thumbifydir "a/b") or (thumbifydir "a/b" 150)
   ; (thumbifytree "a/b") or (thumbifytree "a/b" 150)
@@ -16,10 +16,10 @@
            thumbify/force thumbify/verbose
            image?)
 
-  (require (lib "list.ss"))
-  (require (lib "process.ss"))
-  (require "../imagemagick/imagemagick.ss")
-  (require "../misc/pathhack.ss")
+  (require (lib "list.rkt"))
+  (require (lib "process.rkt"))
+  (require "../imagemagick/imagemagick.rkt")
+  (require "../misc/pathhack.rkt")
 
   (define RES 125)
 

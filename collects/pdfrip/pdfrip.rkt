@@ -1,12 +1,12 @@
 (module pdfrip mzscheme
 
-  (require (lib "list.ss"))
-  (require (lib "file.ss"))
-  (require "../pdfrip/misc.ss")
-  (require "../xpdf/xpdf.ss")
-  (require "../thumbify/thumbify.ss")
-  (require "../imagemagick/imagemagick.ss")
-  (require "../misc/pathhack.ss")
+  (require (lib "list.rkt"))
+  (require (lib "file.rkt"))
+  (require "../pdfrip/misc.rkt")
+  (require "../xpdf/xpdf.rkt")
+  (require "../thumbify/thumbify.rkt")
+  (require "../imagemagick/imagemagick.rkt")
+  (require "../misc/pathhack.rkt")
 
   (provide pdfrip pdfripdir pdfriptree
            pdfrip/force pdfrip/verbose

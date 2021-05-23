@@ -1,4 +1,4 @@
-(dynaload "metadata.ss")
+(dynaload "metadata.rkt")
 
 (image-aftermake-callbacks 'add
                            (lambda (img)

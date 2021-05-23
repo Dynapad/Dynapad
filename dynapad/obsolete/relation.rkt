@@ -1,7 +1,7 @@
 ;THIS SHOULD ALL BE OBSOLETE, replaced by newrelation.ss
 ;  keep for back-compat
 
-(dynaload "brush.ss")
+(dynaload "brush.rkt")
 
 (define relation%
   (class linkable-obj%

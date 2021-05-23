@@ -36,10 +36,10 @@ bounce.ss includes several types of force.
   view      - bounce off the edge of the view so doesn't leave the view
   comeback  - if out of view, move toward the view
 
-(load "dynapad.ss")
+(load "dynapad.rkt")
 (appload "uberapp")
-(load "barneshut.ss")
-(load "bounce.ss")
+(load "barneshut.rkt")
+(load "bounce.rkt")
 (define objs ... list of dynaobjects ...)
 (define t (run objs))  - start physics thread
 (set! nbforce #t)      - start barneshut force calculation

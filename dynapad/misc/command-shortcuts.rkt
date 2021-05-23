@@ -172,7 +172,7 @@
 ;           (and (not (eq? eof try)) try)))
 ;))
 
-; TODO: this was "plthome.ss", is this a safe choice of replacement..?
+; TODO: this was "plthome.rkt", is this a safe choice of replacement..?
 #; ; overwritten by the version below
 (define-syntax (this-expression-source-path stx)
   (syntax-case stx ()

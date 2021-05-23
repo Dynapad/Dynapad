@@ -1,7 +1,7 @@
 (module mysql mzscheme
 
-  (require (lib "class.ss"))
-  (require (lib "etc.ss"))
+  (require (lib "class.rkt"))
+  (require (lib "etc.rkt"))
 
   (provide mysql%)
 

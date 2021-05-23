@@ -1,5 +1,5 @@
-(require (lib "mrpict.ss" "texpict"))
-(require (lib "etc.ss")) ;;for (rec)
+(require (lib "mrpict.rkt" "texpict"))
+(require (lib "etc.rkt")) ;;for (rec)
 
 
 ;; Wrapper class stores dynapad object and an abstract pict struct

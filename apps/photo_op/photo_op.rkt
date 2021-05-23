@@ -3,8 +3,8 @@
 ;;
 (display "Including photo_op features...")(newline)
 
-(dynaload "events/new-events.ss")
-(dynaload "menu/new-menu_popup.ss")
+(dynaload "events/new-events.rkt")
+(dynaload "menu/new-menu_popup.rkt")
 
 
 ;--- init ---
@@ -13,8 +13,8 @@
 (enable-popups dynapad)
 
 ;-- Optional features: --
-;(dynaload "piles.ss")
-;(dynaload "timeline.ss")
-;(dynaload "undo.ss")
-;(dynaload "composite.ss")
-;(dynaload "brush.ss")
+;(dynaload "piles.rkt")
+;(dynaload "timeline.rkt")
+;(dynaload "undo.rkt")
+;(dynaload "composite.rkt")
+;(dynaload "brush.rkt")

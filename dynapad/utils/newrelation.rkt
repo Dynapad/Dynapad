@@ -1,4 +1,4 @@
-(dynaload "tools-lists.ss")
+(dynaload "tools-lists.rkt")
 
 (define-macro (brush-style-template brush-field direction)
   `(case-lambda

@@ -187,7 +187,7 @@
 (define (save-pdf-config pdf) ;pdf is a pdf-portrait
   (let ((dir (send pdf dir)))
     (and (directory-exists? dir)
-         (let* ((path (build-path->string dir "config.ss"))
+         (let* ((path (build-path->string dir "config.rkt"))
                 (file (open-output-file path #:mode 'text #:exists 'truncate))
                 (cmd `(ic (make-object pdf-portrait% dynapad
                                        (relpath ,(build-path->string "../"
@@ -445,7 +445,7 @@
   (let ((dir (get-pdf-metadata-dir pdfpath)))
     (unless (directory-exists? dir)
       (make-directory dir))
-    (or (let ((config-file (build-path->string dir "config.ss")))
+    (or (let ((config-file (build-path->string dir "config.rkt")))
           (and (file-exists? config-file)
                (load config-file)))
         (ic (make-object pdf-portrait% dynapad pdfpath)

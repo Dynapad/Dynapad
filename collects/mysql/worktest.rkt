@@ -1,4 +1,4 @@
-(load-relative "workspace.ss")
+(load-relative "workspace.rkt")
 (define w (make-object workspace%))
 (printf "~a~%" (send w names))
 (printf "hi~%")

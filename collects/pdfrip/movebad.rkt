@@ -1,10 +1,10 @@
 (module movebad mzscheme
-  (require (lib "file.ss"))
-  (require (lib "list.ss"))
-  (require "../pdfrip/pdfrip.ss")
-  (require "../pdfrip/composite.ss")
-  (require "../pdfrip/import.ss")
-  (require "../misc/pathhack.ss")
+  (require (lib "file.rkt"))
+  (require (lib "list.rkt"))
+  (require "../pdfrip/pdfrip.rkt")
+  (require "../pdfrip/composite.rkt")
+  (require "../pdfrip/import.rkt")
+  (require "../misc/pathhack.rkt")
 
   (provide movebaddir movebadtree)
 

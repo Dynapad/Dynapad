@@ -1,4 +1,4 @@
-(load-relative "../../apps/logsummary/logmunge.ss")
+(load-relative "../../apps/logsummary/logmunge.rkt")
 
 
 (define push-ops-no-exec

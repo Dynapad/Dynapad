@@ -1,4 +1,4 @@
-(dynaload "event-binders.ss")
+(dynaload "event-binders.rkt")
 
 (define minipad% (class panel%
 

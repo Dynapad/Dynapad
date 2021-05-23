@@ -214,8 +214,8 @@
 (define domain-from-url (regexp "^[hftp]+://([1-9a-zA-Z\\-\\.]+)/?"))
 
 #|
-(load "/home/etienne/dynapad/apps/task-region/labeled-group.ss")
-(load "/home/etienne/dynapad/apps/task-region/task-region.ss")
+(load "/home/etienne/dynapad/apps/task-region/labeled-group.rkt")
+(load "/home/etienne/dynapad/apps/task-region/task-region.rkt")
 (define a (make-object task-region% dynapad))
 (define b (make-object web-region-toolbox% dynapad a))
 (send b build-from-query "today")

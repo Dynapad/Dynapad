@@ -31,7 +31,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(dynaload "zoom-pushpull.ss")
+(dynaload "zoom-pushpull.rkt")
 
 (define *startpan-dx-threshold* 4)
 (define *startzoom-dy-threshold* 5)

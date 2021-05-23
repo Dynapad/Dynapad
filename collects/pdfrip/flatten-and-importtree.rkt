@@ -1,5 +1,5 @@
 (module flatten-and-importtree mzscheme
-  (require "../pdfrip/import.ss")
+  (require "../pdfrip/import.rkt")
 
   (let*
       ((args (vector->list (current-command-line-arguments)))

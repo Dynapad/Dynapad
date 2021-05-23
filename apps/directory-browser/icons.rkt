@@ -1,4 +1,4 @@
-(require (lib "file.ss"))  ; needed for "file-name-from-path"
+(require (lib "file.rkt"))  ; needed for "file-name-from-path"
 
 (define icon-container-form%
   (class base-formation%

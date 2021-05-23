@@ -64,7 +64,7 @@
 
 (define (for-all-pads body) (for-each body *list-of-all-dynapads*))
 
-;(dynaload "mode.ss")
+;(dynaload "mode.rkt")
 (push-onto-malist-val! massoc "Run"
                        (lambda (argPAD)
                          (clear-all-menu-buttons)

@@ -1,5 +1,5 @@
-(load-relative "dt.ss")
-(load-relative "dt-events.ss")
+(load-relative "dt.rkt")
+(load-relative "dt-events.rkt")
 
 (define *dt-mouse-button* "1")
 

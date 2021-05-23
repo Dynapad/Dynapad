@@ -1,6 +1,6 @@
-(require (lib "process.ss" "mzlib"))
+(require (lib "process.rkt" "mzlib"))
 
-(dynaload "strings.ss")
+(dynaload "strings.rkt")
 
 (define (thumbify hires-path thumb-path size)
   (system (string-append "thumbify thumb_max_size=" size

@@ -1,9 +1,9 @@
 (module import mzscheme
-  (require (lib "file.ss"))
-  (require (lib "list.ss"))
-  (require "../pdfrip/pdfrip.ss")
-  (require "../pdfrip/composite.ss")
-  (require "../misc/pathhack.ss")
+  (require (lib "file.rkt"))
+  (require (lib "list.rkt"))
+  (require "../pdfrip/pdfrip.rkt")
+  (require "../pdfrip/composite.rkt")
+  (require "../misc/pathhack.rkt")
 
   (provide importdir importtree
            flatten remove-all-but-pdf movebad flatten-and-importtree)

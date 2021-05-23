@@ -1,6 +1,6 @@
-(load-relative "logmunge.ss")
-(require (lib "pregexp.ss"))
-(require (lib "string.ss"))
+(load-relative "logmunge.rkt")
+(require (lib "pregexp.rkt"))
+(require (lib "string.rkt"))
 
 (def *dragevent-codes* null) ;alist: codes->categories
 (def *dragevent-rows* null) ;alist: category->rows

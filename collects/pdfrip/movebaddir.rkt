@@ -1,5 +1,5 @@
 (module movebaddir mzscheme
-  (require "../pdfrip/movebad.ss")
+  (require "../pdfrip/movebad.rkt")
 
   (let*
       ((args (vector->list (current-command-line-arguments)))

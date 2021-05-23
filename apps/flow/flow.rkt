@@ -1,4 +1,4 @@
-(require (lib "class.ss"))
+(require (lib "class.rkt"))
 
 ; flow menu
 ; inner to outer transition enables selection

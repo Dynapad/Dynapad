@@ -1,6 +1,6 @@
 ; I don't know if this is foolproof, but it makes the usual case easier.
-(appload "dt-dynapad" "dt.ss")
-(appload "dt-dynapad" "dt-events.ss")
+(appload "dt-dynapad" "dt.rkt")
+(appload "dt-dynapad" "dt-events.rkt")
 
 ; a layer for tools to live on above the drawing surface
 (define *dt-tool-layer* (make-object layer% dynapad "dt-tool"))

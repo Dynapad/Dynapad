@@ -1,6 +1,6 @@
-(require (lib "class.ss"))
-(require (lib "defmacro.ss"))
-(require (lib "math.ss"))
+(require (lib "class.rkt"))
+(require (lib "defmacro.rkt"))
+(require (lib "math.rkt"))
 
 (define *all-regions* null)
 (define *greedy-regions* null)
@@ -566,7 +566,7 @@
         (super decorate)))
     ))
 
-(dynaload "actortimer.ss")
+(dynaload "actortimer.rkt")
 (define fader-timer (make-object auto-unsubscribe-timer% dynapad 300))
 (send fader-timer start)
 

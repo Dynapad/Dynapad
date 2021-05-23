@@ -4,7 +4,7 @@
 ; requires pdfrip.ss
 
 (module pdfriptree mzscheme
-  (require "pdfrip.ss")
+  (require "pdfrip.rkt")
 
   (pdfrip/verbose #t)
 

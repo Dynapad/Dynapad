@@ -25,7 +25,7 @@
          resetDrawObject 
          add-shape-vertex-event
          )
-;(dynaload "menu-draw.ss")
+;(dynaload "menu-draw.rkt")
 ;======= Draw Rect, Oval, Line, and Polygon from Menubar ========
 
 (define Draw-mode #f)

@@ -1,4 +1,4 @@
-(dynaload "menu_popup.ss")
+(dynaload "menu_popup.rkt")
 
 
 ; redefine top level menu for this application

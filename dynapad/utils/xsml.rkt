@@ -1,4 +1,4 @@
-(dynaload "alist.ss")
+(dynaload "alist.rkt")
 
 ;=================================================================
 ;  xsml = extendable scheme markup language

@@ -1,9 +1,9 @@
-(require (lib "file.ss"))
+(require (lib "file.rkt"))
 
-(load-relative "dir-browser.ss")
-(load-relative "icons.ss")
-(dynaload "launcher.ss")
-(load-relative "thermometer.ss")
+(load-relative "dir-browser.rkt")
+(load-relative "icons.rkt")
+(dynaload "launcher.rkt")
+(load-relative "thermometer.rkt")
 
 ;; --Global Objects --
 (define *launcher* (make-object launcher%)) ;Adds bindings to file icons

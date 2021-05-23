@@ -1,5 +1,5 @@
 
-(require (lib "pregexp.ss"))
+(require (lib "pregexp.rkt"))
 
 (define (read-tab-separated-file path)
   (define results ())

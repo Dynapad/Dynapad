@@ -2,7 +2,7 @@
 ; This file is obsolete; import operations subsumed by import-dirs.ss
 
 ;(require dynapad/misc/tools-lists)
-;(dynaload "tools-lists.ss")
+;(dynaload "tools-lists.rkt")
 
 ; grandfather in exising image collections
 ; when saved, they'll become image% objects

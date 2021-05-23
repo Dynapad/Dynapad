@@ -1,4 +1,4 @@
-(require (lib "file.ss"))
+(require (lib "file.rkt"))
 
 (define titled-frame-container%
   (class frame-container%

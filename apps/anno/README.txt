@@ -13,7 +13,7 @@ The larger system is not yet ready for release.
 USER GUIDE
 
 To run it:
- * set your DYNAPADHOME environment variable & put (load "./apps/anno/anno.ss")
+ * set your DYNAPADHOME environment variable & put (load "./apps/anno/anno.rkt")
   into your DYNAPADHOME/apps.ss file.  Then anno.ss will load whenever
   you run dynapad.
 

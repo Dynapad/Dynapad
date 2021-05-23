@@ -1,4 +1,4 @@
-(require (lib "process.ss"))
+(require (lib "process.rkt"))
 
 ; originally from etienne
 

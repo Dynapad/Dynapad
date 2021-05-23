@@ -41,7 +41,7 @@
     (when home
       (set! *home-directory* home))
     (when home
-      (set! padsetup (build-path->string home ".padsetup.ss"))
+      (set! padsetup (build-path->string home ".padsetup.rkt"))
       (when (file-exists? padsetup) (load padsetup)))))
 
 (define (setup-dynapad-subdirectory . args)

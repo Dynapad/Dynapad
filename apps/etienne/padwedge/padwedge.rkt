@@ -1,4 +1,4 @@
-(require (lib class.ss"))
+(require (lib class.rkt"))
 
 ;; Added by Etienne 5/23/02
 (define padwedge%

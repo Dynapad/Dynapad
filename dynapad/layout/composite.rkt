@@ -1,6 +1,6 @@
 #lang racket/base
 
-;(require (lib "process.ss")) ; this was mzlib/process, maybe racket/system has what we need?
+;(require (lib "process.rkt")) ; this was mzlib/process, maybe racket/system has what we need?
 (require racket/class
          racket/system
          ;dynapad/pdf

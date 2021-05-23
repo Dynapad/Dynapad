@@ -1,4 +1,4 @@
-(require (lib "process.ss"))
+(require (lib "process.rkt"))
 
 (define dir "/tmp/googlerip/")
 (if (not (directory-exists? dir))

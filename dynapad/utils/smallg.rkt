@@ -68,7 +68,7 @@
                                   (+ (cadr segA) (* r A.dy)))))))))
 
 ;-----
-;(dynaload "tools-lists.ss")
+;(dynaload "tools-lists.rkt")
 
 (define geo-actor-name 'geon)
 (define (geodize it)  ;creates dummy actor

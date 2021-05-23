@@ -1,10 +1,10 @@
 (module composite mzscheme
-  (require "../pdfrip/pdfrip.ss")
-  (require "../pdfrip/misc.ss")
-  (require "../imagemagick/imagemagick.ss")
-  (require "../thumbify/thumbify.ss")
-  (require "../misc/pathhack.ss")
-  (require (lib "list.ss"))
+  (require "../pdfrip/pdfrip.rkt")
+  (require "../pdfrip/misc.rkt")
+  (require "../imagemagick/imagemagick.rkt")
+  (require "../thumbify/thumbify.rkt")
+  (require "../misc/pathhack.rkt")
+  (require (lib "list.rkt"))
 
   (provide
    tile2x2 largest_rightside largest_bottomhalf

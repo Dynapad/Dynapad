@@ -7,7 +7,7 @@
 ; but I like the name composite for both the base module and the command
 
 (module compositeone mzscheme
-  (require "composite.ss")
+  (require "composite.rkt")
 
   (let*
       ((l (vector->list (current-command-line-arguments)))

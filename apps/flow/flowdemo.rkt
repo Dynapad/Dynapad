@@ -1,6 +1,6 @@
 ;load this file after starting dynapad
-(load-relative "flow.ss")
-(load-relative "zoom.ss")
+(load-relative "flow.rkt")
+(load-relative "zoom.rkt")
 
 ; example
 ; Draw is a flow menu (inner-to-out transition pushes submenu)

@@ -2,7 +2,7 @@
 ; see menubar.ss as example of revision.
 ;======= Simple Menubar ========
 
-(dynaload "wx_emulator.ss")
+(dynaload "wx_emulator.rkt")
 
 (define (for-all-pads body) (for-each body *list-of-all-dynapads*))
 
@@ -417,7 +417,7 @@
 (make-object dywx-button% "<none>" penpane (pen-command #f))
 
 
-;;;(require (prefix wx: (lib "kernel.ss" "mred" "private")))
+;;;(require (prefix wx: (lib "kernel.rkt" "mred" "private")))
 
 (define (update-panel-colors)
   (let ((penclr (send dynapad defaultpen))

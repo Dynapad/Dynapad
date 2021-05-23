@@ -1,10 +1,10 @@
-(require (lib "class.ss"))
-(require (lib "defmacro.ss"))
-(require (lib "math.ss"))
-;(dynaload "geometry.ss") ;includes actor.ss, alist.ss
-;(dynaload "bbox.ss")
-;(dynaload "actor.ss")
-;(dynaload "actortimer.ss")
+(require (lib "class.rkt"))
+(require (lib "defmacro.rkt"))
+(require (lib "math.rkt"))
+;(dynaload "geometry.rkt") ;includes actor.ss, alist.ss
+;(dynaload "bbox.rkt")
+;(dynaload "actor.rkt")
+;(dynaload "actortimer.rkt")
 
 
 ;relation of actors:

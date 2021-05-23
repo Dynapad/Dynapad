@@ -4,7 +4,7 @@
 ; requires movebad.ss
 
 (module movebadtree mzscheme
-  (require "../pdfrip/movebad.ss")
+  (require "../pdfrip/movebad.rkt")
 
   (let*
       ((args (vector->list (current-command-line-arguments)))

@@ -1,4 +1,4 @@
-(require (lib "mysterx.ss" "mysterx"))
+(require (lib "mysterx.rkt" "mysterx"))
 
 ;make a browser (ie without controls) hosts the object
 (define mx (make-object mx-browser%))

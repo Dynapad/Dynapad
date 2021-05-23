@@ -1,5 +1,5 @@
-(load "/home/etienne/dynapad/formation.ss")
-(dynaload "arrange.ss")
+(load "/home/etienne/dynapad/formation.rkt")
+(dynaload "arrange.rkt")
 
 (define labeled-group%
   (class container-form%

@@ -1,8 +1,8 @@
-(load "/home/hci/dynapad/arrange.ss")
-(load "/home/hci/dynapad/piles.ss")
-(load "/home/hci/dynapad/apps/mysql/mysql.ss")
-(load "/home/etienne/dynapad/apps/task-region/mysql-history.ss")
-(load "/home/etienne/dynapad/apps/task-region/clock.ss")
+(load "/home/hci/dynapad/arrange.rkt")
+(load "/home/hci/dynapad/piles.rkt")
+(load "/home/hci/dynapad/apps/mysql/mysql.rkt")
+(load "/home/etienne/dynapad/apps/task-region/mysql-history.rkt")
+(load "/home/etienne/dynapad/apps/task-region/clock.rkt")
 
 (define (make-web-pile domain)
   (define p (make-object polygon% dynapad '(-20 0 0 -20 20 0 0 20)))

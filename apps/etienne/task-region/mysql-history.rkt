@@ -1,5 +1,5 @@
-(dynaload "apps/mysql/mysql.ss")
-(load "/home/etienne/dynapad/apps/task-region/etienne.ss")
+(dynaload "apps/mysql/mysql.rkt")
+(load "/home/etienne/dynapad/apps/task-region/etienne.rkt")
 
 (define mysql-default%
   (class mysql%

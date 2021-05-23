@@ -1,6 +1,6 @@
 (module xpdf mzscheme
 
-  (require (lib "process.ss"))
+  (require (lib "process.rkt"))
 
   (provide xpdf/pdfimages xpdf/pdftops xpdf/pdfinfo xpdf/pdftotext
            xpdf/verbose)

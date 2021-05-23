@@ -7,7 +7,7 @@
 ; but I like the name pdfrip for both the base module and the command
 
 (module pdfripone mzscheme
-  (require "pdfrip.ss")
+  (require "pdfrip.rkt")
 
   (let*
       ((l (vector->list (current-command-line-arguments)))

@@ -1,15 +1,15 @@
-(require (lib "defmacro.ss"))
-(require (lib "math.ss"))
-(dynaload "actor.ss")
-;(dynaload "misc.ss")
-;(dynaload "alist.ss")
-(dynaload "alist.ss")
-;(dynaload "tools-objects.ss")
-(dynaload "tools-misc.ss")
-(dynaload "tools-lists.ss")
+(require (lib "defmacro.rkt"))
+(require (lib "math.rkt"))
+(dynaload "actor.rkt")
+;(dynaload "misc.rkt")
+;(dynaload "alist.rkt")
+(dynaload "alist.rkt")
+;(dynaload "tools-objects.rkt")
+(dynaload "tools-misc.rkt")
+(dynaload "tools-lists.rkt")
 
 ;if debugging used:
-;(dynaload "profile.ss")
+;(dynaload "profile.rkt")
 
 (define stale 'stale)
 

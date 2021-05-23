@@ -1,4 +1,4 @@
-(dynaload "system-command.ss")
+(dynaload "system-command.rkt")
 
 ; originally from etienne
 

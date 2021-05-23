@@ -1,4 +1,4 @@
-(require (lib "mysterx.ss" "mysterx"))
+(require (lib "mysterx.rkt" "mysterx"))
 
 (define mediaplayer%
   (class object%

@@ -1,4 +1,4 @@
-(dynaload "actor.ss")
+(dynaload "actor.rkt")
 
 (define dt-actor%
   (class actor%

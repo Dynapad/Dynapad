@@ -1,7 +1,7 @@
 ; load this file after starting dynapad
-(load-relative "menu.ss")
-(load-relative "zoom.ss")
-(dynaload "arrangeimages.ss")
+(load-relative "menu.rkt")
+(load-relative "zoom.rkt")
+(dynaload "arrangeimages.rkt")
 
 (define *menu* (make-object menu% dynapad))
 

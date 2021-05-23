@@ -1,4 +1,4 @@
-(require (lib "pathhack.ss" "misc"))
+(require (lib "pathhack.rkt" "misc"))
 
 ;--- dynaload ----------------------------------------------------
 
@@ -40,11 +40,11 @@
 
 ; appload assumes application name matches application directory
 ; usage: (appload "foo") --> apps/foo/foo.ss
-; usage: (appload "foo" "bar.ss") --> apps/foo/bar.ss
+; usage: (appload "foo" "bar.rkt") --> apps/foo/bar.ss
 (define (appload dirname . startfile)
   (define appname (if (not (null? startfile))
                       (car startfile)
-                      (string-append dirname ".ss")))
+                      (string-append dirname ".rkt")))
   (define filename (build-path->string *dynapad-directory* "apps" dirname appname ))
   (if (file-exists? filename)
       (begin (load filename) #t)

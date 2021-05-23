@@ -1,4 +1,4 @@
-(load (build-path->string (getenv "DYNAHOME") "lib" "mysql.ss"))
+(load (build-path->string (getenv "DYNAHOME") "lib" "mysql.rkt"))
 
 (define workspace%
   (class mysql%

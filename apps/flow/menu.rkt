@@ -1,4 +1,4 @@
-(require (lib "class.ss"))
+(require (lib "class.rkt"))
 
 (define menu%
   (class group%

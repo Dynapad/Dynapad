@@ -1,5 +1,5 @@
-(load "/home/etienne/dynapad/formation.ss")
-(load-relative "control-panel.ss")
+(load "/home/etienne/dynapad/formation.rkt")
+(load-relative "control-panel.rkt")
 
 (define task-region%
   (class container-form%

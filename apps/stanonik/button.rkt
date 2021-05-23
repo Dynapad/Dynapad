@@ -1,5 +1,5 @@
-(require (lib "class.ss"))
-(load-relative "workspace.ss")
+(require (lib "class.rkt"))
+(load-relative "workspace.rkt")
 
 (define button%
   (class oval%

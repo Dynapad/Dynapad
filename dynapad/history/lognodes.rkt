@@ -1,5 +1,5 @@
-(dynaload "trees.ss")
-(dynaload "tools-lists.ss")
+(dynaload "trees.rkt")
+(dynaload "tools-lists.rkt")
 
 (define (gather-lognames dir treename)
   (let* ((allfiles (directory-list->string dir))

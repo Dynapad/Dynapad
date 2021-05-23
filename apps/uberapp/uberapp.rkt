@@ -1,35 +1,35 @@
-(dynaload "event-binders-newdraw.ss")
+(dynaload "event-binders-newdraw.rkt")
 (make-object newpaddraw-event-binder% dynapad newpad-event-state%)
-(dynaload "progress.ss")
+(dynaload "progress.rkt")
 
-;(dynaload "events/new-events.ss")
+;(dynaload "events/new-events.rkt")
 
 ;(define (main-menu-title obj) ;overrides generic version in dynapad.ss
 ;  (if obj "Object Menu" "Dynapad Menu"))
 
-(dynaload "menu_popup.ss")
+(dynaload "menu_popup.rkt")
 
-(dynaload "newbrush.ss")
+(dynaload "newbrush.rkt")
 
-(dynaload "logs.ss")
+(dynaload "logs.rkt")
 
-(dynaload "piles.ss")
-(dynaload "timeline.ss")
+(dynaload "piles.rkt")
+(dynaload "timeline.rkt")
 
-(dynaload "composite.ss")
+(dynaload "composite.rkt")
 
 ; automatic brushing, popup-menus for images
-(dynaload "image-menu.ss")
+(dynaload "image-menu.rkt")
 
-(dynaload "edges.ss")
+(dynaload "edges.rkt")
 
 ; enable automatic hires when hit zoom limit
-(dynaload "auto-hires.ss")
+(dynaload "auto-hires.rkt")
 
-(dynaload "log-views.ss")
+(dynaload "log-views.rkt")
 
 
-(dynaload "lockdown.ss") ;puts dp into "analyst mode"; protects histories
-(dynaload "write-eps.ss")
+(dynaload "lockdown.rkt") ;puts dp into "analyst mode"; protects histories
+(dynaload "write-eps.rkt")
 
-(dynaload "back-compat.ss")
+(dynaload "back-compat.rkt")

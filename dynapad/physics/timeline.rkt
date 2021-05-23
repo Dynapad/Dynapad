@@ -1,28 +1,28 @@
 (announce-module-loading "region tools...")
 
-(dynaload "bbox.ss")
-(dynaload "actor.ss")
-(dynaload "tools-lists.ss")
-(dynaload "tools-misc.ss")
-(dynaload "tools-cmp.ss")
-(dynaload "geometry.ss")
+(dynaload "bbox.rkt")
+(dynaload "actor.rkt")
+(dynaload "tools-lists.rkt")
+(dynaload "tools-misc.rkt")
+(dynaload "tools-cmp.rkt")
+(dynaload "geometry.rkt")
 
 (update-progress .5)
-(dynaload "regions.ss")
+(dynaload "regions.rkt")
 (update-progress .7)
-(dynaload "actortimer.ss")
-(dynaload "layout.ss")
+(dynaload "actortimer.rkt")
+(dynaload "layout.rkt")
 
 (update-progress .85)
-;(dynaload "image-dates.ss")
-(dynaload "get-user-bbox.ss")
+;(dynaload "image-dates.rkt")
+(dynaload "get-user-bbox.rkt")
 
-(dynaload "metadata.ss")
+(dynaload "metadata.rkt")
 
-(dynaload "colors.ss")
+(dynaload "colors.rkt")
 
 
-;(dynaload "piles.ss")
+;(dynaload "piles.rkt")
 
 ;(display "    libraries loaded...")(newline)
 

@@ -1,4 +1,4 @@
-(dynaload "geometry.ss")
+(dynaload "geometry.rkt")
 
 ; The following is a 2D implementation of the QuickHull algorithm
 ;

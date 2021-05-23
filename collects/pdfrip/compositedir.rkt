@@ -1,5 +1,5 @@
 (module compositedir mzscheme
-  (require "../pdfrip/composite.ss")
+  (require "../pdfrip/composite.rkt")
 
   (let*
       ((args (vector->list (current-command-line-arguments)))

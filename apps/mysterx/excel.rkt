@@ -1,4 +1,4 @@
-(require (lib "mysterx.ss" "mysterx"))
+(require (lib "mysterx.rkt" "mysterx"))
 
 (define excel (cci/progid "Excel.Application"))
 (com-set-property! excel "Visible" #t)

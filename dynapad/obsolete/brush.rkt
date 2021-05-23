@@ -35,8 +35,8 @@
 ; highlight itself.
 
 (announce-module-loading "brushing feature...")
-;(dynaload "hndl.ss") ; is it good style to do this here?
-(dynaload "handle.ss")
+;(dynaload "hndl.rkt") ; is it good style to do this here?
+(dynaload "handle.rkt")
 (define (target-via-handle obj)
   (let ((hndl (get-hndl obj)))
     (if hndl (send hndl instances-except obj)

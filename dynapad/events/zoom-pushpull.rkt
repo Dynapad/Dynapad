@@ -1,4 +1,4 @@
-(dynaload "lerp.ss")
+(dynaload "lerp.rkt")
 
 (define (wider-view? v1 v2)
   (let ((z1 (caddr v1))

@@ -1,4 +1,4 @@
-(require (lib "process.ss" "mzlib"))
+(require (lib "process.rkt" "mzlib"))
 
 (define launcher%
   (class object%

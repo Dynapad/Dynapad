@@ -158,14 +158,14 @@
 
 ;Utilities for reading/writing workspace logs
 
-;(dynaload "logbranch.ss")
+;(dynaload "logbranch.rkt")
 (update-progress .6)
 
 ;OPTIONAL: comment out to exclude...
 ; visible logs:
-;(dynaload "showlogs.ss")  ;requires logbranch.ss
+;(dynaload "showlogs.rkt")  ;requires logbranch.ss
 ; state-marker
-;(dynaload "logbead.ss")   ;requires showlogs.ss
+;(dynaload "logbead.rkt")   ;requires showlogs.ss
 (update-progress .8)
 
 #|

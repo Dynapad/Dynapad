@@ -1,11 +1,11 @@
 
 
-(dynaload "tools-cmp.ss")
-(dynaload "tools-misc.ss")
-(dynaload "tools-lists.ss")
-(dynaload "animate.ss")
-(dynaload "lerp.ss")
-(require (lib "etc.ss")) ;needs (identity...)
+(dynaload "tools-cmp.rkt")
+(dynaload "tools-misc.rkt")
+(dynaload "tools-lists.rkt")
+(dynaload "animate.rkt")
+(dynaload "lerp.rkt")
+(require (lib "etc.rkt")) ;needs (identity...)
 
 ;==================== Padded BBoxes =========
 

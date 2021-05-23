@@ -29,7 +29,7 @@
          )
 
 #;
-(require (lib "class100.ss"))
+(require (lib "class100.rkt"))
 
 ; Someday we might decide to create an entire library of widgets for pad.
 ; Until then we need to leverage of effort by using existing widgets.
