@@ -4,7 +4,7 @@
                   message-box)
          compatibility/mlist
          dynapad/base
-         dynapad/copy ; provides import-set
+         dynapad/copy ; provides import-set and import-set-core
          dynapad/ffs
          dynapad/pad-state
          ;dynapad/import
@@ -26,13 +26,16 @@
 
          ;dynapad/history/ids ; this actually works now ?!
          (only-in dynapad/history/logs
-                  restore-set)
+                  restore-set
+                  restore-set-core
+                  )
          (only-in dynapad/history/deferred-evals
                   do-deferred-evals)
          (only-in dynapad/layout/bbox
                   bbunion-objects
                   )
          dynapad/physics/animate
+         (only-in dynapad/import importing?)
          )
 
 (provide Paste-From-Copy-Buffer

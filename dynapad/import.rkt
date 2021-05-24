@@ -45,7 +45,10 @@
 ;  (load-context-objs (mcar *load-context-stack*)))
 
 (define (push-deferred-expr phase expr)
-  (let ((oldmlst (list->mlist (load-context-deferred-exprs (mcar *load-context-stack*)))))
+  (let* ([rawml (load-context-deferred-exprs (mcar *load-context-stack*))]
+         [oldmlst (if (mlist? rawml) ; FIXME we shouldn't need this?
+                      rawml
+                      (list->mlist rawml))])
     (pushq-onto-malist-val-always! phase expr oldmlst)
     (set-load-context-deferred-exprs! (mcar *load-context-stack*) oldmlst)))
 ;                     (cons expr oldmlst))))
@@ -53,7 +56,9 @@
 (define (deferred-exprs)
   ;alist by phase ((0 expr...) (1 expr....) (n expr....))
   (let ([exprs (load-context-deferred-exprs (mcar *load-context-stack*))])
-    (if (list? exprs) (list->mlist exprs) exprs)))
+    (if (list? exprs)
+        (list->mlist exprs)
+        exprs)))
 
 (define (order-by-phase mlst)
   ;mlst is ((0 x1 x2...) (1 x3 x4...) ...)
@@ -64,3 +69,8 @@
                  (lambda (phase-a phase-b)
                    (< (mcar phase-a) (mcar phase-b))))])
     (apply mappend (map mcdr phases))))
+
+(module+ test
+  (order-by-phase (mlist (mlist 2 'b)
+                         (mlist 3 'c)
+                         (mlist 1 'a))))

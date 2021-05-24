@@ -12,6 +12,8 @@
          counting-list
          mmap
          list-head
+
+         list-overlapq ; needed by newlrelation which may be obsolete
          )
 
 (define (multiple? lst)

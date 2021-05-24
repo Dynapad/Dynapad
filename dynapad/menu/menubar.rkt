@@ -48,12 +48,14 @@
 
 (provide init-menubar
          drawpane
+         arcpane
          use-bitmap-or-string
          for-all-pads
          clear-all-menu-buttons
          button-double-clicked?
          update-panel-colors
          set-*draw-button-off-labels*!
+         push-*guest-button-off-labels*!
          )
 
 (define (init-menubar)
@@ -160,6 +162,8 @@
 (define on_lasso      (use-bitmap-or-string "pad/bitmaps/On_lasso.xpm"         "Lasso"       ))
 
 (define *guest-button-off-labels* null)
+(define (push-*guest-button-off-labels*! value)
+  (push! value *guest-button-off-labels*))
 (define *draw-button-off-labels* null)
 (define (set-*draw-button-off-labels*! value)
   (set! *draw-button-off-labels* value))

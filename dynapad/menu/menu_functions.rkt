@@ -93,6 +93,10 @@
 
 (provide make-submenu-Edit
          make-submenu-Select-Highlighted
+         make-submenu-Arrange
+         make-submenu-Object
+         make-submenu-Font
+         make-submenu-Tools
          ; needed by menubar
          Load-Image
          Get-Font-Name-For-Selected
@@ -106,6 +110,9 @@
          UnGroup-Selected
          Save-Current
          Select-and-Save-All
+         ask-user-for-color
+         *default_directory*
+         Select-and-Import-File
          )
 
 (announce-module-loading "Menu functions...")
@@ -125,7 +132,7 @@
 
 (define modebutton #f)  ; placeholder variable
 
-(define *default_directory* #f)
+(define *default_directory* #f) ; FIXME parameter probably
 
 (define (Load-Image)
   (let* ((path (send currentPAD get-path))

@@ -15,6 +15,7 @@
          ; called by eval at some point
          ObjID
          max-padid
+         ensure-id
          )
 
 ;---- IDs -----------
@@ -61,6 +62,8 @@
     ((id index) (or (lookup-id id index)  ;use provided index first,
                     (id->obj id)))  ; then try master index
     ))
+
+; FIXME something seems like it might have been flipped here !?!?!
 (define ObjID id->obj) ;terse version for save files
 (define objid id->obj) ;sadly, this variation propogated in log files
 ;  when case-sensitivity was off in PLT
@@ -82,8 +85,9 @@
      (let ((id (IDatom->id expr))) ;try to convert to an id
        (cond (id (id->obj id idmap)) ;if id, replace with obj
              ((list? expr)         ;descend if list
-              (map (lambda (subexpr) (import-expr-with-objs subexpr idmap))
-                   expr))
+              (map ; FIXME vs mmap ??
+               (lambda (subexpr) (import-expr-with-objs subexpr idmap))
+               expr))
              (else expr))))
     ))
 

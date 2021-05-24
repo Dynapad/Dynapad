@@ -27,7 +27,7 @@
   (set! *debug-deferred-exprs* (deferred-exprs)) ;delete this later
   (mmap
    #;
-   (lambda (e) (printf "~a~%" e) (eval e))
+   (lambda (e) (printf "dde: ~a~%" e) (eval e))
    eval
    (mmap (lambda (expr) (import-expr-with-objs expr idmap))
          (order-by-phase (deferred-exprs)))))

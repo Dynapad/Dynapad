@@ -15,14 +15,29 @@
                   )
          dynapad/misc/misc
          (only-in dynapad/utils/actor
-                  actors%)
+                  send-actor)
          dynapad/menu/menu-state
          (only-in dynapad/utils/import-dirs
                   make-submenu-Import
                   )
          dynapad/menu/wxmenu
+
+         (only-in dynapad/menu/menu_shared
+                  nyi
+                  make-submenu-Draw
+                  Restore-Current
+                  Select-and-Restore-File
+                  make-submenu-Export
+                  )
+
          (only-in dynapad/menu/menu_functions
+                  Save-Current
+                  Select-and-Save-All
                   make-submenu-Edit
+                  make-submenu-Arrange
+                  make-submenu-Object
+                  make-submenu-Font
+                  make-submenu-Tools
                   )
          (only-in dynapad/events/zoom-classic
                   Zoom-In-lambda
@@ -36,10 +51,12 @@
                   Select-Zoom-Out-lambda
                   Select-Zoom-Out-Stop-lambda
                   )
+         (only-in dynapad/events/event-state
+                  make-submenu-Selector
+                  )
          )
 
-(provide add-custom-popup-items
-         *popup-menus-enabled?*
+(provide *popup-menus-enabled?*
          )
 
 (define *popup-menus-enabled?* #f)

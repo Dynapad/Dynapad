@@ -1,9 +1,17 @@
+#lang racket/base
 (require (only-in racket/class send make-object)
          (only-in racket/gui/base
                   horizontal-pane%
                   check-box%)
          dynapad/menu/menu_popup
+         dynapad/menu/menu-state
+         (only-in dynapad/menu/wxmenu
+                  add-checkable-menu-item
+                  add-menu-separator)
          dynapad/history/log-state
+         dynapad/pad-state
+         (only-in dynapad/misc/user-preferences *use-menubar*)
+         (only-in dynapad/history/logbranch current-logtree)
          )
 
 ; ---------GUI controls------------

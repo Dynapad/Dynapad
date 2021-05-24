@@ -19,7 +19,10 @@
                   )
          )
 
-(provide select%)
+(provide select%
+         halo-hilight%
+         concentric-hilight%
+         )
 
 ; This module handles all forms of highlights
 ;  (C-level objects which are not dynaobject%s)

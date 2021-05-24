@@ -2,7 +2,15 @@
 
 (require racket/class
          dynapad/history/undo
-         )
+         dynapad/misc/misc
+         dynapad/pad-state
+         dynapad/layout/bbox
+         (only-in dynapad/base rect%)
+         (only-in dynapad/events/mode
+                  push-event-mode
+                  pop-event-mode))
+
+(provide ask-user-for-bbox)
 
 (define (dt-event? e) #f)  ;may be overridden by DiamondTouch table package
 

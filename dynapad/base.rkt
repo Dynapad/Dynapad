@@ -30,6 +30,7 @@
          oval%
          polygon%
          make-new-dynapad
+         alist-filters
          )
 
 (define (link-hook o) #t)
@@ -1467,7 +1468,7 @@
 
     (define (writeoptions)
       `(,@(super writeoptions)
-        (defer-send (members ,(export-objs (members))))
+        (defer-send (quote (members ,(export-objs (members)))))
         ;(refer-when-ready 'members ,@(map obj->id (members)))
         ;(members (list ,@(map (lambda (o) (send o write)) (reverse (members)))))
         (divisible ,(divisible))))

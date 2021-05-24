@@ -21,6 +21,8 @@
          )
 
 (provide image%
+         baseimage%
+         imagedata%
          findthumb
          pdf%
          ensure-thumb

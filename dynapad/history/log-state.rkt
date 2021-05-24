@@ -39,7 +39,11 @@
          enter-laststate
          make-undo/redo-frame
          *log-continues?*
-         )
+         ; needed for calls to eval in restore
+         created-by
+         visit-state
+         visit-start
+         change-view)
 
 (define *logtree-layer* null)
 (define (set-*logtree-layer*! value)

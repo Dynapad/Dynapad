@@ -26,6 +26,7 @@
 
 (provide initCreateLink
          bindHyperlink
+         set-*enact-link-fn*!
          )
 
 ; If destination is list of numbers (position on pad surface, rather than object),
@@ -62,6 +63,9 @@
 ;     ...finish...
 
 (define *enact-link-fn* #f)
+
+(define (set-*enact-link-fn*! fn)
+  (set! *enact-link-fn* fn))
 
 (define (initCreateLink argPAD)
   (send argPAD focus)

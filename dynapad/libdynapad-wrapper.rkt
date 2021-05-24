@@ -11,8 +11,13 @@
      (case (system-type 'gc)
        [(cgc)
         #'(begin
-            (require dynapad/libdynapad)
-            (provide (all-from-out dynapad/libdynapad)))]
+            (require (rename-in dynapad/libdynapad [sch_position sch_position-real]))
+            (provide (except-out (all-from-out dynapad/libdynapad) sch_position-real))
+            (provide sch_position)
+            ; sch_position: expects argument of type <dynaobject%>; given: #f
+            (define (sch_position . rest)
+              (apply sch_position-real rest))
+            )]
        [else
         #'(begin
             (begin

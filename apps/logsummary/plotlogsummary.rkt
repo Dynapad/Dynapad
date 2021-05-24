@@ -1,3 +1,4 @@
+#lang racket/base
 (load-relative "logmunge.rkt")
 (require (lib "pregexp.rkt"))
 (require (lib "string.rkt"))
@@ -198,7 +199,7 @@
     ((path)
      (when (and path
                 (file-exists? path))
-       (let ((port (open-input-file path 'text))
+       (let ((port (open-input-file path #:mode 'text))
              (line #f))
          (while (not (eq? eof (cset! line (read-line port))))
            (scan-log-line line))

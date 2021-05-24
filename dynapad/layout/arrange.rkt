@@ -23,6 +23,7 @@
 
 (provide arrange-in-spiral-in-current-view
          arrange-in-grid-in-current-view
+         precompute-NxM-grid-coords-at-xyz
          )
 ;;Basic routines
 

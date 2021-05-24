@@ -20,6 +20,7 @@
 (provide get-container
          frame-container%
          resizable-image%
+         container-form%
          )
 
 (define (get-container obj)

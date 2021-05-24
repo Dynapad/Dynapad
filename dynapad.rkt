@@ -33,11 +33,20 @@
           load-log
           start-state)
 
- #; ; not the issue here it seems
+ (only-in dynapad/history/log-state
+          created-by
+          visit-state
+          visit-start
+          change-view
+          )
+ ;#; ; not the whole issue here it seems
  (only-in dynapad/import
           importing?)
  #;
  (only-in dynapad/history/deferred-evals do-deferred-evals)
+ (only-in dynapad/misc/misc ic)
+ dynapad/image
+ (only-in dynapad/ffs defer-send)
          )
 
 (provide dynapad
@@ -50,10 +59,18 @@
          max-padid
          set-max-padid
          load-set
-         #;
+
+         created-by
+         visit-state
+         visit-start
+         change-view
+         ;#;
          importing?
+         ic
+         defer-send
          #;
          do-deferred-evals
+         (all-from-out dynapad/image)
          (all-from-out dynapad/pad-state)
          (all-from-out dynapad/base))
 

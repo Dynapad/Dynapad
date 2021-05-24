@@ -77,7 +77,8 @@
          )
 
 (provide pdf-portrait%
-         pad-date-format)
+         pad-date-format
+         make-pdf-at-position)
 
 (define *max-pdf-images* 8)
 (define *max-pdf-images-shown* 1)

@@ -1,13 +1,30 @@
 #lang racket/base
 
-(require (only-in racket/class make-object)
+(require (only-in racket/class make-object send)
+         (only-in racket/gui/base get-directory)
          mzlib/etc
          (only-in dynapad/image
                   image%)
          (only-in dynapad/pdf
                   make-pdf-at-position)
+         (only-in dynapad/utils/get-user-bbox ask-user-for-bbox)
+         dynapad/layout/bbox
+         (only-in dynapad/layout/arrange precompute-NxM-grid-coords-at-xyz)
          dynapad/pad-state
+         dynapad/undo-state
+         dynapad/spd ; probably not needed
          ;dynapad/layout/composite  ; alte might be dynapad/image-utils/arrangeimages.rkt depending on load order
+         dynapad/misc/misc
+         (only-in dynapad/menu/menu_functions
+                  *default_directory*
+                  Select-and-Import-File
+                  )
+         (only-in dynapad/menu/wxmenu
+                  add-checkable-menu-item
+                  add-menu-item
+                  add-submenu
+                  add-menu-separator
+                  )
          collects/misc/pathhack
          )
 

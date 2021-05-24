@@ -35,7 +35,9 @@
                   sch_xy_in_poly)
          )
 
-(provide event-state%)
+(provide event-state%
+         make-submenu-Selector
+         )
 
 (define *default-use-lasso?* #t)
 

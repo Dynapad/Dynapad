@@ -16,6 +16,7 @@
          new-padid
          *id-counter*
          set-*id-counter*!
+         defer-send
          )
 
 (define *id-counter* 0)    ;highest id so far

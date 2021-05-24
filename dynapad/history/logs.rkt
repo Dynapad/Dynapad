@@ -212,6 +212,10 @@
           (enter-firststate state-id)
           (send (current-logbranch)
                 log-visitstart-entry (make-timestamp-ID) state-id)
+          ; this is where logs are evaled if you run into undefined
+          ; errors that are coming from here check whether they have
+          ; been imported at the top level AND in the file the defines
+          ; the macro AND in the file that uses and expands the macro
           (eval build-expr))   ;build starting state
         (set-*heed-start-state?*! #t))) ;activate in future
   )
@@ -255,6 +259,8 @@
     [(_ whatever ...) ;don't parse args here, just get syntax context (mypath)
      ; and pass along to restore-log-branch-convert-args
      (with-syntax ((mypath (datum->syntax stx (syntax-source stx))))
+       ; in order to get eval to work we had to read from a file which
+       ; remove the syntax location, load preserves it but can't eval the forms
        (syntax (restore-log-branch-convert-args
                 (and (not (equal? "STDIN" mypath)) mypath) ;"STDIN"-->#f
                 whatever ...)))]
@@ -335,6 +341,11 @@
 (define-syntax restore-set-core
   (syntax-rules ()
     ((_ expr ...)
+     (let* ((objs (filter (lambda (o) (is-a? o object%))
+                          (map safe-eval (list expr ...)))))
+       (do-deferred-evals *id->obj-index*)
+       objs)
+     #; ; XXX show-possible-delay kills backtraces
      (show-possible-delay currentPAD
                           (let* ((objs (filter (lambda (o) (is-a? o object%))
                                                (map safe-eval (list expr ...)))))
@@ -469,13 +480,14 @@
 ;     (make-object *logbranch-class* (current-logtree) #f #f #f logid)))
 ;    (unless (importing?) (set! *current-logbranch* branch))
 ;    (load (send branch path))))
+
 (define load-log
   (case-lambda
     ((treename logid)
      (unless (importing?)
        (ensure-current-logtree treename)
        (send (current-logtree) ensure-current-branch logid))
-     (load (send (current-logbranch) path)))
+     (mimic-old-load (send (current-logbranch) path)))
     ((hname treename logid)
      (unless (equal? hname (get-hostname))
        (error (format "Log hostname (~a) doesn't match this host" hname)))

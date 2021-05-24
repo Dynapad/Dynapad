@@ -4,9 +4,25 @@
                   init
                   inherit
                   super-instantiate
+                  make-object
+                  define/override
+                  ; things needed when name-part expands
+                  field
+                  define/public
+                  send
+                  this
                   )
-         (only-in racket/path file-name-from-path)
+         (only-in racket/path file-name-from-path filename-extension)
          dynapad/utils/formation
+         dynapad/layout/bbox
+         dynapad/misc/misc
+         dynapad/bind
+         dynapad/pad-state
+         (only-in dynapad/base rect% polygon% group%)
+         (only-in dynapad/container container-form%)
+         (only-in dynapad/image baseimage% image% imagedata% pdf%)
+         (only-in dynapad/events/text text%)
+         collects/misc/pathhack
          )
 
 (define icon-container-form%
@@ -34,8 +50,8 @@
     (inherit image-obj title-obj)
 
     ;; Do some checking of title.
-    (if (not  _init-title)
-        (set! _init-title (file-name-from-path _init-path)))
+    (when (not  _init-title)
+      (set! _init-title (file-name-from-path _init-path)))
 
     ;; Make the image object
     (if (file-exists? _init-path)
@@ -119,6 +135,7 @@
 
     (define/public (move-title-to-right-of-image)
       (define bb (send (image-obj) bbox))
+      (define zfac (send this z))
       (send (title-obj) anchor "w")
       (send (title-obj) xy (+ (b2 bb) zfac) (byc bb)))
 
@@ -251,7 +268,7 @@
     (let ((w (send (title-obj) width))
           ;(maxw (* (send (image-obj) width) 1.25)))
           (maxw 64))
-      (if (> w maxw) (send (title-obj) width maxw)))
+      (when (> w maxw) (send (title-obj) width maxw)))
 
     ;; Creates a boundary around icon
     (let* ((bb (send (image-obj) bbox))
@@ -302,8 +319,8 @@
     (dynaclass 'file-icon%)
 
     ;; Set title if necessary
-    (if (not  _init_title)
-        (set! _init_title (file-name-from-path _init_file_path)))
+    (when (not  _init_title)
+      (set! _init_title (file-name-from-path _init_file_path)))
 
     ))
 
@@ -532,7 +549,7 @@
 (define (fitpoly bb coords)
   (let ((x0 (b0 bb)) (y0 (b1 bb))
                      (xs (bbwidth bb)) (ys (bbheight bb))
-                     (newcrds ()))
+                     (newcrds '()))
     (while (> (length coords) 1)
       (endpush! newcrds (+ x0 (* xs (car coords))))
       (endpush! newcrds (+ y0 (* ys (cadr coords))))

@@ -1,6 +1,7 @@
 #lang racket/base
 
 (require (only-in racket/class send)
+         (only-in dynapad/seval mimic-old-load)
          dynapad/import
          dynapad/pad-state
          dynapad/misc/misc
@@ -48,6 +49,8 @@
          undoable-delete-objs
 
          get-top-group
+
+         abstract-objects-callbacks
          )
 
 ;--- basic do/undo mechanism -------------------------------------
@@ -306,7 +309,7 @@
                     (delete-all currentPAD) ;DO NOT move these inside restore-set-core
                     (clear-undo/redo)
                     ;       )
-                    (load path)) ; file should call load-set --> restore-set
+                    (mimic-old-load path)) ; file should call load-set --> restore-set
   path)
 
 (define-syntax use-load-context

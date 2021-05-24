@@ -1,13 +1,39 @@
 #lang racket/base
 
 (require racket/class
+         (only-in racket/gui/base button%)
+         dynapad/ffs
          dynapad/misc/progress
          dynapad/misc/misc ; ic item config
          dynapad/layout/bbox
+         dynapad/history/ids
+         (only-in dynapad/dynapad-c-api slowgrow)
          ; cycle inducing
          ; dynapad/dynapad-c-api
          ; oval%
-         ;(only-in dynapad/base oval%)
+         (only-in dynapad/pad-state dynapad)
+         (only-in dynapad/base oval% line% polygon%)
+         (only-in dynapad/events/text text%)
+         (only-in dynapad/events/hyperlink set-*enact-link-fn*!)
+         (only-in dynapad/events/mode
+                  changemode
+                  )
+         (only-in dynapad/menu/menubar
+                  use-bitmap-or-string
+                  arcpane
+                  clear-all-menu-buttons
+                  button-double-clicked?
+                  for-all-pads
+                  push-*guest-button-off-labels*!
+                  )
+         (only-in dynapad/events/draw
+                  set-Draw-multiple!
+                  )
+         )
+
+(provide Make-Tie-Between
+         graph-edge%
+         graph-arc%
          )
 
 (announce-module-loading "graph tools...")
@@ -424,7 +450,7 @@
 ; supplement to events.ss and menubar.ss
 (define (initCreateEdge argPAD)
   (send argPAD focus)
-  (set! *enact-link-fn*
+  (set-*enact-link-fn*!
         (lambda (source target)
           (unless (list? target)
             (Make-Tie-Between graph-edge% source target))))
@@ -432,7 +458,7 @@
 
 (define (initCreateArc argPAD)
   (send argPAD focus)
-  (set! *enact-link-fn*
+  (set-*enact-link-fn*!
         (lambda (source target)
           (unless (list? target)
             (Make-Tie-Between graph-arc% source target))))
@@ -450,7 +476,7 @@
                (lambda (button event)
                  (clear-all-menu-buttons)
                  (send button set-label on_graphedge)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (for-all-pads (lambda (argPAD)
                                  (initCreateEdge argPAD)))
                  ))
@@ -462,15 +488,13 @@
                (lambda (button event)
                  (clear-all-menu-buttons)
                  (send button set-label on_grapharc)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (for-all-pads (lambda (argPAD)
                                  (initCreateArc argPAD)))
                  ))
   )
 
-(push! (list btn_edge off_graphedge)
-       *guest-button-off-labels*)
-(push! (list btn_arc off_grapharc)
-       *guest-button-off-labels*)
+(push-*guest-button-off-labels*! (list btn_edge off_graphedge))
+(push-*guest-button-off-labels*! (list btn_arc off_grapharc))
 
 (update-progress 1)

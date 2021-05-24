@@ -35,6 +35,8 @@
          nyi
          Select-and-Restore-File
          Export-To-Directories
+         make-submenu-Draw
+         make-submenu-Export
          )
 
 (define (nyi msg) (lambda () (printf "~a: not yet implemented~%" msg)))
