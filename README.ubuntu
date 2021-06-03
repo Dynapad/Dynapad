@@ -50,15 +50,18 @@ pushd dynapad
 git checkout modularize  # temporary until changes are merged
 mkdir build
 pushd build
-cmake .. -G Ninja -DRACKET_DIR=${HOME}/git/racket/racket # can leave out -DRACKET_DIR on gentoo
+# can leave out -DRACKET_DIR on gentoo
+cmake .. -G Ninja -DRACKET_DIR=${HOME}/git/racket/racket
 ninja
 popd
 
+# x86_64-linux x86_64-macosx etc.
+SUBPATH=$(racketcgc -e "(display (path->string (system-library-subpath)))")
 # cgc build
-mkdir -p dynapad/compiled/bc/native/x86_64-linux
+mkdir -p dynapad/compiled/bc/native/${SUBPATH}
 # on a real build libdynapad.so needs to be put at an absolute known path
 # can't link against relative paths
-racocgc ctool --cgc --ld dynapad/compiled/bc/native/x86_64-linux/libdynapad_rkt.so "${PWD}/build/libdynapad.so"
+racocgc ctool --cgc --ld dynapad/compiled/bc/native/${SUBPATH}/libdynapad_rkt.so "${PWD}/build/libdynapad.so"
 racocgc pkg install dynapad/
 racocgc pkg install collects/
 racocgc make dynapad.rkt
