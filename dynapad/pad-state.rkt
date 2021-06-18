@@ -1,15 +1,5 @@
 #lang racket/base
 
-(require (only-in racket/class send make-object)
-         (only-in racket/gui/base
-                  frame%)
-         syntax/location
-         (only-in dynapad/misc/user-preferences
-                  *draw-menu-x*
-                  *draw-menu-y*
-                  )
-         )
-
 (provide currentPAD set-currentPAD!
          dynapad set-dynapad!
          dp1 set-dp1!
@@ -20,6 +10,16 @@
          *list-of-all-dynapads* 
          set-*list-of-all-dynapads*!
          set-initial-pad-state!
+         )
+
+(require (only-in racket/class send make-object)
+         (only-in racket/gui/base
+                  frame%)
+         syntax/location
+         (only-in dynapad/misc/user-preferences
+                  *draw-menu-x*
+                  *draw-menu-y*
+                  )
          )
 
 (define *list-of-all-dynapads* '()) ; TODO parameter

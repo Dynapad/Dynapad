@@ -1,5 +1,9 @@
 #lang racket/base
 
+(provide *popup-menus-enabled?*
+         include-custom-popup-items
+         )
+
 (require racket/class
          (only-in dynapad/pad-state
                   dynapad
@@ -54,9 +58,6 @@
          (only-in dynapad/events/event-state
                   make-submenu-Selector
                   )
-         )
-
-(provide *popup-menus-enabled?*
          )
 
 (define *popup-menus-enabled?* #f)

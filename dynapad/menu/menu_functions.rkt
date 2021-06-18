@@ -1,5 +1,29 @@
 #lang racket/base
 
+(provide make-submenu-Edit
+         make-submenu-Select-Highlighted
+         make-submenu-Arrange
+         make-submenu-Object
+         make-submenu-Font
+         make-submenu-Tools
+         ; needed by menubar
+         Load-Image
+         Get-Font-Name-For-Selected
+         fillgetcolor
+         pengetcolor
+         Resize-Selected
+         Reshape-Selected
+         Raise-Selected
+         Lower-Selected
+         Group-Selected
+         UnGroup-Selected
+         Save-Current
+         Select-and-Save-All
+         ask-user-for-color
+         *default_directory*
+         Select-and-Import-File
+         )
+
 (require (only-in racket/class
                   send
                   make-object
@@ -89,30 +113,6 @@
                   add-menu-item
                   add-submenu
                   )
-         )
-
-(provide make-submenu-Edit
-         make-submenu-Select-Highlighted
-         make-submenu-Arrange
-         make-submenu-Object
-         make-submenu-Font
-         make-submenu-Tools
-         ; needed by menubar
-         Load-Image
-         Get-Font-Name-For-Selected
-         fillgetcolor
-         pengetcolor
-         Resize-Selected
-         Reshape-Selected
-         Raise-Selected
-         Lower-Selected
-         Group-Selected
-         UnGroup-Selected
-         Save-Current
-         Select-and-Save-All
-         ask-user-for-color
-         *default_directory*
-         Select-and-Import-File
          )
 
 (announce-module-loading "Menu functions...")

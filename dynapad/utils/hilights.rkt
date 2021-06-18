@@ -20,6 +20,7 @@
          )
 
 (provide select%
+         hilight%
          halo-hilight%
          concentric-hilight%
          )

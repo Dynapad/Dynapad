@@ -19,6 +19,7 @@
 (provide ls-dir
          get-username
          get-hostname
+         fs
          )  ; really (all-defined-out)
 
 ;-----------------------------------------------------------------

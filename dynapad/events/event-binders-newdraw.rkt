@@ -1,7 +1,8 @@
 #lang racket/base
 
-(require racket/class
-         dynapad/events/draw
+(require (only-in racket/class class init super-instantiate)
+         ;dynapad/events/draw
+         dynapad/events/text
          dynapad/events/hyperlink
          dynapad/events/event-binders-new)
 
@@ -14,7 +15,7 @@
 
     (init argPAD evs-class)
     (super-instantiate (argPAD evs-class))
-    (bindHyperlink argPAD) ;hyperlink.ss
-    (bindDrawMode argPAD) ;draw.ss
-    (bindTextMode argPAD) ;text.ss
+    (bindHyperlink argPAD)
+    (bindDrawMode argPAD)
+    (bindTextMode argPAD)
     ))

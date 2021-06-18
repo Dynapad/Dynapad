@@ -31,6 +31,7 @@
          polygon%
          make-new-dynapad
          alist-filters
+         make-alist-modifier-function-general
          )
 
 (define (link-hook o) #t)

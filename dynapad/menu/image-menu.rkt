@@ -1,4 +1,18 @@
-(dynaload "metadata.rkt")
+#lang racket/base
+
+(require
+ (only-in racket/class send)
+ (only-in racket/date date-display-format date->string)
+ (only-in dynapad/utils/parsedate pair->date)
+ dynapad/image
+ dynapad/image-utils/metadata
+ dynapad/pdf
+ dynapad/utils/handle
+ dynapad/menu/popup-provider
+ dynapad/menu/wxmenu
+ dynapad/menu/menu_functions
+ dynapad/menu/menu_popup
+ )
 
 (image-aftermake-callbacks 'add
                            (lambda (img)

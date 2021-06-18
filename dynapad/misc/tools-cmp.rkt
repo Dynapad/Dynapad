@@ -1,8 +1,11 @@
 #lang racket/base
 
-(require (only-in racket/string string-prefix?))
+(provide cmp-nums
+         safe-cmp-nums
+         safe-cmp-strs
+         )
 
-(provide cmp-nums)
+(require (only-in racket/string string-prefix?))
 
 (define (cmp-nums a b)
   (cond ((< a b) -1)

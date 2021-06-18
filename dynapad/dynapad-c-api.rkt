@@ -1,5 +1,9 @@
 #lang racket/base
 
+(provide slowgrow
+         addbinding
+         )
+
 (require racket/class
          racket/list
          racket/file
@@ -23,8 +27,6 @@
          dynapad/utils/hilights
          collects/misc/pathhack  ; build-path->string
          )
-
-(provide slowgrow)
 
 ;;; (load-relative-extension (path-replace-suffix "build/libdynapad" (system-type 'so-suffix)))
 

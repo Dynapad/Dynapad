@@ -1,35 +1,26 @@
-(dynaload "event-binders-newdraw.rkt")
+#lang racket/base
+(require racket/class
+         dynapad/events/event-state
+         (only-in dynapad/pad-state
+                  dynapad)
+         dynapad/events/event-binders-newdraw
+         dynapad/menu/image-menu
+         dynapad/menu/menu-draw
+         dynapad/menu/menu_popup
+         dynapad/utils/newbrush
+         dynapad/utils/write-eps
+         dynapad/utils/edges
+         dynapad/physics/piles
+         dynapad/physics/timeline
+         dynapad/layout/composite
+         dynapad/image-utils/auto-hires
+         dynapad/history/logs
+         dynapad/history/log-views
+         dynapad/history/lockdown
+         dynapad/history/back-compat
+         "../../dynapad.rkt"
+         )
+
+(provide (all-from-out "../../dynapad.rkt"))
+
 (make-object newpaddraw-event-binder% dynapad newpad-event-state%)
-(dynaload "progress.rkt")
-
-;(dynaload "events/new-events.rkt")
-
-;(define (main-menu-title obj) ;overrides generic version in dynapad.ss
-;  (if obj "Object Menu" "Dynapad Menu"))
-
-(dynaload "menu_popup.rkt")
-
-(dynaload "newbrush.rkt")
-
-(dynaload "logs.rkt")
-
-(dynaload "piles.rkt")
-(dynaload "timeline.rkt")
-
-(dynaload "composite.rkt")
-
-; automatic brushing, popup-menus for images
-(dynaload "image-menu.rkt")
-
-(dynaload "edges.rkt")
-
-; enable automatic hires when hit zoom limit
-(dynaload "auto-hires.rkt")
-
-(dynaload "log-views.rkt")
-
-
-(dynaload "lockdown.rkt") ;puts dp into "analyst mode"; protects histories
-(dynaload "write-eps.rkt")
-
-(dynaload "back-compat.rkt")

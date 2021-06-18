@@ -31,11 +31,17 @@
                   )
          (only-in dynapad/misc/misc
                   ensure-number)
-         ;dynapad/misc/misc
-         ;dynapad/misc/alist
+         dynapad/misc/misc
+         dynapad/misc/alist
          dynapad/misc/tools-cmp
          dynapad/image-utils/smart-labels
          dynapad/image-utils/metadata-base
+         )
+
+(provide get-image-date
+         get-image-filedate
+         get-image-focus-dist
+         get-image-fstop
          )
 
 ;==================== Parameters =============

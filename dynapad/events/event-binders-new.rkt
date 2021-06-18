@@ -6,6 +6,27 @@
 ;  (send img bind "<Double-ButtonPress-1>"
 ;    (image-toggle-hires-thumb img) ))
 ; Use new aftermake callbacks:
+(require (only-in racket/class
+                  send
+                  class
+                  init
+                  super-instantiate
+                  define/public
+                  is-a?
+                  )
+         dynapad/base
+         dynapad/image
+         dynapad/misc/misc
+         dynapad/events/pan
+         dynapad/events/mode
+         dynapad/events/zoom-pushpull
+         dynapad/pad-state
+         dynapad/history/undo
+         (only-in dynapad/dynapad-c-api addbinding)
+         )
+
+(provide newpad-event-binder%)
+
 (image-aftermake-callbacks 'add
                            (lambda (img) (send img bind "<Double-ButtonPress-1>"
                                                (image-toggle-hires-thumb img))))
@@ -31,7 +52,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(dynaload "zoom-pushpull.rkt")
+;;(dynaload "zoom-pushpull.rkt")
 
 (define *startpan-dx-threshold* 4)
 (define *startzoom-dy-threshold* 5)
@@ -46,6 +67,8 @@
       (filter (lambda (obj) (not (send obj sticky))) (send  eventPAD objects)))
 
     (define/public (precompute-view argPAD objs)
+      (precompute-distant-view argPAD objs)
+      #; ; precompute-center-view does not seem to exist only closeup and distant
       (precompute-center-view argPAD objs))
 
     (define/public (is-background? obj)
@@ -55,7 +78,7 @@
     ; Combined "Gearshift" Pan/Zoom:
     (define init-drag-view
       (lambda (eventPAD e)
-        (set! currentPAD eventPAD)
+        (set-currentPAD! eventPAD)
         (sendf eventPAD evs sy0 (event-sy e))
         (sendf eventPAD evs sx0 (event-sx e))))
 
@@ -107,12 +130,12 @@
             (pop-event-mode eventPAD "Pan")))
 
     (send argPAD bind "<Run-Shift-B2-Motion>"
-          (lambda (eventPAD e) (set! currentPAD eventPAD)
+          (lambda (eventPAD e) (set-currentPAD! eventPAD)
                   (let ((frac (update-push-pull-motion eventPAD e)))
                     (update-lerp-zooming eventPAD e frac 'relax-constraints))))
 
 
-    (bindSelect argPAD "Select") ;select.ss
+    (bindSelect argPAD "Select")
     (bindSelect argPAD "Run")
 
     ;(send argPAD bind "<Run-Shift-ButtonPress-1>"

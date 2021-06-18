@@ -1,4 +1,25 @@
-(dynaload "lerp.rkt")
+#lang racket/base
+
+(require (only-in racket/class class init super-instantiate field send define/public this)
+         (only-in racket/list third)
+         dynapad/events/event-state
+         dynapad/layout/bbox
+         dynapad/layout/bbox
+         dynapad/misc/misc
+         dynapad/misc/tools-misc
+         dynapad/utils/lerp
+         dynapad/pad-state ; annoying that you can't use racket-xp-mode
+                           ; to find arbitrary definition sources if
+                           ; you already know/remember where they are
+         dynapad/undo-state
+         )
+
+(provide precompute-distant-view
+         init-push-pull-motion
+         update-push-pull-motion
+         init-lerp-zooming
+         update-lerp-zooming
+         )
 
 (define (wider-view? v1 v2)
   (let ((z1 (caddr v1))

@@ -7,6 +7,7 @@
 
 (provide round-to-int
          round-to-decimal
+         sign
          )
 
 ;---- STATS tools ----

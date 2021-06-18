@@ -1,5 +1,16 @@
 #lang racket/base
 
+(provide image%
+         baseimage%
+         imagedata%
+         findthumb
+         pdf%
+         ensure-thumb
+         image-aftermake-callbacks
+         image-toggle-hires-thumb
+         gifjpg_rexp
+         )
+
 (require racket/class
          (only-in racket/path file-name-from-path)
          dynapad/base
@@ -20,13 +31,6 @@
          collects/thumbify/thumbify
          )
 
-(provide image%
-         baseimage%
-         imagedata%
-         findthumb
-         pdf%
-         ensure-thumb
-         )
 
 ;; thumbs
 

@@ -193,7 +193,13 @@
                ;search existing branches
                (find-branch-matching (lambda (b) (equal? logid (send b logid))))
                ;else create correct logbranch
+               ; XXX indeed see the note on the init-fields that any but not all
+               ; of the other init fields may be false, oops ...
                (make-object (branch-class) this #f #f #f logid))))
+        ; XXX FIXME however the issue is likely caused here because the branch is created without
+        ; a startnum or a file
+        (println (list 'aaaaaaaaaaaaaaaaaaaaaaaaaaaa logid _current-logbranch branch
+                       ))
         (activate-branch branch)))
 
     (define/public current-branch (get/set _current-logbranch))
@@ -202,7 +208,8 @@
       (when _current-logbranch
         (send _current-logbranch deactivate))
       (current-branch branch)
-      (let* ((startid  (send branch startnum))
+      (let* ((startid  (send branch startnum)) ; XXXXXXXXXXX FIXME broken here
+             (__ (println 'we| |don\'t| |get| |here))
              (startnum (and startid (ensure-number startid))))
         (reset-stacks startnum))
       (send branch activate)

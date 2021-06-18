@@ -1,4 +1,29 @@
-(require (lib "port.rkt"))
+#lang racket/base
+
+(require
+ (only-in racket/class make-object send is-a?)
+ (only-in racket/file make-temporary-file)
+ (only-in racket/port copy-port)
+ (only-in dynapad/base line% rect% oval% polygon% group% base-group%)
+ (only-in dynapad/container container-form%)
+ (only-in dynapad/image image%)
+ (only-in dynapad/events/text titled-frame-container%)
+ (only-in dynapad/pdf pdf-portrait%)
+ dynapad/utils/colors
+ dynapad/layout/bbox
+ dynapad/pad-state
+ dynapad/misc/misc
+ (only-in dynapad/misc/tools-lists mmap)
+ collects/imagemagick/imagemagick
+ dynapad/events/text
+ (only-in dynapad/save Select-File-Dialog)
+ dynapad/menu/wxmenu
+ (only-in dynapad/misc/command-shortcuts fs) ; XXX FIXME command shortcuts should not be used in here
+ (only-in dynapad/menu/menu_popup *popup-menus-enabled?*)
+ (only-in dynapad/menu/menu-state append-mainmenu-constructor)
+ )
+
+;(require (lib "port.rkt"))
 
 (define (rel-x x xy0 z)
   (* z (- x (car xy0))))
@@ -29,7 +54,7 @@
 
 (define writeps-string
   (case-lambda
-    ((bb crds font size str) (writeps-text bb crds font size str #f))
+    ((bb crds font size str) (writeps-string bb crds font size str #f))
     ((bb crds font size str pen)
      (let ((xy (bbsw bb))
            (z (or *eps-export-scale* (send dynapad getzoom))))
@@ -39,6 +64,7 @@
                (rel-y (pop! crds) xy z)
                str)))
     ))
+
 (define writeps-textobj
   (case-lambda
     ((bb text) (writeps-textobj bb text #f))

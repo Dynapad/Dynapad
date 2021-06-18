@@ -3,6 +3,8 @@
 (require dynapad/misc/misc)
 
 (provide lerp
+         view_lerp
+         siso_lerp_mp
          )
 ;--- lerp utilities ----------------------------------------------
 

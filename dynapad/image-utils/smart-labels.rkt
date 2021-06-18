@@ -1,10 +1,12 @@
 #lang racket/base
 
-(require racket/date
+(require (except-in racket/date date->seconds)
          dynapad/misc/misc
          dynapad/utils/parsedate
          dynapad/misc/tools-lists
          )
+
+(provide dates->labels)
 
 (define (list-offset lst fn)
   (cond ((null? lst) #f)

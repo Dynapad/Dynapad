@@ -37,6 +37,7 @@
 
 (provide event-state%
          make-submenu-Selector
+         combo-event-state%
          )
 
 (define *default-use-lasso?* #t)

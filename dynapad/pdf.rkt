@@ -1,5 +1,12 @@
 #lang racket/base
 
+(provide pdf-portrait%
+         pad-date-format
+         make-pdf-at-position
+         make-submenu-DateFormat
+         show-metadata-time?
+         )
+
 (require racket/class
          (only-in racket/date
                   date->string
@@ -75,10 +82,6 @@
                   pair->date
                   )
          )
-
-(provide pdf-portrait%
-         pad-date-format
-         make-pdf-at-position)
 
 (define *max-pdf-images* 8)
 (define *max-pdf-images-shown* 1)

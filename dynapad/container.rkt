@@ -1,5 +1,11 @@
 #lang racket/base
 
+(provide get-container
+         frame-container%
+         resizable-image%
+         container-form%
+         )
+
 (require racket/class
          dynapad/base
          (only-in dynapad/image
@@ -15,12 +21,6 @@
          (only-in dynapad/history/ids
                   obj->IDexpr
                   )
-         )
-
-(provide get-container
-         frame-container%
-         resizable-image%
-         container-form%
          )
 
 (define (get-container obj)

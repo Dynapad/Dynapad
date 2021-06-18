@@ -1,5 +1,11 @@
 #lang racket/base
 
+(provide text%
+         titled-frame-container%
+         bindDrawMode
+         bindTextMode
+         )
+
 (require racket/class
          dynapad/base
          (only-in dynapad/dynapad-c-api
@@ -40,11 +46,6 @@
                   sch_pen
                   sch_font
                   )
-         )
-
-(provide text%
-         bindDrawMode
-         bindTextMode
          )
 
 (define basetext%

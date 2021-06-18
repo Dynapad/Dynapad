@@ -7,6 +7,8 @@
 
 (provide bindArrows
          bindClassicPan
+         Start-Pan-Event
+         Do-Pan-Event
          )
 
 (define Start-Pan-Event

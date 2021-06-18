@@ -16,6 +16,7 @@
 (provide assign-handle
          pdf-handle%
          get-pdf-metadata-dir
+         image-handle%
          )
 
 ; A handle% associates multiple dynaobjects (renderings)

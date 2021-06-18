@@ -1,4 +1,7 @@
 #lang racket
+
+(provide halo-brush%)
+
 (require racket/class
          compatibility/mlist
          ;dynapad/ffs
@@ -6,6 +9,9 @@
          dynapad/misc/misc
          dynapad/misc/alist
          (except-in dynapad/misc/tools-lists mmap) ; conflict with mlist mmap
+         dynapad/menu/menu-state
+         dynapad/pad-state
+         dynapad/bind
          )
 
 (require racket/class
@@ -22,7 +28,7 @@
                   sch_pen)
 
          (only-in dynapad/menu/menu_popup
-                  *popup-menu-enabled?*
+                  *popup-menus-enabled?*
                   )
 
          (only-in dynapad/menu/wxmenu
@@ -35,8 +41,6 @@
                   ask-user-for-color)
          (for-syntax racket/base)
          )
-
-(provide halo-brush%)
 
 ;; originally from newrelation
 (define-macro (brush-style-template brush-field direction)
@@ -988,7 +992,17 @@
 (define (default-unbrush-obj-fn source target)
   (default-unhighlight-fn target))
 
-; ---- these 3 recycled from brush.ss
+; ---- these 4 recycled from brush.ss
+
+(define default-brush-hilight%
+  (class hilight%
+    (init dynapad-arg object-arg)
+    (inherit-field _dynapad _object _cptr)
+
+    (super-instantiate (dynapad-arg object-arg 'brush)) ;'brush label is optional
+    (sch_pen _cptr "yellow")
+    ))
+
 (define (default-highlight-fn obj . highlight-class)
   ;return existing or new highlight
   (set! highlight-class (if (null? highlight-class)
