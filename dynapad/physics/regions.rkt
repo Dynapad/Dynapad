@@ -9,6 +9,7 @@
          *default-region-form-type*
          lens%
          mutator%
+         create-tool-layers
          )
 
 (require racket/class
@@ -52,14 +53,30 @@
 (define *default-region-form-type* resizable-frame-container%)
 
 ;Create tool layers:
-(send dynapad setvar 'drag-layer (make-object layer% dynapad "drag"))
-(send dynapad setvar 'lens-layer (ic
-                                  (make-object layer% dynapad "lens")
-                                  (raise)))
-(let ((select-layer (send dynapad getvar 'select-layer)))
-  (when select-layer
-    (send select-layer raise)))
-(define *brush-layer* (send dynapad getvar 'lens-layer)) ;temp
+
+(define *brush-layer* #f)
+
+(define (create-tool-layers dynapad)
+  "Register region related variables with dynapad."
+  ; XXX we wrap these to ordering dependencies during module
+  ; loading/require phase unfortunately this means that for the time
+  ; being create-tool-layers has to be called explicitly after dynapad
+  ; is not null
+  (send dynapad setvar 'drag-layer (make-object layer% dynapad "drag"))
+  (send dynapad setvar 'lens-layer (ic
+                                    (make-object layer% dynapad "lens")
+                                    (raise)))
+  (let ((select-layer (send dynapad getvar 'select-layer)))
+    (when select-layer
+      (send select-layer raise)))
+  (set! *brush-layer* (send dynapad getvar 'lens-layer)) ;temp
+
+  (send dynapad beforedrag-callbacks 'add respond-to-pickup)
+  (send dynapad afterdrag-callbacks 'add
+        (lambda (eventPAD event draglist)
+          ;(display "regions responding...")(newline)
+          (respond-to-drop eventPAD event draglist)))
+  )
 
 (define region-actor-name 'rgnactor)
 ;(define (is-a-region? obj) (assq region-actor-name (send obj alist)))
@@ -909,7 +926,6 @@
                                    (pushq-onto-malist-val-always! r o alist)))))))
     alist))
 
-(send dynapad beforedrag-callbacks 'add respond-to-pickup)
 
 ; make sure all regions affected by moving objs
 ; will be restored after an undo
@@ -1008,11 +1024,6 @@
 
                          (for-each (lambda (rgn) (send rgn finish)) check-regs)
                          )))
-
-(send dynapad afterdrag-callbacks 'add
-      (lambda (eventPAD event draglist)
-        ;(display "regions responding...")(newline)
-        (respond-to-drop eventPAD event draglist)))
 
 ;===================================
 ; syntax:

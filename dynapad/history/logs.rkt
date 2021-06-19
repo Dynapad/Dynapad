@@ -98,6 +98,19 @@
 ;  By default, <treename> is the name under which the tree is first saved
 ;======================================================
 
+(provide #; ;didn't work :/
+         (all-from-out undo-state)
+         do-deferred-evals
+         restore-set-core
+         restore-set
+         ensure-keyframe
+         start-new-history
+
+         ; needed for save and restore
+         load-log
+         start-state
+         )
+
 (require (only-in racket/class send is-a? object%)
          dynapad/seval
          racket/string
@@ -136,21 +149,11 @@
          (only-in dynapad/menu/wxmenu
                   add-menu-item
                   add-menu-separator)
+         ; edges -> menubar -> menu_functions -> logs ; previous cycle now fixed by lifting out graph
+         (only-in dynapad/utils/graph graph-edge% graph-arc%) ; needed for restore-log-branch
+         (only-in dynapad/events/text text%) ; needed for restore-log-branch
          collects/misc/pathhack
          (for-syntax racket/base)
-         )
-
-(provide #; ;didn't work :/
-         (all-from-out undo-state)
-         do-deferred-evals
-         restore-set-core
-         restore-set
-         ensure-keyframe
-         start-new-history
-
-         ; needed for save and restore
-         load-log
-         start-state
          )
 
 #; ; not relevant in the compiled module context
@@ -159,6 +162,7 @@
 ;Utilities for reading/writing workspace logs
 
 ;(dynaload "logbranch.rkt")
+#;
 (update-progress .6)
 
 ;OPTIONAL: comment out to exclude...
@@ -166,6 +170,7 @@
 ;(dynaload "showlogs.rkt")  ;requires logbranch.ss
 ; state-marker
 ;(dynaload "logbead.rkt")   ;requires showlogs.ss
+#;
 (update-progress .8)
 
 #|

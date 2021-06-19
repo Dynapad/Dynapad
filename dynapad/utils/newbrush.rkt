@@ -6,7 +6,6 @@
          )
 
 (require racket/class
-         compatibility/mlist
          ;dynapad/ffs
          (only-in dynapad/base alist-filters)
          dynapad/misc/misc
@@ -25,14 +24,14 @@
          dynapad/misc/misc
          dynapad/misc/alist
          dynapad/utils/hilights
+         dynapad/utils/graph
          dynapad/utils/edges
          (except-in dynapad/misc/tools-lists mmap)
          (only-in dynapad/libdynapad-wrapper
                   sch_pen)
 
          (only-in dynapad/menu/menu_popup
-                  *popup-menus-enabled?*
-                  )
+                  push-popup-menus-requested!)
 
          (only-in dynapad/menu/wxmenu
                   add-checkable-menu-item
@@ -941,12 +940,14 @@
              (lambda (r) (make-submenu-BrushStyles sb obj (car r) (cadr r))))))
 
 
-(when *popup-menus-enabled?*
+(define (request-popup-menu-for-newbrush)
   (append-mainmenu-constructor
    (lambda (mb obj)
      (make-submenu-Relations mb obj)
      ;       (make-submenu-Highlighting mb obj)
      )))
+
+(push-popup-menus-requested! request-popup-menu-for-newbrush)
 
 ; ====== Preset Special-relation brushes ======
 ;  these may be overridden by customized brushes saved with workspace

@@ -497,16 +497,17 @@
 (define (make-pile-with-objs regn-type form-type . objs)
   (make-pile regn-type form-type objs))
 
-
-(when *popup-menus-enabled?*
+(define (request-popup-menu-for-piles)
+  "callback for registering popup menu items to avoid stateful loading"
   (append-mainmenu-constructor
    (lambda (mb obj)
      (add-menu-separator mb)
      (add-menu-item mb (if (any-selected?)
                            "Pile Selected"
                            "Make Pile...")
-                    make-pile)
-     )))
+                    make-pile))))
+
+(push-popup-menus-requested! request-popup-menu-for-piles)
 
 #; ; no longer relevant
 (update-progress 1)

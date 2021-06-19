@@ -2,6 +2,18 @@
 
 ;======= Simple Menubar ========
 
+(provide init-menubar
+         drawpane
+         arcpane
+         use-bitmap-or-string
+         for-all-pads
+         clear-all-menu-buttons
+         button-double-clicked?
+         update-panel-colors
+         set-*draw-button-off-labels*!
+         push-*guest-button-off-labels*!
+         )
+
 (require (only-in racket/class send make-object)
          (only-in racket/gui/base
                   button%
@@ -44,18 +56,6 @@
                   Confirm-and-Delete-All
                   )
          dynapad/menu/menu_functions
-         )
-
-(provide init-menubar
-         drawpane
-         arcpane
-         use-bitmap-or-string
-         for-all-pads
-         clear-all-menu-buttons
-         button-double-clicked?
-         update-panel-colors
-         set-*draw-button-off-labels*!
-         push-*guest-button-off-labels*!
          )
 
 (define (init-menubar)

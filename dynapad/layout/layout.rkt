@@ -781,7 +781,6 @@
          dynapad/menu/menu_popup
          dynapad/utils/actor
          dynapad/physics/regions
-         ;dynapad/layout/layout
  )
 
 #|
@@ -970,7 +969,7 @@
                                       form-type rgn-type proj-type param more))))))
     ))
 
-(when *popup-menus-enabled?*
+(define (request-popup-menu-for-layout)
   (append-mainmenu-constructor
    (lambda (mb obj)
      (add-menu-separator mb)
@@ -995,3 +994,5 @@
                                               resizable-dissolving-fusing-frame-container%
                                               )))
      )))
+
+(push-popup-menus-requested! request-popup-menu-for-layout)

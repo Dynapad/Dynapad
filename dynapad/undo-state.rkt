@@ -47,7 +47,16 @@
          ensure-region-unclaims-after-undo
 
          false-event-lambda
-         )
+
+         ; needed for storing log views
+         *last-view-bbox*
+         newview
+         oldview
+         oldbb
+         newbb  
+         zoomtarget
+         zoomobject
+ )
 
 (require (only-in racket/class send)
          (only-in dynapad/seval mimic-old-load)
@@ -345,3 +354,13 @@
   (use-load-context 'import
                     (load path))  ; file at path should call (load-set ...)
   path)
+
+; originally from log-views, used to store metadata
+
+(define *last-view-bbox* #f)
+(define (oldview . args) #f)
+(define (newview . args) #f)
+(define (oldbb . args) #f)
+(define (newbb . args) (set! *last-view-bbox* args))
+(define (zoomtarget . args) #f)
+(define (zoomobject . args) #f)

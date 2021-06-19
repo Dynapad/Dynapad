@@ -2,6 +2,35 @@
 
 ; FIXME tab completion while running this causes everything to freeze
 
+(provide dynapad
+         ; things needed for calls to eval
+         import-set
+         ObjID
+
+         load-log
+         start-state
+         max-padid
+         set-max-padid
+         load-set
+
+         created-by
+         visit-state
+         visit-start
+         change-view
+         ;#;
+         importing?
+         ic
+         defer-send
+         #;
+         do-deferred-evals
+         (all-from-out dynapad/image)
+         (all-from-out dynapad/pad-state)
+         (all-from-out dynapad/undo-state)
+         (all-from-out dynapad/base)
+         (all-from-out dynapad/utils/graph)
+         (all-from-out dynapad/events/text)
+         )
+
 ; things that need to be at the top level for reasons I don't entirely understand
 ; (require dynapad/pad-state) for the event struct for oval
 
@@ -31,7 +60,8 @@
           )
  (only-in dynapad/history/logs
           load-log
-          start-state)
+          start-state
+          )
 
  (only-in dynapad/history/log-state
           created-by
@@ -47,32 +77,17 @@
  (only-in dynapad/misc/misc ic)
  dynapad/image
  (only-in dynapad/ffs defer-send)
-         )
 
-(provide dynapad
-         ; things needed for calls to eval
-         import-set
-         ObjID
-
-         load-log
-         start-state
-         max-padid
-         set-max-padid
-         load-set
-
-         created-by
-         visit-state
-         visit-start
-         change-view
-         ;#;
-         importing?
-         ic
-         defer-send
-         #;
-         do-deferred-evals
-         (all-from-out dynapad/image)
-         (all-from-out dynapad/pad-state)
-         (all-from-out dynapad/base))
+ (only-in dynapad/utils/graph graph-edge% graph-arc%)
+ (only-in dynapad/events/text text%)
+ (only-in dynapad/undo-state ; needed for restore-log-branch
+          newview
+          oldview
+          oldbb
+          newbb  
+          zoomtarget
+          zoomobject)
+ )
 
 (current-eventspace (make-eventspace))
 
@@ -88,17 +103,17 @@
   (current-library-collection-paths)))
 
 ;-----------------------------------------------------------------
-(require dynapad/utils/alias
-         dynapad/utils/formation
-         dynapad/utils/lambdas
+(require ;dynapad/utils/alias
+         ;dynapad/utils/formation
+         ;dynapad/utils/lambdas
          ;dynapad/events/events
          dynapad/history/undo  ; events bits were moved to undo for now
          dynapad/history/log-state
          (only-in dynapad/history/logs
                   start-new-history)
-         dynapad/layout/bbox
-         dynapad/layout/arrange
-         dynapad/misc/command-shortcuts
+         ;dynapad/layout/bbox
+         ;dynapad/layout/arrange
+         ;dynapad/misc/command-shortcuts ; may want to reprovide these or set them up for #lang dynapad
          dynapad/misc/user-preferences
          dynapad/menu/menubar
          collects/misc/pathhack)
@@ -125,7 +140,6 @@
 (init-menubar)  ; menubar setup
 (init-logtree-layer)
 (start-new-history)  ; set up logging for undo
-
 
 ;(define *popup-menus-enabled?* #f)  ; -> menu_popup
 ;(define *menubar* #f) -> menubar

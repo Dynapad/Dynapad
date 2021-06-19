@@ -24,7 +24,7 @@
               (provide name)
               (define (name . rest)
                 (displayln
-                 (format "~a was called with args: ~a" 'name rest))
+                 (format "libdynapad-wrapper: ~a was called with args: ~a" 'name rest))
                 (~? return-value))) ...)])]))
 
 (define-syntax (dpnames stx)
@@ -36,7 +36,7 @@
            (~? return-value)) ...)]))
 
 (define (msg this name args)
-  (displayln (format "object ~a method ~a was called with args: ~a" this name args)))
+  (displayln (format "libdynapad-wrapper: object ~a method ~a was called with args: ~a" this name args)))
 
 (define test-object%
   ; FIXME this doesn't really work, because

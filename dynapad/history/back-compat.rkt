@@ -10,8 +10,8 @@
          (only-in dynapad/layout/layout labeled-linear-projector%))
 
 (define titled-resizable-frame-container% resizable-dissolving-fusing-frame-container%)
+(define linear-projector% labeled-linear-projector%) ; cgc can't handle this coming second ??
 (define simple-linear-projector% linear-projector%)
-(define linear-projector% labeled-linear-projector%)
 
 (define brush% mutator%)
 

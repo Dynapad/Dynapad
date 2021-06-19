@@ -1,8 +1,8 @@
 #lang racket/base
 
-(provide *popup-menus-enabled?*
-         include-custom-popup-items
-         )
+(provide include-custom-popup-items
+         enable-popups
+         push-popup-menus-requested!)
 
 (require racket/class
          (only-in dynapad/pad-state
@@ -61,6 +61,15 @@
          )
 
 (define *popup-menus-enabled?* #f)
+(define popup-menus-requested '())
+
+(define (push-popup-menus-requested! callback)
+  "push callback onto list register when popup menus are enabled, if
+they are already enabled then call them immediately"
+  (if *popup-menus-enabled?*
+      (callback)
+      (displayln (format "registering callback: ~s for popup menus" callback)))
+  (push! popup-menus-requested callback))
 
 (define (main-menu-title obj) ;probably overridden by application module
   (if obj "Object Menu" "Dynapad Menu"))
@@ -79,8 +88,6 @@
   (when pmenu (show-popup-function pmenu (event-sx e) (event-sy e)))
   )
 
-(define show-popup-function (show-popup-lambda dynapad (make-popup-server)))
-
 (define (enable-popups-old-events argPAD)
   (send dynapad bind "<Control-Run-ButtonPress-3>"
         (lambda (w e) (handle-popup-event e) #f))
@@ -88,16 +95,20 @@
         (lambda (w e) (handle-popup-event e) #f))
   )
 
+(define show-popup-function (lambda (pmenu sx sy) (error 'uninitizlied)))
 (define (enable-popups argPAD)
   (set! *popup-menus-enabled?* #t)
   ;  (re-map-old-zoom-functions-to-Alt-modifier-versions argPAD)
   ; ^NEEDS ATTENTION...
+  
+  ; prevent issues with stateful loading
+  (set! show-popup-function (show-popup-lambda dynapad (make-popup-server)))
 
   (send dynapad bind "<Run-ButtonRelease-3>"
         (lambda (w e) (handle-popup-event e) #f))
   (send dynapad bind "<Select-ButtonRelease-3>"
         (lambda (w e) (handle-popup-event e) #f))
-  )
+  (for-each (λ (callback) (callback)) popup-menus-requested))
 
 (define (re-map-old-zoom-functions-to-Alt-modifier-versions argPAD)
   (send argPAD bind "<Run-Control-ButtonPress-2>"   Zoom-In-lambda)
@@ -210,4 +221,5 @@
   )
 
 ; Make it so:
+#; ; woah, don't do this here! the main pad may not have been initialized!
 (enable-popups dynapad)

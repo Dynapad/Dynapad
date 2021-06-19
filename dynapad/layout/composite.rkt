@@ -1,5 +1,8 @@
 #lang racket/base
 
+(provide limit-drag-to-bbox
+         )
+
 ;(require (lib "process.rkt")) ; this was mzlib/process, maybe racket/system has what we need?
 (require racket/class
          racket/system
@@ -26,12 +29,8 @@
          ;collects/thumbify/thumbify
          )
 
-(provide limit-drag-to-bbox
-         )
-
+#;
 (announce-module-loading "PDF features...")
-
-
 
 ; never mind; use (make-object imagedata%..)  instead
 #|
@@ -156,4 +155,5 @@
          (system mogrify-cmd))))))
 
 |#
+#;
 (update-progress 1)

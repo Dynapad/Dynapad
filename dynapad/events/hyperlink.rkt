@@ -1,5 +1,10 @@
 #lang racket/base
 
+(provide initCreateLink
+         bindHyperlink
+         set-*enact-link-fn*!
+         )
+
 (require (only-in racket/class send is-a? make-object)
          dynapad/base
          (only-in dynapad/pad-state
@@ -22,11 +27,6 @@
                   )
          (only-in dynapad/events/draw
                   Draw-multiple)
-         )
-
-(provide initCreateLink
-         bindHyperlink
-         set-*enact-link-fn*!
          )
 
 ; If destination is list of numbers (position on pad surface, rather than object),

@@ -81,10 +81,10 @@
           (send (send eventPAD ztimer) stop)))
 
 (define (bindClassicZoom argPAD)
-  (let (( zoomproc
-          (lambda (arg_PAD zmult)
-            (send arg_PAD zoom zmult 0 (sendf arg_PAD evs lastx)
-                  (sendf arg_PAD evs lasty)))))
+  (let ((zoomproc
+         (lambda (arg_PAD zmult)
+           (send arg_PAD zoom zmult 0 (sendf arg_PAD evs lastx)
+                 (sendf arg_PAD evs lasty)))))
 
     (send argPAD ztimer (make-object zoomtimer% argPAD zoomproc))
     (send argPAD zinterval 10)

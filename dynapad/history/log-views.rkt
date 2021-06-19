@@ -1,8 +1,6 @@
 ; this assumes both event-binders-new.ss and logs.ss are already loaded
 #lang racket/base
 
-(provide *last-view-bbox*)
-
 (require racket/class
          dynapad/pad-state
          (only-in dynapad/base dynapad%)
@@ -10,6 +8,9 @@
          dynapad/events/zoom-pushpull
          dynapad/history/logbranch
          )
+
+; many of the functions consed here are defined in dynapad/undo-state
+; so that they can be consumed by multiple modules without cycles
 
 (access-hit-near-zoomlimit-callbacks
  'add
@@ -75,11 +76,3 @@
    (log-changeview-entry ''endpan
                          (cons 'newview (send argPAD view))
                          (cons 'newbb (send argPAD bbox)))))
-
-(define (oldview . args) #f)
-(define (newview . args) #f)
-(define (oldbb . args) #f)
-(define *last-view-bbox* #f)
-(define (newbb . args) (set! *last-view-bbox* args))
-(define (zoomtarget . args) #f)
-(define (zoomobject . args) #f)

@@ -14,20 +14,14 @@
          access-afterpan-callbacks
          )
 
-(require (only-in racket/class
-                  send
-                  class
-                  init
-                  super-instantiate
-                  define/public
-                  is-a?
-                  )
+(require racket/class
          dynapad/base
          dynapad/image
          dynapad/misc/misc
          dynapad/events/pan
          dynapad/events/mode
          dynapad/events/zoom-pushpull
+         (only-in dynapad/events/zoom-classic zoomtimer%)
          dynapad/pad-state
          dynapad/history/undo
          (only-in dynapad/dynapad-c-api addbinding)
@@ -67,6 +61,17 @@
   (class basepad-event-binder%
     (init argPAD evs-class)
     (super-instantiate (argPAD evs-class))
+
+    (unless (send argPAD ztimer)
+      ; ensure that a ztimer is bound, this used to be done via
+      ; bindZoom aka bindClassicZoom it seems like there are some
+      ; legacy calls the expect ztimer to be not false even when using
+      ; the new event and zoom iplementation
+      (let ((zoomproc
+             (lambda (arg_PAD zmult)
+               (send arg_PAD zoom zmult 0 (sendf arg_PAD evs lastx)
+                     (sendf arg_PAD evs lasty)))))
+        (send argPAD ztimer (make-object zoomtimer% argPAD zoomproc))))
 
     ;--- pad-specific methods; subclass (e.g. for minipad) should override
     (define/public (get-zoom-relevant-objects eventPAD)

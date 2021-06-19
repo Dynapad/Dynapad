@@ -1,5 +1,7 @@
-(load-relative "logmunge.rkt")
-(require (lib "string.rkt"))
+#lang racket/base
+
+(require racket/string
+         "logmunge.rkt")
 
 (define *summary-port* #f)
 (define (summarize-log logpath)
@@ -21,12 +23,14 @@
     (and log
          (summarize-log log))))
 
-(if *popup-menus-enabled?*
+(define (request-popup-menu-for-summarize-log)
     (append-mainmenu-constructor
      (lambda (mb obj)
        (add-menu-separator mb)
        (add-menu-item mb "Summarize Log..." Select-Logfile-to-Summarize)
        )))
+
+(push-popup-menus-requested! request-popup-menu-for-summarize-log)
 
 (define (fsay . args)
   (when *summary-port*
@@ -49,12 +53,14 @@
 (define (log-10 x)
   (log-b 10 x))
 
+#; ; old version
 (define (round-to-d-digits n d) ;sorta works
   (let* ((s (sign n))
          (digits (round (log-10 (abs n))))
          (fac (inexact->exact (expt 10 (- digits d))))
          (a (round (/ n fac))))
     (* fac a)))
+
 (define (round-to-d-digits num x)
   (let ([y (expt 10 x)])
     (number->string (/ (exact->inexact (round (* num y))) y))))

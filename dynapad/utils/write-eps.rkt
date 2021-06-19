@@ -19,7 +19,7 @@
  (only-in dynapad/save Select-File-Dialog)
  dynapad/menu/wxmenu
  (only-in dynapad/misc/command-shortcuts fs) ; XXX FIXME command shortcuts should not be used in here
- (only-in dynapad/menu/menu_popup *popup-menus-enabled?*)
+ (only-in dynapad/menu/menu_popup push-popup-menus-requested!)
  (only-in dynapad/menu/menu-state append-mainmenu-constructor)
  )
 
@@ -277,12 +277,14 @@
                              *include-eps-images?*)
     ))
 
-(when *popup-menus-enabled?*
+(define (request-popup-menu-for-write-eps)
   (append-mainmenu-constructor
    (lambda (mb obj)
      (add-menu-separator mb)
      (make-submenu-ExportEPS mb obj)
      )))
+
+(push-popup-menus-requested! request-popup-menu-for-write-eps)
 
 ;==== taped on later ...
 ;(define (writeps-posthoc-viewbb zoom viewbb)

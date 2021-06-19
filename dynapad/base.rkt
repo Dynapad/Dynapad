@@ -1,5 +1,21 @@
 #lang racket/base
 
+(provide dynaobject%
+         dynapad%
+         layer%
+         base-group%
+         group%
+         line%
+         freehand%
+         polyline%
+         rect%
+         oval%
+         polygon%
+         make-new-dynapad
+         alist-filters
+         make-alist-modifier-function-general
+         )
+
 (require racket/class
          racket/gui/base
          compatibility/mlist
@@ -16,22 +32,6 @@
          dynapad/utils/hilights
          (only-in dynapad/events/mode
                   createModes)
-         )
-
-(provide dynaobject%
-         dynapad%
-         layer%
-         base-group%
-         group%
-         line%
-         freehand%
-         polyline%
-         rect%
-         oval%
-         polygon%
-         make-new-dynapad
-         alist-filters
-         make-alist-modifier-function-general
          )
 
 (define (link-hook o) #t)

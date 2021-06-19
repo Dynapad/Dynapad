@@ -199,6 +199,7 @@
                (make-object (branch-class) this #f #f #f logid))))
         ; XXX FIXME however the issue is likely caused here because the branch is created without
         ; a startnum or a file
+        #; ; now more or less resolved ?
         (println (list 'aaaaaaaaaaaaaaaaaaaaaaaaaaaa logid _current-logbranch branch
                        ))
         (activate-branch branch)))
@@ -210,6 +211,7 @@
         (send _current-logbranch deactivate))
       (current-branch branch)
       (let* ((startid  (send branch startnum)) ; XXXXXXXXXXX FIXME broken here
+             #; ; old debug print statement
              (__ (println 'we| |don\'t| |get| |here))
              (startnum (and startid (ensure-number startid))))
         (reset-stacks startnum))

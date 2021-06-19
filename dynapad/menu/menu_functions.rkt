@@ -115,6 +115,7 @@
                   )
          )
 
+#; ; no longer needed
 (announce-module-loading "Menu functions...")
 
 ;======= Menu Functions =================
@@ -349,7 +350,7 @@
 
 ;--- not implemented --------------------------------------------
 
-(define (warning msg) (printf "~a~%" msg))
+(define (warning msg) (printf "menu_functions warning: ~a~%" msg))
 (define (not-implemented op_name)
   (warning (string-append op_name ": not implemented yet")) )
 

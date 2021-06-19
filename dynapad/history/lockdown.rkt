@@ -1,5 +1,7 @@
 #lang racket/base
 
+(provide lockdown-bind-keys)
+
 (require racket/class
          "../../apps/logsummary/logmunge.rkt" ; FIXME this should probably be managed by having apps inside dynapad in another package
          dynapad/base
@@ -10,9 +12,20 @@
          (only-in dynapad/events/text text%)
          (only-in dynapad/history/logs restore-set)
          (only-in dynapad/history/log-state set-current-state-id *logtree-layer*)
-         (only-in dynapad/history/log-views *last-view-bbox*)
          (only-in dynapad/events/zoom-pushpull precompute-distant-view)
          )
+
+(define (lockdown-bind-keys dynapad)
+  "isolate top level sends to avoid ordering issues when loading modules"
+  (send dynapad bind "<Control-KeyPress-h>"
+        (lambda (p e) (send p moveto
+                            (precompute-distant-view p (send p objects))
+                            500)))
+  (send dynapad bind "<Control-KeyPress-g>"
+        (lambda (p e)
+          (when *last-view-outline*
+            (dynapad-zoom-to-bbox (send *last-view-outline* bbox)))))
+  )
 
 (define push-ops-no-exec
   (case-lambda
@@ -80,15 +93,6 @@
           (append (bbcenter new-bb) (list (* (send dynapad getzoom) ratio)))
           500)
     ))
-
-(send dynapad bind "<Control-KeyPress-h>"
-      (lambda (p e) (send p moveto
-                          (precompute-distant-view p (send p objects))
-                          500)))
-(send dynapad bind "<Control-KeyPress-g>"
-      (lambda (p e)
-        (when *last-view-outline*
-          (dynapad-zoom-to-bbox (send *last-view-outline* bbox)))))
 
 (define (update-last-view-bbox bb)
   (if bb

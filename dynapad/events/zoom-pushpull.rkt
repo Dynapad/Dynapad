@@ -1,5 +1,7 @@
 #lang racket/base
 
+;; FIXME for some reason when this is used if you zoom out too much everything dissappears
+
 (provide precompute-distant-view
          init-push-pull-motion
          update-push-pull-motion
@@ -153,7 +155,10 @@
 ;        0  (if at starting/midpoint limit)
 ;        -1 (if at far-away limit)
 
+(define lerp-zoom-active? #f) ; DEBUG
+
 (define (init-lerp-zooming argPAD e is-background? everything-list)
+  (set! lerp-zoom-active? #t)
   (def pos (send argPAD view))
   (def closeup_set (event-obj e))
   (def ex (event-x e))
@@ -208,8 +213,11 @@
 ;(exec-any-callbacks cb-list argPAD event)
 
 (define (update-lerp-zooming argPAD evnt frac . args)
+  ; FIXME somehow this manages to get called before init-lerp-zooming in some cases?
+  (unless lerp-zoom-active?
+    (error 'oops "init-lerp-zooming should have been called at least once before this"))
   (def view0 (sendf argPAD evs v0))
-  (def z0 (caddr view0))
+  (def z0 (caddr view0)) ; FIXME view0 can somehow be #f instead of list ?!
   (def newz (* z0 (expt 10.0 frac)))
   (def view_closeup (sendf argPAD evs vclose))
   (def view_of_everything (sendf argPAD evs vfar))
