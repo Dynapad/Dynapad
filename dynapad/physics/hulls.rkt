@@ -1,4 +1,12 @@
-(dynaload "geometry.rkt")
+#lang racket/base
+
+(provide convex-hull)
+
+(require (only-in racket/class make-object send)
+         dynapad/pad-state
+         (only-in dynapad/base oval% polygon%)
+         dynapad/misc/misc
+         dynapad/utils/geometry)
 
 ; The following is a 2D implementation of the QuickHull algorithm
 ;
@@ -10,6 +18,7 @@
 ;                    p     | offset
 ;         p   (right-pts)  p
 
+#; ; old slow implementation
 (define (partition-points-with-seg a b pts)
   ;a, b are start, end of segment
   ; pts are set of points to partition (may include a, b)

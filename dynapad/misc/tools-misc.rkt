@@ -1,14 +1,39 @@
 #lang racket/base
 
+(provide round-to-int
+         round-to-decimal
+         sign
+         increment-mean
+         decrement-mean
+         pct-string->number
+         ; needed by dynapad/utils/geometry
+         infinity
+         -infinity
+         hypotenuse
+         2val-sign
+         path-map
+         path-template
+         chain-map
+         path-ref
+         path-foreach
+         chain-foreach
+         path->list
+         ring-map
+         ring-template
+         ring-ref
+         ring-foreach
+         mean
+         weighted-mean
+         ring-filter
+         chain-filter
+         ring->list
+         other
+         )
+
 (require racket/class
          compatibility/defmacro
          scheme/math  ; alternately mzlib/math
          (for-syntax racket/base))
-
-(provide round-to-int
-         round-to-decimal
-         sign
-         )
 
 ;---- STATS tools ----
 

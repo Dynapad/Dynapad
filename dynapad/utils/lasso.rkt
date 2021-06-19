@@ -1,7 +1,17 @@
 #lang racket/base
 
+(provide lasso-contained-objects
+         ask-user-for-lasso
+         )
+
 (require racket/class
+         (only-in dynapad/base freehand% polygon%)
          dynapad/history/undo
+         dynapad/events/mode
+         dynapad/pad-state ; event
+         dynapad/misc/misc
+         dynapad/layout/bbox
+         (only-in dynapad/libdynapad-wrapper sch_xy_in_poly)
          )
 
 ;These are similar to get-user-bbox.ss

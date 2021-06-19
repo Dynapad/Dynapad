@@ -1,5 +1,13 @@
 #lang racket/base
 
+(provide export-link
+         export-container-generic-name
+         export-container-custom-name
+         construct-unique-filename-seed
+         insert-filenamebase-suffix
+         filter-and-sort-directory
+         )
+
 (require mzlib/process
          collects/misc/pathhack
          dynapad/misc/misc
@@ -7,14 +15,6 @@
          (only-in dynapad/libdynapad-wrapper
                   sch_imagep
                   )
-         )
-
-(provide export-link
-         export-container-generic-name
-         export-container-custom-name
-         construct-unique-filename-seed
-         insert-filenamebase-suffix
-         filter-and-sort-directory
          )
 
 (define break-on-last-dot-regexp (regexp "(.*)([.][a-zA-Z]+)"))

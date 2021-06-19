@@ -1,14 +1,5 @@
 #lang racket/base
 
-(require (only-in racket/class send)
-         (only-in dynapad/seval mimic-old-load)
-         dynapad/import
-         dynapad/pad-state
-         dynapad/misc/misc
-         dynapad/history/ids
-         ;dynapad/history/logs ; danger i suspect ; yep
-         )
-
 (provide *undo-stack*
          *redo-stack*
          push-*undo-stack*!
@@ -51,6 +42,20 @@
          get-top-group
 
          abstract-objects-callbacks
+
+         ensure-region-claims-after-undo
+         ensure-region-unclaims-after-undo
+
+         false-event-lambda
+         )
+
+(require (only-in racket/class send)
+         (only-in dynapad/seval mimic-old-load)
+         dynapad/import
+         dynapad/pad-state
+         dynapad/misc/misc
+         dynapad/history/ids
+         ;dynapad/history/logs ; danger i suspect ; yep
          )
 
 ;--- basic do/undo mechanism -------------------------------------

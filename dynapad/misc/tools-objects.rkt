@@ -1,5 +1,9 @@
 #lang racket/base
 
+(provide remote-get
+         remote-set!
+         )
+
 (require compatibility/defmacro
          (for-syntax racket/base))
 

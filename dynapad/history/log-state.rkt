@@ -1,25 +1,5 @@
 #lang racket/base
 
-(require (only-in racket/class send make-object)
-         (only-in racket/date date->string)
-         dynapad/base
-         dynapad/import
-         dynapad/pad-state
-         dynapad/misc/misc
-         dynapad/misc/user-preferences
-
-         #;
-         (
-         racket/class
-         dynapad/base
-         dynapad/pad-state
-         collects/misc/pathhack
-         dynapad/misc/tools-lists
-         (only-in racket/function identity)
-         dynapad/ffs  ; *id-counter*
-         dynapad/history/ids
-         )
-         )
 (provide reset-stacks
          make-timestamp-ID
          *current-state-id*
@@ -44,6 +24,27 @@
          visit-state
          visit-start
          change-view)
+
+(require (only-in racket/class send make-object)
+         (only-in racket/date date->string)
+         dynapad/base
+         dynapad/import
+         dynapad/pad-state
+         dynapad/misc/misc
+         dynapad/misc/user-preferences
+
+         #;
+         (
+         racket/class
+         dynapad/base
+         dynapad/pad-state
+         collects/misc/pathhack
+         dynapad/misc/tools-lists
+         (only-in racket/function identity)
+         dynapad/ffs  ; *id-counter*
+         dynapad/history/ids
+         )
+         )
 
 (define *logtree-layer* null)
 (define (set-*logtree-layer*! value)

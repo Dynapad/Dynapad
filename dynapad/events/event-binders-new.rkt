@@ -6,6 +6,14 @@
 ;  (send img bind "<Double-ButtonPress-1>"
 ;    (image-toggle-hires-thumb img) ))
 ; Use new aftermake callbacks:
+
+(provide newpad-event-binder%
+         access-beforezoom-callbacks
+         access-afterzoom-callbacks
+         access-beforepan-callbacks
+         access-afterpan-callbacks
+         )
+
 (require (only-in racket/class
                   send
                   class
@@ -24,8 +32,6 @@
          dynapad/history/undo
          (only-in dynapad/dynapad-c-api addbinding)
          )
-
-(provide newpad-event-binder%)
 
 (image-aftermake-callbacks 'add
                            (lambda (img) (send img bind "<Double-ButtonPress-1>"

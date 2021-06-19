@@ -1,6 +1,50 @@
-(require (lib "class.rkt"))
-(require (lib "defmacro.rkt"))
-(require (lib "math.rkt"))
+#lang racket/base
+
+(provide region-actor-name
+         get-rgn
+         fusing-container%
+         regionize
+         region%
+         tray%
+         *default-region-form-type*
+         lens%
+         mutator%
+         )
+
+(require racket/class
+         (except-in compatibility/mlist mmap)
+         compatibility/defmacro
+         racket/math
+         dynapad/base
+         dynapad/container-text
+         dynapad/pad-state
+         dynapad/misc/misc
+         (only-in dynapad/misc/tools-misc increment-mean decrement-mean)
+         dynapad/misc/tools-lists
+         dynapad/misc/alist
+         dynapad/utils/actor
+         (only-in dynapad/utils/geometry contained-objects contained-in? contains-pt? geodize geo-actor-name)
+         dynapad/layout/bbox
+         dynapad/ffs
+         dynapad/utils/formation
+         dynapad/utils/colors
+         (only-in dynapad/copy clone-object)
+         dynapad/physics/actortimer
+         dynapad/utils/lerp
+         dynapad/undo-state
+         dynapad/history/ids
+         (only-in dynapad/history/undo
+                  afterdrag-prepare-undo-callbacks
+                  beforedrag-prepare-undo-callbacks)
+         (only-in dynapad/spd show-possible-delay) ; FIXME XXX breaks debugging
+         (only-in dynapad/dynapad-c-api panel%)
+         (only-in dynapad/image image%)
+         (only-in dynapad/events/text text%)
+         )
+
+;(require (lib "class.rkt"))
+;(require (lib "defmacro.rkt"))
+;(require (lib "math.rkt"))
 
 (define *all-regions* null)
 (define *greedy-regions* null)
@@ -285,7 +329,7 @@
              (let ((obj (send this object)))
                (when obj
                  (send obj afterposition-callbacks 'remove 'absorption)
-                 (send obj post-build-ops 'remove #f absorption))))
+                 (send obj post-build-ops 'remove #f 'absorption))))
          (set! _absorptive val))))
 
     (define/public greedy
@@ -321,6 +365,7 @@
   (class virtual-region%
     (init _obj)
     (super-instantiate ())
+    (inherit-field _contents)
     (send this dynaclass 'region%)
 
     (send this attach-to _obj region-actor-name)
@@ -385,7 +430,10 @@
                      ;(if (not newsticky)
                      ;    (send-actor-named (send this object)
                      ;      geo-actor-name refresh-edge-ring))
-                     (for-each (lambda (obj) (stickify-obj obj newsticky))
+                     (for-each (lambda (obj)
+                                 (error 'unknown-function "I have no idea what stickify-obj was supposed to do. If this code is used at all then maybe debug it when we hit it?")
+                                 #; ; I have no idea what stickify-obj was, there is no reference anywhere that I can find
+                                 (stickify-obj obj newsticky))
                                _contents))))
 
     (define (seize-obj obj)
@@ -566,7 +614,7 @@
         (super decorate)))
     ))
 
-(dynaload "actortimer.rkt")
+;(dynaload "actortimer.rkt")
 (define fader-timer (make-object auto-unsubscribe-timer% dynapad 300))
 (send fader-timer start)
 
@@ -646,11 +694,9 @@
 
 
     (send this enter-actions 'add
-          (lambda (o) (push! `(send ,(obj->IDexpr o) position (list ,@(send o position)))
-                             *undo-ops*)))
+          (lambda (o) (push-*undo-ops*! `(send ,(obj->IDexpr o) position (list ,@(send o position))))))
     (send this update-actions 'add
-          (lambda (o) (push! `(send ,(obj->IDexpr o) position (list ,@(send o position)))
-                             *undo-ops*)))
+          (lambda (o) (push-*undo-ops*! `(send ,(obj->IDexpr o) position (list ,@(send o position))))))
 
     (define/override (decorate)
       (let* ((obj (send this pane))
@@ -879,6 +925,7 @@
                                        (foreach alist (lambda (tuple)
                                                         (apply ensure-region-claims-after-undo tuple))))))
 
+#; ; duplicate I think? but may need to be set! can't tell yet
 (define *claims-this-round* null)
 ; this is a alist ((reg obj obj...)...) of all additions to regions
 ; during most recent drag

@@ -1,12 +1,27 @@
-(announce-module-loading "pile features...")
-(dynaload "hulls.rkt")
-(update-progress .5)
+#lang racket/base
 
-(dynaload "regions.rkt")
-(update-progress .75)
-
-(dynaload "colors.rkt")
-(dynaload "get-user-bbox.rkt")
+(require racket/class
+         dynapad/base
+         dynapad/bind
+         dynapad/pad-state
+         dynapad/undo-state
+         dynapad/misc/misc
+         dynapad/misc/alist
+         dynapad/layout/bbox
+         dynapad/physics/hulls
+         dynapad/physics/regions
+         dynapad/utils/colors
+         dynapad/utils/get-user-bbox
+         dynapad/utils/geometry
+         dynapad/utils/actor
+         dynapad/utils/lasso
+         dynapad/utils/formation
+         (only-in dynapad/events/reshape make-lazy-pairs)
+         (only-in dynapad/container-text dissolving-fusing-frame-container%)
+         dynapad/menu/menu_popup
+         dynapad/menu/menu-state
+         dynapad/menu/wxmenu
+         )
 
 (define obj-point%
   (class geo-point%
@@ -24,6 +39,7 @@
 ;  object-list)
 ;  (map make-fencepost-pair object-list))
 
+#; ; apparently and old implementation that was kept around?
 (define (generate-convex-hull-from-fenceposts objs)
   (convex-hull
    (map (lambda (obj)
@@ -492,5 +508,5 @@
                     make-pile)
      )))
 
-
+#; ; no longer relevant
 (update-progress 1)

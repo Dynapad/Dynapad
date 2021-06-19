@@ -15,6 +15,11 @@
 ; of "you probably meant to require this ..." which is
 ; undesireable, but might work from a usability prespective
 
+(provide base-formation%
+         name-part
+         part?
+         )
+
 (require racket/class
          compatibility/defmacro
          dynapad/base
@@ -31,10 +36,6 @@
                   sch_members
                   )
  )
-
-(provide base-formation%
-         name-part
-         )
 
 (define-macro (name-part field-name method-name)
   `(begin

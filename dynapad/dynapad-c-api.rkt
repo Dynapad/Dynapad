@@ -2,6 +2,7 @@
 
 (provide slowgrow
          addbinding
+         panel%
          )
 
 (require racket/class

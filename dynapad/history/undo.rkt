@@ -1,4 +1,22 @@
 #lang racket/base
+
+(provide Paste-From-Copy-Buffer
+         Copy-Paste-ReSelect
+         undoable-delete-all
+         import-path
+         undo
+         Delete-Selected
+         Deep-Delete-Selected
+         Confirm-and-Delete-All
+         bindSelect
+         basepad-event-binder%
+         Start-Shift-Select-Event
+         beforedrag-prepare-undo-callbacks
+         afterdrag-prepare-undo-callbacks
+         ; needed for top level evals
+         load-set
+         )
+
 (require racket/class
          (only-in racket/gui/base
                   message-box)
@@ -36,20 +54,6 @@
                   )
          dynapad/physics/animate
          (only-in dynapad/import importing?)
-         )
-
-(provide Paste-From-Copy-Buffer
-         Copy-Paste-ReSelect
-         undoable-delete-all
-         import-path
-         undo
-         Delete-Selected
-         Deep-Delete-Selected
-         Confirm-and-Delete-All
-         bindSelect
-         basepad-event-binder%
-         ; needed for top level evals
-         load-set
          )
 
 ;; cyclical dependencies with mode, select, and event-shared ffs

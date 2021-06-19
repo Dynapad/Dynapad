@@ -11,6 +11,8 @@
 (provide add-images-to-hires-list
          image-hires-and-center
          init-image-bindings
+         set-image-hires-list
+         *list_of_hirez_images*
          )
 
 ;======= Image Bindings and Utilities ============================

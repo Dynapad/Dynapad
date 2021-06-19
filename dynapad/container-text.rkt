@@ -1,9 +1,30 @@
 #lang racket/base
+
+(provide resizable-frame-container%
+         dissolving-fusing-frame-container%
+         resizable-dissolving-fusing-frame-container%
+         )
+
 (require racket/class
          (only-in dynapad/container
-                  frame-container%)
+                  frame-container%
+                  make-resize-border
+                  )
          (only-in dynapad/events/text
-                  text%))
+                  text%
+                  edit-text-at-xy
+                  )
+         (only-in dynapad/utils/formation name-part)
+         dynapad/layout/bbox
+         dynapad/misc/misc
+         (only-in dynapad/misc/tools-misc mean)
+         dynapad/misc/filenames
+         dynapad/dynapad-c-api
+         (only-in dynapad/menu/wxmenu add-menu-item)
+         dynapad/menu/popup-provider
+         (only-in dynapad/copy clone-object)
+         (only-in dynapad/history/undo Start-Shift-Select-Event)
+         )
 
 (define titled-frame-container%
   (class frame-container%

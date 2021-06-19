@@ -1,3 +1,20 @@
+#lang racket/base
+
+(provide (all-from-out dynapad/layout/layout))
+
+(require dynapad/layout/layout)
+
+#|
+(require racket/class
+         dynapad/pad-state
+         dynapad/menu/wxmenu
+         dynapad/menu/menu_functions
+         dynapad/menu/menu_popup
+         dynapad/utils/actor
+         dynapad/physics/regions
+         dynapad/layout/layout
+ )
+
 (announce-module-loading "region tools...")
 
 (dynaload "bbox.rkt")
@@ -72,7 +89,7 @@
     (add-menu-separator popmenu) ;------------------------------
     (make-submenu-Edit    popmenu object)
     (include-custom-popup-items popmenu object)
-    popmenu ))
+    popmenu))
 
 (define (DumpSelectedTrays)
   (let* ((rgns (apply append (map
@@ -209,3 +226,5 @@
 
 
 (update-progress 1)
+
+|#

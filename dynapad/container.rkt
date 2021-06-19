@@ -4,6 +4,7 @@
          frame-container%
          resizable-image%
          container-form%
+         make-resize-border
          )
 
 (require racket/class

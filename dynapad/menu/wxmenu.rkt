@@ -1,5 +1,14 @@
 #lang racket/base
 
+(provide add-submenu
+         add-menu-item
+         add-menu-separator
+         show-popup-lambda
+         make-popup-server
+         new-popup
+         add-checkable-menu-item
+         )
+
 (require racket/class
          (only-in racket/gui/base
                   popup-menu%
@@ -17,15 +26,6 @@
                                  the-pen-list))
          dynapad/pad-state
          dynapad/misc/misc
-         )
-
-(provide add-submenu
-         add-menu-item
-         add-menu-separator
-         show-popup-lambda
-         make-popup-server
-         new-popup
-         add-checkable-menu-item
          )
 
 #;

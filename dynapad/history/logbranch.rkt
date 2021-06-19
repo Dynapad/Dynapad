@@ -29,6 +29,7 @@
          logpath->logdir+logfile
          logfile->treename
          logfile->logid
+         log-changeview-entry
          )
 
 ;(dynaload "actor.rkt")

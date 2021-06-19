@@ -1,5 +1,19 @@
 #lang racket/base
 
+(provide precompute-distant-view
+         init-push-pull-motion
+         update-push-pull-motion
+         init-lerp-zooming
+         update-lerp-zooming
+         access-hit-near-zoomlimit-callbacks
+         ; log-views
+         access-hit-far-zoomlimit-callbacks
+         access-hit-midfar-zoomlimit-callbacks
+         access-hit-midnear-zoomlimit-callbacks
+         *last-zoom-targets*
+         newpad-event-state%
+         )
+
 (require (only-in racket/class class init super-instantiate field send define/public this)
          (only-in racket/list third)
          dynapad/events/event-state
@@ -12,13 +26,6 @@
                            ; to find arbitrary definition sources if
                            ; you already know/remember where they are
          dynapad/undo-state
-         )
-
-(provide precompute-distant-view
-         init-push-pull-motion
-         update-push-pull-motion
-         init-lerp-zooming
-         update-lerp-zooming
          )
 
 (define (wider-view? v1 v2)

@@ -4,6 +4,7 @@
          (only-in dynapad/pad-state
                   dynapad)
          dynapad/events/event-binders-newdraw
+         dynapad/events/zoom-pushpull
          dynapad/menu/image-menu
          dynapad/menu/menu-draw
          dynapad/menu/menu_popup

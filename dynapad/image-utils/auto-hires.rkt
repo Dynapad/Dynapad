@@ -1,3 +1,13 @@
+#lang racket/base
+
+(require racket/class
+         dynapad/spd ; XXX breaks debugability
+         dynapad/pad-state
+         dynapad/misc/misc
+         dynapad/layout/bbox
+         (only-in dynapad/events/image-events set-image-hires-list *list_of_hirez_images*)
+         dynapad/events/zoom-pushpull)
+
 ; enable automatic hires when hit zoom limit
 
 ;requires event-binders-new.ss

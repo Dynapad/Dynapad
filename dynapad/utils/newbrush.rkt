@@ -1,6 +1,9 @@
 #lang racket
 
-(provide halo-brush%)
+(provide halo-brush%
+         samedir-relation
+         track-duplicates-of-objs
+         )
 
 (require racket/class
          compatibility/mlist

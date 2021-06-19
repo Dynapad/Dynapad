@@ -1,6 +1,16 @@
 ; this assumes both event-binders-new.ss and logs.ss are already loaded
 #lang racket/base
 
+(provide *last-view-bbox*)
+
+(require racket/class
+         dynapad/pad-state
+         (only-in dynapad/base dynapad%)
+         dynapad/events/event-binders-new
+         dynapad/events/zoom-pushpull
+         dynapad/history/logbranch
+         )
+
 (access-hit-near-zoomlimit-callbacks
  'add
  (lambda (argPAD evnt)

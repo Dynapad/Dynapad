@@ -1,19 +1,27 @@
 #lang racket/base
 
-(require compatibility/defmacro
-         (for-syntax racket/base)
-         dynapad/misc/misc
-         #;
-         dynapad/misc/tools-objects
-         )
-
 (provide first-valid
          list-position-general
          counting-list
          mmap
          list-head
+         list-intersect+diff
+         auto-extend-list-tail
 
          list-overlapq ; needed by newlrelation which may be obsolete
+         make-pairs ; needed by dynapad/utils/geometry
+         cross-map ; needed by dynapad/physics/physics
+         ; make-list ; cannot provide due to collision with racket/list I think?
+         insert-into-sorted-list
+         inserted-list
+         )
+
+(require compatibility/defmacro
+         (only-in racket/list make-list)
+         (for-syntax racket/base)
+         dynapad/misc/misc
+         #;
+         dynapad/misc/tools-objects
          )
 
 (define (multiple? lst)
@@ -89,6 +97,7 @@
 ;     (filter (lambda (l1-item in-l2?) (not in-l2?))
 ;         l1 also-ins))))
 
+#; ; use builtin
 (define (make-list n atom)
   (vector->list (make-vector n atom)))
 

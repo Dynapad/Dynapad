@@ -1,5 +1,18 @@
-(load-relative "../../apps/logsummary/logmunge.rkt")
+#lang racket/base
 
+(require racket/class
+         "../../apps/logsummary/logmunge.rkt" ; FIXME this should probably be managed by having apps inside dynapad in another package
+         dynapad/base
+         dynapad/pad-state
+         dynapad/undo-state
+         dynapad/misc/misc
+         dynapad/layout/bbox
+         (only-in dynapad/events/text text%)
+         (only-in dynapad/history/logs restore-set)
+         (only-in dynapad/history/log-state set-current-state-id *logtree-layer*)
+         (only-in dynapad/history/log-views *last-view-bbox*)
+         (only-in dynapad/events/zoom-pushpull precompute-distant-view)
+         )
 
 (define push-ops-no-exec
   (case-lambda
@@ -18,6 +31,7 @@
   (let ((rt (send *tape-block* state->reltime state)))
     (send rt write)))
 
+#; ; old version
 (define (set-current-state-id new) ;overrides version in logs.ss
   (set! *current-state-id* new)
   (when *tape-block*
@@ -25,7 +39,7 @@
 
 ;even newer override includes state-counter:
 (define (set-current-state-id new)
-  (set! *current-state-id* new)
+  (set-current-state-id new)
   (update-stateid-counter new))
 
 (define *state-id-counter* #f)

@@ -1,6 +1,13 @@
 ; This whole file is ugly hacky code just to support Dan's thesis log files.
 #lang racket/base
 
+(require racket/class
+         dynapad/undo-state
+         (only-in dynapad/ffs linkable-obj%)
+         dynapad/container-text
+         (only-in dynapad/utils/newbrush samedir-relation track-duplicates-of-objs)
+         (only-in dynapad/physics/regions mutator%)
+         (only-in dynapad/layout/layout labeled-linear-projector%))
 
 (define titled-resizable-frame-container% resizable-dissolving-fusing-frame-container%)
 (define simple-linear-projector% linear-projector%)

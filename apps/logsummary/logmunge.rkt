@@ -1,3 +1,15 @@
+#lang racket/base
+
+(provide tape-timeblock%
+         reltime)
+
+(require racket/class
+         dynapad/pad-state
+         dynapad/misc/misc
+         dynapad/layout/bbox
+         (only-in dynapad/events/text text%)
+         )
+
 ; tape-timeblock format
 ;(block-name from-pair to-pair synch-pair synch-state)
 (define (reltime m s)

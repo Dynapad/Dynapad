@@ -4,6 +4,7 @@
          titled-frame-container%
          bindDrawMode
          bindTextMode
+         edit-text-at-xy
          )
 
 (require racket/class

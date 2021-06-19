@@ -1,16 +1,22 @@
 #lang racket/base
 
+(provide actor%
+         named-actor%
+         send-actor
+         get-actor-named
+         get-actors-named
+         ; for dynapad/utils/geometry
+         send-actor-named
+         ; for dynapad/physics/physics
+         send-actors-named
+         expiring-actor%
+         )
+
 (require racket/class
          compatibility/mlist
          dynapad/ffs
          dynapad/misc/misc
          dynapad/misc/alist
-         )
-
-(provide actor%
-         named-actor%
-         send-actor
-         get-actor-named
          )
 
 ; Consider using surrogate.ss to replace actor construction

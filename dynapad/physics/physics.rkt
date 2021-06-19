@@ -1,11 +1,27 @@
-(require (lib "class.rkt"))
-(require (lib "defmacro.rkt"))
-(require (lib "math.rkt"))
+#lang racket/base
+
+(require racket/class
+         compatibility/defmacro
+         compatibility/mlist
+         racket/math
+         dynapad/utils/actor
+         dynapad/physics/actortimer
+         dynapad/pad-state
+         dynapad/misc/misc
+         dynapad/misc/alist
+         (only-in dynapad/utils/geometry
+                  geo-actor-name motion-actor-name scale-dxy null-vector intersection geodize)
+         dynapad/layout/bbox
+         dynapad/physics/regions
+         )
+
+;(require (lib "class.rkt"))
+;(require (lib "defmacro.rkt"))
+;(require (lib "math.rkt"))
 ;(dynaload "geometry.rkt") ;includes actor.ss, alist.ss
 ;(dynaload "bbox.rkt")
 ;(dynaload "actor.rkt")
 ;(dynaload "actortimer.rkt")
-
 
 ;relation of actors:
 ;
@@ -31,6 +47,7 @@
 (define (resize obj absx absy relx rely)
   (send-actors-named obj 'shadows refresh-boundary))
 
+#; ; unused and `set-object-callbacks' is completely unknown
 (define (add-slide-shadow obj new-shadow)
   (set-object-callbacks obj)
   (send new-shadow attach-to obj 'shadows))
@@ -46,6 +63,7 @@
 ;---- TIMERS ----
 
 (define motion-tick 150)
+(define homing-tick 250) ; I have no idea whether this is right I jus need a value to fill in a hole
 (define repulsion-tick 250)  ; should be >motion, <lookout
 (define repulsion-kick-duration (+ repulsion-tick 100))
 (define lookout-tick 750)
@@ -54,6 +72,9 @@
 
 (define motion-timer (make-object auto-unsubscribe-timer% dynapad motion-tick))
 (send motion-timer start)
+
+(define homing-timer (make-object subscription-timer% dynapad homing-tick))
+(send homing-timer start)
 
 (define repulsion-timer (make-object auto-unsubscribe-timer% dynapad repulsion-tick))
 ;(send repulsion-timer start)
@@ -66,6 +87,7 @@
 
 (define (stop-all)
   (send motion-timer stop)
+  (send homing-timer stop)
   (send repulsion-timer stop)
   (send lookout-timer stop))
 
@@ -84,7 +106,6 @@
 
 ;(define delay-to-sleep 5000)
 ;(define nobounce #t)
-(define motion-actor-name 'motor)
 (define motion-actor%
   (class expiring-actor%
     ;metric standard used for callibration:
@@ -102,7 +123,7 @@
       (super delete))
 
     (define/override (kick until rel-time)
-      (if _asleep?
+      (when _asleep?
           (send motion-timer subscribe this))
       (super kick until rel-time))
 
@@ -116,8 +137,8 @@
       (let* ((newspeed (+ (speed) dspeed)))
         (if (and _slow-limit (< newspeed _slow-limit))
             (set! newspeed _slow-limit)
-            (if (and _fast-limit (> newspeed _fast-limit))
-                (set! newspeed _fast-limit)))
+            (when (and _fast-limit (> newspeed _fast-limit))
+              (set! newspeed _fast-limit)))
         (display (format "speed:~a~%" newspeed))
         (send _velocity length newspeed)))
 
@@ -165,10 +186,10 @@
 
     (define/override (update abstime dtime)
       ;apply friction
-      (if (not (zero? _friction))
-          (let* ((decel (/ _friction _mass))
-                 (dspeed (- (* dtime decel))))
-            (send this change-speed dspeed)))
+      (when (not (zero? _friction))
+        (let* ((decel (/ _friction _mass))
+               (dspeed (- (* dtime decel))))
+          (send this change-speed dspeed)))
       (super update abstime dtime))
 
     ))
@@ -232,22 +253,22 @@
       (case-lambda
         (()
          ;(display "trying...")(newline)
-         (if (not _brakes-on?)
-             (begin
-               ;(display "braking...")(newline)
-               ;(if visible-state? (send (send this object) fill "red"))
-               (send this friction _braking-friction)
-               (set! _brakes-on? #t))))
+         (when (not _brakes-on?)
+           (begin
+             ;(display "braking...")(newline)
+             ;(if visible-state? (send (send this object) fill "red"))
+             (send this friction _braking-friction)
+             (set! _brakes-on? #t))))
         ((frict) (begin
                    (set! _braking-friction frict)
                    (set! _brakes-on? #f)
                    (brakes-on)))))
     (define/public (brakes-off)
-      (if _brakes-on?
-          (begin
-            ;(if visible-state? (send (send this object) fill "blue"))
-            (send this friction _moving-friction)
-            (set! _brakes-on? #f))))
+      (when _brakes-on?
+        (begin
+          ;(if visible-state? (send (send this object) fill "blue"))
+          (send this friction _moving-friction)
+          (set! _brakes-on? #f))))
     (define/override (apply-force duration coast-time)
       (brakes-off)
       (super apply-force duration coast-time))
@@ -409,25 +430,25 @@
              (intruders (send dynapad find 'overlapping bbox)))
         (for-each
          (lambda (intruder)
-           (if (and
-                (not (eq? intruder me)) ;exclude oneself
-                (send-actor-named intruder 'awakener alive?))
-               (let ((watch (assq intruder (cdr my-watches))))
-                 (if (not watch) ;not already included
-                     (let* ((repulsor (make-object repulsor% me intruder)))
-                       ;make sure intruder is awake (may be already)
-                       (awaken intruder)
-                       ;put me on intruder's watch list
-                       (pushq-onto-malist-val-always!
-                        'repulsors
-                        (list me repulsor)
-                        intruder alist)
-                       ;put intruder on my watch list
-                       (set! watch (list intruder repulsor))
-                       (set-mcdr! my-watches
-                                  (cons watch (cdr my-watches)))))
-                 ;In either case; kick the resulting repulsor
-                 (send (cadr watch) kick #f lookout-kick-duration))))
+           (when (and
+                  (not (eq? intruder me)) ;exclude oneself
+                  (send-actor-named intruder 'awakener alive?))
+             (let ((watch (assq intruder (cdr my-watches))))
+               (when (not watch) ;not already included
+                 (let* ((repulsor (make-object repulsor% me intruder)))
+                   ;make sure intruder is awake (may be already)
+                   (awaken intruder)
+                   ;put me on intruder's watch list
+                   (pushq-onto-malist-val-always!
+                    'repulsors
+                    (list me repulsor)
+                    intruder alist)
+                   ;put intruder on my watch list
+                   (set! watch (list intruder repulsor))
+                   (set-mcdr! my-watches
+                              (cons watch (cdr my-watches)))))
+               ;In either case; kick the resulting repulsor
+               (send (cadr watch) kick #f lookout-kick-duration))))
          intruders)
         ;stale repulsors will expire on their own if not kicked
         ))
@@ -467,10 +488,10 @@
                (set! _target-y y))))
 
     (define/public (update abstime dtime)
-      (if _target-fn   ; handle moving target
-          (let ((newxy (_target-fn)))
-            (set! _target-x (car newxy))
-            (set! _target-y (cadr newxy))))
+      (when _target-fn   ; handle moving target
+        (let ((newxy (_target-fn)))
+          (set! _target-x (car newxy))
+          (set! _target-y (cadr newxy))))
       (let* ((timeleft (- _duedate abstime)))
         (if (positive? timeleft)
             (let* ((rawfraction (/ motion-tick timeleft))
@@ -509,10 +530,10 @@
     ((obj target-fn) (animate-to obj target-fn 1000)) ;1000ms by default
     ((obj target-fn howlong)
      (let ((homer (get-actor-named obj 'homer)))
-       (if (not homer)
-           (begin
-             (set! homer (make-object homing-actor%)); target-fn))
-             (send homer attach-to obj 'homer)))
+       (when (not homer)
+         (begin
+           (set! homer (make-object homing-actor%)); target-fn))
+           (send homer attach-to obj 'homer)))
        (send homer target target-fn)
        (send homer duedate (+ (current-milliseconds) howlong))
        (send homer go)
@@ -563,22 +584,22 @@
 
     (define/public (update abstime dtime)
       ;       (define time1 (/ (- (current-milliseconds) birthdate) 10))
-      (if (not (send this maybe-expire `(send ,this overlap-or-die)))
-          (let ((overlap (intersection obj1 obj2))) ;see geometry.ss
-            ;       (let ((overlap
-            ;          (measure 'itrsct intersection obj1 obj2)))
-            (if overlap
-                (begin
-                  (send overlap accumulate-forces-on-parents)
-                  (send-actor-named obj1 motion-actor-name apply-force 1 repulsion-kick-duration)
-                  (send-actor-named obj2 motion-actor-name apply-force 1 repulsion-kick-duration)
-                  )
-                ;TEMPORARY:
-                (delete)))
-          ;       (plot-tick this
-          ;              time1
-          ;              (/ (- (current-milliseconds) birthdate) 10)
-          ;              "red")
+      (when (not (send this maybe-expire `(send ,this overlap-or-die)))
+        (let ((overlap (intersection obj1 obj2))) ;see geometry.ss
+          ;       (let ((overlap
+          ;          (measure 'itrsct intersection obj1 obj2)))
+          (if overlap
+              (begin
+                (send overlap accumulate-forces-on-parents)
+                (send-actor-named obj1 motion-actor-name apply-force 1 repulsion-kick-duration)
+                (send-actor-named obj2 motion-actor-name apply-force 1 repulsion-kick-duration)
+                )
+              ;TEMPORARY:
+              (delete)))
+        ;       (plot-tick this
+        ;              time1
+        ;              (/ (- (current-milliseconds) birthdate) 10)
+        ;              "red")
 
           ))
     ))
@@ -597,7 +618,7 @@
     (send object slide-callbacks 'add
           (lambda (obj dx dy) (send this slide)))
     ;listen for future motion of object obj
-    (if visible-state? (send object pen "pink")) ;show I'm alive
+    (when visible-state? (send object pen "pink")) ;show I'm alive
 
     (define/public (alive?)
       #t) ;acknowledge awakener presence
@@ -605,39 +626,39 @@
     (define/public (awake?) _awake?)
 
     (define/public (awaken)
-      (if (not _awake?)
-          (let* ((me (send this object))
-                 (geoactor (geodize me))
-                 (lookoutactor (make-object lookout-actor%))
-                 (momentum-actor (make-object self-braking-slab-actor%)))
-            (send lookoutactor attach-to me lookout-actor-name)
-            (send momentum-actor attach-to me motion-actor-name)
-            (set! _awake? #t)
-            (send hibernation-timer subscribe this) ;maybe sleep in awhile
-            (if visible-state? (send me pen "red"))
-            )))
+      (when (not _awake?)
+        (let* ((me (send this object))
+               (geoactor (geodize me))
+               (lookoutactor (make-object lookout-actor%))
+               (momentum-actor (make-object self-braking-slab-actor%)))
+          (send lookoutactor attach-to me lookout-actor-name)
+          (send momentum-actor attach-to me motion-actor-name)
+          (set! _awake? #t)
+          (send hibernation-timer subscribe this) ;maybe sleep in awhile
+          (when visible-state? (send me pen "red"))
+          )))
 
     (define/public (sleep)
       (let ((me (send this object)))
         (for-each (lambda (name)
                     (send-actor-named me name delete))
                   (list lookout-actor-name motion-actor-name))
-        (if visible-state? (send me pen "pink"))
+        (when visible-state? (send me pen "pink"))
         (send hibernation-timer unsubscribe this)
         (set! _awake? #f)))
 
     (define/override (delete)
       (sleep)
-      (if visible-state? (send (send this object) pen "white"))
+      (when visible-state? (send (send this object) pen "white"))
       (super delete))
 
     (define/public (update . args)
       ; if awake, infrequently receives update from hiberation timer
       ; Then: go to sleep if not moving and not selected
       (let ((me (send this object)))
-        (if (and (not (send me selected?))
-                 (zero? (send-actor-named me motion-actor-name speed)))
-            (sleep))))
+        (when (and (not (send me selected?))
+                   (zero? (send-actor-named me motion-actor-name speed)))
+          (sleep))))
 
     (define/public (slide . args) (awaken)) ;respond to future motion
 
@@ -666,8 +687,8 @@
   (if (list? sth)
       (for-each awaken sth)
       ;else single item; attach awakener, or use existing
-      (if (not (send-actor-named sth 'awakener awaken)) ;if has awakener, use it
-          (make-object awakener% sth)))) ;else make new
+      (when (not (send-actor-named sth 'awakener awaken)) ;if has awakener, use it
+        (make-object awakener% sth)))) ;else make new
 
 (define (sleep sth)
   (if (list? sth)

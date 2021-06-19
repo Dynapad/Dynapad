@@ -1,13 +1,15 @@
 #lang racket/base
 
+(provide general-handle%
+         reshape-polygon
+         make-lazy-pairs
+         )
+
 (require racket/class
          dynapad/base
          dynapad/pad-state
          dynapad/misc/misc
          )
-
-(provide general-handle%
-         reshape-polygon)
 
 ;=== Reshape and Resize ==========================================
 

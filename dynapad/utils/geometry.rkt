@@ -1,15 +1,62 @@
-(require (lib "defmacro.rkt"))
-(require (lib "math.rkt"))
-(dynaload "actor.rkt")
+#lang racket/base
+
+(provide
+ ; for physics
+ geo-actor-name
+ motion-actor-name
+ scale-dxy
+ null-vector
+ intersection
+ geodize
+ contained-objects
+ contained-in?
+ contains-pt?
+ ; for hulls
+ geo-point%
+ geo-polygon%
+         )
+
+(require racket/class
+         #; ; avoid action at a distance issues
+         (only-in racket/class
+                  class send super-instantiate define/public send/apply
+                  this make-object define/override super init
+                  is-a?
+                  field init-field inherit-field ; XXX confusing error messages with spooky action at a distance if these are not imported
+                  )
+         (only-in racket/list remove-duplicates)
+         compatibility/defmacro
+         (only-in compatibility/mlist massq mlist)
+         racket/math
+         dynapad/pad-state
+         (only-in dynapad/base rect% polygon% oval% line%)
+         (only-in dynapad/image image%)
+         (only-in dynapad/events/text text%)
+         (only-in dynapad/dynapad-c-api panel%)
+         dynapad/layout/bbox 
+         ;(only-in dynapad/layout/bbox bboverlap? bbslide coords-from-bbox bbwidth bbheight bbstretch)
+         dynapad/misc/misc
+         dynapad/misc/tools-misc
+         dynapad/misc/tools-lists
+         dynapad/misc/alist
+         dynapad/utils/actor
+         (only-in dynapad/events/reshape make-lazy-pairs)
+         dynapad/utils/formation
+         (for-syntax racket/base)
+         )
+
+;(dynaload "actor.rkt")
 ;(dynaload "misc.rkt")
 ;(dynaload "alist.rkt")
-(dynaload "alist.rkt")
+;(dynaload "alist.rkt")
 ;(dynaload "tools-objects.rkt")
-(dynaload "tools-misc.rkt")
-(dynaload "tools-lists.rkt")
+;(dynaload "tools-misc.rkt")
+;(dynaload "tools-lists.rkt")
 
 ;if debugging used:
 ;(dynaload "profile.rkt")
+
+(define motion-actor-name 'motor)
 
 (define stale 'stale)
 
@@ -278,7 +325,7 @@
 ;(make-object geo-point% { x y | (x y)})
 (define geo-point%
   (class geo-actor%
-    (init-field _x (_y 0))
+    (init-field _x (_y 0))  ; XXX design failure in racket/class where somehow the syntax for init-field is not detected as missing
     (when (list? _x) (set! _y (cadr _x)) (set! _x (car _x)))
     (super-instantiate ())
 
@@ -982,7 +1029,9 @@
     (define/override (refresh-intercept)
       (super go-thru-point _origin))
 
+    #; ; XXX not sure what ths was supposed to be but the pattern is pervasive and seems incorrect?
     (define/override (slide-by-dxy! dx dy)
+      
       (send this origin slide dx dy)
       (invalidate-vars _intercept))
 
@@ -1690,7 +1739,8 @@
                       (is-a? it text%)
                       (is-a? it panel%))
                   (coords-from-bbox (send it bbox)) ;only 2pts; must expand
-                  (send obj coords)))))
+                  ; XXX the ther possibility is that this was supposed to be (send object coords)
+                  (send it coords)))))
 
     ;REDEFS
     (define/public (rescale-around-xy xfact yfact xy-src)

@@ -1,5 +1,8 @@
 #lang racket/base
 
+(provide animate-batch-then-do
+         animate-to)
+
 (require racket/class
          (only-in dynapad/pad-state
                   dynapad)
@@ -9,8 +12,6 @@
          dynapad/utils/actor
          dynapad/physics/actortimer
          )
-
-(provide animate-batch-then-do)
 
 ; there are several motion timers with diff. freqs;
 ;  subscribe motion-actors to appropriate freq timer

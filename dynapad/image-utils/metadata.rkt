@@ -20,6 +20,16 @@
 ;  minutes
 ;  seconds
 
+(provide get-image-date
+         get-image-filedate
+         get-image-focus-dist
+         get-image-fstop
+         date-created-parameter
+         date-acquired-parameter
+         focus-dist-parameter
+         fstop-parameter
+         )
+
 (require racket/class
          racket/date
          racket/list
@@ -36,12 +46,6 @@
          dynapad/misc/tools-cmp
          dynapad/image-utils/smart-labels
          dynapad/image-utils/metadata-base
-         )
-
-(provide get-image-date
-         get-image-filedate
-         get-image-focus-dist
-         get-image-fstop
          )
 
 ;==================== Parameters =============

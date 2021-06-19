@@ -1,14 +1,5 @@
 #lang racket/base
 
-(require racket/class
-         dynapad/misc/misc
-         dynapad/ffs
-         dynapad/import
-         ;dynapad/history/undo
-         ;dynapad/misc/alist
-         ;dynapad/menu/menu_functions
-         )
-
 (provide obj->IDexpr
          set-max-padid
          import-expr-with-objs
@@ -16,6 +7,15 @@
          ObjID
          max-padid
          ensure-id
+         )
+
+(require racket/class
+         dynapad/misc/misc
+         dynapad/ffs
+         dynapad/import
+         ;dynapad/history/undo
+         ;dynapad/misc/alist
+         ;dynapad/menu/menu_functions
          )
 
 ;---- IDs -----------

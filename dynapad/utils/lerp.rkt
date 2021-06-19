@@ -1,11 +1,12 @@
 #lang racket/base
 
-(require dynapad/misc/misc)
-
 (provide lerp
          view_lerp
          siso_lerp_mp
          )
+
+(require dynapad/misc/misc)
+
 ;--- lerp utilities ----------------------------------------------
 
 ;linear-interpolates between low and high by fraction t

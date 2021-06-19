@@ -1,5 +1,7 @@
 #lang racket/base
 
+(provide ask-user-for-bbox)
+
 (require racket/class
          dynapad/history/undo
          dynapad/misc/misc
@@ -9,8 +11,6 @@
          (only-in dynapad/events/mode
                   push-event-mode
                   pop-event-mode))
-
-(provide ask-user-for-bbox)
 
 (define (dt-event? e) #f)  ;may be overridden by DiamondTouch table package
 
