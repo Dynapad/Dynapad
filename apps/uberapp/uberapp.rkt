@@ -37,4 +37,4 @@
 (create-tool-layers dynapad)
 (lockdown-bind-keys dynapad)
 
-(make-object newpaddraw-event-binder% dynapad newpad-event-state%)
+(void (make-object newpaddraw-event-binder% dynapad newpad-event-state%))

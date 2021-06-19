@@ -135,11 +135,13 @@
 ;; this has to be done here because other stages of init
 ;; e.g. log-state.rkt expects the pads to already exist
 ;; at compile time, this is probably a design flaw
-(set-initial-pad-state! (make-new-dynapad ".dynapad"))
-(load-and-apply-user-preferences dynapad)
-(init-menubar)  ; menubar setup
-(init-logtree-layer)
-(start-new-history)  ; set up logging for undo
+(void
+ (set-initial-pad-state! (make-new-dynapad ".dynapad"))
+ (load-and-apply-user-preferences dynapad)
+ (init-menubar)  ; menubar setup
+ (init-logtree-layer)
+ (start-new-history)  ; set up logging for undo
+ )
 
 ;(define *popup-menus-enabled?* #f)  ; -> menu_popup
 ;(define *menubar* #f) -> menubar
@@ -149,6 +151,7 @@
 (when *window-geometry* (send dynapad winfo *window-geometry*))
 
 ; load applications after dynapad has started
+#; ; old functionality, probably needs to be restored
 (let ((load-on-startup "./apps.ss"))
   (if (file-exists? load-on-startup)
       (load load-on-startup)

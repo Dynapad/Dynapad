@@ -24,7 +24,6 @@
                   set-*draw-button-off-labels*!
                   )
          )
-
 (define rectpane     (make-object horizontal-pane% drawpane))
 (define ovalpane     (make-object horizontal-pane% drawpane))
 (define linepane     (make-object horizontal-pane% drawpane))

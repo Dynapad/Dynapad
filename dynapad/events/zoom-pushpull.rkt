@@ -214,6 +214,8 @@
 
 (define (update-lerp-zooming argPAD evnt frac . args)
   ; FIXME somehow this manages to get called before init-lerp-zooming in some cases?
+  ; I think the repro is to add a hyperlink and zoom around using the classic zoom controls
+  ; then once you have finished, try to use the lerp and you should trigger the error
   (unless lerp-zoom-active?
     (error 'oops "init-lerp-zooming should have been called at least once before this"))
   (def view0 (sendf argPAD evs v0))

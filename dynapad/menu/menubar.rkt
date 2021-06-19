@@ -67,16 +67,17 @@
 (define (for-all-pads body) (for-each body *list-of-all-dynapads*))
 
 ;(dynaload "mode.rkt")
-(push-onto-malist-val! massoc "Run"
-                       (lambda (argPAD)
-                         (clear-all-menu-buttons)
-                         (send btn_run set-label on_run))
-                       gui-mode-malist)
-(push-onto-malist-val! massoc "Select"
-                       (lambda (argPAD)
-                         (clear-all-menu-buttons)
-                         (send btn_select set-label on_select))
-                       gui-mode-malist)
+
+(void (push-onto-malist-val! massoc "Run"
+                             (lambda (argPAD)
+                               (clear-all-menu-buttons)
+                               (send btn_run set-label on_run))
+                             gui-mode-malist))
+(void (push-onto-malist-val! massoc "Select"
+                             (lambda (argPAD)
+                               (clear-all-menu-buttons)
+                               (send btn_select set-label on_select))
+                             gui-mode-malist))
 
 
 #| ;obsolete:
@@ -267,13 +268,13 @@
 
 ;; from menu_functions
 
-(make-object button% "Image" imagefontpane
-             (lambda (button event) (Load-Image)))
+(void (make-object button% "Image" imagefontpane
+                   (lambda (button event) (Load-Image))))
 
-(make-object button% "Font" imagefontpane
-             (lambda (b e)
-               (let ((restore-callback (make-restore-font-callback-all-pads)))
-                 (Get-Font-Name-For-Selected apply-new-font-to-all-pads restore-callback))))
+(void (make-object button% "Font" imagefontpane
+                   (lambda (b e)
+                     (let ((restore-callback (make-restore-font-callback-all-pads)))
+                       (Get-Font-Name-For-Selected apply-new-font-to-all-pads restore-callback)))))
 
 (define (apply-new-font-to-all-pads newfont)
   (for-all-pads (lambda (PAD)
@@ -324,19 +325,19 @@
                                  (when (has-method? o 'fill) (send o fill tclcolor)))))) )))
 
 
-(make-object canvas% *menubar*)
+(void (make-object canvas% *menubar*))
 (define fillpane (make-object horizontal-pane% *menubar*))
 (define midpane (make-object horizontal-pane% *menubar*))
 (define penpane (make-object horizontal-pane% *menubar*))
-(make-object canvas% *menubar*)
+(void (make-object canvas% *menubar*))
 
-(make-object button% "Fill" fillpane (fill-command))
-(make-object button% "<none>" fillpane (fill-command #f))
+(void (make-object button% "Fill" fillpane (fill-command)))
+(void (make-object button% "<none>" fillpane (fill-command #f)))
 (define fakecanvas (make-object canvas% midpane))
 (define fillcanvas (make-object canvas% midpane))
 (send fillcanvas min-height 30)
-(make-object button% "Pen" penpane (pen-command))
-(make-object button% "<none>" penpane (pen-command #f))
+(void (make-object button% "Pen" penpane (pen-command)))
+(void (make-object button% "<none>" penpane (pen-command #f)))
 
 
 (require (prefix-in wx: (only-in mred/private/kernel
@@ -472,40 +473,46 @@
                   (Lower-Selected PAD))))
 
 (define resizereshapepane (make-object horizontal-pane% *menubar*))
-(make-object button% "Resize" resizereshapepane (lambda (b e) (Resize-Selected-all-pads)))
-(make-object button% "Reshape" resizereshapepane (lambda (b e) (Reshape-Selected-all-pads)))
+(void
+ (make-object button% "Resize" resizereshapepane (lambda (b e) (Resize-Selected-all-pads)))
+ (make-object button% "Reshape" resizereshapepane (lambda (b e) (Reshape-Selected-all-pads))))
 
 (define raiselowerpane (make-object horizontal-pane% *menubar*))
-(make-object button% "Raise" raiselowerpane (lambda (b e) (Raise-Selected-all-pads)))
-(make-object button% "Lower" raiselowerpane (lambda (b e) (Lower-Selected-all-pads)))
+(void
+ (make-object button% "Raise" raiselowerpane (lambda (b e) (Raise-Selected-all-pads)))
+ (make-object button% "Lower" raiselowerpane (lambda (b e) (Lower-Selected-all-pads))))
 
 (define grouppane (make-object horizontal-pane% *menubar*))
-(make-object button% "Group" grouppane (lambda (b e) (Group-Selected)))
-(make-object button% "Ungroup" grouppane (lambda (b e) (UnGroup-Selected)))
+(void
+ (make-object button% "Group" grouppane (lambda (b e) (Group-Selected)))
+ (make-object button% "Ungroup" grouppane (lambda (b e) (UnGroup-Selected))))
 
 (define copypastepane (make-object horizontal-pane% *menubar*))
-(make-object button% "Copy" copypastepane (lambda (b e) (Copy-Selected)))
-(make-object button% "Paste" copypastepane (lambda (b e) (Paste-From-Copy-Buffer)))
+(void
+ (make-object button% "Copy" copypastepane (lambda (b e) (Copy-Selected)))
+ (make-object button% "Paste" copypastepane (lambda (b e) (Paste-From-Copy-Buffer))))
 
 ;(define importpane (make-object horizontal-pane% *menubar*))
 ;(make-object button% "Import..." importpane (lambda (b e) (Select-and-Import-File)))
 
 (define loadpane (make-object horizontal-pane% *menubar*))
-(make-object button% "Revert" loadpane (lambda (b e) (Restore-Current)))
-(make-object button% "Restore..." loadpane (lambda (b e) (Select-and-Restore-File)))
+(void
+ (make-object button% "Revert" loadpane (lambda (b e) (Restore-Current)))
+ (make-object button% "Restore..." loadpane (lambda (b e) (Select-and-Restore-File))))
 
 (define savepane (make-object horizontal-pane% *menubar*))
-(make-object button% "Save" savepane (lambda (b e) (Save-Current)))
-(make-object button% "Save As..." savepane (lambda (b e) (Select-and-Save-All)))
+(void
+ (make-object button% "Save" savepane (lambda (b e) (Save-Current)))
+ (make-object button% "Save As..." savepane (lambda (b e) (Select-and-Save-All))))
 
 (define exportpane (make-object horizontal-pane% *menubar*))
-(make-object button% "Export Dirs..." exportpane (lambda (b e) (Export-To-Directories)))
+(void (make-object button% "Export Dirs..." exportpane (lambda (b e) (Export-To-Directories))))
 
 (define deletepane (make-object horizontal-pane% *menubar*))
-(make-object button% "Delete" deletepane (lambda (b e) (Delete-Selected)))
+(void (make-object button% "Delete" deletepane (lambda (b e) (Delete-Selected))))
 
 (define deleteallpane (make-object horizontal-pane% *menubar*))
-(make-object button% "Delete All" deleteallpane (lambda (b e) (Confirm-and-Delete-All)))
+(void (make-object button% "Delete All" deleteallpane (lambda (b e) (Confirm-and-Delete-All))))
 
 ;(define loadimagespane (make-object horizontal-pane% *menubar*))
 ;(make-object button% "Load Images" loadimagespane (lambda (button event) (Arrange-Images)))

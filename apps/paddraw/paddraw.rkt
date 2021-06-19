@@ -4,13 +4,15 @@
 ; is more or less doing
 (require racket/class
          dynapad/events/event-state
-         (only-in dynapad/pad-state
-                  dynapad)
-         dynapad/events/event-binders-classic
+         (only-in dynapad/pad-state dynapad)
+         ; a newline is printing here somewhere
+         dynapad/events/event-binders-classic ; this is where our culpret is? or in menu-draw
          dynapad/menu/menu-draw
          "../../dynapad.rkt"
          )
 
 (provide (all-from-out "../../dynapad.rkt"))
 
-(make-object paddraw-event-binder% dynapad event-state%)
+; FIXME now eternally stuck in a wx queue due to changes related to uberapp
+
+(void (make-object paddraw-event-binder% dynapad event-state%))
