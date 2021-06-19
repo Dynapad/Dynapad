@@ -63,6 +63,7 @@
     (init _original)
     (super-instantiate ())
     (field (_url (send this url _original)))
+    ; FIXME this is broken when loading an image from file in uberapp but NOT in paddraw
 
     (define/public url
       (case-lambda

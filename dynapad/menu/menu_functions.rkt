@@ -549,8 +549,9 @@
   (add-menu-item sb "Make Bigger" make-selected-bigger (any-selected?))
   (add-menu-item sb "Make Smaller" make-selected-smaller (any-selected?))
   (add-menu-separator sb)
-  (add-menu-item sb "Resize" Resize-Selected (any-selected?))
-  (add-menu-item sb "Reshape" Reshape-Selected (any-selected?))
+  ; FIXME maybe for these the right solution is to wrap in lambda and pass dynapad?
+  (add-menu-item sb "Resize" Resize-Selected (any-selected?)) ; FIXME this seems very wrong
+  (add-menu-item sb "Reshape" Reshape-Selected (any-selected?)) ; FIXME this seems very wrong
   (add-menu-item sb "Rotate" (nyi "Rotate") #f)
   (add-menu-item sb "Flip Vertical" (nyi "Flip Vertical") #f)
   (add-menu-item sb "Flip Horizontal" (nyi "Flip Horizontal") #f)

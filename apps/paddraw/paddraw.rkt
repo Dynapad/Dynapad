@@ -13,6 +13,12 @@
 
 (provide (all-from-out "../../dynapad.rkt"))
 
-; FIXME now eternally stuck in a wx queue due to changes related to uberapp
+; now eternally stuck in a wx queue due to changes related to uberapp?
+; nope, this is just what happens if you fail to run racket{,cgc} with
+; the options --repl and --require
 
 (void (make-object paddraw-event-binder% dynapad event-state%))
+
+; LOOOL the behavior of loading paddraw and uberapp together at the
+; same time is amusing, the zooms interact with eachother and the
+; scene vanishes into nothingness
