@@ -47,7 +47,7 @@ popd
 mkdir ~/bin
 ln -s ~/git/racket/racket/bin/racocgc ~/bin/
 ln -s ~/git/racket/racket/bin/racketcgc ~/bin/
-echo 'PATH='"${HOME}"'/bin:${PATH}' > ~/.zshrc
+echo 'PATH='"${HOME}"'/bin:/usr/local/opt/imagemagick@6/bin:${PATH}' > ~/.zshrc
 source ~/.zshrc
 
 # FIXME TODO see if we actually need to run make bc for mzdyn3m.o
@@ -65,7 +65,6 @@ https://docs.racket-lang.org/raco/cc.html
 git clone git@github.com:tgbugs/dynapad.git dynapad
 
 pushd dynapad
-git checkout modularize  # temporary until changes are merged
 mkdir build
 pushd build
 # can leave out -DRACKET_DIR on gentoo
@@ -75,18 +74,28 @@ popd
 
 # cgc build
 SUBPATH=$(racketcgc -e "(display (path->string (system-library-subpath)))")
+SO_SUFFIX=$(racketcgc -e "(display (bytes->string/utf-8 (system-type 'so-suffix)))")
 mkdir -p dynapad/compiled/bc/native/${SUBPATH}
-# on a real build libdynapad.so needs to be put at an absolute known path
-# can't link against relative paths
-# FIXME libdynapad.so does not work for this, it must be built as a dylib a bundle on macosx
-racocgc ctool --cgc --ld dynapad/compiled/bc/native/${SUBPATH}/libdynapad_rkt.dylib "${PWD}/build/libdynapad.so"
-racocgc pkg install dynapad/
-racocgc pkg install collects/
+racocgc ctool --cgc \
+        ++ldf -Wl,-rpath,"${PWD}/build/" \
+        --ld dynapad/compiled/bc/native/${SUBPATH}/libdynapad_rkt${SO_SUFFIX} \
+        "${PWD}/build/libdynapad${SO_SUFFIX}"
+racocgc pkg install collects/ dynapad/
+racocgc pkg install gui
 racocgc make dynapad.rkt
 #+end_src
 
+# no needed now the the rpath linker flag is used
+# install_name_tool -add_rpath "@loader_path/../../../../../build/" \
+                  # dynapad/compiled/bc/native/${SUBPATH}/libdynapad_rkt.dylib
+
 * Running
 
+Start =Applications/Utilities/XQuartz.app=.
 #+begin_src bash
-racketcgc -it "apps/paddraw/paddraw.rkt"
+DISPLAY=:0.0 racketcgc -it "apps/paddraw/paddraw.rkt"
 #+end_src
+fails with 
+#+begin_example
+Assertion failed: (pthreadret == 0), function _xcb_in_wake_up_next_reader, file xcb_in.c, line 926.
+#+end_example
