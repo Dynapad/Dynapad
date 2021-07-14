@@ -83,6 +83,8 @@ racocgc ctool --cgc \
 racocgc pkg install collects/ dynapad/
 racocgc pkg install gui
 racocgc make dynapad.rkt
+racocgc make apps/paddraw/paddraw.rkt
+racocgc make apps/uberapp/uberapp.rkt
 #+end_src
 
 # no needed now the the rpath linker flag is used
@@ -91,11 +93,6 @@ racocgc make dynapad.rkt
 
 * Running
 
-Start =Applications/Utilities/XQuartz.app=.
 #+begin_src bash
-DISPLAY=:0.0 racketcgc -it "apps/paddraw/paddraw.rkt"
+racketcgc -it "apps/paddraw/paddraw.rkt"
 #+end_src
-fails with 
-#+begin_example
-Assertion failed: (pthreadret == 0), function _xcb_in_wake_up_next_reader, file xcb_in.c, line 926.
-#+end_example
