@@ -22,11 +22,11 @@ run:
   start mred
     mred -z
   load dynapad
-    (load "dynapad.ss")
+    (load "dynapad.rkt")
   load uberapp
     (appload "uberapp")
   load the dt interface to uberapp
-    (appload "dt-dynapad" "dt-buttons.ss")
+    (appload "dt-dynapad" "dt-buttons.rkt")
 
 I know many of these are standard steps, but I decided to err on the
 side of completeness and specificity. I also spent some time simplifying

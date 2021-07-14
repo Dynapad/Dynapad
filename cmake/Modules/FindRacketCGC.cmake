@@ -9,10 +9,11 @@ find_path(RacketCGC_INCLUDE_DIR_escheme
 
 list(APPEND CMAKE_FIND_LIBRARY_SUFFIXES ".o")
 find_library(RacketCGC_LIBRARY_mzdyn
-    NAMES mzdyn.o
+    NAMES mzdyn3m.o mzdyn.o
     PATHS "${RACKET_DIR}/lib"
           "/usr/local/opt/racket/lib"
           "/usr/local/lib"
+          "/usr/lib64/racket"
     PATH_SUFFIXES racket)
 
 # set(RacketCGC_VERSION ...)
@@ -38,15 +39,21 @@ if (RacketCGC_FOUND)
   set(RacketCGC_DYNAMIC_SYMBOLS
     "scheme_add_global"
     "scheme_append"
+    "scheme_block_until"
     "scheme_byte_string_to_char_string"
     "scheme_char_string_to_byte_string"
+    "scheme_check_proc_arity"
     "scheme_current_config"
     "scheme_dont_gc_ptr"
-    "scheme_gc_ptr_ok"
-    "scheme_expand_filename"
     "scheme_eval"
-    "scheme_check_proc_arity"
+    "scheme_expand_filename"
+    "scheme_false"
+    "scheme_fdset"
+    "scheme_finish_primitive_module"
+    "scheme_gc_ptr_ok"
     "scheme_get_env"
+    "scheme_get_fdset"
+    "scheme_initialize"
     "scheme_intern_symbol"
     "scheme_is_list"
     "scheme_list_length"
@@ -57,17 +64,15 @@ if (RacketCGC_FOUND)
     "scheme_make_path"
     "scheme_make_prim_w_arity"
     "scheme_make_struct_instance"
-    "scheme_true"
-    "scheme_false"
+    "scheme_making_progress"
     "scheme_null"
+    "scheme_primitive_module"
     "scheme_real_to_double"
+    "scheme_thread_block"
     "scheme_thread_local_key"
     "scheme_thread_local_offset"
-    "scheme_thread_block"
-    "scheme_block_until"
-    "scheme_making_progress"
-    "scheme_fdset"
-    "scheme_get_fdset"
+    "scheme_true"
+    "scheme_void"
     "scheme_warning"
     "scheme_wrong_count"
     "scheme_wrong_type")

@@ -10,7 +10,7 @@ Meanings of lefthand/righthand/other gestures are built into the code.
 
 Usage:
 
-  (load "amaya.ss")
+  (load "amaya.rkt")
   (define x (make-object transcript% "Amaya-example.txt"))
 
   (send x entries) ; returns list of entry% objects

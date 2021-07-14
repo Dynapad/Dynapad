@@ -6,7 +6,7 @@ must be in the mysql collects directory (presumably this directory!).
 
 Usage:
 
-  (require "mysql.ss")
+  (require "mysql.rkt")
   (define c (make-object mysql%))
   (send c connect "host" "user" "password")
   (send c database "test")

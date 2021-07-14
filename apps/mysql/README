@@ -2,14 +2,14 @@ Simple mysql interface.  You can use this directly, but I recommend
 subclassing from mysql%.  See workspace.ss and worktest.ss for an
 example of subclassing.
 
-  (load-relative "/home/hci/dynapad/apps/mysql/worktest.ss")
+  (load-relative "/home/hci/dynapad/apps/mysql/worktest.rkt")
 
 Environment variable DYNAHOME MUST BE SET, because mysql.ss and mysql.so
 are installed in $DYNAHOME/lib.
 
 Usage:
 
-  (load (build-path (getenv "DYNAHOME") "lib" "mysql.ss"))
+  (load (build-path (getenv "DYNAHOME") "lib" "mysql.rkt"))
   (define c (make-object mysql%))
   (send c connect "host" "user" "password")
   (send c database "test")

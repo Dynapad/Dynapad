@@ -6,7 +6,7 @@ of levels of recursion.
 
 Usage:
 
-   (load "directory-browser.ss")
+   (load "directory-browser.rkt")
    (define db (make-object dir-browser% currentPAD [path] [depth]))
 
 Caution: Directories with a large number of contents such as /home/Share 
