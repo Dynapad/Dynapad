@@ -40,7 +40,7 @@ add_definitions(-DXSHM)
 
 add_subdirectory(pad)
 
-add_library(dynapad MODULE 
+add_library(dynapad SHARED
   "dynapad.cpp"
   "tclSchemeNotify.c")
 
