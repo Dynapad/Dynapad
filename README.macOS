@@ -79,7 +79,7 @@ mkdir -p dynapad/compiled/bc/native/${SUBPATH}
 # on a real build libdynapad.so needs to be put at an absolute known path
 # can't link against relative paths
 # FIXME libdynapad.so does not work for this, it must be built as a dylib a bundle on macosx
-racocgc ctool --cgc --ld dynapad/compiled/bc/native/${SUBPATH}/libdynapad_rkt.dylib "${PWD}/build/libdynapad.so"
+racocgc ctool --cgc --ld dynapad/compiled/bc/native/${SUBPATH}/libdynapad_rkt.dylib "${PWD}/build/libdynapad.dylib"
 racocgc pkg install dynapad/
 racocgc pkg install collects/
 racocgc make dynapad.rkt
