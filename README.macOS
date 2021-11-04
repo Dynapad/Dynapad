@@ -21,6 +21,11 @@ pushd ~/git
 git clone https://github.com/racket/racket.git
 pushd racket/racket/src
 
+# Needed as of macOS 12.
+export LDFLAGS="-L/usr/local/opt/libffi/lib"
+export CPPFLAGS="-I/usr/local/opt/libffi/include"
+export PKG_CONFIG_PATH="/usr/local/opt/libffi/lib/pkgconfig"
+
 ./configure \
 --enable-float \
 --enable-foreign \
@@ -75,14 +80,17 @@ popd
 
 # cgc build
 SUBPATH=$(racketcgc -e "(display (path->string (system-library-subpath)))")
+SO_SUFFIX=$(racketcgc -e "(display (bytes->string/utf-8 (system-type 'so-suffix)))")
 mkdir -p dynapad/compiled/bc/native/${SUBPATH}
-# on a real build libdynapad.so needs to be put at an absolute known path
-# can't link against relative paths
-# FIXME libdynapad.so does not work for this, it must be built as a dylib a bundle on macosx
-racocgc ctool --cgc --ld dynapad/compiled/bc/native/${SUBPATH}/libdynapad_rkt.dylib "${PWD}/build/libdynapad.dylib"
-racocgc pkg install dynapad/
-racocgc pkg install collects/
+racocgc ctool --cgc \
+        ++ldf -Wl,-rpath,"${PWD}/build/" \
+        --ld dynapad/compiled/bc/native/${SUBPATH}/libdynapad_rkt${SO_SUFFIX} \
+        "${PWD}/build/libdynapad${SO_SUFFIX}"
+racocgc pkg install collects/ dynapad/
+racocgc pkg install gui
 racocgc make dynapad.rkt
+racocgc make apps/paddraw/paddraw.rkt
+racocgc make apps/uberapp/uberapp.rkt
 #+end_src
 
 * Running
