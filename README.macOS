@@ -52,7 +52,7 @@ popd
 mkdir ~/bin
 ln -s ~/git/racket/racket/bin/racocgc ~/bin/
 ln -s ~/git/racket/racket/bin/racketcgc ~/bin/
-echo 'PATH='"${HOME}"'/bin:${PATH}' > ~/.zshrc
+echo 'PATH='"${HOME}"'/bin:/usr/local/opt/imagemagick@6/bin:${PATH}' > ~/.zshrc
 source ~/.zshrc
 
 # FIXME TODO see if we actually need to run make bc for mzdyn3m.o
@@ -70,7 +70,6 @@ https://docs.racket-lang.org/raco/cc.html
 git clone git@github.com:tgbugs/dynapad.git dynapad
 
 pushd dynapad
-git checkout modularize  # temporary until changes are merged
 mkdir build
 pushd build
 # can leave out -DRACKET_DIR on gentoo
@@ -92,6 +91,10 @@ racocgc make dynapad.rkt
 racocgc make apps/paddraw/paddraw.rkt
 racocgc make apps/uberapp/uberapp.rkt
 #+end_src
+
+# no needed now the the rpath linker flag is used
+# install_name_tool -add_rpath "@loader_path/../../../../../build/" \
+                  # dynapad/compiled/bc/native/${SUBPATH}/libdynapad_rkt.dylib
 
 * Running
 

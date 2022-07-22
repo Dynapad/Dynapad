@@ -37,7 +37,7 @@ software in general.
 // Pad++ Font Data Manager
 //
 
-#define DEFAULT_FONT_PATH "/opt/X11/share/fonts/Type1 /usr/lib/X11/fonts/Type1 /usr/X11R6/lib/X11/fonts/Type1"
+#define DEFAULT_FONT_PATH "/usr/share/fonts/Type1 /opt/X11/share/fonts/Type1 /usr/lib/X11/fonts/Type1 /usr/X11R6/lib/X11/fonts/Type1"
 
 #define PATH_SEP_CHAR ' '
 
@@ -192,7 +192,7 @@ Get_data(const char *name, int style, Pad_Bool warn) {
         // attempted to load a font whose name wasn't recognized...
 
         Pad_Bool gotAlias;
-        font = new Pad_FontData(Substitute_font(key, gotAlias));
+        font = new Pad_FontData(Substitute_font(key, gotAlias)); // recurse point
         font->substituted = TRUE;
         fontTable.Set(&key, font);
 
@@ -266,6 +266,7 @@ static FontSub fontSubTable[] = {
 
 static Pad_FontData *
 Substitute_font(FontKey key, Pad_Bool &isAlias) {
+    Pad_FontData *font_test;
     Pad_FontData *font;
     isAlias = FALSE;
 
@@ -277,8 +278,15 @@ Substitute_font(FontKey key, Pad_Bool &isAlias) {
 
     DOTABLE(iter, fontTable, Pad_FontData, f) {
         if (!(strcasecmp(key.name, f->name))) {
-            // yes, they gave the case incorrectly - fix it up
-            return Get_data(f->name, key.style, FALSE);
+          // key in tables does not mean that you actually
+          // get a value, therefore test to prevent infinite recursion
+          // growing into a segfault
+          // I suspect that this happens because fontTable is not
+          // property initialized, but it certainly seems to be
+          // initialized because fontTable.Set is called as expected
+          font_test = (Pad_FontData *) fontTable.Get(&key);
+          if (font_test)
+            return Get_data(f->name, key.style, FALSE); // recurse point
         }
     }
 
