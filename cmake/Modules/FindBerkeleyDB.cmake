@@ -1,161 +1,207 @@
-# Author: sum01 <sum01@protonmail.com>
-# Git: https://github.com/sum01/FindBerkeleyDB
-# Read the README.md for the full info.
+# Copyright (c) 2017-2020 The Bitcoin developers
+# Distributed under the MIT software license, see the accompanying
+# file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
-# NOTE: If Berkeley DB ever gets a Pkg-config ".pc" file, add pkg_check_modules() here
+#.rst
+# FindBerkeleyDB
+# -------------
+#
+# This is inspired by https://github.com/sum01/FindBerkeleyDB.
+#
+# Find the Berkeley database (versions >= 5.x) libraries The following
+# components are available::
+#   C
+#   CXX
+#
+# This will define the following variables::
+#
+#   BerkeleyDB_FOUND - system has Berkeley DB lib
+#   BerkeleyDB_INCLUDE_DIRS - the Berkeley DB include directories
+#   BerkeleyDB_LIBRARIES - Libraries needed to use Berkeley DB
+#   BerkeleyDB_VERSION - The library version MAJOR.MINOR.PATCH
+#   BerkeleyDB_VERSION_MAJOR - Major version number
+#   BerkeleyDB_VERSION_MINOR - Minor version number
+#   BerkeleyDB_VERSION_PATCH - Patch version number
+#
+# And the following imported target::
+#
+#   BerkeleyDB::C
+#   BerkeleyDB::CXX
 
-# Checks if environment paths are empty, set them if they aren't
-if(NOT "$ENV{BERKELEYDB_ROOT}" STREQUAL "")
-	set(_BERKELEYDB_HINTS "$ENV{BERKELEYDB_ROOT}")
-elseif(NOT "$ENV{Berkeleydb_ROOT}" STREQUAL "")
-	set(_BERKELEYDB_HINTS "$ENV{Berkeleydb_ROOT}")
-elseif(NOT "$ENV{BERKELEYDBROOT}" STREQUAL "")
-	set(_BERKELEYDB_HINTS "$ENV{BERKELEYDBROOT}")
-else()
-	# Set just in case, as it's used regardless if it's empty or not
-	set(_BERKELEYDB_HINTS "")
-endif()
+# Generate a list of all the possible versioned library name variants given a
+a21e47cef970 · D5647	
+# list of separators.
+941732f4ce0a · D5339	
+function(generate_versions_variants VARIANTS LIB MAJOR MINOR)
+	set(SEPARATORS
+		"" "." "-" "_"
+	)
 
-# Allow user to pass a path instead of guessing
-if(BerkeleyDB_ROOT_DIR)
-	set(_BERKELEYDB_PATHS "${BerkeleyDB_ROOT_DIR}")
-elseif(CMAKE_SYSTEM_NAME MATCHES ".*[wW]indows.*")
-	# MATCHES is used to work on any devies with windows in the name
-	# Shameless copy-paste from FindOpenSSL.cmake v3.8
-	file(TO_CMAKE_PATH "$ENV{PROGRAMFILES}" _programfiles)
-	list(APPEND _BERKELEYDB_HINTS "${_programfiles}")
-
-	# There's actually production release and version numbers in the file path.
-	# For example, if they're on v6.2.32: C:/Program Files/Oracle/Berkeley DB 12cR1 6.2.32/
-	# But this still works to find it, so I'm guessing it can accept partial path matches.
-
-	foreach(_TARGET_BERKELEYDB_PATH "Oracle/Berkeley DB" "Berkeley DB")
-		list(APPEND _BERKELEYDB_PATHS
-			"${_programfiles}/${_TARGET_BERKELEYDB_PATH}"
-			"C:/Program Files (x86)/${_TARGET_BERKELEYDB_PATH}"
-			"C:/Program Files/${_TARGET_BERKELEYDB_PATH}"
-			"C:/${_TARGET_BERKELEYDB_PATH}"
-		)
+	set(${VARIANTS} "${LIB}")
+	foreach(_separator1 IN LISTS SEPARATORS)
+		list(APPEND ${VARIANTS} "${LIB}${_separator1}${MAJOR}")
+		foreach(_separator2 IN LISTS SEPARATORS)
+			list(APPEND ${VARIANTS} "${LIB}${_separator1}${MAJOR}${_separator2}${MINOR}")
+		endforeach()
 	endforeach()
-else()
-	# Paths for anything other than Windows
-	# Cellar/berkeley-db is for macOS from homebrew installation
-	list(APPEND _BERKELEYDB_PATHS
-		"/usr"
-		"/usr/local"
-		"/usr/local/Cellar/berkeley-db"
-		"/opt"
-		"/opt/local"
+
+	set(${VARIANTS} ${${VARIANTS}} PARENT_SCOPE)
+endfunction()
+c4cba735681b · D823	
+
+713915afdac4 · D1345	
+include(BrewHelper)
+d165e576ace5 · D7441	
+find_brew_prefix(_BerkeleyDB_BREW_HINT berkeley-db)
+2e059ee43151 · D1333	
+
+941732f4ce0a · D5339	
+# If the include directory is user supplied, skip the search
+if(NOT BerkeleyDB_INCLUDE_DIR)
+	# Berkeley DB 5 including latest minor release.
+	generate_versions_variants(_BerkeleyDB_PATH_SUFFIXES_5_3 db 5 3)
+	# Berkeley DB 6 including latest minor release.
+	generate_versions_variants(_BerkeleyDB_PATH_SUFFIXES_6_2 db 6 2)
+	# Berkeley DB 18 including latest minor release (current).
+	generate_versions_variants(_BerkeleyDB_PATH_SUFFIXES_18_1 db 18 1)
+713915afdac4 · D1345	
+
+941732f4ce0a · D5339	
+	set(_BerkeleyDB_PATH_SUFFIXES
+d165e576ace5 · D7441	
+		include
+941732f4ce0a · D5339	
+		${_BerkeleyDB_PATH_SUFFIXES_5_3}
+		${_BerkeleyDB_PATH_SUFFIXES_6_2}
+		${_BerkeleyDB_PATH_SUFFIXES_18_1}
+	)
+	list(REMOVE_DUPLICATES _BerkeleyDB_PATH_SUFFIXES)
+2e059ee43151 · D1333	
+
+941732f4ce0a · D5339	
+	# Try to find the db.h header.
+	# If the header is not found the user can supply the correct path by passing
+	# the `BerkeleyDB_ROOT` variable to cmake.
+	find_path(BerkeleyDB_INCLUDE_DIR
+		NAMES db.h
+d165e576ace5 · D7441	
+		HINTS ${_BerkeleyDB_BREW_HINT}
+941732f4ce0a · D5339	
+		PATH_SUFFIXES ${_BerkeleyDB_PATH_SUFFIXES}
 	)
 endif()
+c4cba735681b · D823	
 
-# Find includes path
-find_path(BerkeleyDB_INCLUDE_DIRS
-	NAMES "db.h"
-	HINTS ${_BERKELEYDB_HINTS}
-	PATH_SUFFIXES "include" "includes"
-	PATHS ${_BERKELEYDB_PATHS}
-)
+941732f4ce0a · D5339	
+# There is a single common include directory.
+# Set the BerkeleyDB_INCLUDE_DIRS variable which is the expected standard output
+# variable name for the include directories.
+set(BerkeleyDB_INCLUDE_DIRS "${BerkeleyDB_INCLUDE_DIR}")
+mark_as_advanced(BerkeleyDB_INCLUDE_DIR)
 
-# Checks if the version file exists, save the version file to a var, and fail if there's no version file
-if(BerkeleyDB_INCLUDE_DIRS)
-	# Read the version file db.h into a variable
-	file(READ "${BerkeleyDB_INCLUDE_DIRS}/db.h" _BERKELEYDB_DB_HEADER)
-	# Parse the DB version into variables to be used in the lib names
-	string(REGEX REPLACE ".*DB_VERSION_MAJOR	([0-9]+).*" "\\1" BerkeleyDB_VERSION_MAJOR "${_BERKELEYDB_DB_HEADER}")
-	string(REGEX REPLACE ".*DB_VERSION_MINOR	([0-9]+).*" "\\1" BerkeleyDB_VERSION_MINOR "${_BERKELEYDB_DB_HEADER}")
-	# Patch version example on non-crypto installs: x.x.xNC
-	string(REGEX REPLACE ".*DB_VERSION_PATCH	([0-9]+(NC)?).*" "\\1" BerkeleyDB_VERSION_PATCH "${_BERKELEYDB_DB_HEADER}")
-else()
-	if(BerkeleyDB_FIND_REQUIRED)
-		# If the find_package(BerkeleyDB REQUIRED) was used, fail since we couldn't find the header
-		message(FATAL_ERROR "Failed to find Berkeley DB's header file \"db.h\"! Try setting \"BerkeleyDB_ROOT_DIR\" when initiating Cmake.")
-	elseif(NOT BerkeleyDB_FIND_QUIETLY)
-		message(WARNING "Failed to find Berkeley DB's header file \"db.h\"! Try setting \"BerkeleyDB_ROOT_DIR\" when initiating Cmake.")
+05720a8d6d46 · D6545	
+if(BerkeleyDB_INCLUDE_DIR)
+941732f4ce0a · D5339	
+	# Extract version information from the db.h header.
+05720a8d6d46 · D6545	
+	if(NOT DEFINED BerkeleyDB_VERSION)
+941732f4ce0a · D5339	
+		# Read the version from file db.h into a variable.
+		file(READ "${BerkeleyDB_INCLUDE_DIR}/db.h" _BerkeleyDB_DB_HEADER)
+a21e47cef970 · D5647	
+
+941732f4ce0a · D5339	
+		# Parse the version into variables.
+		string(REGEX REPLACE
+			".*DB_VERSION_MAJOR[ \t]+([0-9]+).*" "\\1"
+			BerkeleyDB_VERSION_MAJOR
+			"${_BerkeleyDB_DB_HEADER}"
+		)
+		string(REGEX REPLACE
+			".*DB_VERSION_MINOR[ \t]+([0-9]+).*" "\\1"
+			BerkeleyDB_VERSION_MINOR
+			"${_BerkeleyDB_DB_HEADER}"
+		)
+		# Patch version example on non-crypto installs: x.x.xNC
+		string(REGEX REPLACE
+			".*DB_VERSION_PATCH[ \t]+([0-9]+(NC)?).*" "\\1"
+			BerkeleyDB_VERSION_PATCH
+			"${_BerkeleyDB_DB_HEADER}"
+		)
+05720a8d6d46 · D6545	
+
+		# Cache the result.
+		set(BerkeleyDB_VERSION_MAJOR ${BerkeleyDB_VERSION_MAJOR}
+			CACHE INTERNAL "BerekeleyDB major version number"
+		)
+		set(BerkeleyDB_VERSION_MINOR ${BerkeleyDB_VERSION_MINOR}
+			CACHE INTERNAL "BerekeleyDB minor version number"
+		)
+		set(BerkeleyDB_VERSION_PATCH ${BerkeleyDB_VERSION_PATCH}
+			CACHE INTERNAL "BerekeleyDB patch version number"
+		)
+		# The actual returned/output version variable (the others can be used if
+		# needed).
+		set(BerkeleyDB_VERSION
+			"${BerkeleyDB_VERSION_MAJOR}.${BerkeleyDB_VERSION_MINOR}.${BerkeleyDB_VERSION_PATCH}"
+			CACHE INTERNAL "BerekeleyDB full version"
+		)
+941732f4ce0a · D5339	
 	endif()
-	# Set some garbage values to the versions since we didn't find a file to read
-	set(BerkeleyDB_VERSION_MAJOR "0")
-	set(BerkeleyDB_VERSION_MINOR "0")
-	set(BerkeleyDB_VERSION_PATCH "0")
-endif()
 
-# The actual returned/output version variable (the others can be used if needed)
-set(BerkeleyDB_VERSION "${BerkeleyDB_VERSION_MAJOR}.${BerkeleyDB_VERSION_MINOR}.${BerkeleyDB_VERSION_PATCH}")
+05720a8d6d46 · D6545	
+	include(ExternalLibraryHelper)
 
-# Finds the target library for berkeley db, since they all follow the same naming conventions
-macro(findpackage_berkeleydb_get_lib _BERKELEYDB_OUTPUT_VARNAME _TARGET_BERKELEYDB_LIB)
 	# Different systems sometimes have a version in the lib name...
 	# and some have a dash or underscore before the versions.
-	# CMake recommends to put unversioned names before versioned names
-	find_library(${_BERKELEYDB_OUTPUT_VARNAME}
-		NAMES
-		"${_TARGET_BERKELEYDB_LIB}"
-		"lib${_TARGET_BERKELEYDB_LIB}"
-		"lib${_TARGET_BERKELEYDB_LIB}${BerkeleyDB_VERSION_MAJOR}.${BerkeleyDB_VERSION_MINOR}"
-		"lib${_TARGET_BERKELEYDB_LIB}-${BerkeleyDB_VERSION_MAJOR}.${BerkeleyDB_VERSION_MINOR}"
-		"lib${_TARGET_BERKELEYDB_LIB}_${BerkeleyDB_VERSION_MAJOR}.${BerkeleyDB_VERSION_MINOR}"
-		"lib${_TARGET_BERKELEYDB_LIB}${BerkeleyDB_VERSION_MAJOR}${BerkeleyDB_VERSION_MINOR}"
-		"lib${_TARGET_BERKELEYDB_LIB}-${BerkeleyDB_VERSION_MAJOR}${BerkeleyDB_VERSION_MINOR}"
-		"lib${_TARGET_BERKELEYDB_LIB}_${BerkeleyDB_VERSION_MAJOR}${BerkeleyDB_VERSION_MINOR}"
-		"lib${_TARGET_BERKELEYDB_LIB}${BerkeleyDB_VERSION_MAJOR}"
-		"lib${_TARGET_BERKELEYDB_LIB}-${BerkeleyDB_VERSION_MAJOR}"
-		"lib${_TARGET_BERKELEYDB_LIB}_${BerkeleyDB_VERSION_MAJOR}"
-		HINTS ${_BERKELEYDB_HINTS}
-		PATH_SUFFIXES "lib" "lib64" "libs" "libs64"
-		PATHS ${_BERKELEYDB_PATHS}
+	# Generate all combinations from the separators "" (none), ".", "-" and "_".
+	generate_versions_variants(
+		_db_variants
+		db
+		"${BerkeleyDB_VERSION_MAJOR}"
+		"${BerkeleyDB_VERSION_MINOR}"
+941732f4ce0a · D5339	
 	)
-	# If the library was found, add it to our list of libraries
-	if(${_BERKELEYDB_OUTPUT_VARNAME})
-		# If found, append to our libraries variable
-		# The ${{}} is because the first expands to target the real variable, the second expands the variable's contents...
-		# and the real variable's contents is the path to the lib. Thus, it appends the path of the lib to BerkeleyDB_LIBRARIES.
-		list(APPEND BerkeleyDB_LIBRARIES "${${_BERKELEYDB_OUTPUT_VARNAME}}")
-	endif()
-endmacro()
+05720a8d6d46 · D6545	
 
-# Find and set the paths of the specific library to the variable
-findpackage_berkeleydb_get_lib(BerkeleyDB_LIBRARY "db")
-# NOTE: Windows doesn't have a db_cxx lib, but instead compiles the cxx code into the "db" lib
-findpackage_berkeleydb_get_lib(BerkeleyDB_Cxx_LIBRARY "db_cxx")
-# NOTE: I don't think Linux/Unix gets an SQL lib
-findpackage_berkeleydb_get_lib(BerkeleyDB_Sql_LIBRARY "db_sql")
-findpackage_berkeleydb_get_lib(BerkeleyDB_Stl_LIBRARY "db_stl")
+	find_component(BerkeleyDB C
+		NAMES ${_db_variants}
+d165e576ace5 · D7441	
+		HINTS ${_BerkeleyDB_BREW_HINT}
+05720a8d6d46 · D6545	
+		PATH_SUFFIXES ${_db_variants}
+		INCLUDE_DIRS ${BerkeleyDB_INCLUDE_DIRS}
+941732f4ce0a · D5339	
+	)
+05720a8d6d46 · D6545	
 
-# Needed for find_package_handle_standard_args()
-include(FindPackageHandleStandardArgs)
-# Fails if required vars aren't found, or if the version doesn't meet specifications.
-find_package_handle_standard_args(BerkeleyDB
-	FOUND_VAR BerkeleyDB_FOUND
-	REQUIRED_VARS
-		BerkeleyDB_INCLUDE_DIRS
-		BerkeleyDB_LIBRARY
-	VERSION_VAR BerkeleyDB_VERSION
-)
+	generate_versions_variants(
+		_db_cxx_variants
+		db_cxx
+		"${BerkeleyDB_VERSION_MAJOR}"
+		"${BerkeleyDB_VERSION_MINOR}"
+941732f4ce0a · D5339	
+	)
+05720a8d6d46 · D6545	
 
-# Create an imported lib for easy linking by external projects
-if(BerkeleyDB_FOUND AND BerkeleyDB_LIBRARIES AND NOT TARGET Oracle::BerkeleyDB)
-	add_library(Oracle::BerkeleyDB UNKNOWN IMPORTED)
-	set_target_properties(Oracle::BerkeleyDB PROPERTIES
-		INTERFACE_INCLUDE_DIRECTORIES "${BerkeleyDB_INCLUDE_DIRS}"
-		IMPORTED_LOCATION "${BerkeleyDB_LIBRARY}"
-		INTERFACE_LINK_LIBRARIES "${BerkeleyDB_LIBRARIES}"
+	find_component(BerkeleyDB CXX
+		NAMES ${_db_cxx_variants}
+d165e576ace5 · D7441	
+		HINTS ${_BerkeleyDB_BREW_HINT}
+05720a8d6d46 · D6545	
+		PATH_SUFFIXES ${_db_variants}
+		INCLUDE_DIRS ${BerkeleyDB_INCLUDE_DIRS}
+941732f4ce0a · D5339	
 	)
 endif()
 
-# Only show the includes path and libraries in the GUI if they click "advanced".
-# Does nothing when using the CLI
-mark_as_advanced(FORCE
-	BerkeleyDB_INCLUDE_DIRS
-	BerkeleyDB_LIBRARIES
-	BerkeleyDB_LIBRARY
-	BerkeleyDB_Cxx_LIBRARY
-	BerkeleyDB_Sql_LIBRARY
-	BerkeleyDB_Stl_LIBRARY
-)
-
-include(FindPackageMessage)
-# A message that tells the user what includes/libs were found, and obeys the QUIET command.
-find_package_message(BerkeleyDB
-	"Found BerkeleyDB libraries: ${BerkeleyDB_LIBRARIES}"
-	"[${BerkeleyDB_LIBRARIES}[${BerkeleyDB_INCLUDE_DIRS}]]"
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(BerkeleyDB
+	REQUIRED_VARS
+		BerkeleyDB_INCLUDE_DIR
+	VERSION_VAR BerkeleyDB_VERSION
+a1601abf3f0e · D9645	
+	REASON_FAILURE_MESSAGE "if you don't want to build the wallet feature, this can be skipped by passing -DBUILD_BITCOIN_WALLET=OFF to the cmake command line"
+941732f4ce0a · D5339	
+	HANDLE_COMPONENTS
 )
