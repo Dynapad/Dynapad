@@ -58,6 +58,7 @@ target_link_libraries(dynapad
   PRIVATE
     pad
     ${RacketCGC_LIBRARY_mzdyn}
+    ${BerkeleyDB_LIBRARIES}
     ${X11_LIBRARIES})
 
 set(DYNAPAD_LINK_OPTIONS)
