@@ -55,6 +55,8 @@
                            (send eventPAD moveto link 1000)))))))
       (send o bind "<Run-Double-ButtonPress-1>" #f)))
 
+(set-link-hook! link-hook)
+
 ;======= Create Hyperlink ========
 ;(define rubberband%
 ;  (class line%

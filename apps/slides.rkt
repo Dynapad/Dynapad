@@ -1,3 +1,7 @@
+#lang racket/base
+
+(require dynapad/base)
+
 ;;
 ;; Add invisible hyperlinks
 ;; Left top goes back, Right top goes forward
@@ -62,6 +66,8 @@
                   ((is-a? link dynaobject%) (send link center 1000 #f .5 .5 .95))
                   ((list? link) (send pad moveto link 1000))))))
       (send o bind "<Run-Double-ButtonPress-1>" #f)))
+
+(set-link-hook! link-hook)
 
 ;;
 ;; View an object, list, or everything

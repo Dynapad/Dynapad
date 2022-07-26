@@ -14,6 +14,8 @@
          make-new-dynapad
          alist-filters
          make-alist-modifier-function-general
+         set-link-hook!
+         set-center-hook!
          )
 
 (require racket/class
@@ -34,9 +36,16 @@
                   createModes)
          )
 
-(define (link-hook o) #t)
+(define link-hook-fun (λ (o) #t))
 
-(define (center-hook o) #t)
+(define (set-link-hook! f)
+  ; FIXME vs parameter
+  (set! link-hook-fun f))
+
+(define center-hook-fun (λ (o) #t))
+
+(define (set-center-hook! f)
+  (set! center-hook-fun f))
 
 ;;; new dynapad constructor
 (define (make-new-dynapad stringname)
@@ -728,7 +737,7 @@
             (set! initlink newlink))
            (else
             (error "link expects dynaobject% or view, given " newlink)))
-         (link-hook this))))
+         (link-hook-fun this))))
 
     (define savelink
       (case-lambda
@@ -748,7 +757,7 @@
 
     (define (center . args)
       (send/apply (dynapad) center this args)
-      (center-hook this))
+      (center-hook-fun this))
 
     (define dynaclass
       (case-lambda
