@@ -4,6 +4,7 @@ These instructions are for macOS.
 * Dependencies
 
 #+begin_src bash
+
 brew install \
 git \
 racket \
@@ -12,25 +13,27 @@ poppler \
 cmake \
 ninja \
 berkeley-db
+
 #+end_src
 
 * racketcgc
 
 #+begin_src bash
-pushd ~/git
-git clone https://github.com/racket/racket.git
-pushd racket/racket/src
 
-# Needed as of macOS 12.
-export LDFLAGS="-L/usr/local/opt/libffi/lib"
-export CPPFLAGS="-I/usr/local/opt/libffi/include"
-export PKG_CONFIG_PATH="/usr/local/opt/libffi/lib/pkgconfig"
+pushd ~/Downloads
+mkdir dynapad-racket
+pushd dynapad-racket
+curl -LO https://download.racket-lang.org/releases/8.6/installers/racket-minimal-8.6-src.tgz
+tar xvzf racket-minimal-8.6-src.tgz
+
+pushd racket-8.6/src
+curl -LO https://raw.githubusercontent.com/tgbugs/tgbugs-overlay/92825f60270dcba11636f65dcaf447f649fdfc37/dev-scheme/racket/files/8.6-mzdyn-build.patch
+patch -p1 -i 8.6-mzdyn-build.patch
 
 ./configure \
 --enable-float \
 --enable-foreign \
 --disable-libs \
---disable-strip \
 --disable-bcdefault \
 --disable-csdefault \
 --enable-cs \
@@ -42,42 +45,38 @@ export PKG_CONFIG_PATH="/usr/local/opt/libffi/lib/pkgconfig"
 --enable-pthread \
 --enable-libffi
 
-#--enable-shared \
-#--enable-useprefix \
-
 make cgc
 make install-cgc
-popd
-popd
+popd  # racket-8.6/src
+popd  # dynapad-racket
+popd  # ~/Downloads
 mkdir ~/bin
-ln -s ~/git/racket/racket/bin/racocgc ~/bin/
-ln -s ~/git/racket/racket/bin/racketcgc ~/bin/
-echo 'PATH='"${HOME}"'/bin:/usr/local/opt/imagemagick@6/bin:${PATH}' > ~/.zshrc
+unlink ~/bin/racocgc
+unlink ~/bin/racketcgc
+ln -s ~/Downloads/dynapad-racket/racket-8.6/bin/racocgc ~/bin/
+ln -s ~/Downloads/dynapad-racket/racket-8.6/bin/racketcgc ~/bin/
+echo 'PATH='"${HOME}"'/bin:/usr/local/opt/imagemagick@6/bin:${PATH}' >> ~/.zshrc
 source ~/.zshrc
 
-# FIXME TODO see if we actually need to run make bc for mzdyn3m.o
-# FIXME TODO need command line bits
-racocgc pkg install cext-lib
 #+end_src
 
 * Building
 
 https://docs.racket-lang.org/raco/cc.html
 
-=raco ctool is provided by the "cext-lib" package.=
-
 #+begin_src bash
+pushd git
 git clone git@github.com:tgbugs/dynapad.git dynapad
-
 pushd dynapad
+
 mkdir build
 pushd build
-# can leave out -DRACKET_DIR on gentoo
-cmake .. -G Ninja -DRACKET_DIR=${HOME}/git/racket/racket
+cmake .. -G Ninja -DRACKET_DIR=${HOME}/Downloads/dynapad-racket/racket-8.6/
 ninja
 popd
 
 # cgc build
+racocgc pkg install cext-lib  # needed for racocgc ctool below
 SUBPATH=$(racketcgc -e "(display (path->string (system-library-subpath)))")
 SO_SUFFIX=$(racketcgc -e "(display (bytes->string/utf-8 (system-type 'so-suffix)))")
 mkdir -p dynapad/compiled/bc/native/${SUBPATH}
@@ -85,16 +84,12 @@ racocgc ctool --cgc \
         ++ldf -Wl,-rpath,"${PWD}/build/" \
         --ld dynapad/compiled/bc/native/${SUBPATH}/libdynapad_rkt${SO_SUFFIX} \
         "${PWD}/build/libdynapad${SO_SUFFIX}"
-racocgc pkg install --auto gui compatibility
+racocgc pkg install --no-docs --auto gui compatibility
 racocgc pkg install collects/ dynapad/
 racocgc make dynapad.rkt
 racocgc make apps/paddraw/paddraw.rkt
 racocgc make apps/uberapp/uberapp.rkt
 #+end_src
-
-# no needed now the the rpath linker flag is used
-# install_name_tool -add_rpath "@loader_path/../../../../../build/" \
-                  # dynapad/compiled/bc/native/${SUBPATH}/libdynapad_rkt.dylib
 
 * Running
 
