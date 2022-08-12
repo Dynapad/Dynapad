@@ -292,7 +292,8 @@
     ))
 
 (define (at-logbranch-start?)
-  (null? (cdr *undo-stack*)))
+  (or (null? *undo-stack*)
+      (null? (cdr *undo-stack*))))
 (define (at-logbranch-end?)
   (null? *redo-stack*))
 (define (at-log-leaf?)
