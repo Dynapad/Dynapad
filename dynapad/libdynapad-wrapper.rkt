@@ -1,39 +1,80 @@
 #lang racket/base
 (require
  racket/class
- (for-syntax racket/base syntax/parse))
+ (for-syntax
+  racket/base
+  syntax/parse
+  (only-in racket/syntax format-id)))
 
 (provide (except-out (all-defined-out)))
 
+(define-syntax (define-wrap stx)
+  (syntax-parse stx
+    [(_ name)
+     #:with name-real (format-id #'name #:source #'name "~a-real" (syntax-e #'name))
+     #'(begin
+         (require (rename-in (only-in dynapad/libdynapad name) [name name-real]))
+         #;
+         (provide (except-out (all-from-out dynapad/libdynapad)
+                              name-real))
+         (provide name)
+         (define (name . rest)
+           (println (list 'name 'in: rest))
+           (let ([out (apply name-real rest)])
+             (println (list 'name 'out: out))
+             out)))]))
+
 (define-syntax (define-stubs stx)
   (syntax-parse stx
-    [(_ (~or* (name return-value) name) ...)
+    [(_ (~or* (name ((~or* (lambda-list-value default) lambda-list-value) ...) body ...+)
+              (name return-value)
+              name) ...)
      (case (system-type 'gc)
        [(cgc)
         #'(begin
-            (require (rename-in dynapad/libdynapad [sch_position sch_position-real]))
-            (provide (except-out (all-from-out dynapad/libdynapad) sch_position-real))
-            (provide sch_position)
+            (require (rename-in dynapad/libdynapad
+                                [sch_position sch_position-real]))
+            (provide (except-out (all-from-out dynapad/libdynapad)
+                                 sch_position-real))
+            (provide
+             sch_position)
             ; sch_position: expects argument of type <dynaobject%>; given: #f
             (define (sch_position . rest)
               (apply sch_position-real rest))
+            #;
+            (define-wrap sch_bbox)
+            #;
+            (define-wrap sch_getview)
+            #;
+            (define-wrap sch_coords)
             )]
        [else
         #'(begin
             (begin
               (provide name)
-              (define (name . rest)
-                (displayln
-                 (format "libdynapad-wrapper: ~a was called with args: ~a" 'name rest))
-                (~? return-value))) ...)])]))
+              (~?
+               (define (name (~? (lambda-list-value default) lambda-list-value) ...)
+                 (displayln
+                  (format "libdynapad-wrapper: ~a was called with args: ~a" 'name (list lambda-list-value ...)))
+                 body ...)
+               (define (name . rest)
+                 (displayln
+                  (format "libdynapad-wrapper: ~a was called with args: ~a" 'name rest))
+                 (~? return-value)))) ...)])]))
 
 (define-syntax (dpnames stx)
   (syntax-parse stx
-    [(_ (~or* (name return-value) name) ...)
+    [(_ (~or* (name (lambda-list-value ...) body ...+) (name return-value) name) ...)
      #'(class object% (super-new)
-         (define/public (name . rest)
-           (msg this 'name rest)
-           (~? return-value)) ...)]))
+         (~?
+          (~@
+           (define/public (name lambda-list-value ...)
+             body ...))
+          (~@
+           (define/public (name . rest)
+             (msg this 'name rest)
+             (~? return-value)
+             ))) ...)]))
 
 (define (msg this name args)
   (displayln (format "libdynapad-wrapper: object ~a method ~a was called with args: ~a" this name args)))
@@ -56,16 +97,30 @@
   sch_add_tag
   sch_alwaysrender
   sch_anchor
-  sch_background
-  sch_bbox
+  [sch_background
+   "#000000"]
+  [sch_bbox
+   '(-100.0f0 -100.0f0
+      100.0f0  100.0f0)]
   sch_below
   sch_bind
   sch_bindtags
   sch_bind_to_tag
   sch_boundable
   sch_center
-  sch_centerbbox
-  sch_coords
+  [sch_centerbbox
+   (pad bbox-list animation-time two-step? x y zoom)
+   (println (list pad bbox-list animation-time two-step? x y zoom))]
+  [sch_coords
+   ; returns the points for each object rect% oval% line% polygon% ? but the actual
+   ; return value is #t ???
+   ; technically this should be a case lambda
+   ; if coords is provided it sets them
+   (obj [coords #f])
+   (if coords
+       #t
+       '(0.0f0 1.0f0 2.0f0 3.0f0))
+   ]
   sch_cpanzoom
   sch_create
   sch_createPreview
@@ -89,7 +144,12 @@
   sch_events
   sch_faderange
   sch_fastpan
-  [sch_fill (error 'bt)] ; XXX can't hit the codepath that causes the error w/o the c++, have to have an object select and hit Fill
+  [sch_fill
+   ; XXX can't hit the codepath that causes the error w/o the c++
+   ; have to have an object select and hit Fill
+   #;
+   (error 'bt)
+   (void)]
   sch_find
   sch_findable
   sch_flip
@@ -101,7 +161,9 @@
   sch_getfocus
   sch_getgroup
   sch_gettext
-  sch_getview
+  [sch_getview
+   ; x y zoom
+   '(0.0f0 0.0f0 1.0f0)]
   sch_grab
   sch_height
   sch_idle
@@ -157,10 +219,16 @@
   sch_padid
   sch_panelmoveview
   sch_panelsetfill
-  [sch_pen (error 'bt)] ; XXX can't hit the codepath that causes the error w/o the c++, have to have an object select and hit Pen
+  [sch_pen
+   ; XXX can't hit the codepath that causes the error w/o the c++
+   ; have to have an object select and hit Pen
+   #;
+   (error 'bt)
+   (void)]
   sch_penwidth
   sch_pick
-  sch_position
+  [sch_position
+   '(0.0f0 1.0f0 2.0f0 3.0f0)]
   sch_raise
   sch_raiselayer
   sch_refinedissolvespeed
