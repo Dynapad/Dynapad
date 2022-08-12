@@ -273,7 +273,11 @@
       (case-lambda
         (() _hirespath)
         ((newhirespath)
-         (set! _hirespath newhirespath)
+         (set! _hirespath
+               (cond
+                 ((path? newhirespath) newhirespath)
+                 ((string? newhirespath) (string->path newhirespath))
+                 (else (error 'bad-path-type-error "unsupported type for path ~a" newhirespath))))
          (let ((thumbpath (findthumb _hirespath)))
            (when thumbpath
              (set! _thumbdata (make-object imagedata% _dynapad thumbpath))))
