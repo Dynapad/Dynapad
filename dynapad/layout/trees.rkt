@@ -2,7 +2,6 @@
 
 (require racket/class
          (only-in racket/list take)
-         compatibility/mlist
          dynapad/misc/misc
          ;dynapad/misc/alist
          dynapad/utils/actor

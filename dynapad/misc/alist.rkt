@@ -7,6 +7,30 @@
 
 (provide (all-defined-out))
 
+;; missing from compatibility/mlist
+;; adapted from racket/list
+
+(define (do-remove who item mlist equal?)
+  (unless (mlist? mlist)
+    (raise-argument-error who "mlist?" mlist))
+  (let loop ([mlist mlist])
+    (cond [(null? mlist) mlist]
+          [(equal? item (mcar mlist)) (mcdr mlist)]
+          [else
+           (define next (loop (mcdr mlist)))
+           (if (eq? next (mcdr mlist))
+               mlist
+               (mcons (mcar mlist) next))])))
+
+(define (mremq item mlist)
+  (do-remove 'mremq item mlist eq?))
+
+(define (mremv item mlist)
+  (do-remove 'mremv item mlist eqv?))
+
+(define (mremw item mlist)
+  (do-remove 'mremw item mlist equal-always?))
+
 ;remote-get, -set, and -push work on either lvals (settable variables)
 ;  or object fields accessed via message:
 ; (send obj msg) for getting; (send obj msg val) for setting
@@ -25,6 +49,9 @@
 (define-macro (remote-push! atom . lst)
   `(remote-set! ,@lst (cons ,atom (remote-get ,@lst))))
 
+(define-macro (remote-mpush! atom . lst)
+  `(remote-set! ,@lst (mcons ,atom (remote-get ,@lst))))
+
 ;---- Macros for operating on m(utable)alists  ----
 
 ;(...) --> ((new-key-val)..)
@@ -38,7 +65,7 @@
      (if key-vals
          key-vals
          (begin
-           (remote-push! ,new-key-val ,@alist)
+           (remote-mpush! ,new-key-val ,@alist)
            ,new-key-val))))
 
 ;(..(key v0 v1..)..)  --> (...)
@@ -59,7 +86,7 @@
            (set-mcdr! key-vals ,vals)
            (mcons ,key old-vals))
          (begin ;push new
-           (remote-push! (mcons ,key ,vals) ,@alist)
+           (remote-mpush! (mcons ,key ,vals) ,@alist)
            #f))))
 
 ;(..(key v0 v1..)..)  --> (..(key vals)..)
@@ -101,7 +128,7 @@
          (set-mcdr! key-vals (mcons ,val (mcdr key-vals)))
          (begin
            (set! key-vals (mlist ,key ,val))
-           (remote-push! key-vals ,@alist))) ;no such key, so make one
+           (remote-mpush! key-vals ,@alist))) ;no such key, so make one
      key-vals)) ;return entry in either case
 (define-macro (pushv-onto-malist-val-always! key val . alist)
   `(push-onto-malist-val-always! massv ,key ,val ,@alist))
@@ -117,9 +144,9 @@
            key-vals)
          #f)))
 (define-macro (remv-from-malist-val! key val . alist)
-  `(delete-from-malist-val! massv remv ,key ,val ,@alist))
+  `(delete-from-malist-val! massv mremv ,key ,val ,@alist))
 (define-macro (remq-from-malist-val! key val . alist)
-  `(delete-from-malist-val! massq remq ,key ,val ,@alist))
+  `(delete-from-malist-val! massq mremq ,key ,val ,@alist))
 
 ;Like delete-from-malist-val!, but also removes key when del'ing last val
 ;(..(key ..val..)..) --> (..(key...)..) or (...) if last val of key
@@ -133,9 +160,9 @@
            key-vals)
          #f)))
 (define-macro (remv-clean-from-malist-val! key val . malist)
-  `(delete-clean-from-malist-val! massv remv ,key ,val ,@malist))
+  `(delete-clean-from-malist-val! massv mremv ,key ,val ,@malist))
 (define-macro (remq-clean-from-malist-val! key val . malist)
-  `(delete-clean-from-malist-val! massq remq ,key ,val ,@malist))
+  `(delete-clean-from-malist-val! massq mremq ,key ,val ,@malist))
 
 ;=================================================================
 ; alternative alist functions
@@ -177,7 +204,7 @@
         (if elt
             (set-mcdr! elt (list val))
             ;else
-            (set! alist (cons (list key val) alist))
+            (set! alist (mcons (list key val) alist))
             )
         )
       )

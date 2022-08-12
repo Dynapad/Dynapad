@@ -466,7 +466,7 @@
   (ensure-current-logtree #f)
   (let* ((starttime (make-timestamp-ID))
          (newbranch
-          (send (current-logtree) new-branch starttime '(list #t))))
+          (send (current-logtree) new-branch starttime '(mlist #t))))
     (send (current-logtree) activate-branch newbranch)
     (enter-firststate starttime)
     ))

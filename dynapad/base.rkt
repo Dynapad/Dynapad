@@ -285,7 +285,10 @@
     (define alist
       (case-lambda
         (() _alist)
-        ((newalist) (set! _alist newalist))))
+        ((newalist)
+         (when (and (list? newalist) (not (null? newalist)))
+           (error 'non-mutable-list-error "not mlist? ~s" newalist))
+         (set! _alist newalist))))
 
     (define (savealist)
       (filter (lambda (p) (dynapad-printable? p))
@@ -1020,7 +1023,10 @@
     (define eventModeStack
       (case-lambda
         (() _eventModeStack)
-        ((newstack) (set! _eventModeStack newstack))))
+        ((newstack)
+         (unless (list? newstack)
+           (error 'not-immutable-list "not list? ~s" newstack))
+         (set! _eventModeStack newstack))))
 
     (define (xinputdevices)
       (sch_xinputdevices cptr))
