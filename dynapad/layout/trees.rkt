@@ -1,6 +1,7 @@
 #lang racket/base
 
 (require racket/class
+         (only-in racket/list take)
          compatibility/mlist
          dynapad/misc/misc
          ;dynapad/misc/alist
@@ -58,12 +59,21 @@
 
     (define/public (insert-parent new)
       (when _parent
+        (let* ([children (send _parent children)]
+               [right (cons new (cdr (memq this children)))])
+          ; yes we traverse the list 4 times, mutable lists are great ...
+          ; no, I don't feel like writing a version that traverses only once right now
+          (append (take children (- (length children) (length right))) right))
+        #; ; old mlist version
         (let ((my-cell-at-parent (memq this (send _parent children))))
+          ; breaks when trying to save visual logs?
+          ; either we make this work with immutable or we have to change
+          ; memq to mmemq anywhere that might touch this
           (set-mcar! my-cell-at-parent new)))
       (send new depth _depth)
       (send new column _column)
       (send new parent _parent)
-      (send new children (list this))
+      (send new children (list this)) ; must be mlist if set-mcar! is used (no longer)
       (send this parent new)
       (send this drop-family))
     ;     (_relink-fn oldparent new this)))

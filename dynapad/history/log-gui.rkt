@@ -17,19 +17,24 @@
 ; ---------GUI controls------------
 (define (show-history-tree arg)
   (when arg
+    ; requires that the logtree class be a visible-logtree%
     (send (current-logtree) refresh-layout))
   (send *logtree-layer* visible arg)
   (and showhistorybox (send showhistorybox set-value arg)))
+
 (define (toggle-history-tree)
   (let ((shown? (send *logtree-layer* visible)))
     (show-history-tree (not shown?))))
-(define showhistorypane (and *use-menubar*
-                             (make-object horizontal-pane% *menubar*))) ;may be used by showlogs.ss
+
+(define showhistorypane ;; FIXME no longer works as desired probably
+  (and *use-menubar*
+       (make-object horizontal-pane% *menubar*))) ;may be used by showlogs.ss
 
 (define showhistorybox
   (and showhistorypane
        (make-object check-box% "Show history tree" showhistorypane
                     (lambda (button evnt) (toggle-history-tree)))))
+
 (show-history-tree #f)
 
 ;add to popup menu

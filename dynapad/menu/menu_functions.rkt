@@ -462,16 +462,14 @@
     ((fullfilename) (Save-All-As fullfilename Save-All-To-Port))
     ((fullfilename save-fn)
      (with-handlers
-       ((exn?
+       ([exn?
          (lambda (exn)
-           (message-box  "Save" (exn-message exn) *menubar* '(ok)))))
-       (let ((port #f))
-         (unless fullfilename
-           (error "no filename specified"))
-         (send currentPAD set!-path fullfilename)
-         (set! port (open-output-file fullfilename #:exists 'truncate))
-         (save-fn port)
-         (close-output-port port))))))
+           (message-box  "Save" (exn-message exn) *menubar* '(ok)))])
+       (unless fullfilename
+         (error "no filename specified"))
+       (send currentPAD set!-path fullfilename)
+       (call-with-output-file fullfilename #:exists 'truncate
+         save-fn)))))
 
 ;
 ; Edit submenu

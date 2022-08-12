@@ -21,6 +21,7 @@
 
 (provide current-logtree
          current-logbranch
+         set-make-logtree!
          *current-logtree*
          set-*current-logtree*!
          logtree%
@@ -324,8 +325,13 @@
 ;      (send (current-logtree) trust-cache? #f))
 ;  (++_ *id-counter*))
 
-(define (make-logtree dir name) ;may be overridden in showlogs.ss, etc
+(define (-make-logtree dir name) ;may be overridden in showlogs.ss, etc
   (make-object logtree% dynapad logbranch% dir name))
+
+(define make-logtree -make-logtree)
+
+(define (set-make-logtree! f)
+  (set! make-logtree f))
 
 (define *current-logtree* #f)
 
@@ -637,7 +643,7 @@
 
 
 
-    (define/public (split-at-entry  state-id build-expr . more)
+    (define/public (split-at-entry state-id build-expr . more)
       ; Assumes state-id being sought != log start state (else error)
       ; forks log (THIS) corresponding to *current-logid*:
       ;  i.e. all entries after state-id (if any) moved to one new log (A)

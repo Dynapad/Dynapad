@@ -6,9 +6,9 @@
          dynapad/pad-state
          dynapad/misc/misc
          dynapad/utils/lerp
-         dynapad/history/logbranch
+         dynapad/history/logbranch ; also has make-logtree
          dynapad/history/log-state
-         dynapad/history/showlogs
+         dynapad/history/showlogs ; also has make-logtree
          )
 
 (define *current-state-marker* #f)
@@ -80,3 +80,4 @@
 (define (make-logtree dir name) ;override defn in logbranch.ss
   (make-object visible-beaded-logtree% dynapad logbranch-beaded-line% dir name))
 
+(set-make-logtree! make-logtree) ; mimic scheme top level behavior
