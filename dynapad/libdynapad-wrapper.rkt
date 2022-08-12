@@ -8,6 +8,8 @@
 
 (provide (except-out (all-defined-out)))
 
+(define debug-calls (make-parameter #f))
+
 (define-syntax (define-wrap stx)
   (syntax-parse stx
     [(_ name)
@@ -19,10 +21,13 @@
                               name-real))
          (provide name)
          (define (name . rest)
-           (println (list 'name 'in: rest))
-           (let ([out (apply name-real rest)])
-             (println (list 'name 'out: out))
-             out)))]))
+           (if (debug-calls)
+               (begin
+                 (println (list 'name 'in: rest))
+                 (let ([out (apply name-real rest)])
+                   (println (list 'name 'out: out))
+                   out))
+               (apply name-real rest))))]))
 
 (define-syntax (define-stubs stx)
   (syntax-parse stx
@@ -32,13 +37,19 @@
      (case (system-type 'gc)
        [(cgc)
         #'(begin
+            (require dynapad/libdynapad)
+            (define-wrap name) ...
+            #;
             (require (rename-in dynapad/libdynapad
                                 [sch_position sch_position-real]))
+            #;
             (provide (except-out (all-from-out dynapad/libdynapad)
                                  sch_position-real))
+            #;
             (provide
              sch_position)
             ; sch_position: expects argument of type <dynaobject%>; given: #f
+            #;
             (define (sch_position . rest)
               (apply sch_position-real rest))
             #;
@@ -92,6 +103,7 @@
 (define-stubs
   sch_above
   sch_abslinestyle
+  #; ; not defined in libdynapad.so
   sch_add
   sch_addmember
   sch_add_tag
@@ -101,7 +113,7 @@
    "#000000"]
   [sch_bbox
    '(-100.0f0 -100.0f0
-      100.0f0  100.0f0)]
+              100.0f0  100.0f0)]
   sch_below
   sch_bind
   sch_bindtags
@@ -122,9 +134,12 @@
        '(0.0f0 1.0f0 2.0f0 3.0f0))
    ]
   sch_cpanzoom
+  #; ; not defined in libdynapad.so
   sch_create
+  #; ; not defined in libdynapad.so
   sch_createPreview
   sch_cursor
+  #; ; not defined in libdynapad.so
   sch_cursor_by_name
   sch_debugevent
   sch_delete
@@ -135,11 +150,17 @@
   sch_dissolvespeed
   sch_divisible
   sch_doublebuffer
+  #; ; not defined in libdynapad.so (or anywhere for that matter)
   sch_dt
+  #; ; not defined in libdynapad.so
   sch_dtclose
+  #; ; not defined in libdynapad.so
   sch_dtmode
+  #; ; not defined in libdynapad.so
   sch_dtopen
+  #; ; not defined in libdynapad.so
   sch_dtread
+  #; ; not defined in libdynapad.so
   sch_dt_touches
   sch_events
   sch_faderange
@@ -152,7 +173,9 @@
    (void)]
   sch_find
   sch_findable
+  #; ; not defined in libdynapad.so
   sch_flip
+  #; ; not defined in libdynapad.so
   sch_flop
   [sch_focus "focus value"]
   sch_font
@@ -179,6 +202,7 @@
   sch_layers
   sch_lower
   sch_lowerlayer
+  #; ; not defined in libdynapad.so (or anywhere for that matter)
   sch_make
   sch_makebutton
   [sch_makedynapad 'test-cpointer] ; cptr
@@ -198,6 +222,7 @@
   sch_minsize
   [sch_modifier "modifier value"]
   sch_moveto
+  #| ; not defined in libdynapad.so
   sch_mysql
   sch_mysql_affected_rows
   sch_mysql_change_user
@@ -212,8 +237,10 @@
   sch_mysql_real_connect
   sch_mysql_select_db
   sch_mysql_store_result
+  |#
   [sch_objectlist (list (make-object test-object%))] ; FIXME this doesn't work we need the real objects
   sch_order
+  #; ; not defined in libdynapad.so (or anywhere for that matter)
   sch_os
   sch_os2unix
   sch_padid
@@ -242,7 +269,9 @@
   sch_renderscript
   sch_rendertext
   sch_rendertime
+  #; ; not defined in libdynapad.so
   sch_resize
+  #; ; not defined in libdynapad.so
   sch_rotate
   sch_scale
   sch_settext
@@ -251,6 +280,7 @@
   sch_transparency
   sch_truncatefile
   sch_unfindable
+  #; ; not defined in libdynapad.so (or anywhere for that matter)
   sch_unix
   sch_unix2os
   sch_update
@@ -258,6 +288,7 @@
   sch_visible
   sch_visiblelayer
   sch_visiblep
+  #; ; not defined in libdynapad.so
   sch_warp
   sch_warp_pointer
   sch_width
@@ -266,6 +297,7 @@
   wish ; XXX note that this one lacks a prefix
   sch_xftenable
   sch_xinputdevices
+  #; ; not defined in libdynapad.so (or anywhere for that matter)
   sch_xy
   sch_xy_in_poly
   sch_zoom
