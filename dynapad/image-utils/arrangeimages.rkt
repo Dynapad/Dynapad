@@ -1,3 +1,35 @@
+#lang racket/base
+; obsolete
+
+(provide
+ Arrange-Pdfs)
+
+(require
+ racket/class
+ (only-in racket/gui/base
+          get-directory
+          )
+ (only-in dynapad/spd
+          show-possible-delay)
+ dynapad/libdynapad-wrapper
+ (only-in dynapad/pad-state
+          dynapad)
+ (only-in collects/misc/pathhack
+          directory-list->string
+
+          build-path->string)
+ (only-in dynapad/misc/misc
+          push!
+          endpush!
+          foreach)
+ (only-in dynapad/image
+          pdf%
+          image%)
+ (only-in dynapad/undo-state
+          undoify-fresh-objs
+          )
+ (only-in dynapad/events/mode
+          gui-update-mode))
 #; 
 ; This file is obsolete; import operations subsumed by import-dirs.ss
 

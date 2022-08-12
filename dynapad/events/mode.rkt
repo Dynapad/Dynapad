@@ -15,6 +15,7 @@
          push-event-mode
          pop-event-mode
          createModes
+         gui-mode-cursor
          )
 
 (define _gui-mode-cursor '())

@@ -1,3 +1,40 @@
+#lang racket/base
+; obsolete
+
+(provide
+ dywx-bitmap%
+ dywx-frame%
+ dywx-horizontal-pane%
+ dywx-button%
+ color-ellipse%)
+
+(require
+ racket/class
+ (only-in racket/gui/base timer%)
+ (only-in dynapad/pad-state
+          currentPAD)
+ (only-in dynapad/misc/misc
+          ic
+          def
+          push!
+          foreach)
+ (only-in dynapad/layout/bbox
+          bbsw
+          bbnw
+          bbne
+          bbwiden
+          bbcenter)
+ (only-in dynapad/container
+          container-form%)
+ (only-in dynapad/base
+          group%
+          rect%
+          oval%)
+ (only-in dynapad/events/text
+          text%)
+ (only-in dynapad/image
+          imagedata%
+          baseimage%))
 
 ;-- "after" util ---
 ; execute lambda after wait of specified milliseconds
@@ -16,7 +53,7 @@
 (define dywx-frame%
   (class container-form%
     (init title dummy1 dummy2 dummy3 initx inity)
-    (field (_object_sequence ()))
+    (field (_object_sequence '()))
     ;;  (field (_backing #f))
 
     (super-instantiate (currentPAD))
@@ -38,12 +75,12 @@
       )
 
     (define/public (update)
-      (if (not (null? _object_sequence))
-          (let ((targetXY (send this xy)))
-            (set! targetXY (list (car targetXY) (+ (cadr targetXY) (currpixels 2))))
-            (foreach _object_sequence (lambda (obj)
-                                        (send obj xy (car targetXY) (- (cadr targetXY) (currpixels 2)))
-                                        (set! targetXY (bbsw (send obj bbox))) ))))
+      (when (not (null? _object_sequence))
+        (let ((targetXY (send this xy)))
+          (set! targetXY (list (car targetXY) (+ (cadr targetXY) (currpixels 2))))
+          (foreach _object_sequence (lambda (obj)
+                                      (send obj xy (car targetXY) (- (cadr targetXY) (currpixels 2)))
+                                      (set! targetXY (bbsw (send obj bbox))) ))))
 
       ;;    (when (not _backing)
       ;;      (set! _backing (ic (make-object rect% (send this dynapad)
@@ -59,9 +96,9 @@
       )
 
     (define/public (update-all)
-      (if (not (null? _object_sequence))
-          (foreach _object_sequence (lambda (pane)
-                                      (send pane update-all))))
+      (when (not (null? _object_sequence))
+        (foreach _object_sequence (lambda (pane)
+                                    (send pane update-all))))
       (update)
       )
 
@@ -74,7 +111,7 @@
 (define dywx-horizontal-pane%
   (class group%
     (init-field _parent)
-    (field (_object_sequence ()))
+    (field (_object_sequence '()))
     (super-instantiate ((send _parent dynapad)))
     (send this anchor "nw")
     (send this xy 0 0)
@@ -93,17 +130,17 @@
       )
 
     (define/public (update)
-      (if (not (null? _object_sequence))
-          (let ((targetXY (send this xy)))
-            (foreach _object_sequence (lambda (obj)
-                                        (send obj xy (+ (car targetXY) (currpixels 2)) (cadr targetXY))
-                                        (set! targetXY (bbne (send obj bbox))) ))))
+      (when (not (null? _object_sequence))
+        (let ((targetXY (send this xy)))
+          (foreach _object_sequence (lambda (obj)
+                                      (send obj xy (+ (car targetXY) (currpixels 2)) (cadr targetXY))
+                                      (set! targetXY (bbne (send obj bbox))) ))))
       (send _parent update))
 
     (define/public (update-all)
-      (if (not (null? _object_sequence))
-          (foreach _object_sequence (lambda (btn)
-                                      (send btn update-all))))
+      (when (not (null? _object_sequence))
+        (foreach _object_sequence (lambda (btn)
+                                    (send btn update-all))))
       (update)
       )
 
@@ -112,7 +149,7 @@
     (define/public (show bool) #t)
     )
   )
-(def tl-list ())
+(def tl-list '())
 (define dywx-button%
   (class group%
     (init init-label init-pane command-function) ; function args are (bttn evnt)
@@ -123,7 +160,7 @@
     (send this anchor "nw")
     (define/public (get-label) _label)
     (define/public (set-label new_label)
-      (if _label (send _label delete))
+      (when _label (send _label delete))
       (if (string? new_label)
           ;make text%
           (begin
@@ -182,7 +219,7 @@
 
     (define/public (show bool) #t)
 
-    (if init-label (set-label init-label))
+    (when init-label (set-label init-label))
     (send _pane add this)
     (send this bind "<ButtonPress-1>"
           (lambda (d e) (command-function this e) #f))
@@ -195,8 +232,8 @@
     (send this divisible #f)
     (send this findable #f)
     (send this takegroupevents #t)
-    (if init-label
-        (after 1000 (lambda () (send this set-label init-label))))
+    (when init-label
+      (after 1000 (lambda () (send this set-label init-label))))
     )
   )
 

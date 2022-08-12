@@ -22,6 +22,7 @@
          ask-user-for-color
          *default_directory*
          Select-and-Import-File
+         Arrange-Images
          )
 
 (require (only-in racket/class

@@ -1,8 +1,87 @@
+#lang racket/base
+; obsolete
+
+(require
+ racket/class
+ (only-in racket/gui/base
+          button%
+          check-box%
+          horizontal-pane%
+          message%
+          dialog%
+          frame%)
+ (only-in dynapad/pad-state
+          *list-of-all-dynapads*
+          *dynapad-directory*
+          dynapad
+          currentPAD)
+ (only-in dynapad/base
+          rect%
+          oval%
+          line%
+          polyline%
+          polygon%
+          freehand%)
+ (only-in dynapad/events/hyperlink
+          initCreateLink)
+ (only-in dynapad/events/mode
+          changemode
+          changemode--no-gui
+          gui-mode-cursor)
+ (only-in collects/misc/pathhack
+          build-path->string)
+ (only-in dynapad/menu/wx_emulator
+          dywx-bitmap%
+          dywx-frame%
+          dywx-horizontal-pane%
+          dywx-button%
+          color-ellipse%)
+ (only-in dynapad/misc/misc
+          mlet
+          push!
+          foreach
+          has-method?)
+ (only-in dynapad/misc/user-preferences
+          *draw-menu-x*
+          *draw-menu-y*)
+ (only-in dynapad/events/draw
+          set-Draw-multiple!
+          initDraw)
+ (only-in dynapad/events/text
+          text%)
+ (only-in dynapad/menu/menu_functions
+          Load-Image
+          Get-Font-Name-For-Selected
+          pengetcolor
+          fillgetcolor
+          Resize-Selected
+          Reshape-Selected
+          Raise-Selected
+          Lower-Selected
+          Group-Selected
+          UnGroup-Selected
+          Select-and-Import-File
+          Save-Current
+          Select-and-Save-All
+          Arrange-Images)
+ (only-in dynapad/image-utils/arrangeimages
+          Arrange-Pdfs)
+ (only-in dynapad/menu/menu_shared
+          Restore-Current
+          Select-and-Restore-File)
+ (only-in dynapad/copy
+          Copy-Selected)
+ (only-in dynapad/history/undo
+          Confirm-and-Delete-All
+          Delete-Selected
+          Paste-From-Copy-Buffer)
+ (only-in dynapad/layout/bbox
+          bbnw))
+
 ;Most of this is obsolete or redundant;
 ; see menubar.ss as example of revision.
 ;======= Simple Menubar ========
 
-(dynaload "wx_emulator.rkt")
 
 (define (for-all-pads body) (for-each body *list-of-all-dynapads*))
 
@@ -12,8 +91,8 @@
 
     ; change all others pads to match mode (?)
     (for-all-pads (lambda (PAD)
-                    (if (not (eq? PAD argPAD))
-                        (changemode--no-gui PAD mode))))
+                    (when (not (eq? PAD argPAD))
+                      (changemode--no-gui PAD mode))))
 
     (cond ((equal? mode "Run")
            (for-all-pads (lambda (PAD)
@@ -63,7 +142,7 @@
 (define *dynamenubar* (make-object dywx-frame% "Draw Tools" #f #f #f *draw-menu-x* *draw-menu-y*))
 (define *frame* (make-object frame% "Draw Tools" #f #f #f 0 0))
 
-(define *dynamenubar_offlist* ())
+(define *dynamenubar_offlist* '())
 
 (define runpane      (make-object dywx-horizontal-pane% *dynamenubar*))
 (define rectpane     (make-object dywx-horizontal-pane% *dynamenubar*))
@@ -127,8 +206,8 @@
   (send btn_text        set-label off_text       )
   (send btn_portal      set-label off_portal     )
   (send btn_hyperlink   set-label off_hyperlink  )
-  (if btn_marquee (send btn_marquee set-label off_marquee  ))
-  (if btn_lasso (send btn_lasso set-label off_lasso  ))
+  (when btn_marquee (send btn_marquee set-label off_marquee))
+  (when btn_lasso (send btn_lasso set-label off_lasso))
   (foreach *guest-button-off-labels*
            (lambda (pair) (mlet (((btn lbl) pair)) (send btn set-label lbl))))
   )
@@ -165,7 +244,7 @@
                                  (send argPAD fill? #f)))
                  (clear-all-menu-buttons)
                  (send button set-label on_rect)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD rect% "Draw")))))
   )
@@ -179,7 +258,7 @@
                                  (send argPAD fill? #t)))
                  (clear-all-menu-buttons)
                  (send button set-label on_filledRect)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (update-panel-colors)
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD rect% "Draw")))))
@@ -194,7 +273,7 @@
                                  (send argPAD fill? #f)))
                  (clear-all-menu-buttons)
                  (send button set-label on_oval)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD oval% "Draw")))))
   )
@@ -207,7 +286,7 @@
                                  (send argPAD fill? #t)))
                  (clear-all-menu-buttons)
                  (send button set-label on_filledOval)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (update-panel-colors)
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD oval% "Draw")))))
@@ -221,7 +300,7 @@
                (lambda (button event)
                  (clear-all-menu-buttons)
                  (send button set-label on_line)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD line% "Draw")))))
   )
@@ -233,7 +312,7 @@
                (lambda (button event)
                  (clear-all-menu-buttons)
                  (send button set-label on_polyline)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD polyline% "Draw")))))
   )
@@ -247,7 +326,7 @@
                                  (send argPAD fill? #f)))
                  (clear-all-menu-buttons)
                  (send button set-label on_portal)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (printf "portals not migrated yet~%")
                  ))
   )
@@ -261,7 +340,7 @@
                                  (send argPAD fill? #f)))
                  (clear-all-menu-buttons)
                  (send button set-label on_hyperlink)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (for-all-pads (lambda (argPAD)
                                  (initCreateLink argPAD)))
                  ))
@@ -317,7 +396,7 @@
                                  (send argPAD fill? #t)))
                  (clear-all-menu-buttons)
                  (send button set-label on_filledPoly)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (update-panel-colors)
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD polygon% "Draw")))))
@@ -330,7 +409,7 @@
                (lambda (button event)
                  (clear-all-menu-buttons)
                  (send button set-label on_freehand)
-                 (set! Draw-multiple (button-double-clicked?))
+                 (set-Draw-multiple! (button-double-clicked?))
                  (for-all-pads (lambda (argPAD)
                                  (initDraw argPAD freehand% "Draw")))))
   )
@@ -360,18 +439,18 @@
   (for-all-pads (lambda (PAD)
                   (send PAD defaultfont newfont)
                   (foreach (send PAD selected) (lambda (obj)
-                                                 (if (has-method? obj 'font)
-                                                     (send obj font newfont)))))))
+                                                 (when (has-method? obj 'font)
+                                                   (send obj font newfont)))))))
 
 (define (make-restore-font-callback-all-pads)
-  (let ((op-list ()))
+  (let ((op-list '()))
     (for-all-pads (lambda (PAD)
                     (let ((oldfont (send PAD defaultfont)))
                       (push! (lambda() (send PAD defaultfont oldfont)) op-list))
                     (foreach (send PAD selected) (lambda (obj)
-                                                   (if (has-method? obj 'font)
-                                                       (let ((oldfont (send obj font)))
-                                                         (push!  (lambda () (send obj font oldfont)) op-list)))))))
+                                                   (when (has-method? obj 'font)
+                                                     (let ((oldfont (send obj font)))
+                                                       (push! (lambda () (send obj font oldfont)) op-list)))))))
     (lambda () (foreach op-list (lambda (op) (op))))))
 
 ;--- Pen color and Fill color buttons and indicators -------------
@@ -388,7 +467,7 @@
       (for-all-pads (lambda (argPAD)
                       (foreach (send argPAD selected)
                                (lambda (o)
-                                 (if (has-method? o 'pen) (send o pen tclcolor)))))) )))
+                                 (when (has-method? o 'pen) (send o pen tclcolor)))))) )))
 
 (define (fill-command . args)
   (lambda (button event)
@@ -402,7 +481,7 @@
       (for-all-pads (lambda (argPAD)
                       (foreach (send argPAD selected)
                                (lambda (o)
-                                 (if (has-method? o 'fill) (send o fill tclcolor)))))) )))
+                                 (when (has-method? o 'fill) (send o fill tclcolor)))))) )))
 
 
 (define fillpane (make-object dywx-horizontal-pane% *dynamenubar*))
@@ -455,7 +534,7 @@
                    (let loop
                        ((first (car l)) (l l))
                      (cond
-                       ((null? (cdr l)) (if loop? (send (car l) link first)))
+                       ((null? (cdr l)) (when loop? (send (car l) link first)))
                        (else
                         (send (car l) link (cadr l))
                         (loop first (cdr l)))))
@@ -490,7 +569,7 @@
                        ((o o))
                      (let ((next (send o link)))
                        (send o link #f)
-                       (if (and follow? next) (loop next))))
+                       (when (and follow? next) (loop next))))
                    (send dialog show #f)))
     (send dialog show #t)))
 
@@ -564,5 +643,6 @@
 (send *dynamenubar* show #t)
 (update-panel-colors)
 
+#; ; old load stuff ?
 (after 2000 repos-menubar)
 
