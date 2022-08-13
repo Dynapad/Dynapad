@@ -2,6 +2,8 @@
 
 (provide *undo-stack*
          *redo-stack*
+         set-*undo-stack*!
+         set-*redo-stack*!
          push-*undo-stack*!
          push-*redo-stack*!
          pop-*undo-stack*!
@@ -64,7 +66,7 @@
          dynapad/pad-state
          dynapad/misc/misc
          dynapad/history/ids
-         ;dynapad/history/logs ; danger i suspect ; yep
+         ;dynapad/history/logs ; danger i suspect ; yep ; XXX needed for macro expansion of some forms though?
          )
 
 ;--- basic do/undo mechanism -------------------------------------
@@ -73,6 +75,8 @@
 (define *undo-stack* '())
 (define *redo-stack* '())
 
+(define (set-*undo-stack*! value) (set! *undo-stack* value))
+(define (set-*redo-stack*! value) (set! *redo-stack* value))
 
 (define (push-*undo-stack*! value) (push! value *undo-stack*))
 (define (push-*redo-stack*! value) (push! value *redo-stack*))

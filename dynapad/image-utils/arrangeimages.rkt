@@ -2,6 +2,7 @@
 ; obsolete
 
 (provide
+ Arrange-Images
  Arrange-Pdfs)
 
 (require

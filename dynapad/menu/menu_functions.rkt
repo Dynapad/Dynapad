@@ -17,13 +17,12 @@
          Lower-Selected
          Group-Selected
          UnGroup-Selected
+         Save-All-As ; useful for direct saves from code but dangerous
          Save-Current
          Select-and-Save-All
          ask-user-for-color
          *default_directory*
-         Select-and-Import-File
-         Arrange-Images
-         )
+         Select-and-Import-File)
 
 (require (only-in racket/class
                   send
@@ -143,9 +142,14 @@
          (dir? #f))
 
     (when path
-      (set!-values (dir filename dir?) (split-path->string path)))
+      (let-values ([(a b c) (split-path->string path)])
+        (set!-values (dir filename dir?)
+                     (values (if (eq? 'relative a) dir a) b c))))
 
-    (set! path (get-file "Load" *menubar* dir #f #f null))
+    ; racket cannot easily control the location at which the dialog
+    ; is created if this uses the native gui (which we want)
+    (set! path (get-file "Load" *menubar* dir #f #f '()))
+
     (set! *default_directory* dir)
 
     (when path
@@ -161,6 +165,7 @@
 (define (load-pdf-current-view PAD fullpath)
   (make-object pdf% PAD fullpath (center-of-view PAD)))
 
+#; ; defined in dynapad/image-utils/arrangeimages
 (define (Arrange-Images) (not-implemented "Load Image Dir")) ; placeholder function
 
 (define (fontdialog apply-new-font-callback cancel-callback)

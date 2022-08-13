@@ -81,3 +81,6 @@
   (make-object visible-beaded-logtree% dynapad logbranch-beaded-line% dir name))
 
 (set-make-logtree! make-logtree) ; mimic scheme top level behavior
+(set-enter-firststate! enter-firststate)
+(set-enter-midstate! enter-midstate)
+(set-enter-laststate! enter-laststate)

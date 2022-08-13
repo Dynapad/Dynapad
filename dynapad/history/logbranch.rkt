@@ -603,7 +603,10 @@
                                  state-ID
                                  ;'(my-logtreedir) '(my-logtreename)
                                  ;(treename)
-                                 (logid) `',build-expr)))
+                                 (logid)
+                                 ; I have no idea why build-expr was being requoted here
+                                 ; `',build-expr
+                                 build-expr)))
       (write-log-entry (list 'created-by
                              state-ID
                              (send dynapad winid)

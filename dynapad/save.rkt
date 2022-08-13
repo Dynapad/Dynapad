@@ -83,7 +83,9 @@
            (filename #f)
            (dir? #f))
        (when path
-         (set!-values (dir filename dir?) (split-path->string path)))
+         (let-values ([(a b c) (split-path->string path)])
+           (set!-values (dir filename dir?)
+                        (values (if (eq? 'relative a) dir a) b c))))
        (when dir?
          (set! dir (build-path dir filename))
          (set! filename #f))

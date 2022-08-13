@@ -62,9 +62,9 @@
           UnGroup-Selected
           Select-and-Import-File
           Save-Current
-          Select-and-Save-All
-          Arrange-Images)
+          Select-and-Save-All)
  (only-in dynapad/image-utils/arrangeimages
+          Arrange-Images
           Arrange-Pdfs)
  (only-in dynapad/menu/menu_shared
           Restore-Current

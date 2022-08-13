@@ -17,6 +17,11 @@
          enter-firststate
          enter-midstate
          enter-laststate
+
+         set-enter-firststate!
+         set-enter-midstate!
+         set-enter-laststate!
+
          make-undo/redo-frame
          *log-continues?*
          ; needed for calls to eval in restore
@@ -30,6 +35,7 @@
          dynapad/base
          dynapad/import
          dynapad/pad-state
+         dynapad/undo-state
          dynapad/misc/misc
          dynapad/misc/user-preferences
 
@@ -58,11 +64,13 @@
 
 ;---------- Main Load/Save, State-Stack ---
 
+#; ; inherited from undo-state
 (define *undo-stack* null); (list (list 0 #f #f)))
 ; stack of tuples: (state-id do-expr undo-expr)
 ; top of stack (head of list) is most recent frame/state
 ; *undo_stack* should never be null: bottom frame always represents
 ; intial state (possibly 0 state shown above)
+#; ; inherited from undo-state
 (define *redo-stack* null)
 (define *current-state-id* 0) ;=(caar *undo-stack*)
 ; state-id of current view;
@@ -97,12 +105,17 @@
 (define (set-current-state-id new)
   (set! *current-state-id* new))
 
-(define (enter-midstate new)
-  (set-current-state-id new))
-(define (enter-firststate new)
-  (set-current-state-id new))
-(define (enter-laststate new)
-  (set-current-state-id new))
+(define (-enter-firststate new) (set-current-state-id new))
+(define (-enter-midstate   new) (set-current-state-id new))
+(define (-enter-laststate  new) (set-current-state-id new))
+
+(define enter-firststate -enter-firststate)
+(define enter-midstate   -enter-midstate)
+(define enter-laststate  -enter-laststate)
+
+(define (set-enter-firststate! f) (set! enter-firststate f))
+(define (set-enter-midstate!   f) (set! enter-midstate   f))
+(define (set-enter-laststate!  f) (set! enter-laststate  f))
 
 (define (make-undo/redo-frame state-id do-msg undo-msg) ;may be overridden
   (list state-id do-msg undo-msg))
@@ -117,9 +130,10 @@
   (unless (importing?) ;ignore all changes to history if loading in import context
     (let ((newframe (make-undo/redo-frame state-id do-msg undo-msg)))
       (if (> state-id *current-state-id*)
-          (set-append! *redo-stack* (list newframe)) ;append onto future
-          (push! newframe *undo-stack*))) ;push onto past
-    ))
+          ;append onto future
+          (set-*redo-stack*! (append *redo-stack* (list newframe)))
+          ;push onto past
+          (push-*undo-stack*! newframe)))))
 
 (define (log-continues)
   (unless (importing?)
@@ -130,11 +144,11 @@
 
 ; potentially competing with (clear-undo/redo) in undo.ss?:
 (define (reset-stacks state-id)
-  (set! *undo-stack* null)
-  (push! (null-undo-frame state-id) *undo-stack*)
-  (set! *redo-stack* null)
-  (set! *log-continues?* #f) ;assume end unless continued later
-  )
+  (set-*undo-stack*! null)
+  (push-*undo-stack*! (null-undo-frame state-id))
+  (set-*redo-stack*! null)
+  ;assume end unless continued later
+  (set! *log-continues?* #f))
 
 ;---------- State IDs / Timestamps -----------
 (define *timestamp-offset* 1041408000) ;from (find-seconds 0 0 0 1 1 2003)):

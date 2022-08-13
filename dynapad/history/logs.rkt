@@ -465,8 +465,8 @@
   (delete-all currentPAD)
   (ensure-current-logtree #f)
   (let* ((starttime (make-timestamp-ID))
-         (newbranch
-          (send (current-logtree) new-branch starttime '(mlist #t))))
+         (newbranch ; this goes straight to the log, not to memory ?
+          (send (current-logtree) new-branch starttime '(list #t))))
     (send (current-logtree) activate-branch newbranch)
     (enter-firststate starttime)
     ))
@@ -511,8 +511,6 @@
     (enter-laststate *current-state-id*)
     )
   )
-
-(update-progress 1)
 
 ; === NOTES ===
 ; The system can be characterized as a State-Machine:
