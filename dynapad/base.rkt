@@ -850,6 +850,8 @@
       (case-lambda
         (() (sch_sticky cptr))
         ((newsticky) (sch_sticky cptr newsticky)
+                     #; ; disable this for now until we can get sticky implement on select%
+                     ; or until we determine that this functionality is no longer needed/not relevant
                      (when selected
                        (send selected sticky newsticky)))))
 
