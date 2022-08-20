@@ -1,11 +1,7 @@
 #lang racket/base
 
 (require
- (only-in racket/class
-          send
-          send/apply
-          is-a?
-          object%)
+ racket/class ; require all because there is a call to eval down there
  dynapad/pad-state
  dynapad/misc/misc
  dynapad/layout/bbox
