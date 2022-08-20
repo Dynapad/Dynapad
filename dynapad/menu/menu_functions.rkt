@@ -52,6 +52,8 @@
                   split-path->string)
          (only-in dynapad/history/logs
                   ensure-keyframe
+                  undo
+                  redo
                   )
          (only-in dynapad/history/logbranch
                   current-logtree
@@ -67,7 +69,6 @@
                   import-path
                   )
          (only-in dynapad/history/undo
-                  undo
                   undoable-delete-all
                   Paste-From-Copy-Buffer
                   Copy-Paste-ReSelect

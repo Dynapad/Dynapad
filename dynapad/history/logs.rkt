@@ -109,6 +109,13 @@
          ; needed for save and restore
          load-log
          start-state
+
+         undo
+         redo
+
+         ; needed for eval during load I think
+         load-prev-log
+         load-next-log
          )
 
 (require (only-in racket/class send is-a? object%)
@@ -136,6 +143,7 @@
          dynapad/undo-state
          #;
          (only-in dynapad/history/ids import-expr-with-objs)
+         ;dynapad/import ; seemingly safe
          dynapad/history/logbranch
          ;dynapad/history/showlogs
          dynapad/history/logbead
@@ -336,10 +344,13 @@
      (push-ops-no-exec))
     ))
 
+(set-push-ops-no-exec! push-ops-no-exec)
+
 (define (push-ops-and-exec do-expr undo-expr)
   (eval do-expr)
   (push-ops-no-exec do-expr undo-expr))
 
+(set-push-ops-and-exec! push-ops-and-exec)
 
 ;;; from undo
 ;; from ids
@@ -430,7 +441,11 @@
       (send (current-logbranch)
             log-visitstate-entry (make-timestamp-ID) *current-state-id*))
     ;    (eval undo-expr)))
-    (restore-undo-frame frame))) ;exec undo-expr
+    (restore-undo-frame frame) ; XXX if this fails the log history
+    ; will update but the state of the dynapad will be out of sync so
+    ; if you call redo you will recreate existing objects ???  except
+    ; that because everything is backwards the redo is now the undo !?
+    )) ;exec undo-expr
 
 ;(define (backward-frame)
 ;;  (display "back-frame")(newline)cadrable

@@ -12,6 +12,8 @@
          push-redo-op
          ;push-ops-no-exec ; use logs version
          ;push-ops-and-exec ; use logs version
+         set-push-ops-no-exec! ; use logs version
+         set-push-ops-and-exec! ; use logs version
          clear-undo/redo
          abort-undo/redo
 
@@ -108,6 +110,8 @@
     (eval do_op)
     )
 
+(define (set-push-ops-and-exec! f) (set! push-ops-and-exec f))
+
 (define (push-undo-op expr)
   (push! expr *undo-ops*))
 
@@ -138,6 +142,8 @@
      (push! undo_op *undo-ops*)
      (push-ops-no-exec))
     ))
+
+(define (set-push-ops-no-exec! f) (set! push-ops-no-exec f))
 
 ;======= Dan's new generalized versions:
 ; Accumulate many incremental changes in same undo/redo-op

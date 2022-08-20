@@ -4,7 +4,6 @@
          Copy-Paste-ReSelect
          undoable-delete-all
          import-path
-         undo
          Delete-Selected
          Deep-Delete-Selected
          Confirm-and-Delete-All
@@ -15,6 +14,10 @@
          afterdrag-prepare-undo-callbacks
          ; needed for top level evals
          load-set
+         ;undo
+         ;redo
+         ;set-undo!
+         ;set-redo!
          )
 
 (require racket/class
@@ -46,6 +49,8 @@
          (only-in dynapad/history/logs
                   restore-set
                   restore-set-core
+                  undo
+                  redo
                   )
          (only-in dynapad/history/deferred-evals
                   do-deferred-evals)
@@ -372,6 +377,8 @@
          (import-set-core obj ...)
          (restore-set-core obj ...)))))
 
+#| ; this might be needed at some point in the future
+; if we need to break a load cycle
 (define (undo) ;overridden in logs.ss
   (when (not (null? *undo-stack*))
     (let ((do_undo_pair (pop-*undo-stack*!)))
@@ -382,6 +389,8 @@
     )
   )
 
+(define (set-undo! f) (set! undo f))
+
 (define (redo) ;overridden in logs.ss
   (when (not (null? *redo-stack*))
     (let ((do_undo_pair (pop-*redo-stack*!)))
@@ -391,6 +400,9 @@
       )
     )
   )
+
+(define (set-redo! f) (set! undo f))
+|#
 
 (define *beforedrag-prepare-undo-callbacks* null)
 ; This is NOT equivalent to a dynapad's _beforedrag-callbacks
