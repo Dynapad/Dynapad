@@ -86,7 +86,7 @@ Operation
 
 In Cygwin
   Start X by running 
-    dynapad/mystartxwin.sh
+    bin/mystartxwin.sh
   In the xterm window start DrScheme
     /home/plt/DrScheme.exe
   Load dynapad/workspace.ss.
