@@ -85,7 +85,7 @@ racocgc ctool --cgc \
         --ld dynapad/compiled/bc/native/${SUBPATH}/libdynapad_rkt${SO_SUFFIX} \
         "${PWD}/build/libdynapad${SO_SUFFIX}"
 racocgc pkg install --no-docs --auto gui compatibility
-racocgc pkg install collects/ dynapad/
+racocgc pkg install dynapad-collects/ dynapad/
 racocgc make dynapad/base.rkt
 racocgc make apps/paddraw/paddraw.rkt
 racocgc make apps/uberapp/uberapp.rkt

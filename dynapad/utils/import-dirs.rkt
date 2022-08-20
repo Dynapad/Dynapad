@@ -25,7 +25,7 @@
                   add-submenu
                   add-menu-separator
                   )
-         collects/misc/pathhack
+         dynapad-collects/misc/pathhack
          )
 
 (provide make-submenu-Import)

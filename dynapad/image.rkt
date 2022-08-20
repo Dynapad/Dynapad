@@ -27,8 +27,8 @@
                   sch_freeimagedata
                   sch_grab
                   )
-         collects/misc/pathhack
-         collects/thumbify/thumbify
+         dynapad-collects/misc/pathhack
+         dynapad-collects/thumbify/thumbify
          )
 
 

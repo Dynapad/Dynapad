@@ -36,8 +36,8 @@
                   )
          ;dynapad/layout/composite
          dynapad/utils/formation ; for name-part otherwise a cryptic error occurs
-         collects/misc/pathhack
-         (only-in collects/imagemagick/imagemagick
+         dynapad-collects/misc/pathhack
+         (only-in dynapad-collects/imagemagick/imagemagick
                   im/identify
                   )
          (only-in dynapad/libdynapad-wrapper

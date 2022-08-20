@@ -100,7 +100,7 @@
 #; ; no longer needed I think
 (current-library-collection-paths
  (cons
-  (build-path *dynapad-directory* "collects")
+  (build-path *dynapad-directory* "dynapad-collects")
   (current-library-collection-paths)))
 
 ;-----------------------------------------------------------------
@@ -117,7 +117,7 @@
          ;dynapad/misc/command-shortcuts ; may want to reprovide these or set them up for #lang dynapad
          dynapad/misc/user-preferences
          dynapad/menu/menubar
-         collects/misc/pathhack)
+         dynapad-collects/misc/pathhack)
 
 ;(dynaload "alias.ss")               ; allows aliasing of pathnames
 ;(dynaload "events.ss")              ; basic events plus draw-application events)

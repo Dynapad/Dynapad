@@ -9,7 +9,7 @@
          )
 
 (require mzlib/process
-         collects/misc/pathhack
+         dynapad-collects/misc/pathhack
          dynapad/misc/misc
          (only-in racket/path file-name-from-path)
          (only-in dynapad/libdynapad-wrapper

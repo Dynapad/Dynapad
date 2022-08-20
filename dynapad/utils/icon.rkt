@@ -22,7 +22,7 @@
          (only-in dynapad/container container-form%)
          (only-in dynapad/image baseimage% image% imagedata% pdf%)
          (only-in dynapad/events/text text%)
-         collects/misc/pathhack
+         dynapad-collects/misc/pathhack
          )
 
 (define icon-container-form%

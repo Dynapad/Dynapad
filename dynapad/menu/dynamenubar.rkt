@@ -28,7 +28,7 @@
           changemode
           changemode--no-gui
           gui-mode-cursor)
- (only-in collects/misc/pathhack
+ (only-in dynapad-collects/misc/pathhack
           build-path->string)
  (only-in dynapad/menu/wx_emulator
           dywx-bitmap%

@@ -44,7 +44,7 @@
          racket/class
          dynapad/objects
          dynapad/pad-state
-         collects/misc/pathhack
+         dynapad-collects/misc/pathhack
          dynapad/misc/tools-lists
          (only-in racket/function identity)
          dynapad/ffs  ; *id-counter*

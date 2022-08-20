@@ -12,7 +12,7 @@
          (only-in mzlib/file build-absolute-path)
          dynapad/pad-state
          dynapad/misc/misc
-         collects/misc/pathhack
+         dynapad-collects/misc/pathhack
          (for-syntax racket/base setup/dirs)
          )
 

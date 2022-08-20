@@ -26,7 +26,7 @@
          ;dynapad/history/ids  ; see if we really need this ... cycles
          ;                     ; export-objs
          dynapad/utils/hilights
-         collects/misc/pathhack  ; build-path->string
+         dynapad-collects/misc/pathhack  ; build-path->string
          )
 
 ;;; (load-relative-extension (path-replace-suffix "build/libdynapad" (system-type 'so-suffix)))

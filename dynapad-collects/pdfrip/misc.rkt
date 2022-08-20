@@ -1,6 +1,6 @@
 #lang racket/base
 
-(require collects/misc/pathhack)
+(require dynapad-collects/misc/pathhack)
 
 (provide
  dirname basename

@@ -48,7 +48,7 @@
                   mred-color-from-tcl-color
                   tcl-color-from-mred-color
                   )
-         (only-in collects/misc/pathhack
+         (only-in dynapad-collects/misc/pathhack
                   split-path->string)
          (only-in dynapad/history/logs
                   ensure-keyframe

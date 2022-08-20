@@ -3,7 +3,7 @@
 (require (only-in racket/class send)
          (only-in racket/file make-directory*)
          (only-in racket/gui/base message-box)
-         collects/misc/pathhack
+         dynapad-collects/misc/pathhack
          )
 
 (provide setup-dynapad-subdirectory

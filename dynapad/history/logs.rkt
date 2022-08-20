@@ -160,7 +160,7 @@
          ; edges -> menubar -> menu_functions -> logs ; previous cycle now fixed by lifting out graph
          (only-in dynapad/utils/graph graph-edge% graph-arc%) ; needed for restore-log-branch
          (only-in dynapad/events/text text%) ; needed for restore-log-branch
-         collects/misc/pathhack
+         dynapad-collects/misc/pathhack
          (for-syntax racket/base)
          )
 

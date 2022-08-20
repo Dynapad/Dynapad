@@ -15,7 +15,7 @@
          (only-in dynapad/ffs *id-counter*)
          (only-in dynapad/misc/misc
                   write-set)
-         collects/misc/pathhack
+         dynapad-collects/misc/pathhack
          )
 
 (provide Save-All-To-Expr

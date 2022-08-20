@@ -14,10 +14,10 @@
                   limit-drag-to-bbox
                   )
          dynapad/utils/formation
-         collects/misc/pathhack
-         collects/pdfrip/misc
-         collects/imagemagick/imagemagick
-         collects/thumbify/thumbify
+         dynapad-collects/misc/pathhack
+         dynapad-collects/pdfrip/misc
+         dynapad-collects/imagemagick/imagemagick
+         dynapad-collects/thumbify/thumbify
          )
 
 (provide image-composite%

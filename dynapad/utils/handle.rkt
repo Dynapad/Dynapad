@@ -10,7 +10,7 @@
          dynapad/misc/alist
          dynapad/misc/tools-lists
          dynapad/utils/alias
-         collects/misc/pathhack
+         dynapad-collects/misc/pathhack
          )
 
 (provide assign-handle

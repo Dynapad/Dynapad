@@ -67,7 +67,7 @@ racocgc ctool --cgc \
         --ld dynapad/compiled/bc/native/${SUBPATH}/libdynapad_rkt${SO_SUFFIX} \
         "${PWD}/build/libdynapad${SO_SUFFIX}"
 racocgc pkg install dynapad/
-racocgc pkg install collects/
+racocgc pkg install dynapad-collects/
 racocgc make dynapad/base.rkt
 
 racketcgc --repl --require "apps/paddraw/paddraw.rkt"
@@ -75,14 +75,14 @@ racketcgc --repl --require "apps/paddraw/paddraw.rkt"
 # bc build
 racobc ctool --ld dynapad/compiled/bc/native/x86_64-linux/3m/libdynapad_rkt.so build/libdynapad.so
 racobc pkg install dynapad/
-racobc pkg install collects/
+racobc pkg install dynapad-collects/
 racobc make dynapad/base.rkt
 
 racketbc --repl --require "apps/paddraw/paddraw.rkt"
 
 # cs build
 raco pkg install dynapad/
-raco pkg install collects/
+raco pkg install dynapad-collects/
 raco make dynapad/base.rkt
 
 racket -it "apps/paddraw/paddraw.rkt"

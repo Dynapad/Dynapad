@@ -15,7 +15,7 @@
  dynapad/libdynapad-wrapper
  (only-in dynapad/pad-state
           dynapad)
- (only-in collects/misc/pathhack
+ (only-in dynapad-collects/misc/pathhack
           directory-list->string
 
           build-path->string)

@@ -14,7 +14,7 @@
  dynapad/pad-state
  dynapad/misc/misc
  (only-in dynapad/misc/tools-lists mmap)
- collects/imagemagick/imagemagick
+ dynapad-collects/imagemagick/imagemagick
  dynapad/events/text
  (only-in dynapad/save Select-File-Dialog)
  dynapad/menu/wxmenu

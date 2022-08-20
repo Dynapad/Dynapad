@@ -2,7 +2,7 @@ Simple mysql interface.  You can use this directly, but I recommend
 subclassing from mysql%.  See workspace.ss and worktest.ss for examples.
 
 mysql.c must first be compiled (use the makefile) and the resulting mysql.so
-must be in the mysql collects directory (presumably this directory!).
+must be in the mysql dynapad-collects directory (presumably this directory!).
 
 Usage:
 

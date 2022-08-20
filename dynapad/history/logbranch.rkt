@@ -14,7 +14,7 @@
          dynapad/utils/actor
          dynapad/history/ids
          dynapad/history/log-state
-         collects/misc/pathhack
+         dynapad-collects/misc/pathhack
          (only-in dynapad/libdynapad-wrapper
                   sch_truncatefile)
          )

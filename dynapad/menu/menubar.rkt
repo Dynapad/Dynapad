@@ -50,7 +50,7 @@
                   Select-and-Restore-File
                   Export-To-Directories
                   )
-         collects/misc/pathhack
+         dynapad-collects/misc/pathhack
          (only-in dynapad/history/undo
                   Delete-Selected
                   Deep-Delete-Selected

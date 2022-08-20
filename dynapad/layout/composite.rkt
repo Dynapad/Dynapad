@@ -22,11 +22,11 @@
                   b3
                   )
          ;dynapad/image-utils/metadata
-         collects/misc/pathhack
-         ;collects/imagemagick/imagemagick
-         collects/pdfrip/pdfrip
-         ;collects/pdfrip/misc
-         ;collects/thumbify/thumbify
+         dynapad-collects/misc/pathhack
+         ;dynapad-collects/imagemagick/imagemagick
+         dynapad-collects/pdfrip/pdfrip
+         ;dynapad-collects/pdfrip/misc
+         ;dynapad-collects/thumbify/thumbify
          )
 
 #;
