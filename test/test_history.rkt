@@ -5,10 +5,10 @@
          ; a newline is printing here somewhere
          dynapad/events/event-binders-classic ; this is where our culpret is? or in menu-draw
          dynapad/menu/menu-draw
-         "../dynapad.rkt")
+         dynapad/base)
 
 (provide (all-from-out
-          "../dynapad.rkt"))
+          dynapad/base))
 
 (require errortrace)
 (require

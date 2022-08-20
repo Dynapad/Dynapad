@@ -1,6 +1,6 @@
 #lang racket/base
 ; FIXME we are probably going to want either #lang/racket or #lang/dynapad
-; that will provide all the forms that we need, I think that is what dynapad.rkt
+; that will provide all the forms that we need, I think that is what dynapad/base
 ; is more or less doing
 (require racket/class
          dynapad/events/event-state
@@ -8,10 +8,10 @@
          ; a newline is printing here somewhere
          dynapad/events/event-binders-classic ; this is where our culpret is? or in menu-draw
          dynapad/menu/menu-draw
-         "../../dynapad.rkt"
+         dynapad/base
          )
 
-(provide (all-from-out "../../dynapad.rkt"))
+(provide (all-from-out dynapad/base))
 
 ; now eternally stuck in a wx queue due to changes related to uberapp?
 ; nope, this is just what happens if you fail to run racket{,cgc} with

@@ -22,7 +22,7 @@ run:
   start mred
     mred -z
   load dynapad
-    (load "dynapad.rkt")
+    (load "dynapad/base.rkt")
   load uberapp
     (appload "uberapp")
   load the dt interface to uberapp

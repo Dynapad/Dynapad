@@ -1,4 +1,4 @@
-(load-relative "C:/cygwin/home/hollan/dynapad/dynapad.rkt")
+(load-relative "C:/cygwin/home/hollan/dynapad/dynapad/base.rkt")
 
 (require (lib "mysterx.rkt" "mysterx"))
 

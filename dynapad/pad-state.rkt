@@ -31,11 +31,11 @@
   (set-dynapad! pad)
   (set-currentPAD! pad))
 
-; should only be set once at the begining in dynapad.rkt
+; should only be set once at the begining in dynapad/base
 (define dp1 null)
 (define (set-dp1! pad) (set! dp1 pad))
 
-; should only be set once at the begining in dynapad.rkt
+; should only be set once at the begining in dynapad/base
 (define dynapad null)
 (define (set-dynapad! pad) (set! dynapad pad))
 

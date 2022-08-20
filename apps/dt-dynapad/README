@@ -24,7 +24,7 @@ Now you can run dt-dynapad apps. For example, to run dt-paint:
 
   $ mred -z
   MrEd version 202.5, Copyright (c) 1995-2002 PLT
-  > (load "DYNAPAD/dynapad.rkt")
+  > (load "DYNAPAD/dynapad/base.rkt")
   > (load "DYNAPAD/apps/dt-dynapad/dt-paint.rkt")
   #t
 

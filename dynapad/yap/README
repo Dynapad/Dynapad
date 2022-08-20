@@ -36,7 +36,7 @@ bounce.ss includes several types of force.
   view      - bounce off the edge of the view so doesn't leave the view
   comeback  - if out of view, move toward the view
 
-(load "dynapad.rkt")
+(load "dynapad/base.rkt")
 (appload "uberapp")
 (load "barneshut.rkt")
 (load "bounce.rkt")

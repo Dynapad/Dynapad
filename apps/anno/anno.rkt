@@ -3,7 +3,7 @@
 (display "Including annotation features...")(newline)
 
 ;(define rootdir (getenv "DYNAPADHOME"))
-;(load (string-append rootdir "/dynapad.rkt"))
+;(load (string-append rootdir "/dynapad/base.rkt"))
 ;(load (string-append rootdir "/actor.rkt"))
 ;(load (string-append rootdir "/menu_popup.rkt"))
 (dynaload "actor.rkt")

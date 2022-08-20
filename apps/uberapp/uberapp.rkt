@@ -1,6 +1,6 @@
 #lang racket/base
 
-(provide (all-from-out "../../dynapad.rkt"))
+(provide (all-from-out dynapad/base))
 
 (require racket/class
          ; I think we need to be reproviding from this list so that
@@ -29,10 +29,10 @@
          (only-in dynapad/menu/menu_popup enable-popups)
          (only-in dynapad/physics/regions create-tool-layers)
          (only-in dynapad/history/lockdown lockdown-bind-keys)
-         "../../dynapad.rkt"
+         dynapad/base
          )
 
-; XXX ideally these would be activated in dynapad.rkt
+; XXX ideally these would be activated in dynapad/base
 (enable-popups dynapad)
 (create-tool-layers dynapad)
 (lockdown-bind-keys dynapad)
