@@ -41,8 +41,8 @@ add_definitions(-DXSHM)
 add_subdirectory(pad)
 
 add_library(dynapad SHARED
-  "dynapad.cpp"
-  "tclSchemeNotify.c")
+  "extensions/dynapad.cpp"
+  "extensions/tclSchemeNotify.c")
 
 target_include_directories(dynapad
   PRIVATE pad/generic  # todo move to dep
