@@ -1,5 +1,9 @@
 #lang racket/base
 
+(require
+ racket/class ; needed for eval below ... really ened a better solution though
+ )
+
 (provide safe-eval
          mimic-old-load)
 
@@ -8,9 +12,9 @@
   (with-handlers
     ;   ([exn:user? (lambda (exn)
     ([exn:fail? (lambda (exn)
-                  (for-each (list (current-error-port))
-                            (lambda (port)
-                              (fprintf port  "Error (~a) in ~a~%" (exn-message exn) expr)))
+                  (for-each (lambda (port)
+                              (fprintf port  "Error (~a) in ~a~%" (exn-message exn) expr))
+                            (list (current-error-port)))
                   #f)])
     (eval expr)))
 
