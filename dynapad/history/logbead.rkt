@@ -1,7 +1,7 @@
 #lang racket/base
 
 (require racket/class
-         dynapad/base
+         dynapad/objects
          dynapad/undo-state
          dynapad/pad-state
          dynapad/misc/misc

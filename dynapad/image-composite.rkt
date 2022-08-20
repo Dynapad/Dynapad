@@ -3,7 +3,7 @@
 (require racket/class
          dynapad/spd
          dynapad/image
-         dynapad/base
+         dynapad/objects
          dynapad/container
          dynapad/pad-state
          dynapad/misc/misc

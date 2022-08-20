@@ -3,7 +3,7 @@
 
 (require racket/class
          dynapad/pad-state
-         (only-in dynapad/base dynapad%)
+         (only-in dynapad/objects dynapad%)
          dynapad/events/event-binders-new
          dynapad/events/zoom-pushpull
          dynapad/history/logbranch

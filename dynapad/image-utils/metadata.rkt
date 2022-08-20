@@ -34,7 +34,7 @@
          racket/date
          racket/list
          mzlib/etc
-         dynapad/base
+         dynapad/objects
          dynapad/image
          (only-in dynapad/pdf
                   pdf-portrait%

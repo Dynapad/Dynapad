@@ -6,7 +6,7 @@
          racket/list
          (only-in racket/function identity)
          compatibility/defmacro
-         dynapad/base
+         dynapad/objects
          dynapad/container-text
          dynapad/pad-state
          dynapad/menu/menu-state

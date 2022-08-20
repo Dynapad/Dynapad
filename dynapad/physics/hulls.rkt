@@ -4,7 +4,7 @@
 
 (require (only-in racket/class make-object send)
          dynapad/pad-state
-         (only-in dynapad/base oval% polygon%)
+         (only-in dynapad/objects oval% polygon%)
          dynapad/misc/misc
          dynapad/utils/geometry)
 

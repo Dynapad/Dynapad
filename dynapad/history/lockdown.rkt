@@ -4,7 +4,7 @@
 
 (require racket/class
          "../../apps/logsummary/logmunge.rkt" ; FIXME this should probably be managed by having apps inside dynapad in another package
-         dynapad/base
+         dynapad/objects
          dynapad/pad-state
          dynapad/undo-state
          dynapad/misc/misc

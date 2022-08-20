@@ -12,7 +12,7 @@
                   event-sx
                   event-sy
                   )
-         (only-in dynapad/base
+         (only-in dynapad/objects
                   dynapad%)
          (only-in dynapad/undo-state
                   get-top-group

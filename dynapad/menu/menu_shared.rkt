@@ -3,7 +3,7 @@
 (require (only-in racket/class
                   is-a?
                   send)
-         dynapad/base
+         dynapad/objects
          (only-in dynapad/pad-state
                   dynapad
                   currentPAD

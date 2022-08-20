@@ -11,7 +11,7 @@
          ; dynapad/dynapad-c-api
          ; oval%
          (only-in dynapad/pad-state dynapad)
-         (only-in dynapad/base oval% line% polygon%)
+         (only-in dynapad/objects oval% line% polygon%)
          (only-in dynapad/events/text text%)
          (only-in dynapad/events/hyperlink set-*enact-link-fn*!)
          (only-in dynapad/events/mode

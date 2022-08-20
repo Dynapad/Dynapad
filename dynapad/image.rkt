@@ -13,7 +13,7 @@
 
 (require racket/class
          (only-in racket/path file-name-from-path)
-         dynapad/base
+         dynapad/objects
          dynapad/pad-state
          dynapad/misc/misc
          dynapad/misc/filenames

@@ -7,7 +7,7 @@
 
 (require racket/class
          ;dynapad/ffs
-         (only-in dynapad/base alist-filters)
+         (only-in dynapad/objects alist-filters)
          dynapad/misc/misc
          dynapad/misc/alist
          (except-in dynapad/misc/tools-lists mmap) ; conflict with mlist mmap

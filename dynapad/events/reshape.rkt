@@ -6,7 +6,7 @@
          )
 
 (require racket/class
-         dynapad/base
+         dynapad/objects
          dynapad/pad-state
          dynapad/misc/misc
          )

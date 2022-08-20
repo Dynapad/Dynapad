@@ -1,7 +1,7 @@
 #lang racket/base
 
 (require (only-in racket/class send is-a?)
-         dynapad/base
+         dynapad/objects
          dynapad/copy
          dynapad/undo-state
          dynapad/pad-state

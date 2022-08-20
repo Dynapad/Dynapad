@@ -19,7 +19,7 @@
          dynapad/layout/bbox
          dynapad/history/ids
          (only-in dynapad/dynapad-c-api slowgrow)
-         (only-in dynapad/base oval% line% polygon%)
+         (only-in dynapad/objects oval% line% polygon%)
          )
 
 (define (xycenter obj) (bbcenter (send obj bbox)))

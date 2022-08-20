@@ -8,7 +8,7 @@
          )
 
 (require racket/class
-         dynapad/base
+         dynapad/objects
          (only-in dynapad/dynapad-c-api
                   slowgrow
                   )

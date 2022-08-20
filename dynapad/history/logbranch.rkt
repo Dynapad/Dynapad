@@ -3,7 +3,7 @@
 (require racket/class
          racket/list
          (only-in racket/function identity)
-         dynapad/base
+         dynapad/objects
          dynapad/ffs
          dynapad/pad-state
          dynapad/misc/misc

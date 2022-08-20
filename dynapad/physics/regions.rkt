@@ -16,7 +16,7 @@
          (except-in compatibility/mlist mmap)
          compatibility/defmacro
          racket/math
-         dynapad/base
+         dynapad/objects
          dynapad/container-text
          dynapad/pad-state
          dynapad/misc/misc

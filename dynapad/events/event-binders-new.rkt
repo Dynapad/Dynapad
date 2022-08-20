@@ -15,7 +15,7 @@
          )
 
 (require racket/class
-         dynapad/base
+         dynapad/objects
          dynapad/image
          dynapad/misc/misc
          dynapad/events/pan

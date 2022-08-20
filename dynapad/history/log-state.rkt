@@ -32,7 +32,7 @@
 
 (require (only-in racket/class send make-object)
          (only-in racket/date date->string)
-         dynapad/base
+         dynapad/objects
          dynapad/import
          dynapad/pad-state
          dynapad/undo-state
@@ -42,7 +42,7 @@
          #;
          (
          racket/class
-         dynapad/base
+         dynapad/objects
          dynapad/pad-state
          collects/misc/pathhack
          dynapad/misc/tools-lists

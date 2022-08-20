@@ -8,7 +8,7 @@
          )
 
 (require racket/class
-         dynapad/base
+         dynapad/objects
          (only-in dynapad/image
                   image%)
          dynapad/misc/misc

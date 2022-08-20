@@ -26,7 +26,7 @@
           bbcenter)
  (only-in dynapad/container
           container-form%)
- (only-in dynapad/base
+ (only-in dynapad/objects
           group%
           rect%
           oval%)

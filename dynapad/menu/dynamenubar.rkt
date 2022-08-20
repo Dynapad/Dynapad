@@ -15,7 +15,7 @@
           *dynapad-directory*
           dynapad
           currentPAD)
- (only-in dynapad/base
+ (only-in dynapad/objects
           rect%
           oval%
           line%

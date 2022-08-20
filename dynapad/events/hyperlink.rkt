@@ -6,7 +6,7 @@
          )
 
 (require (only-in racket/class send is-a? make-object)
-         dynapad/base
+         dynapad/objects
          (only-in dynapad/pad-state
                   currentPAD
                   set-currentPAD!

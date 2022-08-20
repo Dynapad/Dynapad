@@ -17,7 +17,7 @@
          compatibility/defmacro
          dynapad/libdynapad-wrapper
          dynapad/ffs
-         dynapad/base ; dynapad%
+         dynapad/objects ; dynapad%
          dynapad/bind
          dynapad/pad-state
          dynapad/misc/misc

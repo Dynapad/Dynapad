@@ -7,7 +7,7 @@
                   button%
                   horizontal-pane%
                   )
-         dynapad/base
+         dynapad/objects
          (only-in dynapad/events/draw
                   set-Draw-multiple!
                   initDraw

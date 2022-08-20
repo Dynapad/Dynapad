@@ -24,7 +24,7 @@
          (only-in racket/gui/base
                   message-box)
          compatibility/mlist
-         dynapad/base
+         dynapad/objects
          dynapad/copy ; provides import-set and import-set-core
          dynapad/ffs
          dynapad/pad-state

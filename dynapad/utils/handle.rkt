@@ -5,7 +5,7 @@
          (except-in compatibility/mlist
                     ; mutable-map vs multi-map from tools-lists
                     mmap) 
-         dynapad/base
+         dynapad/objects
          dynapad/misc/misc
          dynapad/misc/alist
          dynapad/misc/tools-lists

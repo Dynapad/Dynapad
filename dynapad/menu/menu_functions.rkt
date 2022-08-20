@@ -39,7 +39,7 @@
                   message-box
                   )
          dynapad/pad-state
-         dynapad/base
+         dynapad/objects
          dynapad/copy
          dynapad/save  ; Select-File-Dialog
          dynapad/misc/misc

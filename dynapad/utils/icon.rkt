@@ -18,7 +18,7 @@
          dynapad/misc/misc
          dynapad/bind
          dynapad/pad-state
-         (only-in dynapad/base rect% polygon% group%)
+         (only-in dynapad/objects rect% polygon% group%)
          (only-in dynapad/container container-form%)
          (only-in dynapad/image baseimage% image% imagedata% pdf%)
          (only-in dynapad/events/text text%)

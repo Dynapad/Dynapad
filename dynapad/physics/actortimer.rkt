@@ -4,7 +4,7 @@
 
 (require racket/class
          (only-in racket/gui/base timer%)
-         (only-in dynapad/base dynaobject%)
+         (only-in dynapad/objects dynaobject%)
          dynapad/misc/misc
          dynapad/utils/actor
          )

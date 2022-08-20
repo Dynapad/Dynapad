@@ -4,7 +4,7 @@
  (only-in racket/class make-object send is-a?)
  (only-in racket/file make-temporary-file)
  (only-in racket/port copy-port)
- (only-in dynapad/base line% rect% oval% polygon% group% base-group%)
+ (only-in dynapad/objects line% rect% oval% polygon% group% base-group%)
  (only-in dynapad/container container-form%)
  (only-in dynapad/image image%)
  (only-in dynapad/events/text titled-frame-container%)

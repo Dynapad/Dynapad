@@ -1,7 +1,7 @@
 #lang racket/base
 
 (require racket/class
-         (only-in dynapad/base
+         (only-in dynapad/objects
                   dynapad%
                   line%
                   polygon%

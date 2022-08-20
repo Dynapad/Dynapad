@@ -7,7 +7,7 @@
          dynapad/misc/misc
          dynapad/pad-state
          dynapad/layout/bbox
-         (only-in dynapad/base rect%)
+         (only-in dynapad/objects rect%)
          (only-in dynapad/events/mode
                   push-event-mode
                   pop-event-mode))

@@ -29,7 +29,7 @@
          (only-in compatibility/mlist massq mlist)
          racket/math
          dynapad/pad-state
-         (only-in dynapad/base rect% polygon% oval% line%)
+         (only-in dynapad/objects rect% polygon% oval% line%)
          (only-in dynapad/image image%)
          (only-in dynapad/events/text text%)
          (only-in dynapad/dynapad-c-api panel%)

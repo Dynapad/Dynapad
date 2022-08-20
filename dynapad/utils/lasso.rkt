@@ -5,7 +5,7 @@
          )
 
 (require racket/class
-         (only-in dynapad/base freehand% polygon%)
+         (only-in dynapad/objects freehand% polygon%)
          dynapad/history/undo
          dynapad/events/mode
          dynapad/pad-state ; event

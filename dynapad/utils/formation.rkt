@@ -22,7 +22,7 @@
 
 (require racket/class
          compatibility/defmacro
-         dynapad/base
+         dynapad/objects
          dynapad/dynapad-c-api
          dynapad/misc/misc
          dynapad/misc/alist
