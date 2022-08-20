@@ -29,6 +29,7 @@
          (all-from-out dynapad/base)
          (all-from-out dynapad/utils/graph)
          (all-from-out dynapad/events/text)
+         (all-from-out racket/class) ; needed for some top-level calls to send
          )
 
 ; things that need to be at the top level for reasons I don't entirely understand
