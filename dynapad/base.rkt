@@ -26,7 +26,7 @@
          (all-from-out dynapad/image)
          (all-from-out dynapad/pad-state)
          (all-from-out dynapad/undo-state)
-         (all-from-out dynapad/base)
+         (all-from-out dynapad/objects)
          (all-from-out dynapad/utils/graph)
          (all-from-out dynapad/events/text)
          (all-from-out racket/class) ; needed for some top-level calls to send
@@ -45,7 +45,7 @@
  #;
  (only-in dynapad/base
           make-new-dynapad)
- dynapad/base ; all provided forms need to be available here
+ dynapad/objects ; all provided forms need to be available here
  ; otherwise various calls to eval will fail with
  ; undefined errors
  dynapad/pad-state
