@@ -4014,256 +4014,138 @@ sch_unix2os(int argc, Scheme_Object **argv) {
     return UNIX_SCHSTR(path);
 }
 
+static void add_make_prim(Scheme_Prim *prim, const char *name, mzshort mina, mzshort maxa, Scheme_Env *env) {
+  scheme_add_global(name, scheme_make_prim_w_arity(prim, name, mina, maxa), env);
+}
 
 Scheme_Object *scheme_reload(Scheme_Env *env) {
+  add_make_prim(sch_wish, "wish", 0, 0, env);
+  add_make_prim(sch_makedynapad, "sch_makedynapad", 2, 2, env);
 
-    scheme_add_global("wish",
-                      scheme_make_prim_w_arity(sch_wish, "wish", 0, 0), env);
-    scheme_add_global("sch_makedynapad",
-                      scheme_make_prim_w_arity(sch_makedynapad, "sch_makedynapad", 2, 2), env);
+  add_make_prim(sch_moveto, "sch_moveto", 4, 4, env);
+  add_make_prim(sch_center, "sch_center", 7, 7, env);
+  add_make_prim(sch_centerbbox, "sch_centerbbox", 7, 7, env);
+  add_make_prim(sch_getview, "sch_getview", 1, 1, env);
+  add_make_prim(sch_zoom, "sch_zoom", 5, 5, env);
+  add_make_prim(sch_modifier, "sch_modifier", 2, 3, env);
+  add_make_prim(sch_find, "sch_find", 3, 20, env);
+  add_make_prim(sch_pick, "sch_pick", 3, 3, env);
+  add_make_prim(sch_cpanzoom, "sch_cpanzoom", 1, 2, env);
+  add_make_prim(sch_getfocus, "sch_getfocus", 1, 1, env);
+  add_make_prim(sch_fontnames, "sch_fontnames", 1, 1, env);
+  add_make_prim(sch_background, "sch_background", 1, 2, env);
+  add_make_prim(sch_update, "sch_update", 1, 4, env);
+  add_make_prim(sch_cursor, "sch_cursor", 2, 2, env);
+  add_make_prim(sch_objectlist, "sch_objectlist", 2, 2, env);
+  add_make_prim(sch_unfindable, "sch_unfindable", 2, 2, env);
+  add_make_prim(sch_visible, "sch_visible", 1, 1, env);
+  add_make_prim(sch_grab, "sch_grab", 4, 4, env);
+  add_make_prim(sch_winid, "sch_winid", 1, 1, env);
+  add_make_prim(sch_debugevent, "sch_debugevent", 1, 2, env);
 
-    scheme_add_global("sch_moveto",
-                      scheme_make_prim_w_arity(sch_moveto, "sch_moveto", 4, 4), env);
-    scheme_add_global("sch_center",
-                      scheme_make_prim_w_arity(sch_center, "sch_center", 7, 7), env);
-    scheme_add_global("sch_centerbbox",
-                      scheme_make_prim_w_arity(sch_centerbbox, "sch_centerbbox", 7, 7), env);
-    scheme_add_global("sch_getview",
-                      scheme_make_prim_w_arity(sch_getview, "sch_getview", 1, 1), env);
-    scheme_add_global("sch_zoom",
-                      scheme_make_prim_w_arity(sch_zoom, "sch_zoom", 5, 5), env);
-    scheme_add_global("sch_modifier",
-                      scheme_make_prim_w_arity(sch_modifier, "sch_modifier", 2, 3), env);
-    scheme_add_global("sch_find",
-                      scheme_make_prim_w_arity(sch_find, "sch_find", 3, 20), env);
-    scheme_add_global("sch_pick",
-                      scheme_make_prim_w_arity(sch_pick, "sch_pick", 3, 3), env);
-    scheme_add_global("sch_cpanzoom",
-                      scheme_make_prim_w_arity(sch_cpanzoom, "sch_cpanzoom", 1, 2), env);
-    scheme_add_global("sch_getfocus",
-                      scheme_make_prim_w_arity(sch_getfocus, "sch_getfocus", 1, 1), env);
-    scheme_add_global("sch_fontnames",
-                      scheme_make_prim_w_arity(sch_fontnames, "sch_fontnames", 1, 1), env);
-    scheme_add_global("sch_background",
-                      scheme_make_prim_w_arity(sch_background, "sch_background", 1, 2), env);
-    scheme_add_global("sch_update",
-                      scheme_make_prim_w_arity(sch_update, "sch_update", 1, 4), env);
-    scheme_add_global("sch_cursor",
-                      scheme_make_prim_w_arity(sch_cursor, "sch_cursor", 2, 2), env);
-    scheme_add_global("sch_objectlist",
-                      scheme_make_prim_w_arity(sch_objectlist, "sch_objectlist", 2, 2), env);
-    scheme_add_global("sch_unfindable",
-                      scheme_make_prim_w_arity(sch_unfindable, "sch_unfindable", 2, 2), env);
-    scheme_add_global("sch_visible",
-                      scheme_make_prim_w_arity(sch_visible, "sch_visible", 1, 1), env);
-    scheme_add_global("sch_grab",
-                      scheme_make_prim_w_arity(sch_grab, "sch_grab", 4, 4), env);
-    scheme_add_global("sch_winid",
-                      scheme_make_prim_w_arity(sch_winid, "sch_winid", 1, 1), env);
-    scheme_add_global("sch_debugevent",
-                      scheme_make_prim_w_arity(sch_debugevent, "sch_debugevent", 1, 2), env);
+  add_make_prim(sch_makerect, "sch_makerect", 2, 2, env);
+  add_make_prim(sch_coords, "sch_coords", 1, 2, env);
+  add_make_prim(sch_width, "sch_width", 1, 2, env);
+  add_make_prim(sch_height, "sch_height", 1, 2, env);
+  add_make_prim(sch_makeoval, "sch_makeoval", 2, 2, env);
+  add_make_prim(sch_makebutton, "sch_makebutton", 2, 2, env);
+  add_make_prim(sch_makeline, "sch_makeline", 2, 2, env);
+  add_make_prim(sch_makepolygon, "sch_makepolygon", 2, 2, env);
+  add_make_prim(sch_xy_in_poly, "sch_xy_in_poly", 3, 3, env);
+  add_make_prim(sch_xinputdevices, "sch_xinputdevices", 1, 1, env);
+  add_make_prim(sch_bind, "sch_bind", 1, 3, env);
+  add_make_prim(sch_bind_to_tag, "sch_bind_to_tag", 3, 4, env);
+  add_make_prim(sch_bindtags, "sch_bindtags", 1, 2, env);
+  add_make_prim(sch_delete, "sch_delete", 1, 1, env);
+  add_make_prim(sch_slide, "sch_slide", 3, 3, env);
+  add_make_prim(sch_scale, "sch_scale", 4, 4, env);
+  add_make_prim(sch_position, "sch_position", 1, 2, env);
+  add_make_prim(sch_bbox, "sch_bbox", 1, 1, env);
+  add_make_prim(sch_warp_pointer, "sch_warp_pointer", 3, 3, env);
+  add_make_prim(sch_winfo, "sch_winfo", 1, 5, env);
+  add_make_prim(sch_maketext, "sch_maketext", 2, 2, env);
+  add_make_prim(sch_settext, "sch_settext", 2, 2, env);
+  add_make_prim(sch_gettext, "sch_gettext", 1, 1, env);
+  add_make_prim(sch_inserttext, "sch_inserttext", 3, 3, env);
+  add_make_prim(sch_marktext, "sch_marktext", 2, 4, env);
+  add_make_prim(sch_deletetext, "sch_deletetext", 2, 2, env);
+  add_make_prim(sch_padid, "sch_padid", 1, 1, env);
+  add_make_prim(sch_focus, "sch_focus", 1, 2, env);
+  add_make_prim(sch_font, "sch_font", 1, 2, env);
+  add_make_prim(sch_anchor, "sch_anchor", 1, 2, env);
+  add_make_prim(sch_zoomaction, "sch_zoomaction", 5, 5, env);
+  add_make_prim(sch_renderscript, "sch_renderscript", 3, 3, env);
+  add_make_prim(sch_renderitem, "sch_renderitem", 1, 1, env);
+  add_make_prim(sch_renderimage, "sch_renderimage", 4, 4, env);
+  add_make_prim(sch_renderline, "sch_renderline", 2, 2, env);
+  add_make_prim(sch_rendercolor, "sch_rendercolor", 2, 2, env);
+  add_make_prim(sch_renderpolygon, "sch_renderpolygon", 2, 2, env);
+  add_make_prim(sch_rendertext, "sch_rendertext", 4, 4, env);
+  add_make_prim(sch_minsize, "sch_minsize", 1, 2, env);
+  add_make_prim(sch_maxsize, "sch_maxsize", 1, 2, env);
+  add_make_prim(sch_faderange, "sch_faderange", 1, 2, env);
+  add_make_prim(sch_raise, "sch_raise", 1, 2, env);
+  add_make_prim(sch_lower, "sch_lower", 1, 2, env);
+  add_make_prim(sch_order, "sch_order", 2, 2, env);
+  add_make_prim(sch_transparency, "sch_transparency", 1, 2, env);
+  add_make_prim(sch_visiblep, "sch_visiblep", 1, 1, env);
+  add_make_prim(sch_sticky, "sch_sticky", 1, 2, env);
+  add_make_prim(sch_findable, "sch_findable", 1, 2, env);
+  add_make_prim(sch_boundable, "sch_boundable", 1, 2, env);
+  add_make_prim(sch_events, "sch_events", 1, 2, env);
+  add_make_prim(sch_alwaysrender, "sch_alwaysrender", 1, 2, env);
+  add_make_prim(sch_below, "sch_below", 1, 1, env);
+  add_make_prim(sch_above, "sch_above", 1, 1, env);
+  add_make_prim(sch_layer, "sch_layer", 1, 2, env);
+  add_make_prim(sch_idle, "sch_idle", 1, 1, env);
+  add_make_prim(sch_rendertime, "sch_rendertime", 1, 1, env);
+  add_make_prim(sch_viewrendertime, "sch_viewrendertime", 1, 1, env);
+  add_make_prim(sch_dissolvespeed, "sch_dissolvespeed", 1, 2, env);
+  add_make_prim(sch_refinedissolvespeed, "sch_refinedissolvespeed", 1, 2, env);
+  add_make_prim(sch_desiredframerate, "sch_desiredframerate", 1, 2, env);
+  add_make_prim(sch_refinementdelay, "sch_refinementdelay", 1, 2, env);
+  add_make_prim(sch_doublebuffer, "sch_doublebuffer", 1, 2, env);
+  add_make_prim(sch_fastpan, "sch_fastpan", 1, 2, env);
+  add_make_prim(sch_xftenable, "sch_xftenable", 1, 2, env);
 
-    scheme_add_global("sch_makerect",
-                      scheme_make_prim_w_arity(sch_makerect, "sch_makerect", 2, 2), env);
-    scheme_add_global("sch_coords",
-                      scheme_make_prim_w_arity(sch_coords, "sch_coords", 1, 2), env);
-    scheme_add_global("sch_width",
-                      scheme_make_prim_w_arity(sch_width, "sch_width", 1, 2), env);
-    scheme_add_global("sch_height",
-                      scheme_make_prim_w_arity(sch_height, "sch_height", 1, 2), env);
-    scheme_add_global("sch_makeoval",
-                      scheme_make_prim_w_arity(sch_makeoval, "sch_makeoval", 2, 2), env);
-    scheme_add_global("sch_makebutton",
-                      scheme_make_prim_w_arity(sch_makebutton, "sch_makebutton", 2, 2), env);
-    scheme_add_global("sch_makeline",
-                      scheme_make_prim_w_arity(sch_makeline, "sch_makeline", 2, 2), env);
-    scheme_add_global("sch_makepolygon",
-                      scheme_make_prim_w_arity(sch_makepolygon, "sch_makepolygon", 2, 2), env);
-    scheme_add_global("sch_xy_in_poly",
-                      scheme_make_prim_w_arity(sch_xy_in_poly, "sch_xy_in_poly", 3, 3), env);
-    scheme_add_global("sch_xinputdevices",
-                      scheme_make_prim_w_arity(sch_xinputdevices, "sch_xinputdevices", 1, 1), env);
-    scheme_add_global("sch_bind",
-                      scheme_make_prim_w_arity(sch_bind, "sch_bind", 1, 3), env);
-    scheme_add_global("sch_bind_to_tag",
-                      scheme_make_prim_w_arity(sch_bind_to_tag, "sch_bind_to_tag", 3, 4), env);
-    scheme_add_global("sch_bindtags",
-                      scheme_make_prim_w_arity(sch_bindtags, "sch_bindtags", 1, 2), env);
-    scheme_add_global("sch_delete",
-                      scheme_make_prim_w_arity(sch_delete, "sch_delete", 1, 1), env);
-    scheme_add_global("sch_slide",
-                      scheme_make_prim_w_arity(sch_slide, "sch_slide", 3, 3), env);
-    scheme_add_global("sch_scale",
-                      scheme_make_prim_w_arity(sch_scale, "sch_scale", 4, 4), env);
-    scheme_add_global("sch_position",
-                      scheme_make_prim_w_arity(sch_position, "sch_position", 1, 2), env);
-    scheme_add_global("sch_bbox",
-                      scheme_make_prim_w_arity(sch_bbox, "sch_bbox", 1, 1), env);
-    scheme_add_global("sch_warp_pointer",
-                      scheme_make_prim_w_arity(sch_warp_pointer, "sch_warp_pointer", 3, 3), env);
-    scheme_add_global("sch_winfo",
-                      scheme_make_prim_w_arity(sch_winfo, "sch_winfo", 1, 5), env);
-    scheme_add_global("sch_maketext",
-                      scheme_make_prim_w_arity(sch_maketext, "sch_maketext", 2, 2), env);
-    scheme_add_global("sch_settext",
-                      scheme_make_prim_w_arity(sch_settext, "sch_settext", 2, 2), env);
-    scheme_add_global("sch_gettext",
-                      scheme_make_prim_w_arity(sch_gettext, "sch_gettext", 1, 1), env);
-    scheme_add_global("sch_inserttext",
-                      scheme_make_prim_w_arity(sch_inserttext, "sch_inserttext", 3, 3), env);
-    scheme_add_global("sch_marktext",
-                      scheme_make_prim_w_arity(sch_marktext, "sch_marktext", 2, 4), env);
-    scheme_add_global("sch_deletetext",
-                      scheme_make_prim_w_arity(sch_deletetext, "sch_deletetext", 2, 2), env);
-    scheme_add_global("sch_padid",
-                      scheme_make_prim_w_arity(sch_padid, "sch_padid", 1, 1), env);
-    scheme_add_global("sch_focus",
-                      scheme_make_prim_w_arity(sch_focus, "sch_focus", 1, 2), env);
-    scheme_add_global("sch_font",
-                      scheme_make_prim_w_arity(sch_font, "sch_font", 1, 2), env);
-    scheme_add_global("sch_anchor",
-                      scheme_make_prim_w_arity(sch_anchor, "sch_anchor", 1, 2), env);
-    scheme_add_global("sch_zoomaction",
-                      scheme_make_prim_w_arity(sch_zoomaction, "sch_zoomaction", 5, 5), env);
-    scheme_add_global("sch_renderscript",
-                      scheme_make_prim_w_arity(sch_renderscript, "sch_renderscript", 3, 3), env);
-    scheme_add_global("sch_renderitem",
-                      scheme_make_prim_w_arity(sch_renderitem, "sch_renderitem", 1, 1), env);
-    scheme_add_global("sch_renderimage",
-                      scheme_make_prim_w_arity(sch_renderimage, "sch_renderimage", 4, 4), env);
-    scheme_add_global("sch_renderline",
-                      scheme_make_prim_w_arity(sch_renderline, "sch_renderline", 2, 2), env);
-    scheme_add_global("sch_rendercolor",
-                      scheme_make_prim_w_arity(sch_rendercolor, "sch_rendercolor", 2, 2), env);
-    scheme_add_global("sch_renderpolygon",
-                      scheme_make_prim_w_arity(sch_renderpolygon, "sch_renderpolygon", 2, 2), env);
-    scheme_add_global("sch_rendertext",
-                      scheme_make_prim_w_arity(sch_rendertext, "sch_rendertext", 4, 4), env);
-    scheme_add_global("sch_minsize",
-                      scheme_make_prim_w_arity(sch_minsize, "sch_minsize", 1, 2), env);
-    scheme_add_global("sch_maxsize",
-                      scheme_make_prim_w_arity(sch_maxsize, "sch_maxsize", 1, 2), env);
-    scheme_add_global("sch_faderange",
-                      scheme_make_prim_w_arity(sch_faderange, "sch_faderange", 1, 2), env);
-    scheme_add_global("sch_raise",
-                      scheme_make_prim_w_arity(sch_raise, "sch_raise", 1, 2), env);
-    scheme_add_global("sch_lower",
-                      scheme_make_prim_w_arity(sch_lower, "sch_lower", 1, 2), env);
-    scheme_add_global("sch_order",
-                      scheme_make_prim_w_arity(sch_order, "sch_order", 2, 2), env);
-    scheme_add_global("sch_transparency",
-                      scheme_make_prim_w_arity(sch_transparency, "sch_transparency", 1, 2), env);
-    scheme_add_global("sch_visiblep",
-                      scheme_make_prim_w_arity(sch_visiblep, "sch_visiblep", 1, 1), env);
-    scheme_add_global("sch_sticky",
-                      scheme_make_prim_w_arity(sch_sticky, "sch_sticky", 1, 2), env);
-    scheme_add_global("sch_findable",
-                      scheme_make_prim_w_arity(sch_findable, "sch_findable", 1, 2), env);
-    scheme_add_global("sch_boundable",
-                      scheme_make_prim_w_arity(sch_boundable, "sch_boundable", 1, 2), env);
-    scheme_add_global("sch_events",
-                      scheme_make_prim_w_arity(sch_events, "sch_events", 1, 2), env);
-    scheme_add_global("sch_alwaysrender",
-                      scheme_make_prim_w_arity(sch_alwaysrender, "sch_alwaysrender", 1, 2), env);
-    scheme_add_global("sch_below",
-                      scheme_make_prim_w_arity(sch_below, "sch_below", 1, 1), env);
-    scheme_add_global("sch_above",
-                      scheme_make_prim_w_arity(sch_above, "sch_above", 1, 1), env);
-    scheme_add_global("sch_layer",
-                      scheme_make_prim_w_arity(sch_layer, "sch_layer", 1, 2), env);
-    scheme_add_global("sch_idle",
-                      scheme_make_prim_w_arity(sch_idle, "sch_idle", 1, 1), env);
-    scheme_add_global("sch_rendertime",
-                      scheme_make_prim_w_arity(sch_rendertime, "sch_rendertime", 1, 1), env);
-    scheme_add_global("sch_viewrendertime",
-                      scheme_make_prim_w_arity(sch_viewrendertime, "sch_viewrendertime", 1, 1), env);
-    scheme_add_global("sch_dissolvespeed",
-                      scheme_make_prim_w_arity(sch_dissolvespeed, "sch_dissolvespeed", 1, 2), env);
-    scheme_add_global("sch_refinedissolvespeed",
-                      scheme_make_prim_w_arity(sch_refinedissolvespeed, "sch_refinedissolvespeed", 1, 2), env);
-    scheme_add_global("sch_desiredframerate",
-                      scheme_make_prim_w_arity(sch_desiredframerate, "sch_desiredframerate", 1, 2), env);
-    scheme_add_global("sch_refinementdelay",
-                      scheme_make_prim_w_arity(sch_refinementdelay, "sch_refinementdelay", 1, 2), env);
-    scheme_add_global("sch_doublebuffer",
-                      scheme_make_prim_w_arity(sch_doublebuffer, "sch_doublebuffer", 1, 2), env);
-    scheme_add_global("sch_fastpan",
-                      scheme_make_prim_w_arity(sch_fastpan, "sch_fastpan", 1, 2), env);
-    scheme_add_global("sch_xftenable",
-                      scheme_make_prim_w_arity(sch_xftenable, "sch_xftenable", 1, 2), env);
+  add_make_prim(sch_imagep, "sch_imagep", 1, 1, env);
+  add_make_prim(sch_makeimagedata, "sch_makeimagedata", 3, 3, env);
+  add_make_prim(sch_makeimage, "sch_makeimage", 2, 2, env);
+  add_make_prim(sch_imagedata, "sch_imagedata", 1, 2, env);
+  add_make_prim(sch_imagepath, "sch_imagepath", 1, 1, env);
+  add_make_prim(sch_imagedim, "sch_imagedim", 1, 1, env);
+  add_make_prim(sch_imagedata_rgb, "sch_imagedata_rgb", 3, 7, env);
+  add_make_prim(sch_freeimagedata, "sch_freeimagedata", 2, 2, env);
+  add_make_prim(sch_fill, "sch_fill", 1, 2, env);
+  add_make_prim(sch_pen, "sch_pen", 1, 2, env);
+  add_make_prim(sch_penwidth, "sch_penwidth", 1, 3, env);
+  add_make_prim(sch_abslinestyle, "sch_abslinestyle", 1, 1, env);
+  add_make_prim(sch_add_tag, "sch_add_tag", 2, 2, env);
+  add_make_prim(sch_delete_tag, "sch_delete_tag", 2, 2, env);
 
-    scheme_add_global("sch_imagep",
-                      scheme_make_prim_w_arity(sch_imagep, "sch_imagep", 1, 1), env);
-    scheme_add_global("sch_makeimagedata",
-                      scheme_make_prim_w_arity(sch_makeimagedata, "sch_makeimagedata", 3, 3), env);
-    scheme_add_global("sch_makeimage",
-                      scheme_make_prim_w_arity(sch_makeimage, "sch_makeimage", 2, 2), env);
-    scheme_add_global("sch_imagedata",
-                      scheme_make_prim_w_arity(sch_imagedata, "sch_imagedata", 1, 2), env);
-    scheme_add_global("sch_imagepath",
-                      scheme_make_prim_w_arity(sch_imagepath, "sch_imagepath", 1, 1), env);
-    scheme_add_global("sch_imagedim",
-                      scheme_make_prim_w_arity(sch_imagedim, "sch_imagedim", 1, 1), env);
-    scheme_add_global("sch_imagedata_rgb",
-                      scheme_make_prim_w_arity(sch_imagedata_rgb, "sch_imagedata_rgb", 3, 7), env);
-    scheme_add_global("sch_freeimagedata",
-                      scheme_make_prim_w_arity(sch_freeimagedata, "sch_freeimagedata", 2, 2), env);
-    scheme_add_global("sch_fill",
-                      scheme_make_prim_w_arity(sch_fill, "sch_fill", 1, 2), env);
-    scheme_add_global("sch_pen",
-                      scheme_make_prim_w_arity(sch_pen, "sch_pen", 1, 2), env);
-    scheme_add_global("sch_penwidth",
-                      scheme_make_prim_w_arity(sch_penwidth, "sch_penwidth", 1, 3), env);
-    scheme_add_global("sch_abslinestyle",
-                      scheme_make_prim_w_arity(sch_abslinestyle, "sch_abslinestyle", 1, 1), env);
-    scheme_add_global("sch_add_tag",
-                      scheme_make_prim_w_arity(sch_add_tag, "sch_add_tag", 2, 2), env);
-    scheme_add_global("sch_delete_tag",
-                      scheme_make_prim_w_arity(sch_delete_tag, "sch_delete_tag", 2, 2), env);
+  add_make_prim(sch_panelsetfill, "sch_panelsetfill", 2, 2, env);
+  add_make_prim(sch_panelmoveview, "sch_panelmoveview", 4, 4, env);
+  add_make_prim(sch_makepanel, "sch_makepanel", 2, 2, env);
+  add_make_prim(sch_makegroup, "sch_makegroup", 2, 2, env);
+  add_make_prim(sch_members, "sch_members", 1, 2, env);
+  add_make_prim(sch_addmember, "sch_addmember", 2, 2, env);
+  add_make_prim(sch_removemember, "sch_removemember", 2, 2, env);
+  add_make_prim(sch_divisible, "sch_divisible", 1, 2, env);
+  add_make_prim(sch_getgroup, "sch_getgroup", 1, 1, env);
 
-    scheme_add_global("sch_panelsetfill",
-                      scheme_make_prim_w_arity(sch_panelsetfill, "sch_panelsetfill", 2, 2), env);
-    scheme_add_global("sch_panelmoveview",
-                      scheme_make_prim_w_arity(sch_panelmoveview, "sch_panelmoveview", 4, 4), env);
-    scheme_add_global("sch_makepanel",
-                      scheme_make_prim_w_arity(sch_makepanel, "sch_makepanel", 2, 2), env);
-    scheme_add_global("sch_makegroup",
-                      scheme_make_prim_w_arity(sch_makegroup, "sch_makegroup", 2, 2), env);
-    scheme_add_global("sch_members",
-                      scheme_make_prim_w_arity(sch_members, "sch_members", 1, 2), env);
-    scheme_add_global("sch_addmember",
-                      scheme_make_prim_w_arity(sch_addmember, "sch_addmember", 2, 2), env);
-    scheme_add_global("sch_removemember",
-                      scheme_make_prim_w_arity(sch_removemember, "sch_removemember", 2, 2), env);
-    scheme_add_global("sch_divisible",
-                      scheme_make_prim_w_arity(sch_divisible, "sch_divisible", 1, 2), env);
-    scheme_add_global("sch_getgroup",
-                      scheme_make_prim_w_arity(sch_getgroup, "sch_getgroup", 1, 1), env);
+  add_make_prim(sch_makelayer, "sch_makelayer", 3, 3, env);
+  add_make_prim(sch_deletelayer, "sch_deletelayer", 1, 1, env);
+  add_make_prim(sch_layername, "sch_layername", 1, 1, env);
+  add_make_prim(sch_layermembers, "sch_layermembers", 1, 1, env);
+  add_make_prim(sch_layers, "sch_layers", 1, 1, env);
+  add_make_prim(sch_visiblelayer, "sch_visiblelayer", 1, 2, env);
+  add_make_prim(sch_raiselayer, "sch_raiselayer", 1, 2, env);
+  add_make_prim(sch_lowerlayer, "sch_lowerlayer", 1, 2, env);
 
-    scheme_add_global("sch_makelayer",
-                      scheme_make_prim_w_arity(sch_makelayer, "sch_makelayer", 3, 3), env);
-    scheme_add_global("sch_deletelayer",
-                      scheme_make_prim_w_arity(sch_deletelayer, "sch_deletelayer", 1, 1), env);
-    scheme_add_global("sch_layername",
-                      scheme_make_prim_w_arity(sch_layername, "sch_layername", 1, 1), env);
-    scheme_add_global("sch_layermembers",
-                      scheme_make_prim_w_arity(sch_layermembers, "sch_layermembers", 1, 1), env);
-    scheme_add_global("sch_layers",
-                      scheme_make_prim_w_arity(sch_layers, "sch_layers", 1, 1), env);
-    scheme_add_global("sch_visiblelayer",
-                      scheme_make_prim_w_arity(sch_visiblelayer, "sch_visiblelayer", 1, 2), env);
-    scheme_add_global("sch_raiselayer",
-                      scheme_make_prim_w_arity(sch_raiselayer, "sch_raiselayer", 1, 2), env);
-    scheme_add_global("sch_lowerlayer",
-                      scheme_make_prim_w_arity(sch_lowerlayer, "sch_lowerlayer", 1, 2), env);
+  add_make_prim(sch_truncatefile, "sch_truncatefile", 2, 2, env);
 
-    scheme_add_global("sch_truncatefile",
-                      scheme_make_prim_w_arity(sch_truncatefile, "sch_truncatefile", 2, 2), env);
-
-    scheme_add_global("sch_os2unix",
-                      scheme_make_prim_w_arity(sch_os2unix, "sch_os2unix", 1, 1), env);
-    scheme_add_global("sch_unix2os",
-                      scheme_make_prim_w_arity(sch_unix2os, "sch_unix2os", 1, 1), env);
+  add_make_prim(sch_os2unix, "sch_os2unix", 1, 1, env);
+  add_make_prim(sch_unix2os, "sch_unix2os", 1, 1, env);
 
     dynapad_typetag = scheme_intern_symbol("dynapad");
     scheme_dont_gc_ptr(dynapad_typetag);
