@@ -8,6 +8,7 @@
          use-bitmap-or-string
          for-all-pads
          clear-all-menu-buttons
+         double-click-duration
          button-double-clicked?
          update-panel-colors
          set-*draw-button-off-labels*!
@@ -116,13 +117,16 @@
 |#
 
 (define *time_last_button_press* #f)
+
+(define double-click-duration (make-parameter 400))
+
 (define (button-double-clicked?)
   (define dt 0)
   (if *time_last_button_press*
       (begin
         (set! dt (- (current-milliseconds) *time_last_button_press*))
         (set! *time_last_button_press* (current-milliseconds))
-        (if (< dt 400) #t #f))
+        (if (< dt (double-click-duration)) #t #f))
       ;else
       (begin
         (set! *time_last_button_press* (current-milliseconds))
