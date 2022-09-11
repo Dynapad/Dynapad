@@ -7,7 +7,6 @@ These instructions are for macOS.
 
 brew install \
 git \
-racket \
 imagemagick@6 \
 poppler \
 cmake \
@@ -20,7 +19,10 @@ berkeley-db
 
 #+begin_src bash
 
-pushd ~/Downloads
+# WORKING_DIR is the directory where you will keep dynapad and its racket.
+export WORKING_DIR=~/dynapad-stuff  # for example
+
+pushd $WORKING_DIR
 mkdir dynapad-racket
 pushd dynapad-racket
 curl -LO https://download.racket-lang.org/releases/8.6/installers/racket-minimal-8.6-src.tgz
@@ -49,12 +51,12 @@ make cgc
 make install-cgc
 popd  # racket-8.6/src
 popd  # dynapad-racket
-popd  # ~/Downloads
+popd  # $WORKING_DIR
 mkdir ~/bin
 unlink ~/bin/racocgc
 unlink ~/bin/racketcgc
-ln -s ~/Downloads/dynapad-racket/racket-8.6/bin/racocgc ~/bin/
-ln -s ~/Downloads/dynapad-racket/racket-8.6/bin/racketcgc ~/bin/
+ln -s $WORKING_DIR/dynapad-racket/racket-8.6/bin/racocgc ~/bin/
+ln -s $WORKING_DIR/dynapad-racket/racket-8.6/bin/racketcgc ~/bin/
 echo 'PATH='"${HOME}"'/bin:/usr/local/opt/imagemagick@6/bin:${PATH}' >> ~/.zshrc
 source ~/.zshrc
 
@@ -71,7 +73,7 @@ pushd dynapad
 
 mkdir build
 pushd build
-cmake .. -G Ninja -DRACKET_DIR=${HOME}/Downloads/dynapad-racket/racket-8.6/
+cmake .. -G Ninja -DRACKET_DIR=$WORKING_DIR/dynapad-racket/racket-8.6/
 ninja
 popd
 
