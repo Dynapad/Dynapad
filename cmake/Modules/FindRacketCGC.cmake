@@ -38,6 +38,7 @@ if (RacketCGC_FOUND)
   # complaining about missing symbols globally, so we list them here.
   set(RacketCGC_DYNAMIC_SYMBOLS
     "scheme_add_global"
+    "scheme_apply"
     "scheme_append"
     "scheme_block_until"
     "scheme_byte_string_to_char_string"

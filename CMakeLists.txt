@@ -28,6 +28,8 @@ find_package(PkgConfig REQUIRED)
 
 find_package(RacketCGC MODULE REQUIRED)
 
+find_package(ImageMagick 6 EXACT MODULE REQUIRED)
+
 find_package(X11 MODULE REQUIRED)
 
 find_package(Freetype MODULE REQUIRED)
